@@ -40,5 +40,5 @@ npm run dev
 
 ## API Base URL
 ```bash
-Routes → Controllers → Services → Models
+http://localhost:5000/api/
 ```
