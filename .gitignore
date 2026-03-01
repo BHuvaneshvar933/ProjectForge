@@ -1,0 +1,11 @@
+# Backend
+backend/node_modules/
+backend/.env
+backend/.env.*
+backend/dist/
+backend/coverage/
+
+node_modules/
+.env
+.env.*
+.DS_Store
