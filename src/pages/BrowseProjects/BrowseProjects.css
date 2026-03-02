@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── Apple / Samsung inspired – black & white, minimal, premium ── */
+
+.browse-container {
+  padding: 64px 8vw;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── header ── */
+.browse-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 56px;
+  padding-bottom: 0;
+  border-bottom: none;
+  gap: 24px;
+}
+
+/* ── search ── */
+.search-box {
+  display: flex;
+  align-items: center;
+}
+
+.search-box input {
+  padding: 14px 22px;
+  border-radius: 980px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 400;
+  outline: none;
+  min-width: 260px;
+  transition: border 0.25s, background 0.25s;
+  backdrop-filter: blur(6px);
+}
+.search-box input::placeholder {
+  color: rgba(255,255,255,0.35);
+}
+.search-box input:focus {
+  border-color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.1);
+}
+
+.search-box button {
+  margin-left: 12px;
+  padding: 14px 28px;
+  border-radius: 980px;
+  border: none;
+  background: #fff;
+  color: #000;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.2s;
+  letter-spacing: -0.01em;
+}
+.search-box button:hover {
+  background: #e5e5e5;
+  transform: scale(1.04);
+}
+
+/* ── grid ── */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 32px;
+}
+
+/* ── card ── */
+.project-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 36px 32px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(.25,.8,.25,1),
+              box-shadow 0.4s cubic-bezier(.25,.8,.25,1),
+              border-color 0.3s;
+  animation: fadeUp 0.6s cubic-bezier(.25,.8,.25,1) both;
+  backdrop-filter: blur(6px);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 64px rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.18);
+}
+
+/* ── skills ── */
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0 0;
+}
+
+.skills span {
+  padding: 6px 16px;
+  border-radius: 980px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: background 0.2s, color 0.2s;
+}
+.skills span:hover {
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+}
+
+/* ── footer ── */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+}
+
+/* ── responsive ── */
+@media (max-width: 768px) {
+  .browse-container { padding: 40px 5vw; }
+  .browse-header h1 { font-size: 2.2rem; }
+  .project-grid { grid-template-columns: 1fr; gap: 24px; }
+}
