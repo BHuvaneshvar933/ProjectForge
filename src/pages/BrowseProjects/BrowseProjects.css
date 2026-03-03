@@ -1,144 +1,94 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-/* ── Apple / Samsung inspired – black & white, minimal, premium ── */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.browse-container {
-  padding: 64px 8vw;
-  min-height: 100vh;
-  background: #000;
-  color: #fff;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@layer components {
+  .browse-container {
+    @apply px-[8vw] py-16 min-h-screen bg-black text-white antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
 
-/* ── header ── */
-.browse-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  margin-bottom: 56px;
-  padding-bottom: 0;
-  border-bottom: none;
-  gap: 24px;
-}
+  .browse-header {
+    @apply flex flex-wrap items-end justify-between mb-14 pb-0 gap-6;
+    border-bottom: none;
+  }
 
-/* ── search ── */
-.search-box {
-  display: flex;
-  align-items: center;
-}
+  .search-box {
+    @apply flex items-center;
+  }
 
-.search-box input {
-  padding: 14px 22px;
-  border-radius: 980px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.06);
-  color: #fff;
-  font-size: 1rem;
-  font-family: inherit;
-  font-weight: 400;
-  outline: none;
-  min-width: 260px;
-  transition: border 0.25s, background 0.25s;
-  backdrop-filter: blur(6px);
-}
-.search-box input::placeholder {
-  color: rgba(255,255,255,0.35);
-}
-.search-box input:focus {
-  border-color: rgba(255,255,255,0.45);
-  background: rgba(255,255,255,0.1);
-}
+  .search-box input {
+    @apply px-[22px] py-3.5 rounded-full border text-white font-normal outline-none min-w-[260px] backdrop-blur-sm;
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    transition: border 0.25s, background 0.25s;
+  }
+  .search-box input::placeholder {
+    color: rgba(255,255,255,0.35);
+  }
+  .search-box input:focus {
+    border-color: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.1);
+  }
 
-.search-box button {
-  margin-left: 12px;
-  padding: 14px 28px;
-  border-radius: 980px;
-  border: none;
-  background: #fff;
-  color: #000;
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.25s, transform 0.2s;
-  letter-spacing: -0.01em;
-}
-.search-box button:hover {
-  background: #e5e5e5;
-  transform: scale(1.04);
-}
+  .search-box button {
+    @apply ml-3 px-7 py-3.5 rounded-full border-0 bg-white text-black text-base font-semibold cursor-pointer tracking-tight;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .search-box button:hover {
+    @apply bg-[#e5e5e5] scale-[1.04];
+  }
 
-/* ── grid ── */
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 32px;
-}
+  .project-grid {
+    @apply grid gap-8;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  }
 
-/* ── card ── */
-.project-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
-  padding: 36px 32px 32px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.4s cubic-bezier(.25,.8,.25,1),
-              box-shadow 0.4s cubic-bezier(.25,.8,.25,1),
-              border-color 0.3s;
-  animation: fadeUp 0.6s cubic-bezier(.25,.8,.25,1) both;
-  backdrop-filter: blur(6px);
-}
+  .project-card {
+    @apply bg-white/4 border border-white/8 rounded-2xl pt-9 px-8 pb-8 relative overflow-hidden backdrop-blur-sm;
+    transition: transform 0.4s cubic-bezier(.25,.8,.25,1),
+                box-shadow 0.4s cubic-bezier(.25,.8,.25,1),
+                border-color 0.3s;
+    animation: fadeUp 0.6s cubic-bezier(.25,.8,.25,1) both;
+  }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: none; }
-}
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: none; }
+  }
 
-.project-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 24px 64px rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.18);
-}
+  .project-card:hover {
+    transform: translateY(-6px);
+    @apply shadow-[0_24px_64px_rgba(255,255,255,0.06)] border-white/18;
+  }
 
-/* ── skills ── */
-.skills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 20px 0 0;
-}
+  .skills {
+    @apply flex flex-wrap gap-2 mt-5;
+  }
 
-.skills span {
-  padding: 6px 16px;
-  border-radius: 980px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: rgba(255,255,255,0.7);
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.1);
-  transition: background 0.2s, color 0.2s;
-}
-.skills span:hover {
-  background: rgba(255,255,255,0.14);
-  color: #fff;
-}
+  .skills span {
+    @apply px-4 py-1.5 rounded-full text-sm font-medium tracking-wide text-white/70 bg-white/8 border border-white/10;
+    transition: background 0.2s, color 0.2s;
+  }
+  .skills span:hover {
+    @apply bg-white/14 text-white;
+  }
 
-/* ── footer ── */
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 28px;
-}
+  .footer {
+    @apply flex justify-between items-center mt-7;
+  }
 
-/* ── responsive ── */
-@media (max-width: 768px) {
-  .browse-container { padding: 40px 5vw; }
-  .browse-header h1 { font-size: 2.2rem; }
-  .project-grid { grid-template-columns: 1fr; gap: 24px; }
+  @media (max-width: 768px) {
+    .browse-container {
+      @apply px-[5vw] py-10;
+    }
+    .browse-header h1 {
+      @apply text-[2.2rem];
+    }
+    .project-grid {
+      @apply grid-cols-1 gap-6;
+    }
+  }
 }
