@@ -136,3 +136,20 @@ export const getJoinedProjects = async (req, res, next) => {
     next(err);
   }
 };
+
+export const leaveProject = async (req, res, next) => {
+  try {
+    const project = await projectService.leaveProject(
+      req.user.id,
+      req.params.projectId
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Successfully left the project",
+      data: { project }
+    });
+  } catch (err) {
+    next(err);
+  }
+};

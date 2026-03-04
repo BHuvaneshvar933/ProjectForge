@@ -1,13 +1,43 @@
 import Project from "../models/project.model.js";
 import Team from "../models/team.model.js";
+import User from "../models/user.model.js";
+import mongoose from "mongoose";
 
+const normalizeProjectRole = (value) => {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed.length < 2 || trimmed.length > 50) return null;
+  return trimmed;
+};
+
+const normalizeOpenRoles = (value) => {
+  if (value === undefined || value === null) return [];
+  if (!Array.isArray(value)) {
+    throw new Error("openRoles must be an array of strings");
+  }
+
+  const roles = value
+    .map((r) => (typeof r === "string" ? r.trim() : ""))
+    .filter((r) => r.length > 0);
+
+  for (const r of roles) {
+    if (r.length < 2 || r.length > 50) {
+      throw new Error("Each open role must be 2-50 characters");
+    }
+  }
+
+  return roles;
+};
 
 // CREATE PROJECT
 export const createProject = async (userId, data) => {
-  let {
+  const {
     requiredSkills,
     teamSizeRequired,
-    timeline
+    timeline,
+    openRoles,
+    ownerProjectRole,
+    ...projectData
   } = data;
 
   // Business Validations
@@ -20,6 +50,20 @@ export const createProject = async (userId, data) => {
     throw new Error("Team size must be at least 2");
   }
 
+  const normalizedOpenRoles = normalizeOpenRoles(openRoles);
+
+  // Owner is always 1 member; openRoles represent remaining slots
+  if (normalizedOpenRoles.length > teamSizeRequired - 1) {
+    throw new Error("openRoles cannot exceed teamSizeRequired - 1");
+  }
+
+  if (normalizedOpenRoles.length + 1 > teamSizeRequired) {
+    throw new Error("openRoles + currentTeamSize exceeds teamSizeRequired");
+  }
+
+  const normalizedOwnerProjectRole =
+    normalizeProjectRole(ownerProjectRole) || "Project Owner";
+
   if (timeline?.startDate && timeline?.endDate) {
     if (new Date(timeline.endDate) <= new Date(timeline.startDate)) {
       throw new Error("End date must be after start date");
@@ -28,7 +72,11 @@ export const createProject = async (userId, data) => {
 
 
   const project = await Project.create({
-    ...data,
+    ...projectData,
+    requiredSkills,
+    teamSizeRequired,
+    timeline,
+    openRoles: normalizedOpenRoles,
     owner: userId,
     currentTeamSize: 1,
     status: "recruiting",
@@ -39,7 +87,8 @@ export const createProject = async (userId, data) => {
     projectId: project._id,
     userId,
     role: "owner",
-    status: "active"
+    status: "active",
+    projectRole: normalizedOwnerProjectRole,
   });
 
   return project;
@@ -59,7 +108,34 @@ export const getProjectById = async (projectId) => {
     throw new Error("Project not found");
   }
 
-  return project;
+  const teamMembers = await Team.find({
+    projectId,
+    status: "active",
+    isDeleted: false,
+  })
+    .populate("userId", "name avatar")
+    .sort({ role: -1, joinedAt: 1 });
+
+  const team = teamMembers.map((m) => ({
+    name: m.userId?.name,
+    avatar: m.userId?.avatar,
+    role: m.role,
+    projectRole:
+      normalizeProjectRole(m.projectRole) ||
+      (m.role === "owner" ? "Project Owner" : "Member"),
+  }));
+
+  const openRolesSafe = Array.isArray(project.openRoles)
+    ? project.openRoles
+        .map((r) => (typeof r === "string" ? r.trim() : ""))
+        .filter((r) => r.length > 0)
+    : [];
+
+  return {
+    ...project.toObject(),
+    team,
+    openRoles: openRolesSafe,
+  };
 };
 
 
@@ -197,8 +273,16 @@ export const getProjectTeam = async (projectId) => {
     status: "active",
     isDeleted: false
   })
-    .populate("userId", "name bio skills")
+    .populate("userId", "name avatar")
     .sort({ role: -1, joinedAt: 1 }); 
+
+  // Backward compatibility: ensure projectRole is always present in response
+  for (const m of teamMembers) {
+    const normalized = normalizeProjectRole(m.projectRole);
+    if (!normalized) {
+      m.projectRole = m.role === "owner" ? "Project Owner" : "Member";
+    }
+  }
 
   return teamMembers;
 };
@@ -222,4 +306,66 @@ export const getJoinedProjects = async (userId) => {
     .populate("requiredSkills", "name");
 
   return projects;
+};
+
+export const leaveProject = async (userId, projectId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const project = await Project.findById(projectId).session(session);
+
+    if (!project || project.isDeleted) {
+      throw new Error("Project not found");
+    }
+
+    const membership = await Team.findOne({
+      projectId,
+      userId,
+      status: "active"
+    }).session(session);
+
+    if (!membership) {
+      throw new Error("You are not an active member of this project");
+    }
+
+    if (membership.role === "owner") {
+      throw new Error("Project owner cannot leave the project");
+    }
+
+    // Update membership
+    membership.status = "left";
+    membership.leftAt = new Date();
+    await membership.save({ session });
+
+    // Update project team size
+    project.currentTeamSize -= 1;
+
+    if (
+      project.status === "in-progress" &&
+      project.currentTeamSize < project.teamSizeRequired
+    ) {
+      project.status = "recruiting";
+    }
+
+    await project.save({ session });
+
+    // Update user stats
+    const user = await User.findById(userId).session(session);
+
+    if (user?.stats) {
+      user.stats.projectsActive -= 1;
+      await user.save({ session });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return project;
+
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
