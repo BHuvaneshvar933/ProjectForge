@@ -1,0 +1,111 @@
+.project-review {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.project-review__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project-review__section--title {
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.project-review__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.project-review__title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.project-review__text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
+}
+
+.project-review__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.project-review__card {
+  border-radius: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project-review__muted {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.project-review__size {
+  font-size: 20px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.project-review__size-unit {
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.35);
+  margin-left: 6px;
+}
+
+.project-review__role {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.project-review__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.project-review__timeline {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.project-review__timeline-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-review__timeline-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.project-review__timeline-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.project-review__timeline-arrow {
+  color: rgba(10, 132, 255, 0.5);
+}
