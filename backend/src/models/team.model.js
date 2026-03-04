@@ -27,6 +27,15 @@ const teamSchema = new mongoose.Schema(
       default: "member",
     },
 
+    // Role inside the project (e.g., "Backend Developer", "UI/UX Designer")
+    projectRole: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+      default: "Member",
+    },
+
     status: {
       type: String,
       enum: ["active", "left", "removed"],

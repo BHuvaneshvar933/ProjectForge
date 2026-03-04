@@ -33,6 +33,17 @@ const projectSchema = new mongoose.Schema(
       ref: "Skill",
     }],
 
+    // Roles that still need to be filled for this project
+    openRoles: {
+      type: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
+      default: [],
+    },
+
     teamSizeRequired: {
       type: Number,
       required: true,

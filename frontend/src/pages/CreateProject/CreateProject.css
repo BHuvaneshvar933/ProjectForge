@@ -1,0 +1,223 @@
+/* Create Project page */
+.create-project {
+	max-width: 768px;
+	margin: 0 auto;
+	padding: 48px 24px;
+	animation: fadeIn 0.5s ease;
+}
+
+.create-project__header {
+	margin-bottom: 40px;
+}
+
+.create-project__title {
+	font-size: 34px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	margin-bottom: 6px;
+}
+
+.create-project__subtitle {
+	font-size: 15px;
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.create-project__stepper {
+	position: relative;
+	margin-bottom: 56px;
+}
+
+.create-project__stepper-line {
+	position: absolute;
+	top: 20px;
+	left: 48px;
+	right: 48px;
+	height: 2px;
+	background: rgba(255, 255, 255, 0.06);
+}
+
+.create-project__stepper-progress {
+	position: absolute;
+	top: 20px;
+	left: 48px;
+	height: 2px;
+	background: #0a84ff;
+	transition: width 0.7s ease;
+}
+
+.create-project__stepper-steps {
+	display: flex;
+	justify-content: space-between;
+	position: relative;
+}
+
+.create-project__step {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 96px;
+}
+
+.create-project__step-circle {
+	width: 40px;
+	height: 40px;
+	border-radius: 999px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+	font-weight: 700;
+	transition: all 0.5s ease;
+}
+
+.create-project__step-circle.is-completed {
+	background: #0a84ff;
+	color: #ffffff;
+	box-shadow: 0 0 12px rgba(10, 132, 255, 0.35);
+}
+
+.create-project__step-circle.is-current {
+	background: rgba(255, 255, 255, 0.1);
+	color: #ffffff;
+	border: 2px solid rgba(10, 132, 255, 0.5);
+	box-shadow: 0 0 12px rgba(10, 132, 255, 0.15);
+}
+
+.create-project__step-circle.is-upcoming {
+	background: rgba(255, 255, 255, 0.04);
+	color: rgba(255, 255, 255, 0.25);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.create-project__step-icon {
+	width: 20px;
+	height: 20px;
+}
+
+.create-project__step-label {
+	margin-top: 12px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+}
+
+.create-project__step-label.is-completed {
+	color: #0a84ff;
+}
+
+.create-project__step-label.is-current {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.create-project__step-label.is-upcoming {
+	color: rgba(255, 255, 255, 0.25);
+}
+
+.create-project__card {
+	border-radius: 24px;
+	padding: 32px;
+	background: rgba(28, 28, 30, 0.55);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(20px);
+	margin-bottom: 32px;
+	animation: scaleIn 0.4s ease;
+}
+
+.create-project__actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.create-project__button {
+	border-radius: 999px;
+	padding: 12px 28px;
+	font-size: 13px;
+	font-weight: 600;
+	transition: all 0.3s ease;
+	border: 1px solid transparent;
+}
+
+.create-project__button:active {
+	transform: scale(0.97);
+}
+
+.create-project__button--secondary {
+	color: rgba(255, 255, 255, 0.7);
+	background: rgba(255, 255, 255, 0.06);
+	border-color: rgba(255, 255, 255, 0.1);
+}
+
+.create-project__button--secondary:hover {
+	color: #ffffff;
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.create-project__button--primary {
+	background: #0a84ff;
+	color: #ffffff;
+	box-shadow: 0 0 12px rgba(10, 132, 255, 0.3);
+}
+
+.create-project__button--primary:hover {
+	background: #409cff;
+	box-shadow: 0 0 20px rgba(10, 132, 255, 0.4);
+}
+
+.create-project__button--success {
+	background: #30d158;
+	color: #ffffff;
+	box-shadow: 0 0 12px rgba(48, 209, 88, 0.3);
+}
+
+.create-project__button--success:hover {
+	background: #34d860;
+	box-shadow: 0 0 20px rgba(48, 209, 88, 0.4);
+}
+
+.create-project__button.is-disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.create-project__button-content {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.create-project__button-icon {
+	width: 16px;
+	height: 16px;
+}
+
+.create-project__spinner {
+	width: 16px;
+	height: 16px;
+	animation: spin 1s linear infinite;
+}
+
+.create-project__spinner-track {
+	opacity: 0.25;
+}
+
+.create-project__spinner-fill {
+	opacity: 0.75;
+}
+
+@media (min-width: 768px) {
+	.create-project {
+		padding: 48px 32px;
+	}
+
+	.create-project__card {
+		padding: 40px;
+	}
+}
+
+@media (min-width: 1024px) {
+	.create-project {
+		padding: 48px 40px;
+	}
+}

@@ -1,0 +1,123 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border: 1px solid transparent;
+  text-transform: capitalize;
+  transition: all 0.3s ease;
+}
+
+.badge--default {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.badge--recruiting {
+  background: rgba(10, 132, 255, 0.15);
+  color: #409cff;
+  border-color: rgba(10, 132, 255, 0.25);
+}
+
+.badge--in-progress,
+.badge--completed {
+  background: rgba(48, 209, 88, 0.15);
+  color: #30d158;
+  border-color: rgba(48, 209, 88, 0.25);
+}
+
+.badge--archived {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.badge--owner {
+  background: #0a84ff;
+  color: #ffffff;
+  border-color: #0a84ff;
+}
+
+.badge--member {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.badge--skill {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.badge--skill:hover {
+  background: rgba(10, 132, 255, 0.12);
+  color: #409cff;
+  border-color: rgba(10, 132, 255, 0.25);
+}
+
+.badge--personal {
+  background: rgba(191, 90, 242, 0.15);
+  color: #bf5af2;
+  border-color: rgba(191, 90, 242, 0.25);
+}
+
+.badge--startup {
+  background: rgba(255, 159, 10, 0.15);
+  color: #ff9f0a;
+  border-color: rgba(255, 159, 10, 0.25);
+}
+
+.badge--open-source {
+  background: rgba(48, 209, 88, 0.15);
+  color: #30d158;
+  border-color: rgba(48, 209, 88, 0.25);
+}
+
+.badge--academic {
+  background: rgba(100, 210, 255, 0.15);
+  color: #64d2ff;
+  border-color: rgba(100, 210, 255, 0.25);
+}
+
+.badge--web {
+  background: rgba(10, 132, 255, 0.15);
+  color: #409cff;
+  border-color: rgba(10, 132, 255, 0.25);
+}
+
+.badge--mobile {
+  background: rgba(255, 159, 10, 0.15);
+  color: #ff9f0a;
+  border-color: rgba(255, 159, 10, 0.25);
+}
+
+.badge--ml {
+  background: rgba(191, 90, 242, 0.15);
+  color: #bf5af2;
+  border-color: rgba(191, 90, 242, 0.25);
+}
+
+.badge--hackathon {
+  background: rgba(48, 209, 88, 0.15);
+  color: #30d158;
+  border-color: rgba(48, 209, 88, 0.25);
+}
+
+.badge--clickable {
+  cursor: pointer;
+}
+
+.badge__remove {
+  margin-left: 6px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.2s ease;
+}
+
+.badge__remove:hover {
+  color: #ff453a;
+}

@@ -46,7 +46,10 @@ const taskSchema = new mongoose.Schema(
       default: "medium",
     },
 
-    tags: [String],
+    tags: {
+  type: [String],
+  default: [],
+},
 
     dueDate: {
       type: Date,
@@ -76,7 +79,8 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Useful compound index for filtering tasks
 taskSchema.index({ projectId: 1, status: 1 });
+taskSchema.index({ projectId: 1, assignedTo: 1 });
+taskSchema.index({ projectId: 1, isDeleted: 1 });
 
 export default mongoose.model("Task", taskSchema);

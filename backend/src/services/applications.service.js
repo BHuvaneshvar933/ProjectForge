@@ -5,6 +5,13 @@ import Team from "../models/team.model.js";
 import User from "../models/user.model.js";
 import * as notificationService from "./notification.service.js";
 
+const normalizeProjectRole = (value) => {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (trimmed.length < 2 || trimmed.length > 50) return null;
+  return trimmed;
+};
+
 export const applyToProject = async (userId, data) => {
   const { projectId, message = "" } = data;
 
@@ -216,6 +223,13 @@ export const acceptApplication = async (ownerId, applicationId) => {
       throw new Error("Project team is already full");
     }
 
+    const openRoles = Array.isArray(project.openRoles) ? project.openRoles : [];
+
+    // Consistency guard: openRoles should never exceed remaining capacity
+    if (openRoles.length + project.currentTeamSize > project.teamSizeRequired) {
+      throw new Error("Project roles exceed team capacity");
+    }
+
     // Get applicant
     const applicant = await User.findById(application.applicantId).session(session);
 
@@ -240,13 +254,23 @@ export const acceptApplication = async (ownerId, applicationId) => {
     application.reviewedBy = ownerId;
     await application.save({ session });
 
+    // Assign a projectRole from openRoles (simple FIFO)
+    let assignedRole = null;
+    if (openRoles.length > 0) {
+      assignedRole = openRoles.shift();
+      assignedRole = normalizeProjectRole(assignedRole);
+    }
+
+    project.openRoles = openRoles;
+
     // Create Team document
     await Team.create(
       [{
         projectId: project._id,
         userId: applicant._id,
         role: "member",
-        status: "active"
+        status: "active",
+        projectRole: assignedRole || "Member",
       }],
       { session }
     );
