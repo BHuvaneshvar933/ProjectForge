@@ -86,6 +86,57 @@
 	flex-wrap: wrap;
 }
 
+.project-detail__match {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+}
+
+.project-detail__match-score {
+	font-size: 26px;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: #ffffff;
+}
+
+.project-detail__match-sub {
+	margin-top: 2px;
+	font-size: 12px;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.project-detail__modal-hint {
+	margin: 0 0 12px;
+	font-size: 13px;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.45);
+}
+
+.project-detail__modal-textarea {
+	width: 100%;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 16px;
+	padding: 14px 16px;
+	color: rgba(255, 255, 255, 0.85);
+	font-size: 14px;
+	outline: none;
+	resize: vertical;
+	transition: all 0.3s ease;
+}
+
+.project-detail__modal-textarea::placeholder {
+	color: rgba(255, 255, 255, 0.25);
+}
+
+.project-detail__modal-textarea:focus {
+	border-color: rgba(10, 132, 255, 0.5);
+	background: rgba(255, 255, 255, 0.08);
+	box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+}
+
 .project-detail__section {
 	margin-bottom: 24px;
 }
@@ -175,9 +226,16 @@
 
 .project-detail__skills,
 .project-detail__roles {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.project-detail__empty {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.45);
 }
 
 .project-detail__timeline-grid {

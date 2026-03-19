@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getProjectById } from '../../api/projectApi';
+import { archiveProject, getProjectById, getProjectTeam } from '../../api/projectApi';
+import { getCurrentUser } from '../../api/authApi';
+import { applyToProject, getMyApplications } from '../../api/applicationApi';
 import Button from '../../components/common/Button';
 import Badge from '../../components/common/Badge';
 import Spinner from '../../components/common/Spinner';
+import Modal from '../../components/common/Modal';
 import { toast } from 'react-toastify';
 import './ProjectDetail.css';
 
@@ -15,6 +18,15 @@ export default function ProjectDetail() {
   const [error, setError] = useState(null);
   const [expanded, setExpanded] = useState(false);
 
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isMember, setIsMember] = useState(false);
+  const [myApplication, setMyApplication] = useState(null);
+
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [applyMessage, setApplyMessage] = useState('');
+  const [applyLoading, setApplyLoading] = useState(false);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+
   const fetchProject = useCallback(async () => {
     try {
       setLoading(true);
@@ -22,6 +34,48 @@ export default function ProjectDetail() {
       const p = data?.data?.project ?? null;
       setProject(p);
       setTeam(Array.isArray(p?.team) ? p.team : []);
+
+      // Optional: enrich conversion CTA with auth + status info (if token exists)
+      const token =
+        (typeof window !== 'undefined' &&
+          (window.localStorage.getItem('token') ||
+            window.localStorage.getItem('pf_token') ||
+            window.localStorage.getItem('projectforge_token'))) ||
+        '';
+
+      if (token) {
+        try {
+          const [meRes, teamRes, appsRes] = await Promise.all([
+            getCurrentUser(),
+            getProjectTeam(id),
+            getMyApplications({ page: 1, limit: 50 }),
+          ]);
+
+          const me = meRes.data?.data?.user ?? null;
+          setCurrentUser(me);
+
+          const teamDocs = teamRes.data?.data?.team ?? [];
+          const member = Array.isArray(teamDocs)
+            ? teamDocs.some((m) => String(m?.userId?._id) === String(me?._id))
+            : false;
+          setIsMember(member);
+
+          const apps = appsRes.data?.data?.applications ?? [];
+          const app = Array.isArray(apps)
+            ? apps.find((a) => String(a?.projectId?._id) === String(id))
+            : null;
+          setMyApplication(app || null);
+        } catch {
+          // Token may be missing/invalid until auth UI is wired
+          setCurrentUser(null);
+          setIsMember(false);
+          setMyApplication(null);
+        }
+      } else {
+        setCurrentUser(null);
+        setIsMember(false);
+        setMyApplication(null);
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load project');
       toast.error('Failed to load project');
@@ -62,19 +116,89 @@ export default function ProjectDetail() {
 
   const isRecruiting = project.status === 'recruiting';
   const teamFull = project.currentTeamSize >= project.teamSizeRequired;
-  const openRoles = project.openRoles || [];
+  const openRoles = Array.isArray(project.openRoles)
+    ? project.openRoles.filter((r) => typeof r === 'string' && r.trim().length > 0)
+    : [];
   const descriptionExpanded = expanded || project.description?.length < 300;
 
-  // Temporary owner-gating until auth is implemented
-  const currentUserId =
+  const tokenPresent =
+    (typeof window !== 'undefined' &&
+      (window.localStorage.getItem('token') ||
+        window.localStorage.getItem('pf_token') ||
+        window.localStorage.getItem('projectforge_token'))) ||
+    '';
+
+  const fallbackUserId =
     (typeof window !== 'undefined' &&
       (window.localStorage.getItem('userId') ||
         window.localStorage.getItem('pf_user_id') ||
         window.localStorage.getItem('projectforge_user_id'))) ||
     '';
+
   const isOwner = Boolean(
-    currentUserId && project.owner?._id && String(project.owner._id) === String(currentUserId)
+    (currentUser?._id && project.owner?._id && String(currentUser._id) === String(project.owner._id)) ||
+      (fallbackUserId && project.owner?._id && String(fallbackUserId) === String(project.owner._id))
   );
+
+  const applicationStatus = myApplication?.status;
+
+  const canApply =
+    Boolean(tokenPresent) &&
+    !isOwner &&
+    !isMember &&
+    !teamFull &&
+    isRecruiting &&
+    (!applicationStatus || applicationStatus === 'withdrawn' || applicationStatus === 'rejected');
+
+  const showPending = Boolean(applicationStatus === 'pending');
+
+  const skillMatchScore = (() => {
+    const userSkills = Array.isArray(currentUser?.skills) ? currentUser.skills : [];
+    const projectSkills = Array.isArray(project.requiredSkills) ? project.requiredSkills : [];
+
+    const userIds = new Set(userSkills.map((s) => String(s)));
+    const projIds = new Set(projectSkills.map((s) => String(s?._id ?? s)));
+
+    const union = new Set([...userIds, ...projIds]);
+    if (union.size === 0) return null;
+
+    let intersectionCount = 0;
+    for (const id of userIds) {
+      if (projIds.has(id)) intersectionCount += 1;
+    }
+
+    return Math.round((intersectionCount / union.size) * 100);
+  })();
+
+  const handleApply = async () => {
+    if (!canApply) return;
+
+    setApplyLoading(true);
+    try {
+      await applyToProject(id, applyMessage);
+      toast.success('Application submitted');
+      setShowApplyModal(false);
+      setApplyMessage('');
+      await fetchProject();
+    } catch (e) {
+      toast.error(e.response?.data?.message || 'Failed to apply');
+    } finally {
+      setApplyLoading(false);
+    }
+  };
+
+  const handleArchive = async () => {
+    if (!isOwner) return;
+
+    try {
+      await archiveProject(id);
+      toast.success('Project archived');
+      setShowArchiveModal(false);
+      await fetchProject();
+    } catch (e) {
+      toast.error(e.response?.data?.message || 'Failed to archive');
+    }
+  };
 
   // Calculate duration
   const startDate = project.timeline?.startDate ? new Date(project.timeline.startDate) : null;
@@ -98,16 +222,44 @@ export default function ProjectDetail() {
         </div>
         
         <div className="project-detail__actions">
-          {isRecruiting && !teamFull && (
-            <Button variant="primary" disabled>Apply (Auth needed)</Button>
+          {!tokenPresent && (
+            <Button variant="primary" disabled>
+              Sign in to apply
+            </Button>
           )}
 
-          {!isRecruiting && (
-            <Button variant="secondary" disabled>Not recruiting</Button>
+          {tokenPresent && isMember && (
+            <Button variant="primary" disabled>
+              Workspace (Coming soon)
+            </Button>
           )}
 
-          {teamFull && isRecruiting && (
-            <Button disabled variant="secondary">Team Full</Button>
+          {tokenPresent && showPending && (
+            <Button variant="secondary" disabled>
+              Application Pending
+            </Button>
+          )}
+
+          {tokenPresent && !isMember && !isOwner && !showPending && teamFull && (
+            <Button variant="secondary" disabled>
+              Team Full
+            </Button>
+          )}
+
+          {tokenPresent && !isMember && !isOwner && !showPending && !isRecruiting && (
+            <Button variant="secondary" disabled>
+              Not recruiting
+            </Button>
+          )}
+
+          {tokenPresent && canApply && (
+            <Button
+              variant="primary"
+              onClick={() => setShowApplyModal(true)}
+              loading={applyLoading}
+            >
+              Apply to Join
+            </Button>
           )}
 
           {isOwner && (
@@ -115,11 +267,30 @@ export default function ProjectDetail() {
               <Link to={`/projects/${id}/edit`}>
                 <Button variant="secondary">Edit Project</Button>
               </Link>
-              <Button variant="danger" disabled>Archive (Auth needed)</Button>
+              <Button variant="danger" onClick={() => setShowArchiveModal(true)}>
+                Archive
+              </Button>
             </>
           )}
         </div>
       </div>
+
+      {(tokenPresent && skillMatchScore !== null) && (
+        <div className="project-detail__section">
+          <h2 className="project-detail__section-title">Your Match</h2>
+          <div className="project-detail__card">
+            <div className="project-detail__match">
+              <div>
+                <div className="project-detail__match-score">{skillMatchScore}%</div>
+                <div className="project-detail__match-sub">based on skill overlap</div>
+              </div>
+              <Badge variant={skillMatchScore >= 70 ? 'recruiting' : 'default'}>
+                {skillMatchScore >= 70 ? 'Strong match' : 'Potential match'}
+              </Badge>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Section 2: Owner Info */}
       <div className="project-detail__section">
@@ -220,16 +391,51 @@ export default function ProjectDetail() {
       </div>
 
       {/* Section 7: Open Roles */}
-      {openRoles.length > 0 && (
-        <div className="project-detail__section">
-          <h2 className="project-detail__section-title">Open Roles</h2>
+      <div className="project-detail__section">
+        <h2 className="project-detail__section-title">Open Roles</h2>
+        {openRoles.length === 0 ? (
+          <div className="project-detail__card">
+            <p className="project-detail__empty">No open roles listed.</p>
+          </div>
+        ) : (
           <div className="project-detail__roles">
             {openRoles.map((role, i) => (
-              <Badge key={i} variant="skill">{role}</Badge>
+              <Badge key={`${role}-${i}`} variant="skill">{role}</Badge>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
+      <Modal
+        isOpen={showApplyModal}
+        onClose={() => setShowApplyModal(false)}
+        title="Apply to Join"
+        onConfirm={handleApply}
+        confirmText={applyLoading ? 'Submitting...' : 'Submit Application'}
+      >
+        <p className="project-detail__modal-hint">
+          Share a short note about why you want to join.
+        </p>
+        <textarea
+          className="project-detail__modal-textarea"
+          rows={5}
+          value={applyMessage}
+          onChange={(e) => setApplyMessage(e.target.value)}
+          placeholder="Example: I can take the Frontend role, I have experience with React and shipping Vite apps..."
+        />
+      </Modal>
+
+      <Modal
+        isOpen={showArchiveModal}
+        onClose={() => setShowArchiveModal(false)}
+        title="Archive Project"
+        onConfirm={handleArchive}
+        confirmText="Archive"
+      >
+        <p className="project-detail__modal-hint">
+          This will archive the project and remove it from public browsing.
+        </p>
+      </Modal>
     </div>
   );
 }
