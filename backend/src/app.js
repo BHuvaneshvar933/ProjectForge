@@ -7,6 +7,8 @@ import projectRoutes from "./routes/project.routes.js";
 import skillRoutes from "./routes/skill.routes.js";
 import applicationRoutes from "./routes/applications.routes.js";
 import taskRoutes from "./routes/task.routes.js";
+import analyticsRoutes from "./routes/analytics.routes.js";
+import messageRoutes from "./routes/message.routes.js";
 
 const app = express();
 
@@ -32,6 +34,8 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/skills", skillRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api", taskRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/messages", messageRoutes);
 
 app.use(errorHandler);
 export default app;

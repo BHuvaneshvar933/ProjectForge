@@ -2,133 +2,141 @@ import mongoose from "mongoose";
 import Team from "../models/team.model.js";
 import Message from "../models/message.model.js";
 
-const roomForProject = (projectId) => `project-${projectId}`;
-
-const ensureProjectMember = async ({ projectId, userId }) => {
-  const membership = await Team.findOne({
-    projectId,
-    userId,
-    status: "active",
-    isDeleted: false,
-  }).select("_id");
-
-  return Boolean(membership);
-};
-
 export const registerSocketHandlers = (io, socket) => {
+  console.log("Handlers registered for:", socket.id);
+  // Join Project Room
   socket.on("join-project", async (projectId, ack) => {
+    console.log("EVENT TRIGGERED");
     try {
-      if (!socket.user || !socket.user.id) {
+      console.log("Project ID:", projectId);
+      if (!socket.user || !socket.user._id) {
         socket.disconnect(true);
         return;
       }
 
       if (!mongoose.Types.ObjectId.isValid(projectId)) {
         if (typeof ack === "function") ack({ ok: false, error: "Invalid projectId" });
+        else socket.emit("error", "Invalid projectId");
         return;
       }
 
-      const ok = await ensureProjectMember({
+      console.log("Checking membership for user:", String(socket.user._id));
+
+      const membership = await Team.findOne({
         projectId,
-        userId: socket.user?.id,
-      });
+        userId: socket.user._id,
+        status: "active",
+        isDeleted: false,
+      }).select("_id");
 
-      if (!ok) {
-        if (typeof ack === "function") ack({ ok: false, error: "Not authorized" });
+      console.log("Membership found:", Boolean(membership));
+
+      if (!membership) {
+        if (typeof ack === "function") ack({ ok: false, error: "Access denied" });
+        else socket.emit("error", "Access denied");
         return;
       }
 
-      const room = roomForProject(projectId);
-      if (!socket.rooms.has(room)) {
-        socket.join(room);
-      }
-      if (typeof ack === "function") ack({ ok: true });
-    } catch {
-      if (typeof ack === "function") ack({ ok: false, error: "Join failed" });
+      const roomName = `project-${projectId}`;
+
+      socket.join(roomName);
+
+      console.log(`User ${socket.user._id} joined ${roomName}`);
+
+      socket.emit("joined-project", roomName);
+      if (typeof ack === "function") ack({ ok: true, room: roomName });
+
+    } catch (err) {
+        console.error("Join error FULL:", err);
+      console.error("Join error:", err.message);
+      if (typeof ack === "function") ack({ ok: false, error: "Failed to join project" });
+      else socket.emit("error", "Failed to join project");
+      console.log("");
     }
   });
 
-  socket.on("send-message", async (data, ack) => {
+  //Send message
+  socket.on("send-message", async ({ projectId, content }, ack) => {
     try {
-      if (!socket.user || !socket.user.id) {
+      if (!socket.user || !socket.user._id) {
         socket.disconnect(true);
         return;
       }
 
-      const projectId = data?.projectId;
-      const content = data?.content;
-      const messageType = data?.messageType || "text";
-
       if (!mongoose.Types.ObjectId.isValid(projectId)) {
         if (typeof ack === "function") ack({ ok: false, error: "Invalid projectId" });
+        else socket.emit("error", "Invalid projectId");
         return;
       }
 
       if (typeof content !== "string" || content.trim().length === 0) {
-        if (typeof ack === "function") ack({ ok: false, error: "Message content required" });
+        if (typeof ack === "function") ack({ ok: false, error: "Invalid message data" });
+        else socket.emit("error", "Invalid message data");
         return;
       }
 
-      if (content.length > 2000) {
-        if (typeof ack === "function") ack({ ok: false, error: "Message too long" });
-        return;
-      }
-
-      const ok = await ensureProjectMember({
+      // to check sender is an active team member
+      const membership = await Team.findOne({
         projectId,
-        userId: socket.user?.id,
-      });
+        userId: socket.user._id,
+        status: "active",
+        isDeleted: false,
+      }).select("_id");
 
-      if (!ok) {
-        if (typeof ack === "function") ack({ ok: false, error: "Not authorized" });
+      if (!membership) {
+        if (typeof ack === "function") ack({ ok: false, error: "Access denied" });
+        else socket.emit("error", "Access denied");
         return;
       }
 
+      const roomName = `project-${projectId}`;
+
+      //Save message
       const message = await Message.create({
         projectId,
-        senderId: socket.user.id,
+        senderId: socket.user._id,
         content: content.trim(),
-        messageType,
+        messageType: "text",
       });
 
-      io.to(roomForProject(projectId)).emit("new-message", {
+      await message.populate("senderId", "name email avatar");
+
+      // Broadcast to room
+      io.to(roomName).emit("new-message", {
         _id: message._id,
-        projectId,
-        senderId: socket.user.id,
+        projectId: String(message.projectId),
+        sender: message.senderId,
         content: message.content,
         messageType: message.messageType,
         createdAt: message.createdAt,
       });
 
       if (typeof ack === "function") ack({ ok: true, data: { messageId: message._id } });
-    } catch {
-      if (typeof ack === "function") ack({ ok: false, error: "Send failed" });
+
+    } catch (err) {
+      console.error("❌ Message error:", err.message);
+      if (typeof ack === "function") ack({ ok: false, error: "Failed to send message" });
+      else socket.emit("error", "Failed to send message");
     }
   });
 
-  socket.on("typing", (projectId) => {
-    if (!socket.user || !socket.user.id) {
-      socket.disconnect(true);
-      return;
-    }
+   // TYPING START
+  socket.on("typing", ({ projectId }) => {
+    const roomName = `project-${projectId}`;
 
-    if (!mongoose.Types.ObjectId.isValid(projectId)) return;
-
-    socket.to(roomForProject(projectId)).emit("user-typing", {
-      userId: socket.user?.id,
+    socket.to(roomName).emit("user-typing", {
+      userId: socket.user._id,
+      name: socket.user.name, 
     });
   });
 
-  socket.on("stop-typing", (projectId) => {
-    if (!socket.user || !socket.user.id) {
-      socket.disconnect(true);
-      return;
-    }
+  // STOP TYPING
+  socket.on("stop-typing", ({ projectId }) => {
+    const roomName = `project-${projectId}`;
 
-    if (!mongoose.Types.ObjectId.isValid(projectId)) return;
-
-    socket.to(roomForProject(projectId)).emit("user-stop-typing", {
-      userId: socket.user?.id,
+    socket.to(roomName).emit("user-stop-typing", {
+      userId: socket.user._id,
     });
   });
+
 };
