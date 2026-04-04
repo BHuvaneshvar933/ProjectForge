@@ -1,8 +1,39 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import './Navbar.css';
 
 export default function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const token = (() => {
+    try {
+      return (
+        window?.localStorage?.getItem("token") ||
+        window?.localStorage?.getItem("pf_token") ||
+        window?.localStorage?.getItem("projectforge_token") ||
+        ""
+      );
+    } catch {
+      return "";
+    }
+  })();
+
+  const isAuthed = Boolean(token);
+
+  const handleLogout = () => {
+    try {
+      window.localStorage.removeItem("token");
+      window.localStorage.removeItem("pf_token");
+      window.localStorage.removeItem("projectforge_token");
+      window.localStorage.removeItem("userId");
+      window.localStorage.removeItem("pf_user_id");
+      window.localStorage.removeItem("projectforge_user_id");
+    } catch {
+      // ignore
+    }
+
+    navigate("/login");
+  };
   
   const isActive = (path) => {
     if (path === '/projects') return location.pathname === '/' || location.pathname === '/projects';
@@ -38,6 +69,31 @@ export default function Navbar() {
           >
             + Create
           </Link>
+
+          {!isAuthed ? (
+            <>
+              <Link
+                to="/login"
+                className={`navbar__link ${isActive('/login') ? 'is-active' : ''}`.trim()}
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className={`navbar__link ${isActive('/register') ? 'is-active' : ''}`.trim()}
+              >
+                Register
+              </Link>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="navbar__link"
+            >
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </nav>

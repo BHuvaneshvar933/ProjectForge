@@ -5,6 +5,10 @@ import ProjectDetail from "./pages/ProjectDetail/ProjectDetail";
 import CreateProject from "./pages/CreateProject/CreateProject";
 import EditProject from "./pages/EditProject/EditProject";
 import MyProjects from "./pages/MyProjects/MyProjects";
+import SocketTest from "./pages/socket";
+import Login from "./pages/Auth/login";
+import Register from "./pages/Auth/register";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -16,9 +20,33 @@ function App() {
         <Route path="/" element={<BrowseProjects />} />
         <Route path="/projects" element={<BrowseProjects />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
-        <Route path="/projects/create" element={<CreateProject />} />
-        <Route path="/projects/:id/edit" element={<EditProject />} />
-        <Route path="/my-projects" element={<MyProjects />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/projects/create"
+          element={
+            <ProtectedRoute>
+              <CreateProject />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditProject />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-projects"
+          element={
+            <ProtectedRoute>
+              <MyProjects />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/socket" element={<SocketTest />} />
       </Routes>
       <ToastContainer 
         position="bottom-right" 
