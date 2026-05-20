@@ -9,6 +9,7 @@ import applicationRoutes from "./routes/applications.routes.js";
 import taskRoutes from "./routes/task.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import notificationRoutes from "./routes/notification.routes.js";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/api/applications", applicationRoutes);
 app.use("/api", taskRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(errorHandler);
 export default app;
