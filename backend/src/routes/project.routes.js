@@ -9,7 +9,8 @@ import {
   archiveProject,
   getProjectTeam,
   getJoinedProjects,
-  leaveProject
+  leaveProject,
+  getProjectRecommendations
 } from "../controllers/project.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
@@ -19,11 +20,12 @@ router.post("/", protect, createProject);
 router.get("/", browseProjects);
 router.get("/my", protect, getMyProjects);
 router.get("/joined", protect, getJoinedProjects);
+router.get("/recommendations", protect, getProjectRecommendations);
 router.get("/:id", getProject);
 router.put("/:id", protect, updateProject);
 router.patch("/:id/close-recruitment", protect, closeRecruitment);
 router.patch("/:id/archive", protect, archiveProject);
-router.get("/:id/team", getProjectTeam);
+router.get("/:id/team", protect, getProjectTeam);
 router.patch(
   "/:projectId/leave",
   protect,

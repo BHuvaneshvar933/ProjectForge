@@ -113,7 +113,7 @@ export const archiveProject = async (req, res, next) => {
 
 export const getProjectTeam = async (req, res, next) => {
   try {
-    const team = await projectService.getProjectTeam(req.params.id);
+    const team = await projectService.getProjectTeam(req.params.id, req.user._id);
 
     res.status(200).json({
       success: true,
@@ -148,6 +148,23 @@ export const leaveProject = async (req, res, next) => {
       success: true,
       message: "Successfully left the project",
       data: { project }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getProjectRecommendations = async (req, res, next) => {
+  try {
+    const recommendations = await projectService.getProjectRecommendations({
+      userId: req.user._id,
+      limit: req.query?.limit ?? 5,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Project recommendations fetched",
+      data: { recommendations },
     });
   } catch (err) {
     next(err);

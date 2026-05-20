@@ -2,6 +2,27 @@ import mongoose from "mongoose";
 import Team from "../models/team.model.js";
 import Message from "../models/message.model.js";
 
+const ensureProjectMember = async ({ projectId, userId }) => {
+  if (!mongoose.Types.ObjectId.isValid(projectId)) {
+    throw new Error("Invalid projectId");
+  }
+
+  const membership = await Team.findOne({
+    projectId,
+    userId,
+    status: "active",
+    isDeleted: false,
+  })
+    .select("_id")
+    .lean();
+
+  if (!membership) {
+    throw new Error("Access denied");
+  }
+
+  return true;
+};
+
 export const registerSocketHandlers = (io, socket) => {
   console.log("Handlers registered for:", socket.id);
   // Join Project Room
@@ -14,30 +35,11 @@ export const registerSocketHandlers = (io, socket) => {
         return;
       }
 
-      if (!mongoose.Types.ObjectId.isValid(projectId)) {
-        if (typeof ack === "function") ack({ ok: false, error: "Invalid projectId" });
-        else socket.emit("error", "Invalid projectId");
-        return;
-      }
+       console.log("Checking membership for user:", String(socket.user._id));
 
-      console.log("Checking membership for user:", String(socket.user._id));
+       await ensureProjectMember({ projectId, userId: socket.user._id });
 
-      const membership = await Team.findOne({
-        projectId,
-        userId: socket.user._id,
-        status: "active",
-        isDeleted: false,
-      }).select("_id");
-
-      console.log("Membership found:", Boolean(membership));
-
-      if (!membership) {
-        if (typeof ack === "function") ack({ ok: false, error: "Access denied" });
-        else socket.emit("error", "Access denied");
-        return;
-      }
-
-      const roomName = `project-${projectId}`;
+       const roomName = `project-${projectId}`;
 
       socket.join(roomName);
 
@@ -49,8 +51,9 @@ export const registerSocketHandlers = (io, socket) => {
     } catch (err) {
         console.error("Join error FULL:", err);
       console.error("Join error:", err.message);
-      if (typeof ack === "function") ack({ ok: false, error: "Failed to join project" });
-      else socket.emit("error", "Failed to join project");
+      const msg = err?.message === "Invalid projectId" ? "Invalid projectId" : err?.message === "Access denied" ? "Access denied" : "Failed to join project";
+      if (typeof ack === "function") ack({ ok: false, error: msg });
+      else socket.emit("error", msg);
       console.log("");
     }
   });
@@ -63,31 +66,13 @@ export const registerSocketHandlers = (io, socket) => {
         return;
       }
 
-      if (!mongoose.Types.ObjectId.isValid(projectId)) {
-        if (typeof ack === "function") ack({ ok: false, error: "Invalid projectId" });
-        else socket.emit("error", "Invalid projectId");
-        return;
-      }
+       if (typeof content !== "string" || content.trim().length === 0) {
+         if (typeof ack === "function") ack({ ok: false, error: "Invalid message data" });
+         else socket.emit("error", "Invalid message data");
+         return;
+       }
 
-      if (typeof content !== "string" || content.trim().length === 0) {
-        if (typeof ack === "function") ack({ ok: false, error: "Invalid message data" });
-        else socket.emit("error", "Invalid message data");
-        return;
-      }
-
-      // to check sender is an active team member
-      const membership = await Team.findOne({
-        projectId,
-        userId: socket.user._id,
-        status: "active",
-        isDeleted: false,
-      }).select("_id");
-
-      if (!membership) {
-        if (typeof ack === "function") ack({ ok: false, error: "Access denied" });
-        else socket.emit("error", "Access denied");
-        return;
-      }
+       await ensureProjectMember({ projectId, userId: socket.user._id });
 
       const roomName = `project-${projectId}`;
 
@@ -115,28 +100,57 @@ export const registerSocketHandlers = (io, socket) => {
 
     } catch (err) {
       console.error("❌ Message error:", err.message);
-      if (typeof ack === "function") ack({ ok: false, error: "Failed to send message" });
-      else socket.emit("error", "Failed to send message");
+      const msg = err?.message === "Invalid projectId" ? "Invalid projectId" : err?.message === "Access denied" ? "Access denied" : "Failed to send message";
+      if (typeof ack === "function") ack({ ok: false, error: msg });
+      else socket.emit("error", msg);
     }
   });
 
    // TYPING START
-  socket.on("typing", ({ projectId }) => {
-    const roomName = `project-${projectId}`;
+  socket.on("typing", async ({ projectId }, ack) => {
+    try {
+      if (!socket.user || !socket.user._id) {
+        socket.disconnect(true);
+        return;
+      }
 
-    socket.to(roomName).emit("user-typing", {
-      userId: socket.user._id,
-      name: socket.user.name, 
-    });
+      await ensureProjectMember({ projectId, userId: socket.user._id });
+
+      const roomName = `project-${projectId}`;
+
+      socket.to(roomName).emit("user-typing", {
+        userId: socket.user._id,
+        name: socket.user.name,
+      });
+
+      if (typeof ack === "function") ack({ ok: true });
+    } catch (err) {
+      const msg = err?.message === "Invalid projectId" ? "Invalid projectId" : err?.message === "Access denied" ? "Access denied" : "Failed";
+      if (typeof ack === "function") ack({ ok: false, error: msg });
+    }
   });
 
   // STOP TYPING
-  socket.on("stop-typing", ({ projectId }) => {
-    const roomName = `project-${projectId}`;
+  socket.on("stop-typing", async ({ projectId }, ack) => {
+    try {
+      if (!socket.user || !socket.user._id) {
+        socket.disconnect(true);
+        return;
+      }
 
-    socket.to(roomName).emit("user-stop-typing", {
-      userId: socket.user._id,
-    });
+      await ensureProjectMember({ projectId, userId: socket.user._id });
+
+      const roomName = `project-${projectId}`;
+
+      socket.to(roomName).emit("user-stop-typing", {
+        userId: socket.user._id,
+      });
+
+      if (typeof ack === "function") ack({ ok: true });
+    } catch (err) {
+      const msg = err?.message === "Invalid projectId" ? "Invalid projectId" : err?.message === "Access denied" ? "Access denied" : "Failed";
+      if (typeof ack === "function") ack({ ok: false, error: msg });
+    }
   });
 
 };
