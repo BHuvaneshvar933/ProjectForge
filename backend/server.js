@@ -19,10 +19,53 @@ await connectDB();
 // HTTP server
 const server = http.createServer(app);
 
+const parseAllowedOrigins = (value) => {
+  if (!value) return [];
+  return String(value)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+};
+
+const isOriginAllowed = (origin, allowed) => {
+  if (!origin) return true;
+  if (!Array.isArray(allowed) || allowed.length === 0) return true;
+  if (allowed.includes("*")) return true;
+  if (allowed.includes(origin)) return true;
+
+  let originUrl;
+  try {
+    originUrl = new URL(origin);
+  } catch {
+    return false;
+  }
+
+  for (const entry of allowed) {
+    if (typeof entry !== "string" || !entry.includes("*")) continue;
+
+    const hasProto = entry.includes("://");
+    const protocol = hasProto ? entry.split("://")[0] : "";
+    const patternHost = (hasProto ? entry.split("://")[1] : entry).trim();
+    if (!patternHost) continue;
+
+    const suffix = patternHost.replace(/^\*\./, "");
+    if (!suffix) continue;
+
+    if (hasProto && originUrl.protocol.replace(":", "") !== protocol) continue;
+    if (originUrl.hostname === suffix || originUrl.hostname.endsWith(`.${suffix}`)) return true;
+  }
+
+  return false;
+};
+
 // Socket.io server
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_ORIGIN || "*",
+    origin: (origin, cb) => {
+      const allowed = parseAllowedOrigins(process.env.CLIENT_ORIGIN);
+      if (isOriginAllowed(origin, allowed)) return cb(null, true);
+      return cb(new Error("CORS: origin not allowed"));
+    },
     methods: ["GET", "POST"],
   },
 });
