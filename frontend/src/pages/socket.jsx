@@ -1,29 +1,29 @@
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 
+const SOCKET_URL =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_SOCKET_URL) ||
+  "http://localhost:5000";
+
 function SocketTest() {
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
-  auth: {
-    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YTJhODI3MWU2NzBkYjM4NGQxNzY1MCIsImlhdCI6MTc3NDI1OTc2MCwiZXhwIjoxNzc0ODY0NTYwfQ.SoZo5_NvFmkyar-ksvf1a-GLh67rgRz0eOL4x9tE72o" //token: localStorage.getItem("token")
-  }
-});
+    const token = window?.localStorage?.getItem("token") || "";
+
+    const socket = io(SOCKET_URL, {
+      auth: {
+        token: token ? `Bearer ${token}` : "",
+      },
+      transports: ["websocket"],
+    });
 
     socket.on("connect", () => {
-      console.log("✅ Connected:", socket.id);
-      socket.emit("join-project", "69a291151ac032db518673d0");
-      socket.emit("send-message", {
-  projectId: "69a291151ac032db518673d0",
-  content: "Hello from ProjectForge 🚀",
-});
-socket.on("new-message", (msg) => {
-  console.log("📩 New message:", msg);
-});
+      // Debug-only page: don't hardcode ObjectIds or auto-emit.
+      console.log("Connected");
     });
     
 
     socket.on("disconnect", () => {
-      console.log("❌ Disconnected");
+      console.log("Disconnected");
     });
     
 
@@ -32,7 +32,14 @@ socket.on("new-message", (msg) => {
     };
   }, []);
 
-  return <div>Socket Test Running (check console)</div>;
+  return (
+    <div style={{ padding: 24 }}>
+      <h2 style={{ marginBottom: 8 }}>Socket Debug</h2>
+      <p style={{ opacity: 0.8 }}>
+        This page is for local debugging only and is not linked from the app.
+      </p>
+    </div>
+  );
 }
 
 export default SocketTest;
