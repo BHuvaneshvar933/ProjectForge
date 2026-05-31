@@ -70,6 +70,15 @@ export default function Navbar() {
             + Create
           </Link>
 
+          {isAuthed && (
+            <Link
+              to="/account"
+              className={`navbar__link ${isActive('/account') ? 'is-active' : ''}`.trim()}
+            >
+              Account
+            </Link>
+          )}
+
           {!isAuthed ? (
             <>
               <Link
@@ -86,13 +95,15 @@ export default function Navbar() {
               </Link>
             </>
           ) : (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="navbar__link"
-            >
-              Logout
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="navbar__link"
+              >
+                Logout
+              </button>
+            </>
           )}
         </div>
       </div>
