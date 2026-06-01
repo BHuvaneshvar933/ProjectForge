@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import Badge from './Badge';
 import './ProjectCard.css';
+import { displaySkillLabel } from '../../utils/display';
 
 export default function ProjectCard({ project, type = "owned" }) {
   const {
@@ -12,6 +13,7 @@ export default function ProjectCard({ project, type = "owned" }) {
     currentTeamSize,
     teamSizeRequired,
     requiredSkills = [],
+    matchScore,
     owner
   } = project;
 
@@ -29,6 +31,9 @@ export default function ProjectCard({ project, type = "owned" }) {
           <Badge variant={status}>
             {status}
           </Badge>
+          {typeof matchScore === "number" && type === "browse" && (
+            <Badge variant="recruiting">Match: {Math.round(matchScore)}%</Badge>
+          )}
         </div>
       </div>
 
@@ -62,7 +67,7 @@ export default function ProjectCard({ project, type = "owned" }) {
         <div className="project-card__skills">
           <div className="project-card__skills-list">
             {requiredSkills.slice(0, 3).map((skill, i) => (
-              <Badge key={i} variant="skill">{skill.name || skill}</Badge>
+              <Badge key={i} variant="skill">{displaySkillLabel(skill)}</Badge>
             ))}
             {requiredSkills.length > 3 && (
               <span className="project-card__skills-more">

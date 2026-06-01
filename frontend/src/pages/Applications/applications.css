@@ -1,0 +1,211 @@
+.apps-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  animation: fadeIn 0.5s ease;
+}
+
+.apps-page--loading {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+.apps-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.apps-page__title {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.apps-page__subtitle,
+.apps-page__hint {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.apps-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  animation: slideUp 0.5s ease;
+}
+
+.apps-card {
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(28, 28, 30, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.apps-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.apps-card__title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.apps-card__title a {
+  color: inherit;
+}
+
+.apps-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.apps-card__badges {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apps-card__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 0;
+}
+
+.apps-card__skills-more {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  align-self: center;
+}
+
+.apps-card__message,
+.apps-card__rejection {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.apps-card__message-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.apps-card__message-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.apps-card__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.apps-page__pager {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.apps-page__pager-text {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.apps-textarea {
+  width: 100%;
+  border-radius: 16px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  outline: none;
+  resize: vertical;
+}
+
+.apps-textarea:focus {
+  border-color: rgba(10, 132, 255, 0.6);
+  box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.14);
+}
+
+.apps-empty {
+  text-align: center;
+  padding: 90px 0;
+  border-radius: 24px;
+  background: rgba(28, 28, 30, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.apps-empty__title {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+}
+
+.apps-empty__subtitle {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 22px;
+}
+
+.apps-empty__action {
+  padding: 10px 24px;
+  border-radius: 999px;
+  background: #0a84ff;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(10, 132, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.apps-empty__action:hover {
+  background: #409cff;
+  box-shadow: 0 0 20px rgba(10, 132, 255, 0.4);
+}
+
+.apps-empty__action:active {
+  transform: scale(0.97);
+}
+
+@media (min-width: 768px) {
+  .apps-page {
+    padding: 48px 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .apps-page {
+    padding: 48px 40px;
+  }
+}

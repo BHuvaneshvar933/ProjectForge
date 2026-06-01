@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { browseProjects } from '../../api/projectApi';
+import { getProjectRecommendations } from '../../api/recommendationApi';
 import ProjectCard from '../../components/common/ProjectCard';
 import ProjectCardSkeleton from '../../components/common/ProjectCardSkeleton';
 import Input from '../../components/common/Input';
@@ -8,6 +9,7 @@ import './BrowseProjects.css';
 export default function BrowseProjects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState([]);
   const [search, setSearch] = useState('');
   const [filters, setFilters] = useState({
     status: '',
@@ -21,6 +23,18 @@ export default function BrowseProjects() {
     pages: 1
   });
 
+  const tokenPresent = (() => {
+    try {
+      return Boolean(
+        window?.localStorage?.getItem('token') ||
+          window?.localStorage?.getItem('pf_token') ||
+          window?.localStorage?.getItem('projectforge_token')
+      );
+    } catch {
+      return false;
+    }
+  })();
+
   const fetchProjects = useCallback(async () => {
     setLoading(true);
     try {
@@ -29,14 +43,27 @@ export default function BrowseProjects() {
       const payload = data?.data ?? {};
       setProjects(payload.projects ?? []);
       setPagination(payload.pagination ?? { page: 1, total: 0, pages: 1 });
+
+      if (tokenPresent && filters.page === 1 && !search && !filters.status && !filters.projectType) {
+        try {
+          const recRes = await getProjectRecommendations({ limit: 5 });
+          const recs = recRes.data?.data?.recommendations ?? [];
+          setRecommendations(Array.isArray(recs) ? recs : []);
+        } catch {
+          setRecommendations([]);
+        }
+      } else {
+        setRecommendations([]);
+      }
     } catch (error) {
       console.error('Failed to fetch projects:', error);
       setProjects([]);
       setPagination({ page: 1, total: 0, pages: 1 });
+      setRecommendations([]);
     } finally {
       setLoading(false);
     }
-  }, [filters, search]);
+  }, [filters, search, tokenPresent]);
 
   useEffect(() => {
     fetchProjects();
@@ -111,6 +138,19 @@ export default function BrowseProjects() {
         </div>
       ) : (
         <>
+          {tokenPresent && recommendations.length > 0 && (
+            <div style={{ marginBottom: 18 }}>
+              <h2 className="browse-page__title" style={{ fontSize: 18, marginBottom: 10 }}>
+                Recommended For You
+              </h2>
+              <div className="browse-page__grid">
+                {recommendations.map((project) => (
+                  <ProjectCard key={project._id} project={project} type="browse" />
+                ))}
+              </div>
+            </div>
+          )}
+
           {projects.length === 0 ? (
             <div className="browse-page__empty">
               <div className="browse-page__empty-icon">

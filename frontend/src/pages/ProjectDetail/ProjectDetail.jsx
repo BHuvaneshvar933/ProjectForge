@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { archiveProject, getProjectById, getProjectTeam } from '../../api/projectApi';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { archiveProject, getJoinedProjects, getProjectById } from '../../api/projectApi';
 import { getCurrentUser } from '../../api/authApi';
 import { applyToProject, getMyApplications } from '../../api/applicationApi';
 import Button from '../../components/common/Button';
@@ -8,10 +8,12 @@ import Badge from '../../components/common/Badge';
 import Spinner from '../../components/common/Spinner';
 import Modal from '../../components/common/Modal';
 import { toast } from 'react-toastify';
+import { displaySkillLabel } from '../../utils/display';
 import './ProjectDetail.css';
 
 export default function ProjectDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [project, setProject] = useState(null);
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,20 +47,20 @@ export default function ProjectDetail() {
 
       if (token) {
         try {
-          const [meRes, teamRes, appsRes] = await Promise.all([
+          const [meRes, joinedRes, appsRes] = await Promise.all([
             getCurrentUser(),
-            getProjectTeam(id),
+            getJoinedProjects(),
             getMyApplications({ page: 1, limit: 50 }),
           ]);
 
           const me = meRes.data?.data?.user ?? null;
           setCurrentUser(me);
 
-          const teamDocs = teamRes.data?.data?.team ?? [];
-          const member = Array.isArray(teamDocs)
-            ? teamDocs.some((m) => String(m?.userId?._id) === String(me?._id))
+          const joined = joinedRes.data?.data?.projects ?? [];
+          const member = Array.isArray(joined)
+            ? joined.some((p) => String(p?._id) === String(id))
             : false;
-          setIsMember(member);
+          setIsMember(member || (me?._id && p?.owner?._id && String(me._id) === String(p.owner._id)));
 
           const apps = appsRes.data?.data?.applications ?? [];
           const app = Array.isArray(apps)
@@ -200,6 +202,43 @@ export default function ProjectDetail() {
     }
   };
 
+  const goToApplications = () => {
+    navigate(`/projects/${id}/applications`);
+  };
+
+  const matchPercent = (() => {
+    try {
+      const userSkills = Array.isArray(currentUser?.skills) ? currentUser.skills : [];
+      const reqSkills = Array.isArray(project?.requiredSkills) ? project.requiredSkills : [];
+
+      const userNames = new Set(
+        userSkills
+          .map((s) => (typeof s === "string" ? s : s?.name))
+          .filter(Boolean)
+          .map((x) => String(x).toLowerCase())
+      );
+      const reqNames = new Set(
+        reqSkills
+          .map((s) => (typeof s === "string" ? s : s?.name))
+          .filter(Boolean)
+          .map((x) => String(x).toLowerCase())
+      );
+
+      if (userNames.size === 0 || reqNames.size === 0) return null;
+
+      let intersection = 0;
+      for (const s of userNames) {
+        if (reqNames.has(s)) intersection += 1;
+      }
+      const union = new Set([...userNames, ...reqNames]).size;
+      if (!union) return null;
+
+      return Math.round((intersection / union) * 100);
+    } catch {
+      return null;
+    }
+  })();
+
   // Calculate duration
   const startDate = project.timeline?.startDate ? new Date(project.timeline.startDate) : null;
   const endDate = project.timeline?.endDate ? new Date(project.timeline.endDate) : null;
@@ -215,6 +254,9 @@ export default function ProjectDetail() {
           <div className="project-detail__badges">
             <Badge variant={project.projectType}>{project.projectType}</Badge>
             <Badge variant={project.status}>{project.status}</Badge>
+            {typeof matchPercent === "number" && (
+              <Badge variant="recruiting">Match: {matchPercent}%</Badge>
+            )}
             <Badge variant="default">
               Team: {project.currentTeamSize} / {project.teamSizeRequired}
             </Badge>
@@ -264,6 +306,9 @@ export default function ProjectDetail() {
 
           {isOwner && (
             <>
+              <Button variant="outline" onClick={goToApplications}>
+                View Applications
+              </Button>
               <Link to={`/projects/${id}/edit`}>
                 <Button variant="secondary">Edit Project</Button>
               </Link>
@@ -330,7 +375,7 @@ export default function ProjectDetail() {
           <h2 className="project-detail__section-title">Required Skills</h2>
           <div className="project-detail__skills">
             {project.requiredSkills.map((skill, i) => (
-              <Badge key={i} variant="skill">{skill.name || skill}</Badge>
+              <Badge key={i} variant="skill">{displaySkillLabel(skill)}</Badge>
             ))}
           </div>
         </div>
