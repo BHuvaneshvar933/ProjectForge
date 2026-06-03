@@ -12,6 +12,45 @@ const normalizeProjectRole = (value) => {
   return trimmed;
 };
 
+const calculateMatchScore = (user, project) => {
+  let matchScore = 0;
+
+  if (user.skills && project.requiredSkills) {
+    const userSkillIds = user.skills.map((s) => s.toString());
+    const projectSkillIds = project.requiredSkills.map((s) => s.toString());
+
+    const intersection = userSkillIds.filter((id) => projectSkillIds.includes(id));
+    const union = [...new Set([...userSkillIds, ...projectSkillIds])];
+
+    matchScore = union.length > 0 ? Math.round((intersection.length / union.length) * 100) : 0;
+  }
+
+  return matchScore;
+};
+
+const pickAssignedRole = ({ preferredRole, invitedRole, project }) => {
+  const normalizedPreferred = normalizeProjectRole(preferredRole);
+  const normalizedInvited = normalizeProjectRole(invitedRole);
+  const openRoles = Array.isArray(project.openRoles) ? [...project.openRoles] : [];
+
+  let assignedRole = normalizedPreferred || normalizedInvited || null;
+
+  if (assignedRole) {
+    const idx = openRoles.findIndex((r) => String(r).trim().toLowerCase() === assignedRole.toLowerCase());
+    if (idx >= 0) {
+      assignedRole = normalizeProjectRole(openRoles[idx]) || assignedRole;
+      openRoles.splice(idx, 1);
+    }
+  }
+
+  if (!assignedRole && openRoles.length > 0) {
+    assignedRole = normalizeProjectRole(openRoles.shift());
+  }
+
+  project.openRoles = openRoles;
+  return assignedRole || "Member";
+};
+
 export const applyToProject = async (userId, data) => {
   const { projectId, message = "" } = data;
 
@@ -65,23 +104,7 @@ export const applyToProject = async (userId, data) => {
     throw new Error("You have already applied to this project");
   }
 
-  // Match Score
-  let matchScore = 0;
-
-  if (user.skills && project.requiredSkills) {
-    const userSkillIds = user.skills.map(s => s.toString());
-    const projectSkillIds = project.requiredSkills.map(s => s.toString());
-
-    const intersection = userSkillIds.filter(id =>
-      projectSkillIds.includes(id)
-    );
-
-    const union = [...new Set([...userSkillIds, ...projectSkillIds])];
-
-    matchScore = union.length > 0
-      ? Math.round((intersection.length / union.length) * 100)
-      : 0;
-  }
+  const matchScore = calculateMatchScore(user, project);
 
   // Create Application
   const application = await Application.create({
@@ -89,7 +112,8 @@ export const applyToProject = async (userId, data) => {
     applicantId: userId,
     message,
     matchScore,
-    status: "pending"
+    status: "pending",
+    applicationType: "application",
   });
 
   // Update user stats
@@ -127,7 +151,8 @@ export const getMyApplications = async (userId, query) => {
         path: "owner",
         select: "name"
       }
-    });
+    })
+    .populate("invitedBy", "name");
 
   const total = await Application.countDocuments(filter);
 
@@ -166,14 +191,14 @@ export const getProjectApplications = async (userId, projectId, query) => {
     .sort({ matchScore: -1, createdAt: -1 })
     .skip(skip)
     .limit(Number(limit))
-    .populate({
-      path: "applicantId",
-      select: "name skills stats",
-      populate: {
-        path: "skills",
-        select: "name"
-      }
-    });
+      .populate({
+        path: "applicantId",
+        select: "name email bio skills stats availabilityHoursPerWeek portfolioLinks createdAt",
+        populate: {
+          path: "skills",
+          select: "name"
+        }
+      });
 
   const total = await Application.countDocuments(filter);
 
@@ -188,7 +213,77 @@ export const getProjectApplications = async (userId, projectId, query) => {
   };
 };
 
-export const acceptApplication = async (ownerId, applicationId) => {
+export const inviteUserToProject = async (ownerId, data) => {
+  const { projectId, userId, message = "", invitedRole = null } = data;
+
+  const [project, user] = await Promise.all([
+    Project.findById(projectId),
+    User.findById(userId),
+  ]);
+
+  if (!project || project.isDeleted) {
+    throw new Error("Project not found");
+  }
+
+  if (project.owner.toString() !== ownerId.toString()) {
+    throw new Error("Not authorized");
+  }
+
+  if (project.status !== "recruiting") {
+    throw new Error("Project is not recruiting");
+  }
+
+  if (project.currentTeamSize >= project.teamSizeRequired) {
+    throw new Error("Project team is already full");
+  }
+
+  if (!user || !user.isActive) {
+    throw new Error("User not found");
+  }
+
+  if (String(user._id) === String(ownerId)) {
+    throw new Error("Cannot invite yourself");
+  }
+
+  const existingMember = await Team.findOne({ projectId, userId, status: "active" });
+  if (existingMember) {
+    throw new Error("User is already a team member");
+  }
+
+  const existingApplication = await Application.findOne({
+    projectId,
+    applicantId: userId,
+    status: "pending",
+    isDeleted: false,
+  });
+  if (existingApplication) {
+    throw new Error("There is already a pending application or invitation for this user");
+  }
+
+  const matchScore = calculateMatchScore(user, project);
+  const application = await Application.create({
+    projectId,
+    applicantId: userId,
+    invitedBy: ownerId,
+    invitedRole: normalizeProjectRole(invitedRole),
+    message,
+    matchScore,
+    status: "pending",
+    applicationType: "invitation",
+  });
+
+  await notificationService.createNotification({
+    userId: user._id,
+    type: "project_invitation",
+    title: "Project Invitation",
+    message: `You were invited to join ${project.title}`,
+    actionUrl: "/applications/sent",
+  });
+
+  return application;
+};
+
+export const acceptApplication = async (ownerId, applicationId, data = {}) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -254,14 +349,11 @@ export const acceptApplication = async (ownerId, applicationId) => {
     application.reviewedBy = ownerId;
     await application.save({ session });
 
-    // Assign a projectRole from openRoles (simple FIFO)
-    let assignedRole = null;
-    if (openRoles.length > 0) {
-      assignedRole = openRoles.shift();
-      assignedRole = normalizeProjectRole(assignedRole);
-    }
-
-    project.openRoles = openRoles;
+    const assignedRole = pickAssignedRole({
+      preferredRole: data.projectRole,
+      invitedRole: application.invitedRole,
+      project,
+    });
 
     // Create Team document
     await Team.create(
@@ -270,7 +362,7 @@ export const acceptApplication = async (ownerId, applicationId) => {
         userId: applicant._id,
         role: "member",
         status: "active",
-        projectRole: assignedRole || "Member",
+        projectRole: assignedRole,
       }],
       { session }
     );
@@ -339,6 +431,129 @@ export const acceptApplication = async (ownerId, applicationId) => {
 
     return project;
 
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+export const respondToInvitation = async (userId, applicationId, data = {}) => {
+  const { action } = data;
+  if (!["accept", "reject"].includes(action)) {
+    throw new Error("Invalid invitation response");
+  }
+
+  if (action === "reject") {
+    const application = await Application.findById(applicationId);
+
+    if (!application || application.isDeleted || application.applicationType !== "invitation") {
+      throw new Error("Invitation not found");
+    }
+    if (String(application.applicantId) !== String(userId)) {
+      throw new Error("Not authorized");
+    }
+    if (application.status !== "pending") {
+      throw new Error("Invitation is not pending");
+    }
+
+    application.status = "rejected";
+    application.reviewedAt = new Date();
+    application.reviewedBy = userId;
+    await application.save();
+
+    const project = await Project.findById(application.projectId).select("title owner").lean();
+    if (project?.owner) {
+      await notificationService.createNotification({
+        userId: project.owner,
+        type: "invitation_rejected",
+        title: "Invitation Declined",
+        message: `A user declined your invitation to ${project.title}`,
+        actionUrl: `/projects/${application.projectId}`,
+      });
+    }
+    return application;
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const application = await Application.findById(applicationId).session(session);
+
+    if (!application || application.isDeleted || application.applicationType !== "invitation") {
+      throw new Error("Invitation not found");
+    }
+    if (String(application.applicantId) !== String(userId)) {
+      throw new Error("Not authorized");
+    }
+    if (application.status !== "pending") {
+      throw new Error("Invitation is not pending");
+    }
+
+    const project = await Project.findById(application.projectId).session(session);
+    if (!project || project.isDeleted) {
+      throw new Error("Project not found");
+    }
+    if (project.status !== "recruiting") {
+      throw new Error("Project is not accepting members right now");
+    }
+    if (project.currentTeamSize >= project.teamSizeRequired) {
+      throw new Error("Project team is already full");
+    }
+
+    const applicant = await User.findById(application.applicantId).session(session);
+    if (!applicant || !applicant.isActive) {
+      throw new Error("User not found or inactive");
+    }
+
+    const existingMember = await Team.findOne({
+      projectId: project._id,
+      userId: applicant._id,
+      status: "active",
+    }).session(session);
+    if (existingMember) {
+      throw new Error("User already a team member");
+    }
+
+    application.status = "accepted";
+    application.reviewedAt = new Date();
+    application.reviewedBy = userId;
+    await application.save({ session });
+
+    const assignedRole = pickAssignedRole({
+      invitedRole: application.invitedRole,
+      project,
+    });
+
+    await Team.create(
+      [{
+        projectId: project._id,
+        userId: applicant._id,
+        role: "member",
+        status: "active",
+        projectRole: assignedRole,
+      }],
+      { session }
+    );
+
+    project.currentTeamSize += 1;
+    if (project.currentTeamSize >= project.teamSizeRequired) {
+      project.status = "in-progress";
+    }
+    await project.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    await notificationService.createNotification({
+      userId: project.owner,
+      type: "invitation_accepted",
+      title: "Invitation Accepted",
+      message: `${applicant.name} accepted your invitation to ${project.title}`,
+      actionUrl: `/projects/${project._id}`,
+    });
+
+    return application;
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

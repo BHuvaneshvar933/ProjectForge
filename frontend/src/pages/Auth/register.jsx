@@ -7,7 +7,7 @@ export default function Register() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         fullName: "",
-        
+
         email: "",
         password: "",
         confirmPassword: "",
@@ -94,7 +94,7 @@ export default function Register() {
                     <div className="hidden min-h-full flex-col justify-between border-b border-zinc-800 bg-zinc-950 p-8 text-white md:flex md:border-b-0 md:border-r md:p-10 lg:p-12">
                         <div>
                             <div className="inline-flex items-center rounded-full border border-zinc-700 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-zinc-300">
-                                TeamForge
+                                ProjectForge
                             </div>
 
                             <h1 className="mt-8 max-w-sm text-3xl font-semibold leading-tight lg:text-4xl">
@@ -142,11 +142,10 @@ export default function Register() {
                                         value={formData.fullName}
                                         onChange={handleChange}
                                         placeholder="John Doe"
-                                        className={`w-full rounded-2xl border bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition duration-200 ${
-                                            errors.fullName
+                                        className={`w-full rounded-2xl border bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition duration-200 ${errors.fullName
                                                 ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20"
                                                 : "border-zinc-700 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-700/40"
-                                        }`}
+                                            }`}
                                     />
 
                                     {errors.fullName && (
@@ -171,11 +170,10 @@ export default function Register() {
                                         value={formData.email}
                                         onChange={handleChange}
                                         placeholder="you@example.com"
-                                        className={`w-full rounded-2xl border bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition duration-200 ${
-                                            errors.email
+                                        className={`w-full rounded-2xl border bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition duration-200 ${errors.email
                                                 ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20"
                                                 : "border-zinc-700 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-700/40"
-                                        }`}
+                                            }`}
                                     />
 
                                     {errors.email && (
@@ -198,11 +196,10 @@ export default function Register() {
                                         value={formData.password}
                                         onChange={handleChange}
                                         placeholder="Create a password"
-                                        className={`w-full rounded-2xl border bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition duration-200 ${
-                                            errors.password
+                                        className={`w-full rounded-2xl border bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition duration-200 ${errors.password
                                                 ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20"
                                                 : "border-zinc-700 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-700/40"
-                                        }`}
+                                            }`}
                                     />
 
                                     {errors.password && (
@@ -227,11 +224,10 @@ export default function Register() {
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
                                         placeholder="Re-enter your password"
-                                        className={`w-full rounded-2xl border bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition duration-200 ${
-                                            errors.confirmPassword
+                                        className={`w-full rounded-2xl border bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition duration-200 ${errors.confirmPassword
                                                 ? "border-red-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20"
                                                 : "border-zinc-700 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-700/40"
-                                        }`}
+                                            }`}
                                     />
 
                                     {errors.confirmPassword && (

@@ -23,24 +23,26 @@ const parseAllowedOrigins = (value) => {
   if (!value) return [];
   return String(value)
     .split(",")
-    .map((s) => s.trim())
+    .map((s) => s.trim().replace(/\/+$/, ""))
     .filter(Boolean);
 };
 
 const isOriginAllowed = (origin, allowed) => {
   if (!origin) return true;
+  const originNorm = String(origin).trim().replace(/\/+$/, "");
   if (!Array.isArray(allowed) || allowed.length === 0) return true;
   if (allowed.includes("*")) return true;
-  if (allowed.includes(origin)) return true;
+  if (allowed.includes(originNorm)) return true;
 
   let originUrl;
   try {
-    originUrl = new URL(origin);
+    originUrl = new URL(originNorm);
   } catch {
     return false;
   }
 
-  for (const entry of allowed) {
+  for (const rawEntry of allowed) {
+    const entry = String(rawEntry || "").trim().replace(/\/+$/, "");
     if (typeof entry !== "string" || !entry.includes("*")) continue;
 
     const hasProto = entry.includes("://");
@@ -64,7 +66,9 @@ const io = new Server(server, {
     origin: (origin, cb) => {
       const allowed = parseAllowedOrigins(process.env.CLIENT_ORIGIN);
       if (isOriginAllowed(origin, allowed)) return cb(null, true);
-      return cb(new Error("CORS: origin not allowed"));
+      const err = new Error("CORS: origin not allowed");
+      err.statusCode = 403;
+      return cb(err);
     },
     methods: ["GET", "POST"],
   },

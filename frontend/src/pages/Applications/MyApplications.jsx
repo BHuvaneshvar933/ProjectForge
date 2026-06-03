@@ -5,7 +5,7 @@ import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import Modal from "../../components/common/Modal";
 import Spinner from "../../components/common/Spinner";
-import { getMyApplications, withdrawApplication } from "../../api/applicationApi";
+import { getMyApplications, respondToInvitation, withdrawApplication } from "../../api/applicationApi";
 import "./applications.css";
 
 export default function MyApplications() {
@@ -16,6 +16,7 @@ export default function MyApplications() {
 
   const [withdrawId, setWithdrawId] = useState("");
   const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const [respondingId, setRespondingId] = useState("");
 
   const fetchMyApplications = useCallback(async () => {
     setLoading(true);
@@ -65,6 +66,20 @@ export default function MyApplications() {
     }
   };
 
+  const onRespondToInvite = async (applicationId, action) => {
+    if (!applicationId) return;
+    setRespondingId(applicationId);
+    try {
+      await respondToInvitation(applicationId, action);
+      toast.success(action === "accept" ? "Invitation accepted" : "Invitation declined");
+      await fetchMyApplications();
+    } catch (e) {
+      toast.error(e?.response?.data?.message || "Failed to respond to invitation");
+    } finally {
+      setRespondingId("");
+    }
+  };
+
   if (loading) {
     return (
       <div className="apps-page apps-page--loading">
@@ -99,6 +114,7 @@ export default function MyApplications() {
           {items.map((a) => {
             const project = a?.projectId;
             const projectId = project?._id || a?.projectId;
+            const isInvitation = a?.applicationType === "invitation";
             return (
               <div key={a._id} className="apps-card">
                 <div className="apps-card__top">
@@ -108,10 +124,14 @@ export default function MyApplications() {
                     </div>
                     <div className="apps-card__meta">
                       <span className="apps-card__meta-item">Owner: {project?.owner?.name || "-"}</span>
+                      {isInvitation && (
+                        <span className="apps-card__meta-item">Invited by: {a?.invitedBy?.name || project?.owner?.name || "-"}</span>
+                      )}
                       <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>
                     </div>
                   </div>
                   <div className="apps-card__badges">
+                    <Badge variant="default">{isInvitation ? "Invitation" : "Application"}</Badge>
                     <Badge variant={statusVariant[a.status] || "default"}>{a.status}</Badge>
                     {project?.status && (
                       <Badge variant={project.status}>{project.status}</Badge>
@@ -119,9 +139,16 @@ export default function MyApplications() {
                   </div>
                 </div>
 
+                {isInvitation && a?.invitedRole && (
+                  <div className="apps-card__message">
+                    <div className="apps-card__message-label">Suggested role</div>
+                    <div className="apps-card__message-text">{a.invitedRole}</div>
+                  </div>
+                )}
+
                 {a?.message && (
                   <div className="apps-card__message">
-                    <div className="apps-card__message-label">Your note</div>
+                    <div className="apps-card__message-label">{isInvitation ? "Invitation note" : "Your note"}</div>
                     <div className="apps-card__message-text">{a.message}</div>
                   </div>
                 )}
@@ -137,7 +164,25 @@ export default function MyApplications() {
                   <Link to={`/projects/${projectId}`}>
                     <Button variant="outline">Open Project</Button>
                   </Link>
-                  {a?.status === "pending" && (
+                  {a?.status === "pending" && isInvitation && (
+                    <>
+                      <Button
+                        variant="primary"
+                        loading={respondingId === a._id}
+                        onClick={() => onRespondToInvite(a._id, "accept")}
+                      >
+                        Accept Invite
+                      </Button>
+                      <Button
+                        variant="danger"
+                        disabled={respondingId === a._id}
+                        onClick={() => onRespondToInvite(a._id, "reject")}
+                      >
+                        Decline
+                      </Button>
+                    </>
+                  )}
+                  {a?.status === "pending" && !isInvitation && (
                     <Button variant="danger" onClick={() => setWithdrawId(a._id)}>
                       Withdraw
                     </Button>

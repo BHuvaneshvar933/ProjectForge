@@ -49,6 +49,7 @@
   background: rgba(28, 28, 30, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.10);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  min-width: 0;
 }
 
 .apps-card__top {
@@ -64,6 +65,8 @@
   font-weight: 700;
   letter-spacing: -0.01em;
   margin-bottom: 6px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .apps-card__title a {
@@ -78,10 +81,16 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
+.apps-card__meta-item {
+  overflow-wrap: anywhere;
+}
+
 .apps-card__badges {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .apps-card__skills {
@@ -120,12 +129,15 @@
   color: rgba(255, 255, 255, 0.75);
   line-height: 1.55;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .apps-card__actions {
   display: flex;
   gap: 10px;
   margin-top: 14px;
+  flex-wrap: wrap;
 }
 
 .apps-page__pager {
@@ -150,6 +162,11 @@
   color: rgba(255, 255, 255, 0.85);
   outline: none;
   resize: vertical;
+}
+
+.apps-textarea--single {
+  min-height: 48px;
+  resize: none;
 }
 
 .apps-textarea:focus {
@@ -196,6 +213,29 @@
 
 .apps-empty__action:active {
   transform: scale(0.97);
+}
+
+.apps-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.apps-profile__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px 16px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+}
+
+.apps-role-chip {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.86);
+  padding: 8px 12px;
+  font-size: 12px;
 }
 
 @media (min-width: 768px) {

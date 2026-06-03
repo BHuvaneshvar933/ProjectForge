@@ -21,6 +21,27 @@ const applicationSchema = new mongoose.Schema(
       default: "",
     },
 
+    applicationType: {
+      type: String,
+      enum: ["application", "invitation"],
+      default: "application",
+      index: true,
+    },
+
+    invitedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+
+    invitedRole: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 50,
+      default: null,
+    },
+
     matchScore: {
       type: Number,
       min: 0,

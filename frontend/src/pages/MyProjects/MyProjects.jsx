@@ -130,13 +130,15 @@ export default function MyProjects() {
       </div>
 
       <div className="my-projects__filters">
-        {['all', 'recruiting', 'in-progress', 'completed'].map((status) => (
+        {['all', 'recruiting', 'in-progress', 'completed', 'archived']
+          .filter(status => status !== 'archived' || mode === 'owned')
+          .map((status) => (
           <button
             key={status}
             onClick={() => setFilter(status)}
             className={`my-projects__filter-btn ${filter === status ? 'is-active' : ''}`.trim()}
           >
-            {status === 'in-progress' ? 'Active' : status}
+            {status === 'in-progress' ? 'In-Progress' : status}
           </button>
         ))}
       </div>

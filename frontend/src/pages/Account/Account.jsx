@@ -343,7 +343,10 @@ export default function Account() {
                     key={s._id}
                     type="button"
                     className="account__result"
-                    onClick={() => addSkill(s)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      addSkill(s);
+                    }}
                   >
                     {s.name}
                   </button>

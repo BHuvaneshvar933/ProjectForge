@@ -54,13 +54,46 @@ export const acceptApplication = async (req, res, next) => {
   try {
     const result = await applicationService.acceptApplication(
       req.user.id,
-      req.params.id
+      req.params.id,
+      req.body
     );
 
     res.status(200).json({
       success: true,
       message: "Application accepted successfully",
       data: { project: result }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const inviteUserToProject = async (req, res, next) => {
+  try {
+    const application = await applicationService.inviteUserToProject(req.user.id, req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Invitation sent successfully",
+      data: { application },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const respondToInvitation = async (req, res, next) => {
+  try {
+    const application = await applicationService.respondToInvitation(
+      req.user.id,
+      req.params.id,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Invitation response recorded",
+      data: { application },
     });
   } catch (err) {
     next(err);

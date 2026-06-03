@@ -13,10 +13,15 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       enum: [
         "application_received",
-    "application_accepted",
-    "application_rejected",
-    "task_assigned",
-    "deadline_approaching"
+        "application_accepted",
+        "application_rejected",
+        "task_assigned",
+        "deadline_approaching",
+
+        // Invitations
+        "project_invitation",
+        "invitation_accepted",
+        "invitation_rejected"
       ],
       required: true,
     },

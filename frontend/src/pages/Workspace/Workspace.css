@@ -1,0 +1,467 @@
+/* Workspace page */
+.workspace {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 48px 24px;
+  animation: fadeIn 0.5s ease;
+}
+
+.workspace__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.workspace__title {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.workspace__subtitle {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 60ch;
+}
+
+.workspace__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.workspace__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.workspace__tabs {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0 24px;
+  padding: 4px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  width: fit-content;
+  overflow-x: auto;
+}
+
+.workspace__tab {
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.workspace__tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.workspace__tab.is-active {
+  background: #0a84ff;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(10, 132, 255, 0.25);
+}
+
+.workspace__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
+}
+
+.workspace__card {
+  background: rgba(28, 28, 30, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 18px;
+}
+
+.workspace__card-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.workspace__kv {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.workspace__kvi {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.workspace__kvi-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.workspace__kvi-value {
+  margin-top: 8px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+.workspace__kvi-sub {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Members */
+.workspace-members {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.workspace-member {
+  background: rgba(28, 28, 30, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.workspace-member__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.workspace-member__avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.workspace-member__name {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workspace-member__role {
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Chat */
+.workspace-chat {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  gap: 12px;
+  height: 70vh;
+}
+
+.workspace-chat__list {
+  overflow: auto;
+  padding: 8px 6px 8px 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* WhatsApp/Instagram style bubbles */
+.workspace-chat__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.workspace-chat__row.is-mine {
+  justify-content: flex-end;
+}
+
+.workspace-chat__row.is-theirs {
+  justify-content: flex-start;
+}
+
+.workspace-chat__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  flex: 0 0 auto;
+}
+
+.workspace-chat__bubble {
+  max-width: min(560px, 78%);
+  padding: 10px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.workspace-chat__bubble.is-mine {
+  background: linear-gradient(180deg, rgba(10, 132, 255, 0.28), rgba(10, 132, 255, 0.18));
+  border-color: rgba(10, 132, 255, 0.25);
+  border-bottom-right-radius: 8px;
+}
+
+.workspace-chat__bubble.is-theirs {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.10);
+  border-bottom-left-radius: 8px;
+}
+
+.workspace-chat__sender {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 6px;
+}
+
+.workspace-chat__text {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 13px;
+  line-height: 1.55;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.workspace-chat__time {
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: right;
+}
+
+
+.workspace-chat__typing-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 2px 8px;
+}
+
+.workspace-chat__typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow:
+    10px 0 0 rgba(255, 255, 255, 0.22),
+    20px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+.workspace-chat__typing {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.workspace-chat__composer {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  padding-top: 2px;
+}
+
+.workspace-chat__input {
+  flex: 1;
+  min-height: 44px;
+  max-height: 140px;
+  resize: none;
+  padding: 12px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+  line-height: 1.35;
+}
+
+.workspace-chat__input:focus {
+  border-color: rgba(10, 132, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+}
+
+.workspace-chat__send {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
+  transition: transform 0.12s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.workspace-chat__send:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.workspace-chat__send:active {
+  transform: translateY(0px);
+}
+
+.workspace-chat__send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 720px) {
+  .workspace-chat {
+    height: 72vh;
+  }
+
+  .workspace-chat__bubble {
+    max-width: 88%;
+  }
+}
+
+/* Tasks */
+.workspace-tasks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.workspace-column {
+  background: rgba(28, 28, 30, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 14px;
+  min-height: 60vh;
+}
+
+.workspace-column__title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.workspace-column__title-text {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.workspace-task {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.workspace-task__title {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.workspace-task__meta {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+}
+
+.workspace-task__actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.workspace-select {
+  padding: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  outline: none;
+}
+
+.workspace-select:focus {
+  border-color: rgba(10, 132, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+}
+
+.workspace-modal__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.workspace-modal__textarea {
+  width: 100%;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+  padding: 12px 14px;
+  resize: vertical;
+}
+
+.workspace-modal__textarea:focus {
+  border-color: rgba(10, 132, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+}
+
+@media (max-width: 980px) {
+  .workspace__grid {
+    grid-template-columns: 1fr;
+  }
+  .workspace-tasks {
+    grid-template-columns: 1fr;
+  }
+}

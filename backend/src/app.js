@@ -17,29 +17,31 @@ const parseAllowedOrigins = (value) => {
   if (!value) return [];
   return String(value)
     .split(",")
-    .map((s) => s.trim())
+    .map((s) => s.trim().replace(/\/+$/, ""))
     .filter(Boolean);
 };
 
 const isOriginAllowed = (origin, allowed) => {
   if (!origin) return true;
+  const originNorm = String(origin).trim().replace(/\/+$/, "");
   if (!Array.isArray(allowed) || allowed.length === 0) return true;
 
   // Explicit allow-all.
   if (allowed.includes("*")) return true;
 
   // Exact match first.
-  if (allowed.includes(origin)) return true;
+  if (allowed.includes(originNorm)) return true;
 
   // Wildcards: allow entries like `https://*.vercel.app` or `*.vercel.app`.
   let originUrl;
   try {
-    originUrl = new URL(origin);
+    originUrl = new URL(originNorm);
   } catch {
     return false;
   }
 
-  for (const entry of allowed) {
+  for (const rawEntry of allowed) {
+    const entry = String(rawEntry || "").trim().replace(/\/+$/, "");
     if (typeof entry !== "string" || !entry.includes("*")) continue;
 
     // If entry includes protocol, enforce it.
@@ -68,7 +70,9 @@ app.use(
       if (!origin) return cb(null, true);
 
       if (isOriginAllowed(origin, allowed)) return cb(null, true);
-      return cb(new Error("CORS: origin not allowed"));
+      const err = new Error("CORS: origin not allowed");
+      err.statusCode = 403;
+      return cb(err);
     },
     credentials: true,
   })

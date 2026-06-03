@@ -25,6 +25,8 @@ export default function ProjectApplications() {
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0, limit: 10 });
 
   const [busyId, setBusyId] = useState("");
+  const [profileUser, setProfileUser] = useState(null);
+  const [acceptState, setAcceptState] = useState({ id: "", projectRole: "" });
 
   const [rejectId, setRejectId] = useState("");
   const [rejectReason, setRejectReason] = useState("");
@@ -68,12 +70,14 @@ export default function ProjectApplications() {
   const canPrev = page > 1;
   const canNext = page < (pagination?.pages || 1);
 
-  const onAccept = async (applicationId) => {
+  const onAccept = async () => {
+    const applicationId = acceptState.id;
     if (!applicationId) return;
     setBusyId(applicationId);
     try {
-      await acceptApplication(applicationId);
+      await acceptApplication(applicationId, acceptState.projectRole || undefined);
       toast.success("Application accepted");
+      setAcceptState({ id: "", projectRole: "" });
       await fetchAll();
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to accept application");
@@ -138,6 +142,7 @@ export default function ProjectApplications() {
                   <div>
                     <div className="apps-card__title">{applicant?.name || "Applicant"}</div>
                     <div className="apps-card__meta">
+                      <span className="apps-card__meta-item">{a?.applicationType === "invitation" ? "Invitation" : "Application"}</span>
                       <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>
                       <span className="apps-card__meta-item">Sent: {a?.createdAt ? new Date(a.createdAt).toLocaleString() : "-"}</span>
                     </div>
@@ -160,17 +165,27 @@ export default function ProjectApplications() {
 
                 {a?.message && (
                   <div className="apps-card__message">
-                    <div className="apps-card__message-label">Message</div>
+                    <div className="apps-card__message-label">{a?.applicationType === "invitation" ? "Invitation note" : "Message"}</div>
                     <div className="apps-card__message-text">{a.message}</div>
                   </div>
                 )}
 
-                {a?.status === "pending" ? (
+                {a?.invitedRole && (
+                  <div className="apps-card__message">
+                    <div className="apps-card__message-label">Suggested role</div>
+                    <div className="apps-card__message-text">{a.invitedRole}</div>
+                  </div>
+                )}
+
+                {a?.status === "pending" && a?.applicationType !== "invitation" ? (
                   <div className="apps-card__actions">
+                    <Button variant="outline" onClick={() => setProfileUser(applicant)}>
+                      View Profile
+                    </Button>
                     <Button
                       variant="primary"
                       loading={disabled}
-                      onClick={() => onAccept(a._id)}
+                      onClick={() => setAcceptState({ id: a._id, projectRole: a?.invitedRole || "" })}
                     >
                       Accept
                     </Button>
@@ -180,6 +195,12 @@ export default function ProjectApplications() {
                       onClick={() => setRejectId(a._id)}
                     >
                       Reject
+                    </Button>
+                  </div>
+                ) : a?.status === "pending" ? (
+                  <div className="apps-card__actions">
+                    <Button variant="outline" disabled>
+                      Invitation Sent
                     </Button>
                   </div>
                 ) : (
@@ -208,6 +229,61 @@ export default function ProjectApplications() {
           </Button>
         </div>
       )}
+
+      <Modal
+        isOpen={Boolean(profileUser)}
+        onClose={() => setProfileUser(null)}
+        title={profileUser?.name ? `${profileUser.name}'s Profile` : "Applicant Profile"}
+      >
+        {profileUser && (
+          <div className="apps-profile">
+            <p className="apps-page__hint">{profileUser.bio || "No bio provided."}</p>
+            <div className="apps-profile__grid">
+              <div><strong>Email:</strong> {profileUser.email || "-"}</div>
+              <div><strong>Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
+              <div><strong>Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
+              <div><strong>Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
+            </div>
+            {Array.isArray(profileUser.skills) && profileUser.skills.length > 0 && (
+              <div className="apps-card__skills">
+                {profileUser.skills.map((s) => (
+                  <Badge key={s?._id || s?.name} variant="skill">{displaySkillLabel(s)}</Badge>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        isOpen={Boolean(acceptState.id)}
+        onClose={() => setAcceptState({ id: "", projectRole: "" })}
+        title="Accept application"
+        onConfirm={onAccept}
+        confirmText={busyId === acceptState.id ? "Accepting..." : "Accept"}
+      >
+        <p className="apps-page__hint">Choose the role this person should get in the project.</p>
+        <input
+          className="apps-textarea apps-textarea--single"
+          value={acceptState.projectRole}
+          onChange={(e) => setAcceptState((prev) => ({ ...prev, projectRole: e.target.value }))}
+          placeholder={project?.openRoles?.[0] || "Example: Frontend Developer"}
+        />
+        {Array.isArray(project?.openRoles) && project.openRoles.length > 0 && (
+          <div className="apps-card__skills" style={{ marginTop: 12 }}>
+            {project.openRoles.map((role) => (
+              <button
+                key={role}
+                type="button"
+                className="apps-role-chip"
+                onClick={() => setAcceptState((prev) => ({ ...prev, projectRole: role }))}
+              >
+                {role}
+              </button>
+            ))}
+          </div>
+        )}
+      </Modal>
 
       <Modal
         isOpen={Boolean(rejectId)}
