@@ -1,5 +1,6 @@
 import Badge from '../common/Badge';
 import './ProjectReview.css';
+import { displaySkillLabel } from '../../utils/display';
 
 export default function ProjectReview({ data }) {
   const formatDate = (dateString) => {
@@ -56,7 +57,7 @@ export default function ProjectReview({ data }) {
                 key={typeof skill === 'string' ? skill : skill?._id || skill?.name}
                 variant="skill"
               >
-                {typeof skill === 'string' ? skill : skill?.name}
+                {displaySkillLabel(skill)}
               </Badge>
             ))
           ) : (

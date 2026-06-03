@@ -92,8 +92,14 @@ export default function ProjectCard({ project, type = "owned" }) {
         </div>
         
         <Link to={`/projects/${_id}`}>
-          <button className={`project-card__action ${type === "owned" ? 'project-card__action--ghost' : 'project-card__action--primary'}`.trim()}>
-            {type === "owned" ? "Manage" : "View"}
+          <button className={`project-card__action ${
+            (window?.localStorage?.getItem("userId") === (owner?._id || owner)) 
+              ? 'project-card__action--ghost' 
+              : 'project-card__action--primary'
+          }`.trim()}>
+            {(window?.localStorage?.getItem("userId") === (owner?._id || owner)) 
+              ? "Manage" 
+              : "View"}
           </button>
         </Link>
       </div>

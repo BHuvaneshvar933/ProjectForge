@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const metricsSchema = new mongoose.Schema({
   totalTasks: { type: Number, default: 0 },
   completedTasks: { type: Number, default: 0 },
-  totalHoursLogged: { type: Number, default: 0 }, // future-safe
+  totalHoursLogged: { type: Number, default: 0 },
   velocityScore: { type: Number, default: 0 },
   completionPercentage: { type: Number, default: 0 },
 }, { _id: false });
@@ -33,7 +33,6 @@ const projectSchema = new mongoose.Schema(
       ref: "Skill",
     }],
 
-    // Roles that still need to be filled for this project
     openRoles: {
       type: [
         {
@@ -57,7 +56,7 @@ const projectSchema = new mongoose.Schema(
     timeline: {
       startDate: Date,
       endDate: Date,
-      estimatedDuration: Number, // CRITICAL
+      estimatedDuration: Number,
     },
 
     projectType: {

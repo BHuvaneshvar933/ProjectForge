@@ -152,11 +152,15 @@ export const browseProjects = async (query) => {
 
   const filter = {
     isDeleted: false,
-    visibility: "public",
-    status: { $ne: "archived" }   
+    visibility: "public"
   };
 
-  if (status) filter.status = status;
+  if (status) {
+    filter.status = status;
+  } else {
+    filter.status = "recruiting";
+  }
+
   if (projectType) filter.projectType = projectType;
 
   if (search) {
@@ -192,9 +196,11 @@ export const browseProjects = async (query) => {
 // GET MY PROJECTS
 export const getMyProjects = async (userId) => {
   return await Project.find({
-    owner: userId,
-    isDeleted: false
-  }).sort({ createdAt: -1 });
+    owner: userId
+  })
+    .sort({ createdAt: -1 })
+    .populate("owner", "name")
+    .populate("requiredSkills", "name");
 };
 
 
@@ -217,7 +223,6 @@ export const updateProject = async (projectId, userId, updateData) => {
   return project;
 };
 
-
 // CLOSE RECRUITMENT
 export const closeRecruitment = async (projectId, userId) => {
   const project = await Project.findById(projectId);
@@ -236,7 +241,6 @@ export const closeRecruitment = async (projectId, userId) => {
   return project;
 };
 
-
 // ARCHIVE PROJECT
 export const archiveProject = async (projectId, userId) => {
   const project = await Project.findById(projectId);
@@ -250,7 +254,6 @@ export const archiveProject = async (projectId, userId) => {
   }
 
   project.status = "archived";
-  project.isDeleted = true;       
   project.deletedAt = new Date();
 
   await project.save();
@@ -419,7 +422,6 @@ export const getProjectRecommendations = async ({ userId, limit = 5 }) => {
 
   return await Project.aggregate(pipeline).exec();
 };
-
 // GET JOINED PROJECTS
 export const getJoinedProjects = async (userId) => {
   const memberships = await Team.find({
@@ -432,6 +434,7 @@ export const getJoinedProjects = async (userId) => {
 
   const projects = await Project.find({
     _id: { $in: projectIds },
+    owner: { $ne: userId },
     isDeleted: false
   })
     .sort({ createdAt: -1 })

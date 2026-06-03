@@ -1,0 +1,11 @@
+{
+  "name": "projectforge-bench",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "socket": "node socket-loadtest.js"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.8.3"
+  }
+}

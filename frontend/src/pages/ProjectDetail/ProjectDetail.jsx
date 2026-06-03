@@ -139,7 +139,7 @@ export default function ProjectDetail() {
 
   const isOwner = Boolean(
     (currentUser?._id && project.owner?._id && String(currentUser._id) === String(project.owner._id)) ||
-      (fallbackUserId && project.owner?._id && String(fallbackUserId) === String(project.owner._id))
+    (fallbackUserId && project.owner?._id && String(fallbackUserId) === String(project.owner._id))
   );
 
   const applicationStatus = myApplication?.status;
@@ -196,7 +196,7 @@ export default function ProjectDetail() {
       await archiveProject(id);
       toast.success('Project archived');
       setShowArchiveModal(false);
-      await fetchProject();
+      navigate('/my-projects');
     } catch (e) {
       toast.error(e.response?.data?.message || 'Failed to archive');
     }
@@ -205,6 +205,7 @@ export default function ProjectDetail() {
   const goToApplications = () => {
     navigate(`/projects/${id}/applications`);
   };
+
 
   const matchPercent = (() => {
     try {
@@ -242,8 +243,8 @@ export default function ProjectDetail() {
   // Calculate duration
   const startDate = project.timeline?.startDate ? new Date(project.timeline.startDate) : null;
   const endDate = project.timeline?.endDate ? new Date(project.timeline.endDate) : null;
-  const duration = startDate && endDate 
-    ? Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) 
+  const duration = startDate && endDate
+    ? Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24))
     : null;
 
   return (
@@ -262,7 +263,7 @@ export default function ProjectDetail() {
             </Badge>
           </div>
         </div>
-        
+
         <div className="project-detail__actions">
           {!tokenPresent && (
             <Button variant="primary" disabled>
@@ -272,7 +273,7 @@ export default function ProjectDetail() {
 
           {tokenPresent && isMember && (
             <Button variant="primary" disabled>
-              Workspace (Coming soon)
+              Workspace
             </Button>
           )}
 

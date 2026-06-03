@@ -50,3 +50,19 @@ export const getPublicProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+export const searchUsers = async (req, res, next) => {
+  try {
+    const users = await userService.searchUsers(req.query);
+
+    return res.status(200).json({
+      success: true,
+      message: "Users fetched",
+      data: {
+        users,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

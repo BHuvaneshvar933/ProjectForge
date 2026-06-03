@@ -3,6 +3,7 @@ import Input from '../common/Input';
 import Badge from '../common/Badge';
 import { searchSkills } from '../../api/skillApi';
 import './ProjectRequirements.css';
+import { displaySkillLabel } from '../../utils/display';
 
 export default function ProjectRequirements({ data, updateData, errors }) {
   const [skillInput, setSkillInput] = useState('');
@@ -58,7 +59,7 @@ export default function ProjectRequirements({ data, updateData, errors }) {
       return;
     }
 
-    if (!selectedSkillIds.has(id)) {
+    if (!selectedSkillIds.has(String(id))) {
       updateData({ requiredSkills: [...selectedSkills, { _id: id, name }] });
     }
     setSkillInput('');
@@ -112,7 +113,10 @@ export default function ProjectRequirements({ data, updateData, errors }) {
                   key={s._id}
                   type="button"
                   className="project-req__result"
-                  onClick={() => addSkill(s)}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    addSkill(s);
+                  }}
                 >
                   {s.name}
                 </button>
@@ -142,7 +146,7 @@ export default function ProjectRequirements({ data, updateData, errors }) {
                 variant="skill"
                 className="badge--clickable"
               >
-                {typeof skill === 'string' ? skill : skill?.name}
+                {displaySkillLabel(skill)}
                 <button
                   onClick={() => removeSkill(skill)}
                   className="badge__remove"

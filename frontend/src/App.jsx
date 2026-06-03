@@ -9,6 +9,7 @@ import Login from "./pages/Auth/login";
 import Register from "./pages/Auth/register";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Account from "./pages/Account/Account";
+import MyApplications from "./pages/Applications/MyApplications";
 import ProjectApplications from "./pages/Applications/ProjectApplications";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -52,6 +53,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Account />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/applications/sent"
+          element={
+            <ProtectedRoute>
+              <MyApplications />
             </ProtectedRoute>
           }
         />

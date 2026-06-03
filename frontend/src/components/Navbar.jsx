@@ -34,7 +34,7 @@ export default function Navbar() {
 
     navigate("/login");
   };
-  
+
   const isActive = (path) => {
     if (path === '/projects') return location.pathname === '/' || location.pathname === '/projects';
     return location.pathname.startsWith(path);
@@ -47,28 +47,32 @@ export default function Navbar() {
           <div className="navbar__logo">
             <span className="navbar__logo-text">T</span>
           </div>
-          <span className="navbar__title">TeamForge</span>
+          <span className="navbar__title">ProjectForge</span>
         </Link>
-        
+
         <div className="navbar__links">
-          <Link 
-            to="/projects" 
+          <Link
+            to="/projects"
             className={`navbar__link ${isActive('/projects') && !isActive('/my-projects') && !isActive('/projects/create') ? 'is-active' : ''}`.trim()}
           >
             Browse
           </Link>
-          <Link 
-            to="/my-projects" 
+          <Link
+            to="/my-projects"
             className={`navbar__link ${isActive('/my-projects') ? 'is-active' : ''}`.trim()}
           >
             My Projects
           </Link>
-          <Link 
-            to="/projects/create" 
-            className="navbar__create"
-          >
-            + Create
-          </Link>
+
+
+          {isAuthed && (
+            <Link
+              to="/applications/sent"
+              className={`navbar__link ${isActive('/applications/sent') ? 'is-active' : ''}`.trim()}
+            >
+              Applications
+            </Link>
+          )}
 
           {isAuthed && (
             <Link
