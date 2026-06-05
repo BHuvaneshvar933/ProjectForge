@@ -11,6 +11,8 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Account from "./pages/Account/Account";
 import MyApplications from "./pages/Applications/MyApplications";
 import ProjectApplications from "./pages/Applications/ProjectApplications";
+import Workspace from "./pages/Workspace/Workspace";
+import LearningArchive from "./pages/LearningArchive/LearningArchive";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -21,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<BrowseProjects />} />
         <Route path="/projects" element={<BrowseProjects />} />
+        <Route path="/learning-archive" element={<LearningArchive />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -71,6 +74,15 @@ function App() {
           element={
             <ProtectedRoute>
               <ProjectApplications />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/workspace/:projectId"
+          element={
+            <ProtectedRoute>
+              <Workspace />
             </ProtectedRoute>
           }
         />

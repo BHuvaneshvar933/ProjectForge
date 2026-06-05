@@ -261,61 +261,75 @@ export default function BrowseProjects() {
             </div>
           )}
 
-          <div className="browse-people__invite">
-            <Input
-              label="Suggested Role"
-              value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value)}
-              placeholder={selectedProject?.openRoles?.[0] || 'Example: Frontend Developer'}
-            />
-            <div className="browse-people__label">Invite note</div>
-            <textarea
-              className="browse-people__note"
-              rows={3}
-              value={inviteMessage}
-              onChange={(e) => setInviteMessage(e.target.value)}
-              placeholder="Tell them what they would work on and why you're inviting them"
-            />
-          </div>
+          {selectedProjectId ? (
+            <>
+              <div className="browse-people__invite">
+                <Input
+                  label="Suggested Role"
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value)}
+                  placeholder={selectedProject?.openRoles?.[0] || 'Example: Frontend Developer'}
+                />
+                <div className="browse-people__label">Invite note</div>
+                <textarea
+                  className="browse-people__note"
+                  rows={3}
+                  value={inviteMessage}
+                  onChange={(e) => setInviteMessage(e.target.value)}
+                  placeholder="Tell them what they would work on and why you're inviting them"
+                />
+              </div>
 
-          <div className="browse-people__grid">
-            {people.map((u) => (
-              <div key={u._id} className="browse-people__card">
-                <div className="browse-people__card-top">
-                  <div>
-                    <div className="browse-people__name">{u.name}</div>
-                    <div className="browse-people__bio">{u.bio || 'No bio'}</div>
+              <div className="browse-people__grid">
+                {people.map((u) => (
+                  <div key={u._id} className="browse-people__card">
+                    <div className="browse-people__card-top">
+                      <div>
+                        <div className="browse-people__name">{u.name}</div>
+                        <div className="browse-people__bio">{u.bio || 'No bio'}</div>
+                      </div>
+                      <div className="browse-people__meta">{u.availabilityHoursPerWeek ?? 0} hrs/week</div>
+                    </div>
+
+                    {Array.isArray(u.skills) && u.skills.length > 0 && (
+                      <div className="browse-people__skills">
+                        {u.skills.slice(0, 8).map((s) => (
+                          <Badge key={s?._id || s?.name} variant="skill">{displaySkillLabel(s)}</Badge>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="browse-people__actions">
+                      <Button
+                        variant="primary"
+                        loading={inviteBusyId === u._id}
+                        onClick={() => sendInvite(u._id)}
+                        disabled={!selectedProjectId}
+                      >
+                        Invite
+                      </Button>
+                    </div>
                   </div>
-                  <div className="browse-people__meta">{u.availabilityHoursPerWeek ?? 0} hrs/week</div>
-                </div>
-
-                {Array.isArray(u.skills) && u.skills.length > 0 && (
-                  <div className="browse-people__skills">
-                    {u.skills.slice(0, 8).map((s) => (
-                      <Badge key={s?._id || s?.name} variant="skill">{displaySkillLabel(s)}</Badge>
-                    ))}
+                ))}
+                {!peopleLoading && people.length === 0 && (
+                  <div className="browse-page__empty" style={{ padding: 60 }}>
+                    <p className="browse-page__empty-title">No people found</p>
+                    <p className="browse-page__empty-subtitle">Try a different search.</p>
                   </div>
                 )}
-
-                <div className="browse-people__actions">
-                  <Button
-                    variant="primary"
-                    loading={inviteBusyId === u._id}
-                    onClick={() => sendInvite(u._id)}
-                    disabled={!selectedProjectId}
-                  >
-                    Invite
-                  </Button>
-                </div>
               </div>
-            ))}
-            {!peopleLoading && people.length === 0 && (
-              <div className="browse-page__empty" style={{ padding: 60 }}>
-                <p className="browse-page__empty-title">No people found</p>
-                <p className="browse-page__empty-subtitle">Try a different search.</p>
+            </>
+          ) : (
+            <div className="browse-page__empty" style={{ padding: 60 }}>
+              <div className="browse-page__empty-icon">
+                <svg className="browse-page__empty-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
               </div>
-            )}
-          </div>
+              <p className="browse-page__empty-title">No project selected</p>
+              <p className="browse-page__empty-subtitle">Select a recruiting project you own to search and invite people.</p>
+            </div>
+          )}
         </div>
       ) : (
         <>
