@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import NotificationBell from "./common/NotificationBell";
 import './Navbar.css';
 
 export default function Navbar() {
@@ -53,10 +54,18 @@ export default function Navbar() {
         <div className="navbar__links">
           <Link
             to="/projects"
-            className={`navbar__link ${isActive('/projects') && !isActive('/my-projects') && !isActive('/projects/create') ? 'is-active' : ''}`.trim()}
+            className={`navbar__link ${isActive('/projects') ? 'is-active' : ''}`.trim()}
           >
             Browse
           </Link>
+
+          <Link
+            to="/learning-archive"
+            className={`navbar__link ${isActive('/learning-archive') ? 'is-active' : ''}`.trim()}
+          >
+            Archive
+          </Link>
+
           <Link
             to="/my-projects"
             className={`navbar__link ${isActive('/my-projects') ? 'is-active' : ''}`.trim()}
@@ -81,6 +90,12 @@ export default function Navbar() {
             >
               Account
             </Link>
+          )}
+
+          {isAuthed && (
+            <div className="navbar__link" style={{ padding: 0 }}>
+              <NotificationBell />
+            </div>
           )}
 
           {!isAuthed ? (
