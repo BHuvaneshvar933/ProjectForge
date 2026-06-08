@@ -78,14 +78,14 @@ function App() {
           }
         />
 
-        <Route
+        {/* <Route
           path="/workspace/:projectId"
           element={
             <ProtectedRoute>
               <Workspace />
             </ProtectedRoute>
           }
-        />
+        /> */}
       </Routes>
       <ToastContainer
         position="bottom-right"
