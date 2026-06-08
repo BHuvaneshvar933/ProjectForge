@@ -15,6 +15,23 @@ const taskSchema = new mongoose.Schema(
       trim: true,
     },
 
+    taskNumber: {
+      type: Number,
+    },
+
+    issueType: {
+      type: String,
+      enum: ["epic", "story", "task", "sub-task", "bug", "feature"],
+      default: "task",
+    },
+
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Task",
+      default: null,
+      index: true,
+    },
+
     description: {
       type: String,
       default: "",

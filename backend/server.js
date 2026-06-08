@@ -62,6 +62,11 @@ const isOriginAllowed = (origin, allowed) => {
 
 // Socket.io server
 const io = new Server(server, {
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  transports: ["websocket", "polling"],
+  allowUpgrades: true,
+  cookie: false,
   cors: {
     origin: (origin, cb) => {
       const allowed = parseAllowedOrigins(process.env.CLIENT_ORIGIN);

@@ -16,6 +16,16 @@ const projectSchema = new mongoose.Schema(
       trim: true,
     },
 
+    key: {
+      type: String,
+      trim: true,
+    },
+
+    lastTaskNumber: {
+      type: Number,
+      default: 0,
+    },
+
     description: {
       type: String,
       required: true,
@@ -101,6 +111,36 @@ const projectSchema = new mongoose.Schema(
     deletedAt: {
       type: Date,
       default: null,
+    },
+
+    githubIntegration: {
+      isConnected: { type: Boolean, default: false },
+      repoName: { type: String, default: "" }, // e.g. "facebook/react"
+      accessToken: { type: String, default: "" },
+    },
+
+    archiveData: {
+      timelineEvents: [
+        {
+          eventType: { type: String, default: "milestone" }, // creation, team_change, task, milestone
+          title: String,
+          description: String,
+          date: { type: Date, default: Date.now },
+        }
+      ],
+      challenges: [
+        {
+          problem: String,
+          solution: String,
+        }
+      ],
+      lessonsLearned: [String],
+      deliverables: {
+        sourceCodeUrl: String,
+        demoVideoUrl: String,
+        reportUrl: String,
+        slidesUrl: String,
+      },
     },
   },
   { timestamps: true }

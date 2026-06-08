@@ -298,6 +298,69 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
+
+.workspace-chat__attachment-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s;
+}
+
+.workspace-chat__attachment-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.workspace-chat__image-attachment {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.workspace-chat__menu-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 4px;
+}
+
+.workspace-chat__row:hover .workspace-chat__menu-btn {
+  opacity: 1;
+}
+
+.workspace-chat__menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: #1c1c1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 10;
+  min-width: 100px;
+}
+
+.workspace-chat__menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.workspace-chat__menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .workspace-chat__composer {
   display: flex;
   gap: 10px;
@@ -464,4 +527,25 @@
   .workspace-tasks {
     grid-template-columns: 1fr;
   }
+}
+
+/* Drag and Drop Styles */
+.workspace-column.is-dragover {
+  background: rgba(28, 28, 30, 0.7);
+  border: 1px dashed rgba(10, 132, 255, 0.5);
+}
+
+.workspace-task {
+  cursor: grab;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+.workspace-task:active {
+  cursor: grabbing;
+}
+
+.workspace-task.is-dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }

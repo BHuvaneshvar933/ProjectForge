@@ -10,7 +10,10 @@ import {
   getProjectTeam,
   getJoinedProjects,
   leaveProject,
-  getProjectRecommendations
+  getProjectRecommendations,
+  updateArchiveData,
+  connectGitHub,
+  getGitHubMetrics
 } from "../controllers/project.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
@@ -25,11 +28,13 @@ router.get("/:id", getProject);
 router.put("/:id", protect, updateProject);
 router.patch("/:id/close-recruitment", protect, closeRecruitment);
 router.patch("/:id/archive", protect, archiveProject);
+router.put("/:id/archive-data", protect, updateArchiveData);
 router.get("/:id/team", protect, getProjectTeam);
+router.post("/:id/github", protect, connectGitHub);
+router.get("/:id/github", protect, getGitHubMetrics);
 router.patch(
   "/:projectId/leave",
   protect,
   leaveProject
 );
-
 export default router;

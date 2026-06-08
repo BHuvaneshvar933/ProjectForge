@@ -64,6 +64,9 @@ export const createTask = async (projectId, payload, currentUser) => {
   session.startTransaction();
 
   try {
+    const nextTaskNumber = (project.lastTaskNumber || 0) + 1;
+    project.lastTaskNumber = nextTaskNumber;
+
     const newTask = await Task.create(
       [
         {
@@ -75,6 +78,9 @@ export const createTask = async (projectId, payload, currentUser) => {
           priority: payload.priority || "medium",
           tags: payload.tags || [],
           dueDate: payload.dueDate || null,
+          taskNumber: nextTaskNumber,
+          issueType: payload.issueType || "task",
+          parentId: payload.parentId || null,
         },
       ],
       { session }

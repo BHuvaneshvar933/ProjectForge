@@ -69,7 +69,6 @@ export const getProjectMessages = async ({ projectId, userId, page, limit }) => 
 
   const messages = await Message.find({
     projectId,
-    isDeleted: false,
   })
     .populate("senderId", "name email avatar")
     .sort({ createdAt: -1 })

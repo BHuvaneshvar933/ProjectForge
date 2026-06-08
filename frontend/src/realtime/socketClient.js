@@ -26,10 +26,31 @@ export const getSocket = () => {
   const token = getToken();
 
   socket = io(SOCKET_URL, {
-    auth: {
-      token: token ? `Bearer ${token}` : "",
+    auth: (cb) => {
+      const freshToken = getToken();
+      cb({ token: freshToken ? `Bearer ${freshToken}` : "" });
     },
-    transports: ["websocket"],
+    transports: ["websocket", "polling"],
+    reconnection: true,
+    reconnectionAttempts: Infinity,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax: 5000,
+    timeout: 20000,
+  });
+
+  socket.on("connect_error", (err) => {
+    console.error("Socket connect_error:", err.message);
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.warn("Socket disconnected:", reason);
+    if (reason === "io server disconnect") {
+      socket.connect();
+    }
+  });
+
+  socket.on("reconnect", (attemptNumber) => {
+    console.log("Socket reconnected successfully after", attemptNumber, "attempts");
   });
 
   return socket;
