@@ -43,11 +43,11 @@ export default function ProjectHeader({
           </Button>
         )}
 
-        {tokenPresent && isMember && (
+        {/* {tokenPresent && isMember && (
           <Button variant="primary" onClick={() => navigate(`/workspace/${id}`)}>
             Workspace
           </Button>
-        )}
+        )} */}
 
         {tokenPresent && showPending && (
           <Button variant="secondary" disabled>
