@@ -1,14 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { archiveProject, getJoinedProjects, getProjectById } from '../../api/projectApi';
 import { getCurrentUser } from '../../api/authApi';
 import { applyToProject, getMyApplications } from '../../api/applicationApi';
 import Button from '../../components/common/Button';
-import Badge from '../../components/common/Badge';
 import Spinner from '../../components/common/Spinner';
 import Modal from '../../components/common/Modal';
 import { toast } from 'react-toastify';
-import { displaySkillLabel } from '../../utils/display';
+
+import ProjectHeader from './components/ProjectHeader';
+import ProjectAbout from './components/ProjectAbout';
+import ProjectTimeline from './components/ProjectTimeline';
+import ProjectTeam from './components/ProjectTeam';
+
 import './ProjectDetail.css';
 
 export default function ProjectDetail() {
@@ -18,7 +22,6 @@ export default function ProjectDetail() {
   const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [expanded, setExpanded] = useState(false);
 
   const [currentUser, setCurrentUser] = useState(null);
   const [isMember, setIsMember] = useState(false);
@@ -37,7 +40,6 @@ export default function ProjectDetail() {
       setProject(p);
       setTeam(Array.isArray(p?.team) ? p.team : []);
 
-      // Optional: enrich conversion CTA with auth + status info (if token exists)
       const token =
         (typeof window !== 'undefined' &&
           (window.localStorage.getItem('token') ||
@@ -68,7 +70,6 @@ export default function ProjectDetail() {
             : null;
           setMyApplication(app || null);
         } catch {
-          // Token may be missing/invalid until auth UI is wired
           setCurrentUser(null);
           setIsMember(false);
           setMyApplication(null);
@@ -109,9 +110,7 @@ export default function ProjectDetail() {
         </div>
         <h2 className="project-detail__error-title">Something went wrong</h2>
         <p className="project-detail__error-text">{error || 'Project not found'}</p>
-        <Link to="/projects">
-          <Button>Browse Projects</Button>
-        </Link>
+        <Button onClick={() => navigate('/projects')}>Browse Projects</Button>
       </div>
     );
   }
@@ -121,7 +120,6 @@ export default function ProjectDetail() {
   const openRoles = Array.isArray(project.openRoles)
     ? project.openRoles.filter((r) => typeof r === 'string' && r.trim().length > 0)
     : [];
-  const descriptionExpanded = expanded || project.description?.length < 300;
 
   const tokenPresent =
     (typeof window !== 'undefined' &&
@@ -161,15 +159,15 @@ export default function ProjectDetail() {
     const userIds = new Set(userSkills.map((s) => String(s)));
     const projIds = new Set(projectSkills.map((s) => String(s?._id ?? s)));
 
-    const union = new Set([...userIds, ...projIds]);
-    if (union.size === 0) return null;
+    const denominator = Math.min(userIds.size, projIds.size);
+    if (denominator === 0) return null;
 
     let intersectionCount = 0;
     for (const id of userIds) {
       if (projIds.has(id)) intersectionCount += 1;
     }
 
-    return Math.round((intersectionCount / union.size) * 100);
+    return Math.round((intersectionCount / denominator) * 100);
   })();
 
   const handleApply = async () => {
@@ -206,7 +204,6 @@ export default function ProjectDetail() {
     navigate(`/projects/${id}/applications`);
   };
 
-
   const matchPercent = (() => {
     try {
       const userSkills = Array.isArray(currentUser?.skills) ? currentUser.skills : [];
@@ -240,217 +237,33 @@ export default function ProjectDetail() {
     }
   })();
 
-  // Calculate duration
-  const startDate = project.timeline?.startDate ? new Date(project.timeline.startDate) : null;
-  const endDate = project.timeline?.endDate ? new Date(project.timeline.endDate) : null;
-  const duration = startDate && endDate
-    ? Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24))
-    : null;
-
   return (
     <div className="project-detail">
-      <div className="project-detail__header">
-        <div>
-          <h1 className="project-detail__title">{project.title}</h1>
-          <div className="project-detail__badges">
-            <Badge variant={project.projectType}>{project.projectType}</Badge>
-            <Badge variant={project.status}>{project.status}</Badge>
-            {typeof matchPercent === "number" && (
-              <Badge variant="recruiting">Match: {matchPercent}%</Badge>
-            )}
-            <Badge variant="default">
-              Team: {project.currentTeamSize} / {project.teamSizeRequired}
-            </Badge>
-          </div>
-        </div>
+      <ProjectHeader
+        project={project}
+        matchPercent={matchPercent}
+        tokenPresent={tokenPresent}
+        isMember={isMember}
+        showPending={showPending}
+        teamFull={teamFull}
+        isRecruiting={isRecruiting}
+        canApply={canApply}
+        applyLoading={applyLoading}
+        setShowApplyModal={setShowApplyModal}
+        isOwner={isOwner}
+        goToApplications={goToApplications}
+        setShowArchiveModal={setShowArchiveModal}
+      />
 
-        <div className="project-detail__actions">
-          {!tokenPresent && (
-            <Button variant="primary" disabled>
-              Sign in to apply
-            </Button>
-          )}
+      <ProjectAbout
+        project={project}
+        tokenPresent={tokenPresent}
+        skillMatchScore={skillMatchScore}
+      />
 
-          {tokenPresent && isMember && (
-            <Button variant="primary" disabled>
-              Workspace
-            </Button>
-          )}
+      <ProjectTimeline project={project} />
 
-          {tokenPresent && showPending && (
-            <Button variant="secondary" disabled>
-              Application Pending
-            </Button>
-          )}
-
-          {tokenPresent && !isMember && !isOwner && !showPending && teamFull && (
-            <Button variant="secondary" disabled>
-              Team Full
-            </Button>
-          )}
-
-          {tokenPresent && !isMember && !isOwner && !showPending && !isRecruiting && (
-            <Button variant="secondary" disabled>
-              Not recruiting
-            </Button>
-          )}
-
-          {tokenPresent && canApply && (
-            <Button
-              variant="primary"
-              onClick={() => setShowApplyModal(true)}
-              loading={applyLoading}
-            >
-              Apply to Join
-            </Button>
-          )}
-
-          {isOwner && (
-            <>
-              <Button variant="outline" onClick={goToApplications}>
-                View Applications
-              </Button>
-              <Link to={`/projects/${id}/edit`}>
-                <Button variant="secondary">Edit Project</Button>
-              </Link>
-              <Button variant="danger" onClick={() => setShowArchiveModal(true)}>
-                Archive
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
-
-      {(tokenPresent && skillMatchScore !== null) && (
-        <div className="project-detail__section">
-          <h2 className="project-detail__section-title">Your Match</h2>
-          <div className="project-detail__card">
-            <div className="project-detail__match">
-              <div>
-                <div className="project-detail__match-score">{skillMatchScore}%</div>
-                <div className="project-detail__match-sub">based on skill overlap</div>
-              </div>
-              <Badge variant={skillMatchScore >= 70 ? 'recruiting' : 'default'}>
-                {skillMatchScore >= 70 ? 'Strong match' : 'Potential match'}
-              </Badge>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Section 2: Owner Info */}
-      <div className="project-detail__section">
-        <h2 className="project-detail__section-title">Project Owner</h2>
-        <div className="project-detail__card project-detail__owner">
-          <div className="project-detail__owner-avatar">
-            <span className="project-detail__owner-initial">{project.owner?.name?.[0] || 'U'}</span>
-          </div>
-          <div>
-            <div className="project-detail__owner-name">{project.owner?.name || 'Unknown'}</div>
-            <div className="project-detail__owner-bio">{project.owner?.bio || 'No bio'}</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Section 3: Description */}
-      <div className="project-detail__section">
-        <h2 className="project-detail__section-title">About</h2>
-        <div className="project-detail__card">
-          <p className={`project-detail__description ${!descriptionExpanded ? 'is-clamped' : ''}`}>
-            {project.description}
-          </p>
-          {project.description?.length > 300 && (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="project-detail__read-more"
-            >
-              {expanded ? 'Show less' : 'Read more'}
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Section 4: Required Skills */}
-      {project.requiredSkills?.length > 0 && (
-        <div className="project-detail__section">
-          <h2 className="project-detail__section-title">Required Skills</h2>
-          <div className="project-detail__skills">
-            {project.requiredSkills.map((skill, i) => (
-              <Badge key={i} variant="skill">{displaySkillLabel(skill)}</Badge>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Section 5: Timeline */}
-      {(startDate || endDate) && (
-        <div className="project-detail__section">
-          <h2 className="project-detail__section-title">Timeline</h2>
-          <div className="project-detail__card">
-            <div className="project-detail__timeline-grid">
-              {startDate && (
-                <div className="project-detail__timeline-item">
-                  <div className="project-detail__timeline-label">Start Date</div>
-                  <div className="project-detail__timeline-value">{startDate.toLocaleDateString()}</div>
-                </div>
-              )}
-              {endDate && (
-                <div className="project-detail__timeline-item">
-                  <div className="project-detail__timeline-label">End Date</div>
-                  <div className="project-detail__timeline-value">{endDate.toLocaleDateString()}</div>
-                </div>
-              )}
-              {duration && (
-                <div className="project-detail__timeline-item">
-                  <div className="project-detail__timeline-label">Duration</div>
-                  <div className="project-detail__timeline-value">{duration} days</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Section 6: Team Section */}
-      <div className="project-detail__section">
-        <h2 className="project-detail__section-title">
-          Team <span className="project-detail__section-count">({team.length} / {project.teamSizeRequired})</span>
-        </h2>
-        <div className="project-detail__team-grid">
-          {team.map((member, idx) => (
-            <div key={`${member.name || 'member'}-${idx}`} className="project-detail__card project-detail__team-card">
-              <div className="project-detail__team-row">
-                <div className="project-detail__team-info">
-                  <div className="project-detail__team-avatar">
-                    <span className="project-detail__team-initial">{member.name?.[0] || 'U'}</span>
-                  </div>
-                  <div>
-                    <div className="project-detail__team-name">{member.name || 'Unknown'}</div>
-                    <div className="project-detail__team-role">{member.projectRole || 'Member'}</div>
-                  </div>
-                </div>
-                <Badge variant={member.role}>{member.role || 'member'}</Badge>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Section 7: Open Roles */}
-      <div className="project-detail__section">
-        <h2 className="project-detail__section-title">Open Roles</h2>
-        {openRoles.length === 0 ? (
-          <div className="project-detail__card">
-            <p className="project-detail__empty">No open roles listed.</p>
-          </div>
-        ) : (
-          <div className="project-detail__roles">
-            {openRoles.map((role, i) => (
-              <Badge key={`${role}-${i}`} variant="skill">{role}</Badge>
-            ))}
-          </div>
-        )}
-      </div>
+      <ProjectTeam project={project} team={team} openRoles={openRoles} />
 
       <Modal
         isOpen={showApplyModal}

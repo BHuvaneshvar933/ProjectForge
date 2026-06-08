@@ -59,12 +59,12 @@ export default function Navbar() {
             Browse
           </Link>
 
-          <Link
+          {/* <Link
             to="/learning-archive"
             className={`navbar__link ${isActive('/learning-archive') ? 'is-active' : ''}`.trim()}
           >
             Archive
-          </Link>
+          </Link> */}
 
           <Link
             to="/my-projects"
