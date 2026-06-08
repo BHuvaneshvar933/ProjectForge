@@ -26,6 +26,15 @@ const messageSchema = new mongoose.Schema(
       default: "text",
     },
 
+    attachments: [
+      {
+        url: String,
+        filename: String,
+        mimetype: String,
+        size: Number,
+      }
+    ],
+
     isEdited: {
       type: Boolean,
       default: false,

@@ -1,0 +1,85 @@
+import Application from "../models/application.model.js";
+import Project from "../models/project.model.js";
+
+export const getMyApplications = async (userId, query) => {
+  const { page = 1, limit = 10 } = query;
+
+  const skip = (page - 1) * limit;
+
+  const filter = {
+    applicantId: userId,
+    isDeleted: false
+  };
+
+  const applications = await Application.find(filter)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit))
+    .populate({
+      path: "projectId",
+      select: "title status",
+      populate: {
+        path: "owner",
+        select: "name"
+      }
+    })
+    .populate("invitedBy", "name");
+
+  const total = await Application.countDocuments(filter);
+
+  return {
+    applications,
+    pagination: {
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      pages: Math.ceil(total / limit)
+    }
+  };
+};
+
+export const getProjectApplications = async (userId, projectId, query) => {
+  const { page = 1, limit = 10 } = query;
+
+  const project = await Project.findById(projectId);
+
+  if (!project || project.isDeleted) {
+    throw new Error("Project not found");
+  }
+
+  if (project.owner.toString() !== userId.toString()) {
+    throw new Error("Not authorized");
+  }
+
+  const skip = (page - 1) * limit;
+
+  const filter = {
+    projectId,
+    isDeleted: false
+  };
+
+  const applications = await Application.find(filter)
+    .sort({ matchScore: -1, createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit))
+      .populate({
+        path: "applicantId",
+        select: "name email bio skills stats availabilityHoursPerWeek portfolioLinks createdAt",
+        populate: {
+          path: "skills",
+          select: "name"
+        }
+      });
+
+  const total = await Application.countDocuments(filter);
+
+  return {
+    applications,
+    pagination: {
+      page: Number(page),
+      limit: Number(limit),
+      total,
+      pages: Math.ceil(total / limit)
+    }
+  };
+};

@@ -59,18 +59,21 @@ export const registerSocketHandlers = (io, socket) => {
   });
 
   //Send message
-  socket.on("send-message", async ({ projectId, content }, ack) => {
+  socket.on("send-message", async ({ projectId, content, attachments }, ack) => {
     try {
       if (!socket.user || !socket.user._id) {
         socket.disconnect(true);
         return;
       }
 
-       if (typeof content !== "string" || content.trim().length === 0) {
+      const hasContent = typeof content === "string" && content.trim().length > 0;
+      const hasAttachments = Array.isArray(attachments) && attachments.length > 0;
+
+      if (!hasContent && !hasAttachments) {
          if (typeof ack === "function") ack({ ok: false, error: "Invalid message data" });
          else socket.emit("error", "Invalid message data");
          return;
-       }
+      }
 
        await ensureProjectMember({ projectId, userId: socket.user._id });
 
@@ -80,8 +83,9 @@ export const registerSocketHandlers = (io, socket) => {
       const message = await Message.create({
         projectId,
         senderId: socket.user._id,
-        content: content.trim(),
+        content: content ? content.trim() : "",
         messageType: "text",
+        attachments: hasAttachments ? attachments : [],
       });
 
       await message.populate("senderId", "name email avatar");
@@ -93,6 +97,9 @@ export const registerSocketHandlers = (io, socket) => {
         sender: message.senderId,
         content: message.content,
         messageType: message.messageType,
+        attachments: message.attachments,
+        isEdited: message.isEdited,
+        isDeleted: message.isDeleted,
         createdAt: message.createdAt,
       });
 
@@ -103,6 +110,70 @@ export const registerSocketHandlers = (io, socket) => {
       const msg = err?.message === "Invalid projectId" ? "Invalid projectId" : err?.message === "Access denied" ? "Access denied" : "Failed to send message";
       if (typeof ack === "function") ack({ ok: false, error: msg });
       else socket.emit("error", msg);
+    }
+  });
+
+  // Edit Message
+  socket.on("edit-message", async ({ projectId, messageId, content }, ack) => {
+    try {
+      if (!socket.user || !socket.user._id) {
+        return;
+      }
+
+      await ensureProjectMember({ projectId, userId: socket.user._id });
+
+      const message = await Message.findOne({ _id: messageId, projectId, senderId: socket.user._id, isDeleted: false });
+      if (!message) {
+        if (typeof ack === "function") ack({ ok: false, error: "Message not found or access denied" });
+        return;
+      }
+
+      message.content = content.trim();
+      message.isEdited = true;
+      message.editedAt = new Date();
+      await message.save();
+
+      const roomName = `project-${projectId}`;
+      io.to(roomName).emit("message-edited", {
+        _id: message._id,
+        content: message.content,
+        isEdited: true,
+        editedAt: message.editedAt,
+      });
+
+      if (typeof ack === "function") ack({ ok: true });
+    } catch (err) {
+      if (typeof ack === "function") ack({ ok: false, error: "Failed to edit message" });
+    }
+  });
+
+  // Delete Message
+  socket.on("delete-message", async ({ projectId, messageId }, ack) => {
+    try {
+      if (!socket.user || !socket.user._id) {
+        return;
+      }
+
+      await ensureProjectMember({ projectId, userId: socket.user._id });
+
+      const message = await Message.findOne({ _id: messageId, projectId, senderId: socket.user._id });
+      if (!message) {
+        if (typeof ack === "function") ack({ ok: false, error: "Message not found or access denied" });
+        return;
+      }
+
+      message.isDeleted = true;
+      message.deletedAt = new Date();
+      await message.save();
+
+      const roomName = `project-${projectId}`;
+      io.to(roomName).emit("message-deleted", {
+        _id: message._id,
+      });
+
+      if (typeof ack === "function") ack({ ok: true });
+    } catch (err) {
+      if (typeof ack === "function") ack({ ok: false, error: "Failed to delete message" });
     }
   });
 

@@ -24,6 +24,17 @@ export async function handleTaskMarkedDone({ task, project, session }) {
     project.metrics.completedTasks
   );
 
+  // Auto-log timeline event for archive
+  if (!project.archiveData) {
+    project.archiveData = { timelineEvents: [], challenges: [], lessonsLearned: [], deliverables: {} };
+  }
+  project.archiveData.timelineEvents.push({
+    eventType: "task",
+    title: "Task Completed",
+    description: `Task "${task.title}" was marked as done.`,
+    date: new Date()
+  });
+
   await project.save({ session });
 
   //Update team + user contribution if assigned

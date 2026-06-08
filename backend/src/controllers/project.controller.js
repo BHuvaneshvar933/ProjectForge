@@ -170,3 +170,63 @@ export const getProjectRecommendations = async (req, res, next) => {
     next(err);
   }
 };
+
+export const updateArchiveData = async (req, res, next) => {
+  try {
+    const project = await projectService.updateArchiveData(
+      req.user._id,
+      req.params.id,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Archive data updated successfully",
+      data: { project }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+import { getGitHubMetrics as fetchGitHubMetrics } from "../services/github.service.js";
+
+export const connectGitHub = async (req, res, next) => {
+  try {
+    const project = await projectService.connectGitHub(
+      req.user._id,
+      req.params.id,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "GitHub connected successfully",
+      data: { project }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getGitHubMetrics = async (req, res, next) => {
+  try {
+    const project = await projectService.getProjectById(req.params.id, req.user._id);
+    
+    if (!project.githubIntegration || !project.githubIntegration.isConnected) {
+      return res.status(400).json({ success: false, message: "GitHub is not connected" });
+    }
+
+    const metrics = await fetchGitHubMetrics(
+      project.githubIntegration.repoName,
+      project.githubIntegration.accessToken
+    );
+
+    res.status(200).json({
+      success: true,
+      data: { metrics }
+    });
+  } catch (err) {
+    next(err);
+  }
+};

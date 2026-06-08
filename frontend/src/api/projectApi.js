@@ -30,3 +30,14 @@ export const archiveProject = (id) =>
 // Get project team
 export const getProjectTeam = (id) =>
   API.get(`/projects/${id}/team`);
+
+// Update archive data
+export const updateArchiveData = (id, data) =>
+  API.put(`/projects/${id}/archive-data`, data);
+
+// GitHub Integration
+export const connectGitHub = (id, data) =>
+  API.post(`/projects/${id}/github`, data);
+
+export const getGitHubMetrics = (id) =>
+  API.get(`/projects/${id}/github`);
