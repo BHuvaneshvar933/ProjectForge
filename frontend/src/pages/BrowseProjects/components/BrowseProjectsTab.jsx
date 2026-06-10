@@ -10,7 +10,8 @@ export default function BrowseProjectsTab({
   projects,
   pagination
 }) {
-  const recommendedIds = new Set(recommendations.map(r => r._id));
+  const validRecommendations = recommendations.filter(r => typeof r.matchScore === 'number' && Math.round(r.matchScore) > 0);
+  const recommendedIds = new Set(validRecommendations.map(r => r._id));
   const otherProjects = projects.filter(p => !recommendedIds.has(p._id));
 
   return (
@@ -38,20 +39,20 @@ export default function BrowseProjectsTab({
         </div>
       ) : (
         <>
-          {tokenPresent && recommendations.length > 0 && (
+          {tokenPresent && validRecommendations.length > 0 && (
             <div style={{ marginBottom: 30 }}>
               <h2 className="browse-page__title" style={{ fontSize: 18, marginBottom: 15 }}>
                 Recommended For You
               </h2>
               <div className="browse-page__grid">
-                {recommendations.map((project) => (
+                {validRecommendations.map((project) => (
                   <ProjectCard key={project._id} project={project} type="browse" />
                 ))}
               </div>
             </div>
           )}
 
-          {otherProjects.length === 0 && recommendations.length === 0 ? (
+          {otherProjects.length === 0 && validRecommendations.length === 0 ? (
             <div className="browse-page__empty">
               <div className="browse-page__empty-icon">
                 <svg className="browse-page__empty-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +67,7 @@ export default function BrowseProjectsTab({
               {otherProjects.length > 0 && (
                 <div style={{ marginBottom: 30 }}>
                   <h2 className="browse-page__title" style={{ fontSize: 18, marginBottom: 15 }}>
-                    {recommendations.length > 0 ? 'Other Projects' : 'Explore Projects'}
+                    {validRecommendations.length > 0 ? 'Other Projects' : 'Explore Projects'}
                   </h2>
                   <div className="browse-page__grid">
                     {otherProjects.map((project) => (

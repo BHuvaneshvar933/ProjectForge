@@ -33,8 +33,11 @@
 
 .project-card__badges {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 6px;
   flex-shrink: 0;
+  max-width: 50%;
 }
 
 .project-card__description {

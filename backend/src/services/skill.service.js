@@ -12,7 +12,6 @@ export const searchSkills = async (query) => {
   const q = String(query).trim();
   if (!q) return [];
 
-  // Typeahead behavior: prefix match (typing "h" shouldn't match "Python").
   const rx = `^${escapeRegExp(q)}`;
 
   return await Skill.find({
