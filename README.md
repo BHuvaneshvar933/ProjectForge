@@ -1,19 +1,11 @@
 <div align="center">
-  <img src="https://socialify.git.ci/BHuvaneshvar933/ProjectForge/image?description=1&font=Inter&name=1&pattern=Circuit%20Board&theme=Dark" alt="ProjectForge" width="640" height="320" />
 
   <h3 align="center">ProjectForge</h3>
 
   <p align="center">
     A comprehensive platform for building teams, managing projects, and seamless collaboration.
     <br />
-    <a href="#features"><strong>Explore the docs »</strong></a>
     <br />
-    <br />
-    <a href="#">View Demo</a>
-    ·
-    <a href="#">Report Bug</a>
-    ·
-    <a href="#">Request Feature</a>
   </p>
 </div>
 
