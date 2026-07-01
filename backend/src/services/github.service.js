@@ -73,3 +73,35 @@ export const getGitHubMetrics = async (repoName, token) => {
     throw new Error(error.response?.data?.message || "Failed to fetch GitHub metrics");
   }
 };
+
+export const getBasicRepoStats = async (repoUrl) => {
+  if (!repoUrl || typeof repoUrl !== 'string') return null;
+  
+  const match = repoUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+  if (!match) return null;
+  
+  const owner = match[1];
+  const repo = match[2].replace(/\.git$/, '');
+  
+  try {
+    const repoRes = await axios.get(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'ProjectForge-App'
+      }
+    });
+    
+    return {
+      stars: repoRes.data.stargazers_count,
+      forks: repoRes.data.forks_count,
+      openIssues: repoRes.data.open_issues_count,
+      language: repoRes.data.language,
+      description: repoRes.data.description,
+      owner,
+      repo
+    };
+  } catch (error) {
+    console.error("GitHub API error:", error.message);
+    return null;
+  }
+};

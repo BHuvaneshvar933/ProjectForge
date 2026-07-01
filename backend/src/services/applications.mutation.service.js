@@ -239,6 +239,16 @@ export const acceptApplication = async (ownerId, applicationId, data = {}) => {
       { session }
     );
 
+    if (!project.archiveData) {
+      project.archiveData = { timelineEvents: [], challenges: [], lessonsLearned: [], deliverables: {} };
+    }
+    project.archiveData.timelineEvents.push({
+      eventType: "team_change",
+      title: "Team Member Joined",
+      description: `${applicant.name} joined the project as ${assignedRole || "a member"}.`,
+      date: new Date()
+    });
+
     // Update project team size
     project.currentTeamSize += 1;
 

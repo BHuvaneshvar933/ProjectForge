@@ -4,18 +4,24 @@ import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import Modal from "../../components/common/Modal";
 import { updateArchiveData } from "../../api/projectApi";
+import { getAllSkills } from "../../api/skillApi";
+import { useEffect } from "react";
 import "./JourneyTab.css";
 
 export default function JourneyTab({ project, isMember, onUpdate }) {
-  const [modalType, setModalType] = useState(null); // 'timeline', 'challenge', 'lesson', 'deliverables'
+  const [modalType, setModalType] = useState(null); // 'timeline', 'challenge', 'achievement', 'takeaway', 'skills', 'deliverables'
   const [loading, setLoading] = useState(false);
+  const [allSkills, setAllSkills] = useState([]);
 
   // Form states
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [problem, setProblem] = useState("");
   const [solution, setSolution] = useState("");
-  const [lesson, setLesson] = useState("");
+  const [achievement, setAchievement] = useState("");
+  const [takeaway, setTakeaway] = useState(project?.archiveData?.takeaway || "");
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  
   const [deliverables, setDeliverables] = useState({
     sourceCodeUrl: project?.archiveData?.deliverables?.sourceCodeUrl || "",
     demoVideoUrl: project?.archiveData?.deliverables?.demoVideoUrl || "",
@@ -23,7 +29,11 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
     slidesUrl: project?.archiveData?.deliverables?.slidesUrl || "",
   });
 
-  const archiveData = project?.archiveData || { timelineEvents: [], challenges: [], lessonsLearned: [], deliverables: {} };
+  const archiveData = project?.archiveData || { timelineEvents: [], challenges: [], achievements: [], skillsGained: [], takeaway: "", deliverables: {} };
+
+  useEffect(() => {
+    getAllSkills().then(res => setAllSkills(res.data?.data?.skills || [])).catch(() => {});
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,8 +45,12 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
         data = { type: "timeline", event: { title, description } };
       } else if (modalType === "challenge") {
         data = { type: "challenge", challenge: { problem, solution } };
-      } else if (modalType === "lesson") {
-        data = { type: "lesson", lesson };
+      } else if (modalType === "achievement") {
+        data = { type: "achievement", achievement };
+      } else if (modalType === "takeaway") {
+        data = { type: "takeaway", takeaway };
+      } else if (modalType === "skills") {
+        data = { type: "skills", skills: selectedSkills };
       } else if (modalType === "deliverables") {
         data = { type: "deliverables", deliverables };
       }
@@ -47,9 +61,23 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       setModalType(null);
       
       // Reset forms
-      setTitle(""); setDescription(""); setProblem(""); setSolution(""); setLesson("");
+      setTitle(""); setDescription(""); setProblem(""); setSolution(""); setAchievement("");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to update archive");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (type, index) => {
+    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
+    setLoading(true);
+    try {
+      await updateArchiveData(project._id, { type: `delete_${type}`, index });
+      toast.success(`${type} deleted successfully!`);
+      onUpdate();
+    } catch (err) {
+      toast.error(err.response?.data?.message || `Failed to delete ${type}`);
     } finally {
       setLoading(false);
     }
@@ -126,7 +154,10 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
             {archiveData.challenges.map((c, idx) => (
               <div key={idx} className="journey-card">
                 <div className="journey-card__problem">
-                  <div className="journey-card__label" style={{color: "#ff453a"}}>The Problem</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div className="journey-card__label" style={{color: "#ff453a"}}>The Problem</div>
+                    {isMember && <button className="journey-delete-btn" onClick={() => handleDelete("challenge", idx)}>🗑️</button>}
+                  </div>
                   <div className="journey-card__text">{c.problem}</div>
                 </div>
                 <div className="journey-card__solution">
@@ -141,27 +172,69 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
         )}
       </div>
 
-      {/* Lessons Learned Section */}
+      {/* Achievements Section */}
       <div className="journey-section">
         <div className="journey-section__header">
-          <h3 className="journey-section__title">Lessons Learned</h3>
-          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("lesson")}>+ Add Lesson</Button>}
+          <h3 className="journey-section__title">Key Achievements</h3>
+          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("achievement")}>+ Add Achievement</Button>}
         </div>
-        {archiveData.lessonsLearned?.length > 0 ? (
-          <div>
-            {archiveData.lessonsLearned.map((l, idx) => (
-              <div key={idx} className="journey-lesson">
-                <div className="journey-lesson__icon">💡</div>
-                <div className="journey-lesson__text">{l}</div>
+        {archiveData.achievements?.length > 0 ? (
+          <ul className="journey-achievements-list" style={{ paddingLeft: "20px", color: "rgba(255,255,255,0.8)" }}>
+            {archiveData.achievements.map((ach, idx) => (
+              <li key={idx} style={{ marginBottom: "8px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>{ach}</span>
+                  {isMember && <button className="journey-delete-btn" onClick={() => handleDelete("achievement", idx)}>🗑️</button>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="journey-empty">No achievements documented yet.</div>
+        )}
+      </div>
+
+      {/* Skills Gained Section */}
+      <div className="journey-section">
+        <div className="journey-section__header">
+          <h3 className="journey-section__title">Skills Gained</h3>
+          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("skills")}>Edit Skills</Button>}
+        </div>
+        {archiveData.skillsGained?.length > 0 ? (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            {archiveData.skillsGained.map((skill, idx) => (
+              <div key={idx} style={{ background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "4px 12px", borderRadius: "16px", fontSize: "14px" }}>
+                ✓ {skill.name}
               </div>
             ))}
           </div>
         ) : (
-          <div className="journey-empty">No lessons learned documented yet.</div>
+          <div className="journey-empty">No skills tagged yet.</div>
         )}
       </div>
 
-      <Modal isOpen={!!modalType} onClose={() => setModalType(null)} title={`Add ${modalType}`}>
+      {/* Biggest Takeaway Section */}
+      <div className="journey-section">
+        <div className="journey-section__header">
+          <h3 className="journey-section__title">Biggest Takeaway</h3>
+          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("takeaway")}>Edit Takeaway</Button>}
+        </div>
+        {archiveData.takeaway ? (
+          <div className="journey-lesson">
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", width: "100%" }}>
+              <div className="journey-lesson__icon">💡</div>
+              <div className="journey-lesson__text" style={{ flex: 1 }}>
+                <em>"If I started this project again tomorrow, what would I do differently?"</em><br/><br/>
+                {archiveData.takeaway}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="journey-empty">No takeaway documented yet.</div>
+        )}
+      </div>
+
+      <Modal isOpen={!!modalType} onClose={() => setModalType(null)} title={`Add ${modalType}`} hideDefaultActions={true}>
         <form onSubmit={handleSubmit} className="journey-modal-form">
           {modalType === "timeline" && (
             <>
@@ -186,10 +259,38 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
             </>
           )}
 
-          {modalType === "lesson" && (
+          {modalType === "achievement" && (
             <div className="input-group">
-              <label className="input-label">Key Takeaway / Lesson Learned</label>
-              <textarea className="workspace-modal__textarea" rows={3} value={lesson} onChange={(e) => setLesson(e.target.value)} required></textarea>
+              <label className="input-label">Key Achievement</label>
+              <Input placeholder="e.g. Built real-time chat" value={achievement} onChange={(e) => setAchievement(e.target.value)} required />
+            </div>
+          )}
+
+          {modalType === "takeaway" && (
+            <div className="input-group">
+              <label className="input-label">If you started this project again tomorrow, what would you do differently?</label>
+              <textarea className="workspace-modal__textarea" rows={4} value={takeaway} onChange={(e) => setTakeaway(e.target.value)} required></textarea>
+            </div>
+          )}
+
+          {modalType === "skills" && (
+            <div className="input-group">
+              <label className="input-label">Select Skills Gained (Hold Ctrl/Cmd to select multiple)</label>
+              <select 
+                multiple 
+                className="workspace-modal__textarea" 
+                style={{ height: "150px" }}
+                value={selectedSkills}
+                onChange={(e) => {
+                  const options = [...e.target.selectedOptions];
+                  const values = options.map(opt => opt.value);
+                  setSelectedSkills(values);
+                }}
+              >
+                {allSkills.map(s => (
+                  <option key={s._id} value={s._id}>{s.name}</option>
+                ))}
+              </select>
             </div>
           )}
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { createTask, getProjectTasks, assignTask, updateTaskStatus, deleteTask,updateTask } from "../controllers/task.controller.js";
+import { createTask, getProjectTasks, assignTask, updateTaskStatus, deleteTask, updateTask, bulkUpdateTasks } from "../controllers/task.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -13,6 +13,12 @@ router.get(
   "/projects/:projectId/tasks",
   protect,
   getProjectTasks
+);
+
+router.patch(
+  "/projects/:projectId/tasks/bulk",
+  protect,
+  bulkUpdateTasks
 );
 
 router.patch(

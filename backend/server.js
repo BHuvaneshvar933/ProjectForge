@@ -4,6 +4,8 @@ import { Server } from "socket.io";
 import app from "./src/app.js";
 import connectDB from "./src/config/db.js";
 import "./src/models/index.js";
+import notificationRoutes from "./src/routes/notification.routes.js";
+import aiRoutes from "./src/routes/ai.routes.js";
 import { initializeSocket } from "./src/sockets/socket.js";
 import jwt from "jsonwebtoken";
 import User from "./src/models/user.model.js";

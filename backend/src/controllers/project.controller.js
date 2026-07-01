@@ -209,6 +209,23 @@ export const connectGitHub = async (req, res, next) => {
   }
 };
 
+export const disconnectGitHub = async (req, res, next) => {
+  try {
+    const project = await projectService.disconnectGitHub(
+      req.user._id,
+      req.params.id
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "GitHub disconnected successfully",
+      data: { project }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getGitHubMetrics = async (req, res, next) => {
   try {
     const project = await projectService.getProjectById(req.params.id, req.user._id);
@@ -225,6 +242,49 @@ export const getGitHubMetrics = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: { metrics }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+import { getBasicRepoStats as fetchBasicRepoStats } from "../services/github.service.js";
+
+export const getBasicRepoStats = async (req, res, next) => {
+  try {
+    const { url } = req.query;
+    if (!url) return res.status(400).json({ success: false, message: "URL is required" });
+    
+    const stats = await fetchBasicRepoStats(url);
+    res.status(200).json({ success: true, data: { stats } });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getReleases = async (req, res, next) => {
+  try {
+    const releases = await projectService.getProjectReleases(req.params.id);
+    res.status(200).json({
+      success: true,
+      data: { releases }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const createRelease = async (req, res, next) => {
+  try {
+    const release = await projectService.createProjectRelease(
+      req.user._id,
+      req.params.id,
+      req.body
+    );
+    res.status(201).json({
+      success: true,
+      message: "Release created successfully",
+      data: { release }
     });
   } catch (err) {
     next(err);

@@ -61,6 +61,14 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
 
+    endorsements: [{
+      endorsedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      project: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
+      text: String,
+      skills: [String],
+      createdAt: { type: Date, default: Date.now }
+    }],
+
     deletedAt: {
       type: Date,
       default: null,
