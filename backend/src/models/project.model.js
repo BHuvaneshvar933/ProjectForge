@@ -134,7 +134,12 @@ const projectSchema = new mongoose.Schema(
           solution: String,
         }
       ],
-      lessonsLearned: [String],
+      achievements: [String],
+      skillsGained: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Skill",
+      }],
+      takeaway: String,
       deliverables: {
         sourceCodeUrl: String,
         demoVideoUrl: String,

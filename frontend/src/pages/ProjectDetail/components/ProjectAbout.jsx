@@ -55,6 +55,30 @@ export default function ProjectAbout({ project, tokenPresent, skillMatchScore })
           </div>
         </div>
       )}
+
+      {/* Section 5: Timeline */}
+      {(project.timeline?.startDate || project.timeline?.endDate) && (
+        <div className="project-detail__section">
+          <h2 className="project-detail__section-title">Project Timeline</h2>
+          <div className="project-detail__card" style={{ display: "flex", gap: "24px", alignItems: "center" }}>
+            {project.timeline.startDate && (
+              <div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "4px" }}>Start Date</div>
+                <div style={{ fontWeight: 600 }}>{new Date(project.timeline.startDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+              </div>
+            )}
+            {project.timeline.startDate && project.timeline.endDate && (
+              <div style={{ color: "rgba(255,255,255,0.3)" }}>→</div>
+            )}
+            {project.timeline.endDate && (
+              <div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", marginBottom: "4px" }}>End Date</div>
+                <div style={{ fontWeight: 600 }}>{new Date(project.timeline.endDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -153,6 +153,43 @@
   color: #ffffff;
 }
 
+.account__journey-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.account__journey-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.account__journey-stat:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.account__journey-label {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.account__journey-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0a84ff;
+  background: rgba(10, 132, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
 @media (max-width: 980px) {
   .account__grid {
     grid-template-columns: 1fr;

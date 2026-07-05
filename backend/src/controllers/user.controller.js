@@ -66,3 +66,21 @@ export const searchUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+export const endorseUser = async (req, res, next) => {
+  try {
+    const user = await userService.endorseUser(
+      req.params.id,
+      req.user._id,
+      req.body
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Endorsement added",
+      data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

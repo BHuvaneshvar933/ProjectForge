@@ -104,7 +104,8 @@ export const getProjectById = async (projectId) => {
     isDeleted: false
   })
     .populate("owner", "name bio")
-    .populate("requiredSkills", "name");
+    .populate("requiredSkills", "name")
+    .populate("archiveData.skillsGained", "name");
 
   if (!project) {
     throw new Error("Project not found");
@@ -275,17 +276,25 @@ export const updateArchiveData = async (userId, projectId, data) => {
   }
 
   if (!project.archiveData) {
-    project.archiveData = { timelineEvents: [], challenges: [], lessonsLearned: [], deliverables: {} };
+    project.archiveData = { timelineEvents: [], challenges: [], achievements: [], skillsGained: [], takeaway: "", deliverables: {} };
   }
 
   if (data.type === "timeline") {
     project.archiveData.timelineEvents.push(data.event);
   } else if (data.type === "challenge") {
     project.archiveData.challenges.push(data.challenge);
-  } else if (data.type === "lesson") {
-    if (data.lesson && data.lesson.trim()) {
-      project.archiveData.lessonsLearned.push(data.lesson.trim());
+  } else if (data.type === "delete_challenge") {
+    project.archiveData.challenges.splice(data.index, 1);
+  } else if (data.type === "achievement") {
+    if (data.achievement && data.achievement.trim()) {
+      project.archiveData.achievements.push(data.achievement.trim());
     }
+  } else if (data.type === "delete_achievement") {
+    project.archiveData.achievements.splice(data.index, 1);
+  } else if (data.type === "takeaway") {
+    project.archiveData.takeaway = data.takeaway;
+  } else if (data.type === "skills") {
+    project.archiveData.skillsGained = data.skills;
   } else if (data.type === "deliverables") {
     project.archiveData.deliverables = {
       ...project.archiveData.deliverables,
@@ -317,4 +326,53 @@ export const connectGitHub = async (userId, projectId, payload) => {
 
   await project.save();
   return project;
+};
+
+export const disconnectGitHub = async (userId, projectId) => {
+  const project = await Project.findById(projectId);
+  if (!project) {
+    throw { status: 404, message: "Project not found" };
+  }
+
+  const member = await Team.findOne({ projectId, userId });
+  if (!member && String(project.owner) !== String(userId)) {
+    throw { status: 403, message: "Only team members can disconnect GitHub" };
+  }
+
+  project.githubIntegration = {
+    isConnected: false,
+    repoName: null,
+    accessToken: null,
+  };
+
+  await project.save();
+  return project;
+};
+
+export const getProjectReleases = async (projectId) => {
+  const Release = (await import("../models/release.model.js")).default;
+  return await Release.find({ projectId, isDeleted: false }).sort({ createdAt: -1 });
+};
+
+export const createProjectRelease = async (userId, projectId, payload) => {
+  const project = await Project.findById(projectId);
+  if (!project) throw new Error("Project not found");
+  
+  const member = await Team.findOne({ projectId, userId, status: "active", isDeleted: false });
+  if (!member && String(project.owner) !== String(userId)) {
+    throw new Error("Only team members can create releases");
+  }
+
+  const Release = (await import("../models/release.model.js")).default;
+  const release = await Release.create({
+    projectId,
+    version: payload.version,
+    status: payload.status || "UNRELEASED",
+    progress: payload.progress || 0,
+    startDate: payload.startDate || null,
+    releaseDate: payload.releaseDate || null,
+    description: payload.description || "",
+  });
+
+  return release;
 };

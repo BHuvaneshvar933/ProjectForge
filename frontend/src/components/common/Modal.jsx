@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import './Modal.css';
 
-export default function Modal({ isOpen, onClose, title, children, onConfirm, confirmText = "Confirm" }) {
+export default function Modal({ isOpen, onClose, title, children, onConfirm, confirmText = "Confirm", hideDefaultActions = false }) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -31,17 +31,19 @@ export default function Modal({ isOpen, onClose, title, children, onConfirm, con
           {children}
         </div>
 
-        <div className="modal__actions">
-          <button onClick={onClose} className="modal__button modal__button--ghost">
-            Cancel
-          </button>
-
-          {onConfirm && (
-            <button onClick={onConfirm} className="modal__button modal__button--primary">
-              {confirmText}
+        {!hideDefaultActions && (
+          <div className="modal__actions">
+            <button onClick={onClose} className="modal__button modal__button--ghost">
+              Cancel
             </button>
-          )}
-        </div>
+
+            {onConfirm && (
+              <button onClick={onConfirm} className="modal__button modal__button--primary">
+                {confirmText}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -39,5 +39,17 @@ export const updateArchiveData = (id, data) =>
 export const connectGitHub = (id, data) =>
   API.post(`/projects/${id}/github`, data);
 
+export const disconnectGitHub = (id) =>
+  API.delete(`/projects/${id}/github`);
+
 export const getGitHubMetrics = (id) =>
   API.get(`/projects/${id}/github`);
+
+export const getBasicRepoStats = (url) =>
+  API.get(`/projects/github-stats`, { params: { url } });
+
+export const getProjectReleases = (id) =>
+  API.get(`/projects/${id}/releases`);
+
+export const createProjectRelease = (id, data) =>
+  API.post(`/projects/${id}/releases`, data);

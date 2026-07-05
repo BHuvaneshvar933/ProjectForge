@@ -77,6 +77,7 @@ export const createTask = async (projectId, payload, currentUser) => {
           createdBy: currentUser._id,
           priority: payload.priority || "medium",
           tags: payload.tags || [],
+          startedAt: payload.startedAt || null,
           dueDate: payload.dueDate || null,
           taskNumber: nextTaskNumber,
           issueType: payload.issueType || "task",
@@ -286,6 +287,17 @@ export async function updateTaskStatus(taskId, newStatus, userId) {
       await task.save({ session });
 
       await handleTaskMarkedDone({ task, project, session });
+      
+      if (!project.archiveData) {
+        project.archiveData = { timelineEvents: [], challenges: [], lessonsLearned: [], deliverables: {} };
+      }
+      project.archiveData.timelineEvents.push({
+        eventType: "task",
+        title: `Completed: ${task.title}`,
+        description: `Task ${project.key}-${task.taskNumber} was completed.`,
+        date: new Date()
+      });
+      await project.save({ session });
     } else if (oldStatus === "done" && newStatus !== "done") {
       task.completedAt = null;
       await task.save({ session });
@@ -376,7 +388,10 @@ export const updateTask = async (taskId, updateData, userId) => {
     "description",
     "priority",
     "dueDate",
+    "startedAt",
     "tags",
+    "issueType",
+    "parentId",
   ];
 
   allowedFields.forEach((field) => {
@@ -389,3 +404,46 @@ export const updateTask = async (taskId, updateData, userId) => {
 
   return task;
 };
+
+export async function bulkUpdateTasks(projectId, userId, action, taskIds, payload) {
+  if (!Array.isArray(taskIds) || taskIds.length === 0) {
+    throw new Error("No tasks specified");
+  }
+
+  const project = await Project.findById(projectId);
+  if (!project || project.isDeleted) throw new Error("Project not found");
+
+  const isMember = await Team.findOne({
+    projectId,
+    userId,
+    status: "active",
+  });
+  if (!isMember) throw new Error("Not authorized");
+
+  // Validate tasks belong to project
+  const tasks = await Task.find({ _id: { $in: taskIds }, projectId, isDeleted: false });
+  if (tasks.length !== taskIds.length) {
+    throw new Error("Some tasks were not found in this project");
+  }
+
+  if (action === "delete") {
+    // Delete all matched tasks and their subtasks
+    await Task.updateMany({ _id: { $in: taskIds } }, { $set: { isDeleted: true } });
+    await Task.updateMany({ parentId: { $in: taskIds } }, { $set: { isDeleted: true } });
+    return { count: tasks.length, message: "Tasks deleted" };
+  }
+  
+  if (action === "update") {
+    const updateData = {};
+    if (payload.status) updateData.status = payload.status;
+    if (payload.priority) updateData.priority = payload.priority;
+    if (payload.assignedTo !== undefined) updateData.assignedTo = payload.assignedTo;
+
+    if (Object.keys(updateData).length > 0) {
+      await Task.updateMany({ _id: { $in: taskIds } }, { $set: updateData });
+    }
+    return { count: tasks.length, message: "Tasks updated" };
+  }
+
+  throw new Error("Invalid bulk action");
+}

@@ -1,5 +1,54 @@
 import User from "../models/user.model.js";
 import "../models/skill.model.js";
+import Team from "../models/team.model.js";
+import Project from "../models/project.model.js";
+import Task from "../models/task.model.js";
+
+export const getDeveloperJourneyStats = async (userId) => {
+  const teams = await Team.find({ userId, status: "active" });
+  const projectIds = teams.map((t) => t.projectId);
+
+  const completedProjects = await Project.find({
+    _id: { $in: projectIds },
+    status: "completed",
+  });
+
+  let projectsCompleted = completedProjects.length;
+  let challengesSolved = 0;
+  let achievementsUnlocked = 0;
+  const uniqueSkills = new Set();
+
+  completedProjects.forEach((proj) => {
+    if (proj.archiveData) {
+      if (proj.archiveData.challenges) {
+        challengesSolved += proj.archiveData.challenges.length;
+      }
+      if (proj.archiveData.achievements) {
+        achievementsUnlocked += proj.archiveData.achievements.length;
+      }
+      if (proj.archiveData.skillsGained) {
+        proj.archiveData.skillsGained.forEach((skill) => {
+          uniqueSkills.add(skill.toString());
+        });
+      }
+    }
+  });
+
+  const skillsMastered = uniqueSkills.size;
+
+  const teamContributions = await Task.countDocuments({
+    assignedTo: userId,
+    status: "done",
+  });
+
+  return {
+    projectsCompleted,
+    challengesSolved,
+    skillsMastered,
+    achievementsUnlocked,
+    teamContributions,
+  };
+};
 
 export const getMyProfile = async (userId) => {
   const user = await User.findById(userId)
@@ -10,7 +59,12 @@ export const getMyProfile = async (userId) => {
     throw new Error("User not found");
   }
 
-  return user;
+  const developerJourney = await getDeveloperJourneyStats(userId);
+
+  return {
+    ...user.toObject(),
+    developerJourney
+  };
 };
 
 export const updateProfile = async (userId, updateData) => {
@@ -52,7 +106,12 @@ export const getPublicUserProfile = async (userId) => {
     throw new Error("User not found");
   }
 
-  return user;
+  const developerJourney = await getDeveloperJourneyStats(userId);
+
+  return {
+    ...user.toObject(),
+    developerJourney
+  };
 };
 
 export const searchUsers = async (query) => {
@@ -93,4 +152,37 @@ export const searchUsers = async (query) => {
     .lean();
 
   return users;
+};
+
+export const endorseUser = async (userId, endorserId, data) => {
+  if (String(userId) === String(endorserId)) {
+    throw new Error("You cannot endorse yourself");
+  }
+
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  const { project, text, skills } = data;
+
+  // Ensure they haven't already endorsed for this project
+  const existing = user.endorsements?.find(
+    e => String(e.endorsedBy) === String(endorserId) && String(e.project) === String(project)
+  );
+  if (existing) {
+    throw new Error("You have already endorsed this user for this project");
+  }
+
+  user.endorsements.push({
+    endorsedBy: endorserId,
+    project,
+    text,
+    skills: skills || []
+  });
+
+  await user.save();
+  
+  return user.populate({
+    path: "endorsements.endorsedBy",
+    select: "name email portfolioLinks"
+  });
 };

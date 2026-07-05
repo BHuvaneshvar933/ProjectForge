@@ -15,6 +15,9 @@ import WorkspaceTasks from "../../components/workspace/WorkspaceTasks";
 import WorkspaceCalendar from "../../components/workspace/WorkspaceCalendar";
 import WorkspaceChat from "../../components/workspace/WorkspaceChat";
 import WorkspaceDevelopment from "../../components/workspace/WorkspaceDevelopment";
+import WorkspaceReleases from "../../components/workspace/WorkspaceReleases";
+import WorkspaceSummary from "../../components/workspace/WorkspaceSummary";
+import ProjectCompletionModal from "../../components/workspace/ProjectCompletionModal";
 
 import "./Workspace.css";
 
@@ -36,6 +39,8 @@ export default function Workspace() {
   // GitHub Metrics
   const [githubMetrics, setGithubMetrics] = useState(null);
   const [githubLoading, setGithubLoading] = useState(false);
+
+  const [completionModalOpen, setCompletionModalOpen] = useState(false);
 
   const isOwner = useMemo(() => {
     if (!me?._id || !project?.owner?._id) return false;
@@ -59,20 +64,11 @@ export default function Workspace() {
       const proj = projRes.data?.data?.project || projRes.data?.project;
       setProject(proj);
 
-      let member = false;
-      if (proj?.owner?._id === meRes.data?.data?.user?._id) {
-        member = true;
-      }
-
       const teamRes = await getProjectTeam(projectId);
       const teamList = Array.isArray(teamRes.data?.data?.team) ? teamRes.data.data.team : [];
       setTeam(teamList);
-
-      if (teamList.some((m) => String(m?.userId?._id) === String(meRes.data?.data?.user?._id))) {
-        member = true;
-      }
-    } catch (e) {
-      toast.error(e?.response?.data?.message || "Failed to load workspace");
+    } catch {
+      toast.error("Failed to load workspace");
       setProject(null);
       setTeam([]);
     } finally {
@@ -163,11 +159,11 @@ export default function Workspace() {
     return { completedThisWeek, overdueItems, openBugs };
   }, [tasks]);
 
-  const handleCompleteProject = async () => {
-    if (!window.confirm("Are you sure you want to complete this project? It will be archived.")) return;
+  const handleCompleteProject = async (visibility) => {
     try {
-      await updateProject(projectId, { status: "completed" });
+      await updateProject(projectId, { status: "completed", visibility });
       toast.success("Project completed and archived");
+      setCompletionModalOpen(false);
       fetchBase();
     } catch (err) {
       toast.error("Failed to complete project");
@@ -178,18 +174,15 @@ export default function Workspace() {
 
   const allTabs = [
     { id: "overview", label: "Overview", icon: "📊" },
+    { id: "journey", label: "Journey", icon: "✨" },
     { id: "tasks", label: "Tasks", icon: "✅" },
     { id: "calendar", label: "Calendar", icon: "📅" },
     { id: "chat", label: "Chat", icon: "💬" },
     { id: "development", label: "Development", icon: "💻" },
-    { id: "analytics", label: "Analytics", icon: "📈" },
+    { id: "releases", label: "Releases", icon: "🚢" },
   ];
 
-  if (isCompleted) {
-    allTabs.unshift({ id: "journey", label: "Journey", icon: "✨" });
-  }
-
-  const activeTabs = isMember ? allTabs : allTabs.filter(t => ["overview", "journey", "analytics"].includes(t.id));
+  const activeTabs = isMember ? allTabs : allTabs.filter(t => ["overview", "journey"].includes(t.id));
 
   if (loading) {
     return (
@@ -240,7 +233,7 @@ export default function Workspace() {
           </div>
         </div>
         <div className="workspace__actions">
-          {isOwner && !isCompleted && <Button onClick={handleCompleteProject}>Complete Project</Button>}
+          {isOwner && !isCompleted && <Button onClick={() => setCompletionModalOpen(true)}>Complete Project</Button>}
           <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>Back</Button>
         </div>
       </div>
@@ -258,7 +251,11 @@ export default function Workspace() {
         ))}
       </div>
 
-      {tab === "journey" && <JourneyTab project={project} isMember={isMember} onUpdate={fetchBase} />}
+      {tab === "journey" && (
+        isCompleted 
+          ? <WorkspaceSummary project={project} tasks={tasks} team={teamSorted} me={me} />
+          : <JourneyTab project={project} isMember={isMember} onUpdate={fetchBase} />
+      )}
 
       {tab === "overview" && <WorkspaceOverview tasks={tasks} team={teamSorted} />}
 
@@ -275,6 +272,8 @@ export default function Workspace() {
           onProjectChange={(updatedProj) => setProject(updatedProj)}
         />
       )}
+
+      { tab === "releases" && <WorkspaceReleases projectId={projectId} project={project} /> }
 
       {tab === "tasks" && (
         <WorkspaceTasks
@@ -293,40 +292,12 @@ export default function Workspace() {
 
       {tab === "chat" && <WorkspaceChat projectId={projectId} isMember={isMember} me={me} />}
 
-      {tab === "analytics" && (
-        <div className="workspace__card">
-          <div className="workspace__card-title">Project Analytics</div>
-          <div className="workspace__kv">
-            <div className="workspace__kvi">
-              <div className="workspace__kvi-label">Completion</div>
-              <div className="workspace__kvi-value">
-                {typeof summary?.project?.metrics?.completionPercentage === "number"
-                  ? `${Math.round(summary.project.metrics.completionPercentage)}%`
-                  : "-"}
-              </div>
-              <div className="workspace__kvi-sub">from project metrics</div>
-            </div>
-            <div className="workspace__kvi">
-              <div className="workspace__kvi-label">Velocity</div>
-              <div className="workspace__kvi-value">
-                {typeof summary?.project?.metrics?.velocityScore === "number"
-                  ? summary.project.metrics.velocityScore
-                  : "-"}
-              </div>
-              <div className="workspace__kvi-sub">project velocity score</div>
-            </div>
-            <div className="workspace__kvi">
-              <div className="workspace__kvi-label">Team Capacity</div>
-              <div className="workspace__kvi-value">
-                {summary?.project?.currentTeamSize ?? project.currentTeamSize}
-                <span style={{ opacity: 0.5 }}> / </span>
-                {summary?.project?.teamSizeRequired ?? project.teamSizeRequired}
-              </div>
-              <div className="workspace__kvi-sub">members filled</div>
-            </div>
-          </div>
-        </div>
-      )}
+      <ProjectCompletionModal 
+        isOpen={completionModalOpen}
+        onClose={() => setCompletionModalOpen(false)}
+        project={project}
+        onComplete={handleCompleteProject}
+      />
     </div>
   );
 }

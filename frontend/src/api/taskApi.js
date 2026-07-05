@@ -15,5 +15,8 @@ export const assignTask = (taskId, assignedTo) =>
 export const updateTask = (taskId, payload) =>
   API.put(`/tasks/${taskId}`, payload);
 
+export const bulkUpdateTasks = (projectId, data) =>
+  API.patch(`/projects/${projectId}/tasks/bulk`, data);
+
 export const deleteTask = (taskId) =>
   API.delete(`/tasks/${taskId}`);

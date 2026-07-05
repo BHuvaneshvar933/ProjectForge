@@ -122,3 +122,28 @@ export const updateTask = async (req, res) => {
     });
   }
 };
+
+export const bulkUpdateTasks = async (req, res) => {
+  try {
+    const { action, taskIds, payload } = req.body;
+    const result = await TaskService.bulkUpdateTasks(
+      req.params.projectId,
+      req.user._id,
+      action,
+      taskIds,
+      payload
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Bulk action completed",
+      data: result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

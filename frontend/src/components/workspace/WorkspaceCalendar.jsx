@@ -70,8 +70,8 @@ export default function WorkspaceCalendar({ project, tasks, onTaskClick }) {
           
           // Find items for this day
           const dayTasks = tasks.filter(t => t.dueDate && new Date(t.dueDate).toDateString() === dateStr);
-          const isProjectStart = project?.startDate && new Date(project.startDate).toDateString() === dateStr;
-          const isProjectEnd = project?.endDate && new Date(project.endDate).toDateString() === dateStr;
+          const isProjectStart = project?.timeline?.startDate && new Date(project.timeline.startDate).toDateString() === dateStr;
+          const isProjectEnd = project?.timeline?.endDate && new Date(project.timeline.endDate).toDateString() === dateStr;
           const dayEvents = project?.archiveData?.timelineEvents?.filter(e => new Date(e.date).toDateString() === dateStr) || [];
 
           return (
