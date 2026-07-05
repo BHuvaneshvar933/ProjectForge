@@ -45,11 +45,11 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
         message.html
       ];
       
-      const emailRaw = emailLines.join("\\r\\n");
+      const emailRaw = emailLines.join("\r\n");
       const encodedMessage = Buffer.from(emailRaw)
         .toString("base64")
-        .replace(/\\+/g, "-")
-        .replace(/\\//g, "_")
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
         .replace(/=+$/, "");
 
       await gmail.users.messages.send({
