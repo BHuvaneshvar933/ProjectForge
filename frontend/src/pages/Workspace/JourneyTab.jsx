@@ -1,315 +1,360 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Button from "../../components/common/Button";
-import Input from "../../components/common/Input";
-import Modal from "../../components/common/Modal";
 import { updateArchiveData } from "../../api/projectApi";
 import { getAllSkills } from "../../api/skillApi";
-import { useEffect } from "react";
+import EducationalTip from "../../components/common/EducationalTip";
 import "./JourneyTab.css";
 
 export default function JourneyTab({ project, isMember, onUpdate }) {
-  const [modalType, setModalType] = useState(null); // 'timeline', 'challenge', 'achievement', 'takeaway', 'skills', 'deliverables'
   const [loading, setLoading] = useState(false);
-  const [allSkills, setAllSkills] = useState([]);
+  const archiveData = project?.archiveData || {};
 
   // Form states
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [problem, setProblem] = useState("");
-  const [solution, setSolution] = useState("");
-  const [achievement, setAchievement] = useState("");
-  const [takeaway, setTakeaway] = useState(project?.archiveData?.takeaway || "");
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  
+  const [newAchievement, setNewAchievement] = useState("");
+  const [newChallenge, setNewChallenge] = useState({ problem: "", solution: "" });
+  const [takeaway, setTakeaway] = useState(archiveData.takeaway || "");
   const [deliverables, setDeliverables] = useState({
-    sourceCodeUrl: project?.archiveData?.deliverables?.sourceCodeUrl || "",
-    demoVideoUrl: project?.archiveData?.deliverables?.demoVideoUrl || "",
-    reportUrl: project?.archiveData?.deliverables?.reportUrl || "",
-    slidesUrl: project?.archiveData?.deliverables?.slidesUrl || "",
+    sourceCodeUrl: archiveData.deliverables?.sourceCodeUrl || "",
+    demoVideoUrl: archiveData.deliverables?.demoVideoUrl || "",
+    reportUrl: archiveData.deliverables?.reportUrl || "",
+    slidesUrl: archiveData.deliverables?.slidesUrl || "",
   });
 
-  const archiveData = project?.archiveData || { timelineEvents: [], challenges: [], achievements: [], skillsGained: [], takeaway: "", deliverables: {} };
+  // Skills
+  const [availableSkills, setAvailableSkills] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState(archiveData.skillsGained || []);
 
   useEffect(() => {
-    getAllSkills().then(res => setAllSkills(res.data?.data?.skills || [])).catch(() => {});
+    // Fetch all skills for dropdown
+    getAllSkills()
+      .then(res => {
+        setAvailableSkills(res.data.data.skills || []);
+      })
+      .catch(() => console.error("Could not fetch skills"));
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleAddAchievement = async (e) => {
     e.preventDefault();
-    if (!isMember) return;
+    if (!newAchievement.trim()) return;
     setLoading(true);
     try {
-      let data = {};
-      if (modalType === "timeline") {
-        data = { type: "timeline", event: { title, description } };
-      } else if (modalType === "challenge") {
-        data = { type: "challenge", challenge: { problem, solution } };
-      } else if (modalType === "achievement") {
-        data = { type: "achievement", achievement };
-      } else if (modalType === "takeaway") {
-        data = { type: "takeaway", takeaway };
-      } else if (modalType === "skills") {
-        data = { type: "skills", skills: selectedSkills };
-      } else if (modalType === "deliverables") {
-        data = { type: "deliverables", deliverables };
-      }
-
-      await updateArchiveData(project._id, data);
-      toast.success("Archive updated successfully!");
+      await updateArchiveData(project._id, { type: "achievement", achievement: newAchievement });
+      setNewAchievement("");
       onUpdate();
-      setModalType(null);
-      
-      // Reset forms
-      setTitle(""); setDescription(""); setProblem(""); setSolution(""); setAchievement("");
+      toast.success("Achievement added!");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update archive");
+      toast.error("Failed to add achievement");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (type, index) => {
-    if (!window.confirm(`Are you sure you want to delete this ${type}?`)) return;
+  const handleDeleteAchievement = async (index) => {
     setLoading(true);
     try {
-      await updateArchiveData(project._id, { type: `delete_${type}`, index });
-      toast.success(`${type} deleted successfully!`);
+      await updateArchiveData(project._id, { type: "delete_achievement", index });
       onUpdate();
+      toast.success("Achievement removed!");
     } catch (err) {
-      toast.error(err.response?.data?.message || `Failed to delete ${type}`);
+      toast.error("Failed to remove achievement");
     } finally {
       setLoading(false);
     }
   };
+
+  const handleAddChallenge = async (e) => {
+    e.preventDefault();
+    if (!newChallenge.problem.trim() || !newChallenge.solution.trim()) return;
+    setLoading(true);
+    try {
+      await updateArchiveData(project._id, { type: "challenge", challenge: newChallenge });
+      setNewChallenge({ problem: "", solution: "" });
+      onUpdate();
+      toast.success("Challenge added!");
+    } catch (err) {
+      toast.error("Failed to add challenge");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteChallenge = async (index) => {
+    setLoading(true);
+    try {
+      await updateArchiveData(project._id, { type: "delete_challenge", index });
+      onUpdate();
+      toast.success("Challenge removed!");
+    } catch (err) {
+      toast.error("Failed to remove challenge");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveTakeaway = async () => {
+    setLoading(true);
+    try {
+      await updateArchiveData(project._id, { type: "takeaway", takeaway });
+      onUpdate();
+      toast.success("Takeaway saved!");
+    } catch (err) {
+      toast.error("Failed to save takeaway");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveDeliverables = async () => {
+    setLoading(true);
+    try {
+      await updateArchiveData(project._id, { type: "deliverables", deliverables });
+      onUpdate();
+      toast.success("Deliverables saved!");
+    } catch (err) {
+      toast.error("Failed to save deliverables");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddSkill = async (skillId) => {
+    if (!skillId) return;
+    if (selectedSkills.find(s => s._id === skillId)) return;
+    
+    const newSkillsList = [...selectedSkills.map(s => s._id), skillId];
+    setLoading(true);
+    try {
+      await updateArchiveData(project._id, { type: "skills", skills: newSkillsList });
+      onUpdate();
+      toast.success("Skill added!");
+      // update local state to reflect UI changes immediately
+      const addedSkill = availableSkills.find(s => s._id === skillId);
+      setSelectedSkills([...selectedSkills, addedSkill]);
+    } catch (err) {
+      toast.error("Failed to add skill");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveSkill = async (skillId) => {
+    const newSkillsList = selectedSkills.filter(s => s._id !== skillId).map(s => s._id);
+    setLoading(true);
+    try {
+      await updateArchiveData(project._id, { type: "skills", skills: newSkillsList });
+      onUpdate();
+      toast.success("Skill removed!");
+      setSelectedSkills(selectedSkills.filter(s => s._id !== skillId));
+    } catch (err) {
+      toast.error("Failed to remove skill");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isMember) {
+    return (
+      <div className="journey-tab__empty">
+        You must be a team member to edit the project journey.
+      </div>
+    );
+  }
 
   return (
     <div className="journey-tab">
-      
-      {/* Deliverables Section */}
-      <div className="journey-section">
-        <div className="journey-section__header">
-          <h3 className="journey-section__title">Final Deliverables</h3>
-          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("deliverables")}>Edit Links</Button>}
-        </div>
-        <div className="journey-deliverables">
-          {archiveData.deliverables?.sourceCodeUrl && (
-            <a href={archiveData.deliverables.sourceCodeUrl} target="_blank" rel="noreferrer" className="journey-deliverable-btn">
-              🔗 Source Code
-            </a>
-          )}
-          {archiveData.deliverables?.demoVideoUrl && (
-            <a href={archiveData.deliverables.demoVideoUrl} target="_blank" rel="noreferrer" className="journey-deliverable-btn">
-              ▶️ Demo Video
-            </a>
-          )}
-          {archiveData.deliverables?.reportUrl && (
-            <a href={archiveData.deliverables.reportUrl} target="_blank" rel="noreferrer" className="journey-deliverable-btn">
-              📄 Project Report
-            </a>
-          )}
-          {archiveData.deliverables?.slidesUrl && (
-            <a href={archiveData.deliverables.slidesUrl} target="_blank" rel="noreferrer" className="journey-deliverable-btn">
-              📊 Presentation Slides
-            </a>
-          )}
-          {!archiveData.deliverables?.sourceCodeUrl && !archiveData.deliverables?.demoVideoUrl && !archiveData.deliverables?.reportUrl && !archiveData.deliverables?.slidesUrl && (
-            <div className="journey-empty">No deliverables have been added yet.</div>
-          )}
-        </div>
+      <div className="journey-tab__header">
+        <h2>Developer Journey</h2>
+        <p>Document your milestones, skills gained, and challenges to build a powerful portfolio story.</p>
       </div>
 
-      {/* Timeline Section */}
-      <div className="journey-section">
-        <div className="journey-section__header">
-          <h3 className="journey-section__title">Project Timeline</h3>
-          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("timeline")}>+ Add Milestone</Button>}
-        </div>
-        {archiveData.timelineEvents?.length > 0 ? (
-          <div className="journey-timeline">
-            {archiveData.timelineEvents.map((evt, idx) => (
-              <div key={idx} className="journey-timeline__item">
-                <div className="journey-timeline__dot"></div>
-                <div className="journey-timeline__date">{new Date(evt.date).toLocaleDateString()}</div>
-                <div className="journey-timeline__content">
-                  <div className="journey-timeline__title">{evt.title}</div>
-                  <div className="journey-timeline__desc">{evt.description}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="journey-empty">Timeline is currently empty. Complete tasks or manually add milestones!</div>
-        )}
-      </div>
-
-      {/* Challenges Section */}
-      <div className="journey-section">
-        <div className="journey-section__header">
-          <h3 className="journey-section__title">Challenges & Solutions</h3>
-          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("challenge")}>+ Add Challenge</Button>}
-        </div>
-        {archiveData.challenges?.length > 0 ? (
-          <div className="journey-grid">
-            {archiveData.challenges.map((c, idx) => (
-              <div key={idx} className="journey-card">
-                <div className="journey-card__problem">
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div className="journey-card__label" style={{color: "#ff453a"}}>The Problem</div>
-                    {isMember && <button className="journey-delete-btn" onClick={() => handleDelete("challenge", idx)}>🗑️</button>}
+      <EducationalTip content="Logging your journey items consistently helps you 'build in public' and gives you a perfect record to reference during job interviews." />
+      <div className="journey-tab__grid">
+        {/* Left Column */}
+        <div className="journey-tab__column">
+          
+          {/* Project Timeline Feed */}
+          <div className="journey-card">
+            <h3>Project Timeline ⏱️</h3>
+            <p className="journey-card__desc">Automatic feed of project events.</p>
+            
+            {archiveData.timelineEvents?.length > 0 ? (
+              <div className="journey-timeline">
+                {archiveData.timelineEvents.map((evt, idx) => (
+                  <div key={idx} className="journey-timeline__item">
+                    <div className="journey-timeline__dot"></div>
+                    <div className="journey-timeline__content">
+                      <div className="journey-timeline__date">{new Date(evt.date).toLocaleDateString()}</div>
+                      <strong>{evt.title}</strong>
+                      {evt.description && <p>{evt.description}</p>}
+                    </div>
                   </div>
-                  <div className="journey-card__text">{c.problem}</div>
-                </div>
-                <div className="journey-card__solution">
-                  <div className="journey-card__label" style={{color: "#32d74b"}}>The Solution</div>
-                  <div className="journey-card__text">{c.solution}</div>
-                </div>
+                ))}
               </div>
-            ))}
+            ) : (
+              <div className="journey-tab__empty" style={{ padding: "20px 0" }}>No timeline events yet.</div>
+            )}
           </div>
-        ) : (
-          <div className="journey-empty">No challenges documented yet.</div>
-        )}
-      </div>
 
-      {/* Achievements Section */}
-      <div className="journey-section">
-        <div className="journey-section__header">
-          <h3 className="journey-section__title">Key Achievements</h3>
-          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("achievement")}>+ Add Achievement</Button>}
-        </div>
-        {archiveData.achievements?.length > 0 ? (
-          <ul className="journey-achievements-list" style={{ paddingLeft: "20px", color: "rgba(255,255,255,0.8)" }}>
-            {archiveData.achievements.map((ach, idx) => (
-              <li key={idx} style={{ marginBottom: "8px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {/* Key Achievements */}
+          <div className="journey-card">
+            <h3>Key Achievements 🏆</h3>
+            <p className="journey-card__desc">What major milestones did you hit?</p>
+            
+            <ul className="journey-list">
+              {(archiveData.achievements || []).map((ach, idx) => (
+                <li key={idx}>
                   <span>{ach}</span>
-                  {isMember && <button className="journey-delete-btn" onClick={() => handleDelete("achievement", idx)}>🗑️</button>}
+                  <button onClick={() => handleDeleteAchievement(idx)} disabled={loading}>&times;</button>
+                </li>
+              ))}
+            </ul>
+
+            <form onSubmit={handleAddAchievement} className="journey-form-inline">
+              <input 
+                type="text" 
+                placeholder="e.g., Integrated Stripe payments" 
+                value={newAchievement}
+                onChange={(e) => setNewAchievement(e.target.value)}
+                disabled={loading}
+              />
+              <Button type="submit" disabled={loading || !newAchievement.trim()}>Add</Button>
+            </form>
+          </div>
+
+          {/* Challenges & Solutions */}
+          <div className="journey-card">
+            <h3>Challenges & Solutions 🚧</h3>
+            <p className="journey-card__desc">What roadblocks did you overcome?</p>
+
+            <div className="journey-challenges">
+              {(archiveData.challenges || []).map((c, idx) => (
+                <div key={idx} className="journey-challenge-item">
+                  <button className="journey-challenge-delete" onClick={() => handleDeleteChallenge(idx)} disabled={loading}>&times;</button>
+                  <div className="journey-challenge-row">
+                    <strong>Problem:</strong>
+                    <span>{c.problem}</span>
+                  </div>
+                  <div className="journey-challenge-row">
+                    <strong>Solution:</strong>
+                    <span>{c.solution}</span>
+                  </div>
                 </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="journey-empty">No achievements documented yet.</div>
-        )}
-      </div>
+              ))}
+            </div>
 
-      {/* Skills Gained Section */}
-      <div className="journey-section">
-        <div className="journey-section__header">
-          <h3 className="journey-section__title">Skills Gained</h3>
-          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("skills")}>Edit Skills</Button>}
-        </div>
-        {archiveData.skillsGained?.length > 0 ? (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-            {archiveData.skillsGained.map((skill, idx) => (
-              <div key={idx} style={{ background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "4px 12px", borderRadius: "16px", fontSize: "14px" }}>
-                ✓ {skill.name}
-              </div>
-            ))}
+            <form onSubmit={handleAddChallenge} className="journey-form-block">
+              <input 
+                type="text" 
+                placeholder="The problem..." 
+                value={newChallenge.problem}
+                onChange={(e) => setNewChallenge({...newChallenge, problem: e.target.value})}
+                disabled={loading}
+              />
+              <textarea 
+                placeholder="How you solved it..." 
+                value={newChallenge.solution}
+                onChange={(e) => setNewChallenge({...newChallenge, solution: e.target.value})}
+                disabled={loading}
+              />
+              <Button type="submit" disabled={loading || !newChallenge.problem.trim() || !newChallenge.solution.trim()}>Add Challenge</Button>
+            </form>
           </div>
-        ) : (
-          <div className="journey-empty">No skills tagged yet.</div>
-        )}
-      </div>
 
-      {/* Biggest Takeaway Section */}
-      <div className="journey-section">
-        <div className="journey-section__header">
-          <h3 className="journey-section__title">Biggest Takeaway</h3>
-          {isMember && <Button variant="outline" size="sm" onClick={() => setModalType("takeaway")}>Edit Takeaway</Button>}
         </div>
-        {archiveData.takeaway ? (
-          <div className="journey-lesson">
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", width: "100%" }}>
-              <div className="journey-lesson__icon">💡</div>
-              <div className="journey-lesson__text" style={{ flex: 1 }}>
-                <em>"If I started this project again tomorrow, what would I do differently?"</em><br/><br/>
-                {archiveData.takeaway}
-              </div>
+
+        {/* Right Column */}
+        <div className="journey-tab__column">
+          
+          {/* Skills Gained */}
+          <div className="journey-card">
+            <h3>Skills Gained 🧠</h3>
+            <p className="journey-card__desc">What technologies did you learn or use?</p>
+
+            <div className="journey-skills">
+              {selectedSkills.map(skill => (
+                <div key={skill._id} className="journey-skill-chip">
+                  {skill.name}
+                  <button onClick={() => handleRemoveSkill(skill._id)} disabled={loading}>&times;</button>
+                </div>
+              ))}
             </div>
-          </div>
-        ) : (
-          <div className="journey-empty">No takeaway documented yet.</div>
-        )}
-      </div>
 
-      <Modal isOpen={!!modalType} onClose={() => setModalType(null)} title={`Add ${modalType}`} hideDefaultActions={true}>
-        <form onSubmit={handleSubmit} className="journey-modal-form">
-          {modalType === "timeline" && (
-            <>
-              <Input label="Milestone Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-              <div className="input-group">
-                <label className="input-label">Description</label>
-                <textarea className="workspace-modal__textarea" rows={3} value={description} onChange={(e) => setDescription(e.target.value)} required></textarea>
-              </div>
-            </>
-          )}
-
-          {modalType === "challenge" && (
-            <>
-              <div className="input-group">
-                <label className="input-label">What went wrong / The Problem</label>
-                <textarea className="workspace-modal__textarea" rows={3} value={problem} onChange={(e) => setProblem(e.target.value)} required></textarea>
-              </div>
-              <div className="input-group">
-                <label className="input-label">How we fixed it / The Solution</label>
-                <textarea className="workspace-modal__textarea" rows={3} value={solution} onChange={(e) => setSolution(e.target.value)} required></textarea>
-              </div>
-            </>
-          )}
-
-          {modalType === "achievement" && (
-            <div className="input-group">
-              <label className="input-label">Key Achievement</label>
-              <Input placeholder="e.g. Built real-time chat" value={achievement} onChange={(e) => setAchievement(e.target.value)} required />
-            </div>
-          )}
-
-          {modalType === "takeaway" && (
-            <div className="input-group">
-              <label className="input-label">If you started this project again tomorrow, what would you do differently?</label>
-              <textarea className="workspace-modal__textarea" rows={4} value={takeaway} onChange={(e) => setTakeaway(e.target.value)} required></textarea>
-            </div>
-          )}
-
-          {modalType === "skills" && (
-            <div className="input-group">
-              <label className="input-label">Select Skills Gained (Hold Ctrl/Cmd to select multiple)</label>
-              <select 
-                multiple 
-                className="workspace-modal__textarea" 
-                style={{ height: "150px" }}
-                value={selectedSkills}
-                onChange={(e) => {
-                  const options = [...e.target.selectedOptions];
-                  const values = options.map(opt => opt.value);
-                  setSelectedSkills(values);
-                }}
-              >
-                {allSkills.map(s => (
+            <div className="journey-skill-select">
+              <select onChange={(e) => handleAddSkill(e.target.value)} value="" disabled={loading}>
+                <option value="" disabled>+ Add a skill</option>
+                {availableSkills.filter(s => !selectedSkills.find(ss => ss._id === s._id)).map(s => (
                   <option key={s._id} value={s._id}>{s.name}</option>
                 ))}
               </select>
             </div>
-          )}
-
-          {modalType === "deliverables" && (
-            <>
-              <Input label="Source Code URL (GitHub, GitLab)" value={deliverables.sourceCodeUrl} onChange={(e) => setDeliverables({...deliverables, sourceCodeUrl: e.target.value})} />
-              <Input label="Demo Video URL (YouTube, Vimeo)" value={deliverables.demoVideoUrl} onChange={(e) => setDeliverables({...deliverables, demoVideoUrl: e.target.value})} />
-              <Input label="Project Report URL (Google Docs, PDF)" value={deliverables.reportUrl} onChange={(e) => setDeliverables({...deliverables, reportUrl: e.target.value})} />
-              <Input label="Presentation Slides URL" value={deliverables.slidesUrl} onChange={(e) => setDeliverables({...deliverables, slidesUrl: e.target.value})} />
-            </>
-          )}
-
-          <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "10px" }}>
-            <Button variant="outline" type="button" onClick={() => setModalType(null)}>Cancel</Button>
-            <Button type="submit" disabled={loading}>Save</Button>
           </div>
-        </form>
-      </Modal>
 
+          {/* Biggest Takeaway */}
+          <div className="journey-card">
+            <h3>Biggest Takeaway 💡</h3>
+            <p className="journey-card__desc">If you did this project again, what would you do differently?</p>
+
+            <div className="journey-form-block">
+              <textarea 
+                rows={4}
+                placeholder="My biggest takeaway was..." 
+                value={takeaway}
+                onChange={(e) => setTakeaway(e.target.value)}
+                disabled={loading}
+              />
+              <Button onClick={handleSaveTakeaway} disabled={loading || takeaway === archiveData.takeaway}>Save Takeaway</Button>
+            </div>
+          </div>
+
+          {/* Final Deliverables */}
+          <div className="journey-card">
+            <h3>Final Deliverables 🚀</h3>
+            <p className="journey-card__desc">Link your final outputs so they show up in your portfolio.</p>
+
+            <div className="journey-form-block">
+              <label>Source Code URL</label>
+              <input 
+                type="url" 
+                placeholder="https://github.com/..." 
+                value={deliverables.sourceCodeUrl}
+                onChange={(e) => setDeliverables({...deliverables, sourceCodeUrl: e.target.value})}
+                disabled={loading}
+              />
+              
+              <label>Demo Video URL</label>
+              <input 
+                type="url" 
+                placeholder="https://youtube.com/..." 
+                value={deliverables.demoVideoUrl}
+                onChange={(e) => setDeliverables({...deliverables, demoVideoUrl: e.target.value})}
+                disabled={loading}
+              />
+
+              <label>Project Report URL</label>
+              <input 
+                type="url" 
+                placeholder="https://docs.google.com/..." 
+                value={deliverables.reportUrl}
+                onChange={(e) => setDeliverables({...deliverables, reportUrl: e.target.value})}
+                disabled={loading}
+              />
+
+              <label>Presentation Slides URL</label>
+              <input 
+                type="url" 
+                placeholder="https://pitch.com/..." 
+                value={deliverables.slidesUrl}
+                onChange={(e) => setDeliverables({...deliverables, slidesUrl: e.target.value})}
+                disabled={loading}
+              />
+
+              <Button onClick={handleSaveDeliverables} disabled={loading}>Save Deliverables</Button>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }

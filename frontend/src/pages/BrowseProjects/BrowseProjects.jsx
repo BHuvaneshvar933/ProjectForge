@@ -36,6 +36,9 @@ export default function BrowseProjects() {
   const [peopleSearch, setPeopleSearch] = useState('');
   const [people, setPeople] = useState([]);
   const [peopleLoading, setPeopleLoading] = useState(false);
+  const [peoplePage, setPeoplePage] = useState(1);
+  const [peoplePagination, setPeoplePagination] = useState({ page: 1, total: 0, pages: 1 });
+  const [invitedUserIds, setInvitedUserIds] = useState([]);
   const [inviteRole, setInviteRole] = useState('');
   const [inviteMessage, setInviteMessage] = useState('');
   const [inviteBusyId, setInviteBusyId] = useState('');
@@ -105,7 +108,7 @@ export default function BrowseProjects() {
     }
   }, [canUsePeople, selectedProjectId]);
 
-  const searchPeople = useCallback(async () => {
+  const searchPeople = useCallback(async (page = 1) => {
     if (!canUsePeople) return;
     setPeopleLoading(true);
     try {
@@ -113,15 +116,37 @@ export default function BrowseProjects() {
         ? selectedProject.requiredSkills.map((s) => s?._id || s).filter(Boolean).join(',')
         : '';
 
-      const res = await searchUsers({ search: peopleSearch, skills: skillIds, limit: 12 });
-      const users = res?.data?.data?.users ?? [];
-      setPeople(Array.isArray(users) ? users : []);
+      const res = await searchUsers({ 
+        search: peopleSearch, 
+        skills: skillIds, 
+        limit: 12, 
+        page, 
+        projectId: selectedProjectId 
+      });
+      
+      const payload = res?.data?.data ?? {};
+      const fetchedUsers = Array.isArray(payload.users) ? payload.users : [];
+      const newPagination = payload.pagination ?? { page: 1, total: 0, pages: 1 };
+      
+      if (page === 1) {
+        setPeople(fetchedUsers);
+      } else {
+        setPeople(prev => [...prev, ...fetchedUsers]);
+      }
+      setPeoplePagination(newPagination);
+      setPeoplePage(page);
     } catch {
-      setPeople([]);
+      if (page === 1) setPeople([]);
     } finally {
       setPeopleLoading(false);
     }
-  }, [canUsePeople, peopleSearch, selectedProject]);
+  }, [canUsePeople, peopleSearch, selectedProject, selectedProjectId]);
+
+  const loadMorePeople = () => {
+    if (peoplePagination.page < peoplePagination.pages && !peopleLoading) {
+      searchPeople(peoplePage + 1);
+    }
+  };
 
   const sendInvite = async (userId) => {
     if (!selectedProjectId) return;
@@ -134,6 +159,7 @@ export default function BrowseProjects() {
         invitedRole: inviteRole || undefined,
         message: inviteMessage || undefined,
       });
+      setInvitedUserIds(prev => [...prev, userId]);
       toast.success('Invitation sent');
       setInviteMessage('');
     } catch (e) {
@@ -155,7 +181,7 @@ export default function BrowseProjects() {
   useEffect(() => {
     if (tab !== 'people') return;
     // refresh people search when project changes
-    searchPeople();
+    searchPeople(1);
   }, [searchPeople, selectedProjectId, tab]);
 
   const handleSearch = (e) => {
@@ -167,31 +193,39 @@ export default function BrowseProjects() {
     <div className="browse-page">
       <div className="browse-page__header">
         <div>
-          <h1 className="browse-page__title">Browse Projects</h1>
-          <p className="browse-page__subtitle">Discover and join exciting projects</p>
+          <h1 className="browse-page__title">
+            {tab === 'projects' ? 'Browse Projects' : 'Find Talent'}
+          </h1>
+          <p className="browse-page__subtitle">
+            {tab === 'projects' 
+              ? 'Discover and join exciting projects' 
+              : 'Search and invite skilled developers to your projects'}
+          </p>
         </div>
         
-        <form onSubmit={handleSearch} className="browse-page__search">
-          <div className="browse-page__search-field">
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search projects..."
-              className="browse-page__search-input"
-            />
-            <svg 
-              className="browse-page__search-icon"
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          <button type="submit" className="browse-page__search-button">
-            Search
-          </button>
-        </form>
+        {tab === 'projects' && (
+          <form onSubmit={handleSearch} className="browse-page__search">
+            <div className="browse-page__search-field">
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search projects..."
+                className="browse-page__search-input"
+              />
+              <svg 
+                className="browse-page__search-icon"
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <button type="submit" className="browse-page__search-button">
+              Search
+            </button>
+          </form>
+        )}
       </div>
 
       <div className="browse-page__tabs">
@@ -220,7 +254,7 @@ export default function BrowseProjects() {
           setSelectedProjectId={setSelectedProjectId}
           peopleSearch={peopleSearch}
           setPeopleSearch={setPeopleSearch}
-          searchPeople={searchPeople}
+          searchPeople={() => searchPeople(1)}
           peopleLoading={peopleLoading}
           selectedProject={selectedProject}
           inviteRole={inviteRole}
@@ -230,6 +264,9 @@ export default function BrowseProjects() {
           people={people}
           inviteBusyId={inviteBusyId}
           sendInvite={sendInvite}
+          invitedUserIds={invitedUserIds}
+          peoplePagination={peoplePagination}
+          loadMorePeople={loadMorePeople}
         />
       ) : (
         <BrowseProjectsTab

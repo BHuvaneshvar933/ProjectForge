@@ -3,6 +3,7 @@ import "../models/skill.model.js";
 import Team from "../models/team.model.js";
 import Project from "../models/project.model.js";
 import Task from "../models/task.model.js";
+import Application from "../models/application.model.js";
 
 export const getDeveloperJourneyStats = async (userId) => {
   const teams = await Team.find({ userId, status: "active" });
@@ -115,9 +116,12 @@ export const getPublicUserProfile = async (userId) => {
 };
 
 export const searchUsers = async (query) => {
-  const { search = "", skills = "", limit = 12, excludeProjectUserIds = [] } = query;
+  const { search = "", skills = "", page = 1, limit = 12, projectId = "" } = query;
 
+  const pageNum = Math.max(1, parseInt(page) || 1);
   const limitNum = Number.isFinite(Number(limit)) ? Math.min(30, Math.max(1, Number(limit))) : 12;
+  const skip = (pageNum - 1) * limitNum;
+
   const skillIds = String(skills || "")
     .split(",")
     .map((x) => x.trim())
@@ -128,8 +132,22 @@ export const searchUsers = async (query) => {
     deletedAt: null,
   };
 
-  if (Array.isArray(excludeProjectUserIds) && excludeProjectUserIds.length > 0) {
-    filter._id = { $nin: excludeProjectUserIds };
+  const excludeUserIds = [];
+
+  if (projectId) {
+    const activeTeamMembers = await Team.find({ projectId, status: "active" }).select("userId");
+    const pendingApps = await Application.find({ 
+      projectId, 
+      status: "pending", 
+      isDeleted: false 
+    }).select("applicantId");
+
+    activeTeamMembers.forEach(m => excludeUserIds.push(m.userId.toString()));
+    pendingApps.forEach(a => excludeUserIds.push(a.applicantId.toString()));
+  }
+
+  if (excludeUserIds.length > 0) {
+    filter._id = { $nin: excludeUserIds };
   }
 
   const trimmedSearch = String(search || "").trim();
@@ -144,14 +162,24 @@ export const searchUsers = async (query) => {
     filter.skills = { $in: skillIds };
   }
 
+  const total = await User.countDocuments(filter);
   const users = await User.find(filter)
     .populate("skills", "name category")
     .select("name email bio skills availabilityHoursPerWeek portfolioLinks stats createdAt")
     .sort({ createdAt: -1 })
+    .skip(skip)
     .limit(limitNum)
     .lean();
 
-  return users;
+  return {
+    users,
+    pagination: {
+      page: pageNum,
+      limit: limitNum,
+      total,
+      pages: Math.ceil(total / limitNum) || 1
+    }
+  };
 };
 
 export const endorseUser = async (userId, endorserId, data) => {

@@ -55,6 +55,24 @@ const teamSchema = new mongoose.Schema(
 
     contribution: contributionSchema,
 
+    reflections: {
+      biggestChallenge: String,
+      biggestAchievement: String,
+      favoriteFeature: String,
+      whatToImprove: String,
+    },
+
+    careerAssets: {
+      resumeBullets: [String],
+      portfolioDescription: String,
+      linkedinPosts: {
+        professional: String,
+        technical: String,
+        buildInPublic: String,
+      },
+      interviewAnswer: String
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,

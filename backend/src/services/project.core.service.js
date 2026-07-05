@@ -72,6 +72,9 @@ export const createProject = async (userId, data) => {
   };
   const key = generateKey(projectData.title);
 
+  const owner = await import("../models/user.model.js").then(m => m.default).then(User => User.findById(userId).select("name"));
+  const ownerName = owner ? owner.name : "Owner";
+
   const project = await Project.create({
     ...projectData,
     requiredSkills,
@@ -83,7 +86,15 @@ export const createProject = async (userId, data) => {
     lastTaskNumber: 0,
     currentTeamSize: 1,
     status: "recruiting",
-    isDeleted: false
+    isDeleted: false,
+    archiveData: {
+      timelineEvents: [{
+        eventType: "creation",
+        title: "Project Created",
+        description: `${ownerName} founded the project.`,
+        date: new Date()
+      }]
+    }
   });
 
   await Team.create({
@@ -300,6 +311,11 @@ export const updateArchiveData = async (userId, projectId, data) => {
       ...project.archiveData.deliverables,
       ...data.deliverables
     };
+  } else if (data.type === "completion_answers") {
+    project.archiveData.biggestChallenge = data.biggestChallenge;
+    project.archiveData.biggestAchievement = data.biggestAchievement;
+    project.archiveData.favoriteFeature = data.favoriteFeature;
+    project.archiveData.whatToImprove = data.whatToImprove;
   }
 
   await project.save();

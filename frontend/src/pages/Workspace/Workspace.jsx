@@ -6,7 +6,7 @@ import Button from "../../components/common/Button";
 import Spinner from "../../components/common/Spinner";
 import { getProjectSummary } from "../../api/analyticsApi";
 import { getCurrentUser } from "../../api/authApi";
-import { getProjectById, getProjectTeam, getGitHubMetrics, updateProject } from "../../api/projectApi";
+import { getProjectById, getProjectTeam, getGitHubMetrics, updateProject, updateArchiveData } from "../../api/projectApi";
 import { getProjectTasks } from "../../api/taskApi";
 import JourneyTab from "./JourneyTab";
 
@@ -18,6 +18,7 @@ import WorkspaceDevelopment from "../../components/workspace/WorkspaceDevelopmen
 import WorkspaceReleases from "../../components/workspace/WorkspaceReleases";
 import WorkspaceSummary from "../../components/workspace/WorkspaceSummary";
 import ProjectCompletionModal from "../../components/workspace/ProjectCompletionModal";
+import CelebrationTab from "./CelebrationTab";
 
 import "./Workspace.css";
 
@@ -164,6 +165,7 @@ export default function Workspace() {
       await updateProject(projectId, { status: "completed", visibility });
       toast.success("Project completed and archived");
       setCompletionModalOpen(false);
+      setTab("celebration");
       fetchBase();
     } catch (err) {
       toast.error("Failed to complete project");
@@ -173,6 +175,7 @@ export default function Workspace() {
   const isCompleted = project?.status === "completed";
 
   const allTabs = [
+    ...(isCompleted ? [{ id: "celebration", label: "Celebration ✨", icon: "🎉" }] : []),
     { id: "overview", label: "Overview", icon: "📊" },
     { id: "journey", label: "Journey", icon: "✨" },
     { id: "tasks", label: "Tasks", icon: "✅" },
@@ -182,7 +185,7 @@ export default function Workspace() {
     { id: "releases", label: "Releases", icon: "🚢" },
   ];
 
-  const activeTabs = isMember ? allTabs : allTabs.filter(t => ["overview", "journey"].includes(t.id));
+  const activeTabs = isMember ? allTabs : allTabs.filter(t => ["overview", "journey", "celebration"].includes(t.id));
 
   if (loading) {
     return (
@@ -251,6 +254,14 @@ export default function Workspace() {
         ))}
       </div>
 
+      {tab === "celebration" && isCompleted && (
+        <CelebrationTab 
+          project={project} 
+          team={teamSorted} 
+          myTeamRecord={team.find(m => m.userId?._id === me?._id || m.userId === me?._id)}
+        />
+      )}
+
       {tab === "journey" && (
         isCompleted 
           ? <WorkspaceSummary project={project} tasks={tasks} team={teamSorted} me={me} />
@@ -297,6 +308,10 @@ export default function Workspace() {
         onClose={() => setCompletionModalOpen(false)}
         project={project}
         onComplete={handleCompleteProject}
+        onGoToJourney={() => {
+          setCompletionModalOpen(false);
+          setTab("journey");
+        }}
       />
     </div>
   );

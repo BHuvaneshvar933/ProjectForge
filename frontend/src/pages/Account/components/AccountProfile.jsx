@@ -4,6 +4,7 @@ import Button from "../../../components/common/Button";
 import Badge from "../../../components/common/Badge";
 import { searchSkills } from "../../../api/skillApi";
 import { displaySkillLabel } from "../../../utils/display";
+import EducationalTip from "../../../components/common/EducationalTip";
 
 export default function AccountProfile({ form, setForm }) {
   const [skillInput, setSkillInput] = useState("");
@@ -185,6 +186,7 @@ export default function AccountProfile({ form, setForm }) {
         <div className="account__card-title" style={{ marginBottom: 10 }}>
           Portfolio Links
         </div>
+        <EducationalTip content="Recruiters and potential teammates will check your GitHub and LinkedIn. Make sure your links are up to date." />
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12 }}>
           <Input
             label="GitHub"

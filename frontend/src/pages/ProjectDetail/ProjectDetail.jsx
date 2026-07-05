@@ -12,6 +12,7 @@ import ProjectHeader from './components/ProjectHeader';
 import ProjectAbout from './components/ProjectAbout';
 import ProjectTimeline from './components/ProjectTimeline';
 import ProjectTeam from './components/ProjectTeam';
+import EducationalTip from '../../components/common/EducationalTip';
 
 import './ProjectDetail.css';
 
@@ -272,6 +273,7 @@ export default function ProjectDetail() {
         onConfirm={handleApply}
         confirmText={applyLoading ? 'Submitting...' : 'Submit Application'}
       >
+        <EducationalTip content="Project owners review this note carefully. Mention exactly which open role you want and link a relevant past project if possible." />
         <p className="project-detail__modal-hint">
           Share a short note about why you want to join.
         </p>

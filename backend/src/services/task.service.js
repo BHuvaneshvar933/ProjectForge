@@ -288,13 +288,16 @@ export async function updateTaskStatus(taskId, newStatus, userId) {
 
       await handleTaskMarkedDone({ task, project, session });
       
+      const user = await import("../models/user.model.js").then(m => m.default).then(User => User.findById(userId).select("name").session(session));
+      const userName = user ? user.name : "A team member";
+
       if (!project.archiveData) {
         project.archiveData = { timelineEvents: [], challenges: [], lessonsLearned: [], deliverables: {} };
       }
       project.archiveData.timelineEvents.push({
         eventType: "task",
         title: `Completed: ${task.title}`,
-        description: `Task ${project.key}-${task.taskNumber} was completed.`,
+        description: `${userName} completed task ${project.key}-${task.taskNumber}.`,
         date: new Date()
       });
       await project.save({ session });
