@@ -17,7 +17,7 @@ export const getGitHubMetrics = async (repoName, token) => {
 
   try {
     // 1. Fetch Pull Requests (open and closed to calculate cycle time)
-    const prsResponse = await axios.get(`${baseUrl}/pulls?state=all&per_page=100`, { headers }).catch(() => ({ data: [] }));
+    const prsResponse = await axios.get(`${baseUrl}/pulls?state=all&per_page=100`, { headers });
     const prs = prsResponse.data;
 
     const openPrs = prs.filter(pr => pr.state === "open").length;
@@ -46,7 +46,11 @@ export const getGitHubMetrics = async (repoName, token) => {
     }
 
     // 2. Fetch Deployments
-    const deploymentsResponse = await axios.get(`${baseUrl}/deployments?per_page=100`, { headers }).catch(() => ({ data: [] }));
+    const deploymentsResponse = await axios.get(`${baseUrl}/deployments?per_page=100`, { headers }).catch(e => {
+      // Deployments API often returns 404 if not configured, which is fine. But we shouldn't swallow 403 Rate Limits.
+      if (e.response && e.response.status === 404) return { data: [] };
+      throw e;
+    });
     const deployments = deploymentsResponse.data;
     
     const recentDeployments = deployments.filter(d => new Date(d.created_at) > sevenDaysAgo).length;
