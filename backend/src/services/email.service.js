@@ -33,29 +33,33 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
         refresh_token: process.env.OAUTH_REFRESH_TOKEN,
       });
 
-      const accessToken = await new Promise((resolve, reject) => {
-        oauth2Client.getAccessToken((err, token) => {
-          if (err) {
-            reject("Failed to create access token: " + err);
-          }
-          resolve(token);
-        });
-      });
+      const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          type: "OAuth2",
-          user: process.env.OAUTH_EMAIL,
-          accessToken,
-          clientId: process.env.OAUTH_CLIENT_ID,
-          clientSecret: process.env.OAUTH_CLIENT_SECRET,
-          refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+      const emailLines = [
+        `To: ${to}`,
+        `From: "ProjectForge" <${process.env.OAUTH_EMAIL}>`,
+        `Subject: Password Reset Request`,
+        `Content-type: text/html;charset=utf-8`,
+        `MIME-Version: 1.0`,
+        ``,
+        message.html
+      ];
+      
+      const emailRaw = emailLines.join("\\r\\n");
+      const encodedMessage = Buffer.from(emailRaw)
+        .toString("base64")
+        .replace(/\\+/g, "-")
+        .replace(/\\//g, "_")
+        .replace(/=+$/, "");
+
+      await gmail.users.messages.send({
+        userId: "me",
+        requestBody: {
+          raw: encodedMessage,
         },
       });
 
-      await transporter.sendMail(message);
-      console.log("✉️ Email sent successfully via Gmail OAuth2");
+      console.log("✉️ Email sent successfully via Gmail HTTP API (bypassing SMTP)");
     } else {
       // Fallback to Ethereal
       console.warn("⚠️ No OAuth credentials found in .env. Falling back to Ethereal Email.");
