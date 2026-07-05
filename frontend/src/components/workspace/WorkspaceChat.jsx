@@ -3,7 +3,6 @@ import { toast } from "react-toastify";
 import Spinner from "../common/Spinner";
 import { getSocket } from "../../realtime/socketClient";
 import { getProjectMessages } from "../../api/messageApi";
-import axios from "axios";
 
 export default function WorkspaceChat({ projectId, isMember, me }) {
   const [chatLoading, setChatLoading] = useState(false);
@@ -11,12 +10,9 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
   const [chatInput, setChatInput] = useState("");
   const [typingUsers, setTypingUsers] = useState([]);
   const [editingMessageId, setEditingMessageId] = useState(null);
-  const [attachments, setAttachments] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
   
   const listRef = useRef(null);
   const chatInputRef = useRef(null);
-  const fileInputRef = useRef(null);
   const typingTimer = useRef(null);
   const stopTypingTimer = useRef(null);
 
@@ -126,7 +122,7 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
 
   const onSend = async () => {
     const content = chatInput.trim();
-    if (!content && attachments.length === 0) return;
+    if (!content) return;
     if (!isMember) return;
 
     const socket = getSocket();
@@ -142,40 +138,15 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
     }
 
     // Handle Send
-    socket.emit("send-message", { projectId, content, attachments }, (res) => {
+    socket.emit("send-message", { projectId, content }, (res) => {
       if (!res?.ok) {
         toast.error(res?.error || "Failed to send message");
       }
     });
 
     setChatInput("");
-    setAttachments([]);
     if (chatInputRef.current) {
       chatInputRef.current.style.height = "";
-    }
-  };
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const res = await axios.post("http://localhost:5000/api/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-      if (res.data?.success) {
-        setAttachments([...attachments, res.data.data]);
-      }
-    } catch (err) {
-      toast.error("Failed to upload file");
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -222,14 +193,13 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
                   <div
                     key={m._id || `${m.createdAt}-${m.content}`}
                     className={`workspace-chat__row ${mine ? "is-mine" : "is-theirs"}`.trim()}
-                    style={{ position: "relative" }}
                   >
                     {!mine && (
                       <div className="workspace-chat__avatar" aria-hidden="true">
                         {(senderName || "U")[0]}
                       </div>
                     )}
-                    <div className={`workspace-chat__bubble ${mine ? "is-mine" : "is-theirs"}`.trim()}>
+                    <div className={`workspace-chat__bubble ${mine ? "is-mine" : "is-theirs"}`.trim()} style={{ position: "relative" }}>
                       {!mine && <div className="workspace-chat__sender">{senderName}</div>}
                       
                       {isTombstone ? (
@@ -243,19 +213,6 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
                               {m.content}
                             </div>
                           )}
-                          
-                          {m.attachments && m.attachments.length > 0 && (
-                            <div className="workspace-chat__attachments">
-                              {m.attachments.map((att, idx) => (
-                                <img 
-                                  key={idx} 
-                                  src={`http://localhost:5000${att.url}`} 
-                                  alt={att.filename} 
-                                  className="workspace-chat__image-attachment" 
-                                />
-                              ))}
-                            </div>
-                          )}
                         </>
                       )}
                       
@@ -263,17 +220,17 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
                         {m?.createdAt ? new Date(m.createdAt).toLocaleTimeString() : ""}
                         {!isTombstone && m.isEdited && <span style={{ marginLeft: "4px", fontSize: "10px", opacity: 0.7 }}>(edited)</span>}
                       </div>
-                    </div>
 
-                    {mine && !isTombstone && (
-                      <div style={{ position: "absolute", top: "50%", right: "100%", transform: "translateY(-50%)", paddingRight: "8px" }} className="workspace-chat__menu-wrapper">
-                        <button className="workspace-chat__menu-btn">•••</button>
-                        <div className="workspace-chat__menu">
-                          <div className="workspace-chat__menu-item" onClick={() => handleEditClick(m)}>Edit</div>
-                          <div className="workspace-chat__menu-item" style={{ color: "#ff453a" }} onClick={() => handleDeleteMessage(m._id)}>Delete</div>
+                      {mine && !isTombstone && (
+                        <div style={{ position: "absolute", top: "50%", right: "100%", transform: "translateY(-50%)", paddingRight: "8px" }} className="workspace-chat__menu-wrapper">
+                          <button className="workspace-chat__menu-btn">•••</button>
+                          <div className="workspace-chat__menu">
+                            <div className="workspace-chat__menu-item" onClick={() => handleEditClick(m)}>Edit</div>
+                            <div className="workspace-chat__menu-item" style={{ color: "#ff453a" }} onClick={() => handleDeleteMessage(m._id)}>Delete</div>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -292,35 +249,8 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
         </div>
 
         <div className="workspace-chat__composer-wrapper" style={{ position: "relative" }}>
-          {attachments.length > 0 && (
-            <div style={{ display: "flex", gap: "8px", padding: "8px" }}>
-              {attachments.map((att, idx) => (
-                <div key={idx} style={{ position: "relative", width: "40px", height: "40px", borderRadius: "4px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.2)" }}>
-                  <img src={`http://localhost:5000${att.url}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  <button 
-                    style={{ position: "absolute", top: 0, right: 0, background: "rgba(0,0,0,0.5)", color: "#fff", border: "none", cursor: "pointer", fontSize: "10px" }}
-                    onClick={() => setAttachments(attachments.filter((_, i) => i !== idx))}
-                  >✕</button>
-                </div>
-              ))}
-            </div>
-          )}
           
           <div className="workspace-chat__composer">
-            <button 
-              className="workspace-chat__attachment-btn" 
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-            >
-              {isUploading ? <Spinner size="sm" /> : "📎"}
-            </button>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              style={{ display: "none" }} 
-              accept="image/*" 
-              onChange={handleFileUpload} 
-            />
 
             <textarea
               ref={chatInputRef}
@@ -356,9 +286,9 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
               type="button"
               className="workspace-chat__send"
               onClick={onSend}
-              disabled={chatInput.trim().length === 0 && attachments.length === 0}
+              disabled={chatInput.trim().length === 0}
               aria-label="Send message"
-              title={(chatInput.trim().length > 0 || attachments.length > 0) ? "Send" : "Type a message to send"}
+              title={chatInput.trim().length > 0 ? "Send" : "Type a message to send"}
             >
               <svg
                 viewBox="0 0 24 24"

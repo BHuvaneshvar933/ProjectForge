@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login_user, google_login } from "./Api/routes";
 import { GoogleLogin } from '@react-oauth/google';
@@ -175,12 +175,12 @@ export default function Login() {
                                             Password
                                         </label>
 
-                                        <button
-                                            type="button"
+                                        <Link
+                                            to="/forgot-password"
                                             className="text-xs font-medium text-zinc-500 transition hover:text-zinc-300"
                                         >
                                             Forgot password?
-                                        </button>
+                                        </Link>
                                     </div>
 
                                     <input

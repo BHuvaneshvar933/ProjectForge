@@ -76,3 +76,41 @@ export const getCurrentUser = async (req, res) => {
     },
   });
 };
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      throw new Error("Email is required");
+    }
+
+    await authService.processForgotPassword(email);
+
+    return res.status(200).json({
+      success: true,
+      message: "If an account with that email exists, we have sent a password reset link.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if (!password || password.length < 6) {
+      throw new Error("Password must be at least 6 characters");
+    }
+
+    await authService.processResetPassword(token, password);
+
+    return res.status(200).json({
+      success: true,
+      message: "Password has been reset successfully. You can now log in.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
