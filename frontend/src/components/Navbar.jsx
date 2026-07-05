@@ -21,6 +21,17 @@ export default function Navbar() {
 
   const isAuthed = Boolean(token);
 
+  // Hide the navbar on authentication routes for a cleaner, distraction-free UI
+  const isAuthRoute = 
+    location.pathname === "/login" || 
+    location.pathname === "/register" || 
+    location.pathname === "/forgot-password" ||
+    location.pathname.startsWith("/reset-password");
+
+  if (isAuthRoute) {
+    return null;
+  }
+
   const handleLogout = () => {
     try {
       window.localStorage.removeItem("token");
