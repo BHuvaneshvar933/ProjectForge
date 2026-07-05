@@ -80,6 +80,9 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+
     lastLoginAt: {
       type: Date,
       default: null,

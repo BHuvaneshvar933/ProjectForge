@@ -7,6 +7,8 @@ import EditProject from "./pages/EditProject/EditProject";
 import MyProjects from "./pages/MyProjects/MyProjects";
 import Login from "./pages/Auth/login";
 import Register from "./pages/Auth/register";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Account from "./pages/Account/Account";
 import MyApplications from "./pages/Applications/MyApplications";
@@ -27,6 +29,8 @@ function App() {
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route
           path="/projects/create"
           element={

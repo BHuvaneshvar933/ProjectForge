@@ -1,6 +1,8 @@
 import User from "../models/user.model.js";
 import { hashPassword, comparePassword } from "../utils/password.js";
 import { generateToken } from "../utils/jwt.js";
+import crypto from "crypto";
+import { sendPasswordResetEmail } from "./email.service.js";
 
 export const registerUser = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
@@ -77,4 +79,40 @@ export const googleLoginUser = async (idToken) => {
 
   const token = generateToken(user._id);
   return { user, token };
+};
+
+export const processForgotPassword = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    // Return silently to prevent email enumeration
+    return;
+  }
+
+  // Generate random token
+  const resetToken = crypto.randomBytes(20).toString("hex");
+
+  // Save to DB (1 hour expiration)
+  user.resetPasswordToken = resetToken;
+  user.resetPasswordExpires = Date.now() + 3600000;
+  await user.save();
+
+  // Send email
+  await sendPasswordResetEmail(user.email, resetToken);
+};
+
+export const processResetPassword = async (token, newPassword) => {
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new Error("Password reset token is invalid or has expired");
+  }
+
+  // Update password and clear fields
+  user.password = await hashPassword(newPassword);
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
 };
