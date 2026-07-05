@@ -1,0 +1,23 @@
+.educational-tip {
+  margin-bottom: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.educational-tip--inline {
+  color: var(--color-blue-400);
+}
+
+.educational-tip--box {
+  background: rgba(10, 132, 255, 0.1);
+  border: 1px solid rgba(10, 132, 255, 0.3);
+  border-radius: 8px;
+  padding: 16px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.educational-tip--box strong {
+  color: var(--color-blue-400);
+  display: block;
+  margin-bottom: 4px;
+}

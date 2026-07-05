@@ -4,6 +4,7 @@ import Badge from '../common/Badge';
 import { searchSkills } from '../../api/skillApi';
 import './ProjectRequirements.css';
 import { displaySkillLabel } from '../../utils/display';
+import EducationalTip from '../common/EducationalTip';
 
 export default function ProjectRequirements({ data, updateData, errors }) {
   const [skillInput, setSkillInput] = useState('');
@@ -92,6 +93,7 @@ export default function ProjectRequirements({ data, updateData, errors }) {
       {/* Skills Multi-select */}
       <div className="project-req__section">
         <label className="project-req__label">Required Skills</label>
+        <EducationalTip content="Keep required skills focused on the core stack. Adding too many 'nice-to-have' skills can intimidate great contributors!" />
         <div className="project-req__field">
           <input
             type="text"

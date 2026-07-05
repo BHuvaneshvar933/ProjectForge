@@ -18,6 +18,8 @@ router.post("/generate", protect, async (req, res) => {
       result = await aiService.generateResumeBullet(projectData);
     } else if (type === "interview") {
       result = await aiService.generateInterviewStory(projectData);
+    } else if (type === "career-assets") {
+      result = await aiService.generateCareerAssets(projectData, req.body.projectId, req.user._id);
     } else {
       return res.status(400).json({ success: false, message: "Invalid generation type" });
     }

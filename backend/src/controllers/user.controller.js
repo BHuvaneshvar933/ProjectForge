@@ -53,13 +53,14 @@ export const getPublicProfile = async (req, res, next) => {
 
 export const searchUsers = async (req, res, next) => {
   try {
-    const users = await userService.searchUsers(req.query);
+    const { users, pagination } = await userService.searchUsers(req.query);
 
     return res.status(200).json({
       success: true,
       message: "Users fetched",
       data: {
         users,
+        pagination,
       },
     });
   } catch (error) {

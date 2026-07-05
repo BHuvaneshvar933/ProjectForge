@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { register_user } from "./Api/routes";
+import { register_user, google_login } from "./Api/routes";
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Register() {
     const navigate = useNavigate();
@@ -84,6 +85,29 @@ export default function Register() {
             } catch (err) {
                 toast.error(err?.response?.data?.message || "Registration failed");
             }
+        }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            const res = await google_login({ token: credentialResponse.credential });
+            const token = res?.data?.data?.token;
+            const user = res?.data?.data?.user;
+
+            if (!token) {
+                toast.error("Google login failed: missing token");
+                return;
+            }
+
+            window.localStorage.setItem("token", token);
+            if (user?._id) {
+                window.localStorage.setItem("userId", user._id);
+            }
+
+            toast.success("Account created via Google");
+            navigate("/projects");
+        } catch (err) {
+            toast.error(err?.response?.data?.message || "Google registration failed");
         }
     };
 
@@ -256,6 +280,20 @@ export default function Register() {
                                         Login
                                     </button>
                                 </p>
+
+                                <div className="relative flex items-center justify-center text-sm mt-6 mb-6">
+                                    <span className="absolute bg-zinc-950 px-2 text-zinc-500">Or continue with</span>
+                                    <div className="w-full border-t border-zinc-800"></div>
+                                </div>
+                                <div className="flex justify-center mt-4">
+                                    <GoogleLogin
+                                        onSuccess={handleGoogleSuccess}
+                                        onError={() => toast.error("Google registration failed")}
+                                        theme="filled_black"
+                                        shape="pill"
+                                        text="signup_with"
+                                    />
+                                </div>
                             </div>
                         </form>
                     </div>

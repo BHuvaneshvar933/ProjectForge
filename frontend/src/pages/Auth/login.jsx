@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { login_user } from "./Api/routes";
+import { login_user, google_login } from "./Api/routes";
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -72,6 +73,30 @@ export default function Login() {
             } catch (err) {
                 toast.error(err?.response?.data?.message || "Login failed");
             }
+        }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        try {
+            const res = await google_login({ token: credentialResponse.credential });
+            const token = res?.data?.data?.token;
+            const user = res?.data?.data?.user;
+
+            if (!token) {
+                toast.error("Google login failed: missing token");
+                return;
+            }
+
+            window.localStorage.setItem("token", token);
+            if (user?._id) {
+                window.localStorage.setItem("userId", user._id);
+            }
+
+            toast.success("Logged in with Google");
+            const redirectTo = location.state?.from || "/projects";
+            navigate(redirectTo);
+        } catch (err) {
+            toast.error(err?.response?.data?.message || "Google login failed");
         }
     };
 
@@ -197,6 +222,19 @@ export default function Login() {
                                         Register
                                     </button>
                                 </p>
+
+                                <div className="relative flex items-center justify-center text-sm mt-6 mb-6">
+                                    <span className="absolute bg-zinc-950 px-2 text-zinc-500">Or continue with</span>
+                                    <div className="w-full border-t border-zinc-800"></div>
+                                </div>
+                                <div className="flex justify-center mt-4">
+                                    <GoogleLogin
+                                        onSuccess={handleGoogleSuccess}
+                                        onError={() => toast.error("Google login failed")}
+                                        theme="filled_black"
+                                        shape="pill"
+                                    />
+                                </div>
                             </div>
                         </form>
                     </div>

@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { generateAIContent } from '../../api/aiApi';
 import { getBasicRepoStats } from '../../api/projectApi';
 import { endorseUser } from '../../api/userApi';
+import ReactMarkdown from 'react-markdown';
 import './WorkspaceSummary.css';
 
 export default function WorkspaceSummary({ project, tasks, team, me }) {
@@ -362,13 +363,8 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
                 {aiResult && (
                   <div className="ai-result-box mt-4">
                     <h3 className="ai-result-title">{aiResult.type === 'resume' ? 'Resume Bullet' : 'Interview Story'}</h3>
-                    <div className="ai-result-content">
-                      {/* For simplicity, map markdown bold to actual bold if needed, or just display as text */}
-                      {aiResult.content.split('\n').map((line, i) => (
-                        <p key={i} style={{ marginBottom: line.startsWith('**') ? '8px' : '4px' }}>
-                          {line.replace(/\*\*(.*?)\*\*/g, '$1')}
-                        </p>
-                      ))}
+                    <div className="ai-result-content markdown-content">
+                      <ReactMarkdown>{aiResult.content}</ReactMarkdown>
                     </div>
                   </div>
                 )}

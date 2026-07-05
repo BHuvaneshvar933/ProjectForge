@@ -31,8 +31,8 @@ export default function AccountDetails({ user }) {
             <span className="account__journey-value">{user?.developerJourney?.challengesSolved ?? 0}</span>
           </div>
           <div className="account__journey-stat">
-            <span className="account__journey-label">Skills Mastered</span>
-            <span className="account__journey-value">{user?.developerJourney?.skillsMastered ?? 0}</span>
+            <span className="account__journey-label">Endorsements</span>
+            <span className="account__journey-value">{user?.endorsements?.length ?? 0}</span>
           </div>
           <div className="account__journey-stat">
             <span className="account__journey-label">Achievements Unlocked</span>

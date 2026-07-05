@@ -357,6 +357,38 @@
   line-height: 1.6;
 }
 
+.markdown-content h3 {
+  color: #fff;
+  font-size: 16px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.markdown-content h4 {
+  color: #d8b4fe;
+  font-size: 14px;
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+
+.markdown-content p {
+  margin-bottom: 12px;
+}
+
+.markdown-content ul, .markdown-content ol {
+  margin-left: 20px;
+  margin-bottom: 12px;
+}
+
+.markdown-content li {
+  margin-bottom: 4px;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+  color: #fff;
+}
+
 .github-stats-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);

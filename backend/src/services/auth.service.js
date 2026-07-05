@@ -43,3 +43,38 @@ export const loginUser = async ({ email, password }) => {
 
   return { user, token };
 };
+
+import { OAuth2Client } from 'google-auth-library';
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+export const googleLoginUser = async (idToken) => {
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  
+  const payload = ticket.getPayload();
+  const { sub, email, name } = payload;
+
+  let user = await User.findOne({ $or: [{ googleId: sub }, { email }] });
+
+  if (user) {
+    if (!user.googleId) {
+      user.googleId = sub;
+      await user.save();
+    }
+  } else {
+    user = await User.create({
+      name,
+      email,
+      googleId: sub,
+      stats: {}
+    });
+  }
+
+  user.lastLoginAt = new Date();
+  await user.save();
+
+  const token = generateToken(user._id);
+  return { user, token };
+};

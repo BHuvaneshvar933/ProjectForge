@@ -140,6 +140,10 @@ const projectSchema = new mongoose.Schema(
         ref: "Skill",
       }],
       takeaway: String,
+      biggestChallenge: String,
+      biggestAchievement: String,
+      favoriteFeature: String,
+      whatToImprove: String,
       deliverables: {
         sourceCodeUrl: String,
         demoVideoUrl: String,

@@ -128,3 +128,20 @@ export const leaveProject = async (userId, projectId) => {
     throw error;
   }
 };
+
+export const saveMyReflections = async (projectId, userId, reflections) => {
+  const membership = await Team.findOne({
+    projectId,
+    userId,
+    status: "active",
+    isDeleted: false,
+  });
+
+  if (!membership) {
+    throw new Error("You are not an active member of this project");
+  }
+
+  membership.reflections = reflections;
+  await membership.save();
+  return membership;
+};

@@ -242,8 +242,27 @@ export default function ProjectApplications() {
               <div><strong>Email:</strong> {profileUser.email || "-"}</div>
               <div><strong>Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
               <div><strong>Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
+              <div><strong>Projects Completed:</strong> {profileUser?.stats?.projectsCompleted ?? 0}</div>
               <div><strong>Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
+              <div><strong>Applications Sent:</strong> {profileUser?.stats?.applicationsSent ?? 0}</div>
+              <div><strong>Applications Accepted:</strong> {profileUser?.stats?.applicationsAccepted ?? 0}</div>
+              <div><strong>Acceptance Rate:</strong> {profileUser?.stats?.acceptanceRate ? `${(profileUser.stats.acceptanceRate * 100).toFixed(0)}%` : "0%"}</div>
+              <div><strong>Member Since:</strong> {profileUser?.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "-"}</div>
             </div>
+
+            {profileUser.portfolioLinks && Object.values(profileUser.portfolioLinks).some(Boolean) && (
+              <div className="apps-profile__links" style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+                {profileUser.portfolioLinks.github && (
+                  <a href={profileUser.portfolioLinks.github.startsWith('http') ? profileUser.portfolioLinks.github : `https://${profileUser.portfolioLinks.github}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#0a84ff', borderColor: 'rgba(10, 132, 255, 0.3)'}}>GitHub</a>
+                )}
+                {profileUser.portfolioLinks.linkedin && (
+                  <a href={profileUser.portfolioLinks.linkedin.startsWith('http') ? profileUser.portfolioLinks.linkedin : `https://${profileUser.portfolioLinks.linkedin}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#0a84ff', borderColor: 'rgba(10, 132, 255, 0.3)'}}>LinkedIn</a>
+                )}
+                {profileUser.portfolioLinks.website && (
+                  <a href={profileUser.portfolioLinks.website.startsWith('http') ? profileUser.portfolioLinks.website : `https://${profileUser.portfolioLinks.website}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#0a84ff', borderColor: 'rgba(10, 132, 255, 0.3)'}}>Website</a>
+                )}
+              </div>
+            )}
             {Array.isArray(profileUser.skills) && profileUser.skills.length > 0 && (
               <div className="apps-card__skills">
                 {profileUser.skills.map((s) => (

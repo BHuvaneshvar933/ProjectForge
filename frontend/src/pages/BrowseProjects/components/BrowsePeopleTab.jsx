@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
+import Modal from '../../../components/common/Modal';
 import { displaySkillLabel } from '../../../utils/display';
 
 export default function BrowsePeopleTab({
@@ -18,8 +20,13 @@ export default function BrowsePeopleTab({
   setInviteMessage,
   people,
   inviteBusyId,
-  sendInvite
+  sendInvite,
+  invitedUserIds = [],
+  peoplePagination = { page: 1, pages: 1 },
+  loadMorePeople
 }) {
+  const [profileUser, setProfileUser] = useState(null);
+
   return (
     <div className="browse-people">
       <div className="browse-people__controls">
@@ -105,25 +112,41 @@ export default function BrowsePeopleTab({
                   </div>
                 )}
 
-                <div className="browse-people__actions">
-                  <Button
-                    variant="primary"
-                    loading={inviteBusyId === u._id}
-                    onClick={() => sendInvite(u._id)}
-                    disabled={!selectedProjectId}
-                  >
-                    Invite
+                <div className="browse-people__actions" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '16px' }}>
+                  <Button variant="outline" onClick={() => setProfileUser(u)}>
+                    View Profile
                   </Button>
+                  {invitedUserIds.includes(u._id) ? (
+                    <Button variant="secondary" disabled>
+                      Invited
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      loading={inviteBusyId === u._id}
+                      onClick={() => sendInvite(u._id)}
+                      disabled={!selectedProjectId}
+                    >
+                      Invite
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
             {!peopleLoading && people.length === 0 && (
-              <div className="browse-page__empty" style={{ padding: 60 }}>
+              <div className="browse-page__empty" style={{ padding: 60, gridColumn: "1 / -1" }}>
                 <p className="browse-page__empty-title">No people found</p>
                 <p className="browse-page__empty-subtitle">Try a different search.</p>
               </div>
             )}
           </div>
+          {peoplePagination?.page < peoplePagination?.pages && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+              <Button onClick={loadMorePeople} loading={peopleLoading}>
+                Load More
+              </Button>
+            </div>
+          )}
         </>
       ) : (
         <div className="browse-page__empty" style={{ padding: 60 }}>
@@ -136,6 +159,45 @@ export default function BrowsePeopleTab({
           <p className="browse-page__empty-subtitle">Select a recruiting project you own to search and invite people.</p>
         </div>
       )}
+
+      <Modal
+        isOpen={Boolean(profileUser)}
+        onClose={() => setProfileUser(null)}
+        title={profileUser?.name ? `${profileUser.name}'s Profile` : "Applicant Profile"}
+      >
+        {profileUser && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <p style={{ color: 'var(--color-zinc-400)', fontSize: '14px', lineHeight: '1.5' }}>
+              {profileUser.bio || "No bio provided."}
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', fontSize: '14px' }}>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Email:</strong> {profileUser.email || "-"}</div>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Projects Completed:</strong> {profileUser?.stats?.projectsCompleted ?? 0}</div>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Applications Sent:</strong> {profileUser?.stats?.applicationsSent ?? 0}</div>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Applications Accepted:</strong> {profileUser?.stats?.applicationsAccepted ?? 0}</div>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Acceptance Rate:</strong> {profileUser?.stats?.acceptanceRate ? `${(profileUser.stats.acceptanceRate * 100).toFixed(0)}%` : "0%"}</div>
+              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Member Since:</strong> {profileUser?.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "-"}</div>
+            </div>
+
+            {profileUser?.portfolioLinks && (Object.values(profileUser.portfolioLinks).some(link => link)) && (
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '8px' }}>
+                {profileUser.portfolioLinks.github && (
+                  <a href={profileUser.portfolioLinks.github} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>GitHub</a>
+                )}
+                {profileUser.portfolioLinks.linkedin && (
+                  <a href={profileUser.portfolioLinks.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>LinkedIn</a>
+                )}
+                {profileUser.portfolioLinks.website && (
+                  <a href={profileUser.portfolioLinks.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>Website</a>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

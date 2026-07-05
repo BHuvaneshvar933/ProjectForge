@@ -35,6 +35,9 @@ export const getProjectTeam = (id) =>
 export const updateArchiveData = (id, data) =>
   API.put(`/projects/${id}/archive-data`, data);
 
+export const saveMyReflections = (id, data) =>
+  API.put(`/projects/${id}/my-reflections`, data);
+
 // GitHub Integration
 export const connectGitHub = (id, data) =>
   API.post(`/projects/${id}/github`, data);

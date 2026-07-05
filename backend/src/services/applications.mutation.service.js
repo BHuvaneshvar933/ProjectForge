@@ -132,6 +132,18 @@ export const inviteUserToProject = async (ownerId, data) => {
     throw new Error("There is already a pending application or invitation for this user");
   }
 
+  // Rate Limiting
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const inviteCount = await Application.countDocuments({
+    invitedBy: ownerId,
+    applicationType: "invitation",
+    createdAt: { $gte: twentyFourHoursAgo }
+  });
+
+  if (inviteCount >= 20) {
+    throw new Error("Daily invitation limit reached (20 per day)");
+  }
+
   const matchScore = calculateMatchScore(user, project);
   const application = await Application.create({
     projectId,
@@ -422,6 +434,17 @@ export const respondToInvitation = async (userId, applicationId, data = {}) => {
     if (project.currentTeamSize >= project.teamSizeRequired) {
       project.status = "in-progress";
     }
+
+    if (!project.archiveData) {
+      project.archiveData = { timelineEvents: [], challenges: [], lessonsLearned: [], deliverables: {} };
+    }
+    project.archiveData.timelineEvents.push({
+      eventType: "team_change",
+      title: "Team Member Joined",
+      description: `${applicant.name} joined the project as ${assignedRole || "a member"}.`,
+      date: new Date()
+    });
+
     await project.save({ session });
 
     await session.commitTransaction();

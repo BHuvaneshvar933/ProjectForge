@@ -1,4 +1,5 @@
 import Input from '../common/Input';
+import EducationalTip from '../common/EducationalTip';
 import './ProjectBasicInfo.css';
 
 export default function ProjectBasicInfo({ data, updateData, errors }) {
@@ -16,6 +17,7 @@ export default function ProjectBasicInfo({ data, updateData, errors }) {
       {/* Description Textarea */}
       <div className="project-basic__group">
         <label className="project-basic__label">Description</label>
+        <EducationalTip content="A detailed description is the #1 way to attract top talent. Mention the core problem you are solving and who the app is for." />
         <textarea
           value={data.description}
           onChange={(e) => updateData({ description: e.target.value })}

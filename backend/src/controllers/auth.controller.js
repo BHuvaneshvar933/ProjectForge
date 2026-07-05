@@ -47,6 +47,25 @@ export const login = async (req, res, next) => {
   }
 };
 
+export const googleLogin = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      throw new Error("Token is required");
+    }
+
+    const result = await authService.googleLoginUser(token);
+
+    return res.status(200).json({
+      success: true,
+      message: "Google Login successful",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 //get user
 export const getCurrentUser = async (req, res) => {
   return res.status(200).json({

@@ -290,3 +290,21 @@ export const createRelease = async (req, res, next) => {
     next(err);
   }
 };
+
+export const saveMyReflections = async (req, res, next) => {
+  try {
+    const { id: projectId } = req.params;
+    const userId = req.user._id;
+    const { reflections } = req.body;
+
+    const membership = await projectService.saveMyReflections(projectId, userId, reflections);
+
+    res.status(200).json({
+      success: true,
+      message: "Reflections saved successfully",
+      data: { membership },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
