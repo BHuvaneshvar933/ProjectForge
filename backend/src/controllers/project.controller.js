@@ -154,6 +154,24 @@ export const leaveProject = async (req, res, next) => {
   }
 };
 
+export const removeTeamMember = async (req, res, next) => {
+  try {
+    const project = await projectService.removeTeamMember(
+      req.user.id,
+      req.params.projectId,
+      req.params.userId
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Successfully removed team member",
+      data: { project }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getProjectRecommendations = async (req, res, next) => {
   try {
     const recommendations = await projectService.getProjectRecommendations({

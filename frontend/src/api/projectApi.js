@@ -56,3 +56,6 @@ export const getProjectReleases = (id) =>
 
 export const createProjectRelease = (id, data) =>
   API.post(`/projects/${id}/releases`, data);
+
+export const leaveProject = (projectId) => API.patch(`/projects/${projectId}/leave`);
+export const removeTeamMember = (projectId, userId) => API.delete(`/projects/${projectId}/team/${userId}`);

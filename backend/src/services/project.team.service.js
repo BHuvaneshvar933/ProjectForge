@@ -145,3 +145,69 @@ export const saveMyReflections = async (projectId, userId, reflections) => {
   await membership.save();
   return membership;
 };
+
+export const removeTeamMember = async (requesterId, projectId, targetUserId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const project = await Project.findById(projectId).session(session);
+
+    if (!project || project.isDeleted) {
+      throw new Error("Project not found");
+    }
+
+    if (project.owner.toString() !== requesterId.toString()) {
+      throw new Error("Only the project owner can remove team members");
+    }
+
+    if (requesterId.toString() === targetUserId.toString()) {
+      throw new Error("You cannot remove yourself");
+    }
+
+    const membership = await Team.findOne({
+      projectId,
+      userId: targetUserId,
+      status: "active"
+    }).session(session);
+
+    if (!membership) {
+      throw new Error("User is not an active member of this project");
+    }
+
+    // Update membership
+    membership.status = "removed";
+    membership.leftAt = new Date();
+    await membership.save({ session });
+
+    // Update project team size
+    project.currentTeamSize -= 1;
+
+    if (
+      project.status === "in-progress" &&
+      project.currentTeamSize < project.teamSizeRequired
+    ) {
+      project.status = "recruiting";
+    }
+
+    await project.save({ session });
+
+    // Update user stats
+    const targetUser = await User.findById(targetUserId).session(session);
+
+    if (targetUser?.stats) {
+      targetUser.stats.projectsActive -= 1;
+      await targetUser.save({ session });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return project;
+
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};

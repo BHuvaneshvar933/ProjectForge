@@ -6,7 +6,7 @@ import Button from "../../components/common/Button";
 import Spinner from "../../components/common/Spinner";
 import { getProjectSummary } from "../../api/analyticsApi";
 import { getCurrentUser } from "../../api/authApi";
-import { getProjectById, getProjectTeam, getGitHubMetrics, updateProject, updateArchiveData } from "../../api/projectApi";
+import { getProjectById, getProjectTeam, getGitHubMetrics, updateProject, updateArchiveData, removeTeamMember } from "../../api/projectApi";
 import { getProjectTasks } from "../../api/taskApi";
 import JourneyTab from "./JourneyTab";
 
@@ -100,14 +100,21 @@ export default function Workspace() {
     }
   }, [projectId]);
 
-  const fetchGitHubData = useCallback(async () => {
+  const fetchGitHubData = useCallback(async (silent = false) => {
     if (!project?.githubIntegration?.isConnected) return;
     setGithubLoading(true);
     try {
       const res = await getGitHubMetrics(projectId);
       setGithubMetrics(res.data?.data?.metrics || null);
     } catch (e) {
-      toast.error("Failed to fetch GitHub metrics");
+      if (!silent) {
+        const msg = e.response?.data?.message?.toLowerCase() || "";
+        if (msg.includes("rate limit")) {
+          toast.error("GitHub API limit reached");
+        } else {
+          toast.error(e.response?.data?.message || "Failed to fetch GitHub metrics");
+        }
+      }
     } finally {
       setGithubLoading(false);
     }
@@ -121,7 +128,7 @@ export default function Workspace() {
     if (!loading && project) {
       fetchSummary();
       if (project.githubIntegration?.isConnected) {
-        fetchGitHubData();
+        fetchGitHubData(true);
       }
     }
   }, [fetchSummary, fetchGitHubData, loading, project]);
@@ -169,6 +176,29 @@ export default function Workspace() {
       fetchBase();
     } catch (err) {
       toast.error("Failed to complete project");
+    }
+  };
+
+  const handleResumeProject = async () => {
+    if (!window.confirm("Are you sure you want to resume this project?")) return;
+    try {
+      await updateProject(projectId, { status: "in-progress" });
+      toast.success("Project resumed");
+      setTab("overview");
+      fetchBase();
+    } catch (err) {
+      toast.error("Failed to resume project");
+    }
+  };
+
+  const handleRemoveMember = async (userId) => {
+    if (!window.confirm("Are you sure you want to remove this member? They will lose access to the active workspace but will retain credit on the showcase.")) return;
+    try {
+      await removeTeamMember(projectId, userId);
+      toast.success("Member removed successfully");
+      fetchBase();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to remove member");
     }
   };
 
@@ -237,6 +267,7 @@ export default function Workspace() {
         </div>
         <div className="workspace__actions">
           {isOwner && !isCompleted && <Button onClick={() => setCompletionModalOpen(true)}>Complete Project</Button>}
+          {isOwner && isCompleted && <Button onClick={handleResumeProject}>Resume Project</Button>}
           <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>Back</Button>
         </div>
       </div>
@@ -268,7 +299,7 @@ export default function Workspace() {
           : <JourneyTab project={project} isMember={isMember} onUpdate={fetchBase} />
       )}
 
-      {tab === "overview" && <WorkspaceOverview tasks={tasks} team={teamSorted} />}
+      {tab === "overview" && <WorkspaceOverview tasks={tasks} team={teamSorted} isOwner={isOwner} onRemoveMember={handleRemoveMember} />}
 
       {tab === "calendar" && <WorkspaceCalendar project={project} tasks={tasks} onTaskClick={() => setTab("tasks")} />}
 
@@ -301,7 +332,7 @@ export default function Workspace() {
         />
       )}
 
-      {tab === "chat" && <WorkspaceChat projectId={projectId} isMember={isMember} me={me} />}
+      {tab === "chat" && <WorkspaceChat projectId={projectId} isMember={isMember} me={me} isCompleted={isCompleted} />}
 
       <ProjectCompletionModal 
         isOpen={completionModalOpen}

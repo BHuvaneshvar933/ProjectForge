@@ -294,10 +294,11 @@ export async function updateTaskStatus(taskId, newStatus, userId) {
       if (!project.archiveData) {
         project.archiveData = { timelineEvents: [], challenges: [], lessonsLearned: [], deliverables: {} };
       }
+      const taskRef = project.key ? `${project.key}-${task.taskNumber}` : `task #${task.taskNumber}`;
       project.archiveData.timelineEvents.push({
         eventType: "task",
         title: `Completed: ${task.title}`,
-        description: `${userName} completed task ${project.key}-${task.taskNumber}.`,
+        description: `${userName} completed ${taskRef}.`,
         date: new Date()
       });
       await project.save({ session });

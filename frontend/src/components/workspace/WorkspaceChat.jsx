@@ -4,7 +4,7 @@ import Spinner from "../common/Spinner";
 import { getSocket } from "../../realtime/socketClient";
 import { getProjectMessages } from "../../api/messageApi";
 
-export default function WorkspaceChat({ projectId, isMember, me }) {
+export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) {
   const [chatLoading, setChatLoading] = useState(false);
   const [messages, setMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
@@ -248,65 +248,71 @@ export default function WorkspaceChat({ projectId, isMember, me }) {
           )}
         </div>
 
-        <div className="workspace-chat__composer-wrapper" style={{ position: "relative" }}>
-          
-          <div className="workspace-chat__composer">
-
-            <textarea
-              ref={chatInputRef}
-              className="workspace-chat__input"
-              value={chatInput}
-              onChange={(e) => {
-                const next = e.target.value;
-                setChatInput(next);
-                emitTyping();
-
-                // Auto-grow up to max height for a chat-app feel.
-                const el = chatInputRef.current;
-                if (el) {
-                  el.style.height = "auto";
-                  el.style.height = `${Math.min(el.scrollHeight, 140)}px`;
-                }
-              }}
-              placeholder={editingMessageId ? "Edit message..." : "Write a message..."}
-              rows={1}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  onSend();
-                }
-                if (e.key === "Escape" && editingMessageId) {
-                  setEditingMessageId(null);
-                  setChatInput("");
-                }
-              }}
-            />
-
-            <button
-              type="button"
-              className="workspace-chat__send"
-              onClick={onSend}
-              disabled={chatInput.trim().length === 0}
-              aria-label="Send message"
-              title={chatInput.trim().length > 0 ? "Send" : "Type a message to send"}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                width="18"
-                height="18"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M22 2L11 13" />
-                <path d="M22 2l-7 20-4-9-9-4 20-7z" />
-              </svg>
-            </button>
+        {isCompleted ? (
+          <div style={{ padding: "16px", textAlign: "center", color: "rgba(255,255,255,0.5)", background: "rgba(255,255,255,0.02)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+            Chat is locked for completed projects.
           </div>
-        </div>
+        ) : (
+          <div className="workspace-chat__composer-wrapper" style={{ position: "relative" }}>
+            
+            <div className="workspace-chat__composer">
+
+              <textarea
+                ref={chatInputRef}
+                className="workspace-chat__input"
+                value={chatInput}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  setChatInput(next);
+                  emitTyping();
+
+                  // Auto-grow up to max height for a chat-app feel.
+                  const el = chatInputRef.current;
+                  if (el) {
+                    el.style.height = "auto";
+                    el.style.height = `${Math.min(el.scrollHeight, 140)}px`;
+                  }
+                }}
+                placeholder={editingMessageId ? "Edit message..." : "Write a message..."}
+                rows={1}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    onSend();
+                  }
+                  if (e.key === "Escape" && editingMessageId) {
+                    setEditingMessageId(null);
+                    setChatInput("");
+                  }
+                }}
+              />
+
+              <button
+                type="button"
+                className="workspace-chat__send"
+                onClick={onSend}
+                disabled={chatInput.trim().length === 0}
+                aria-label="Send message"
+                title={chatInput.trim().length > 0 ? "Send" : "Type a message to send"}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M22 2L11 13" />
+                  <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
