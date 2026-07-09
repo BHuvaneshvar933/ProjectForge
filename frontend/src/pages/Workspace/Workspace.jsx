@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import Spinner from "../../components/common/Spinner";
+import Modal from "../../components/common/Modal";
 import { getProjectSummary } from "../../api/analyticsApi";
 import { getCurrentUser } from "../../api/authApi";
 import { getProjectById, getProjectTeam, getGitHubMetrics, updateProject, updateArchiveData, removeTeamMember } from "../../api/projectApi";
