@@ -159,7 +159,8 @@ export const browseProjects = async (query) => {
     limit = 10,
     status,
     projectType,
-    search
+    search,
+    userId
   } = query;
 
   const filter = {
@@ -180,6 +181,12 @@ export const browseProjects = async (query) => {
       { title: { $regex: search, $options: "i" } },
       { description: { $regex: search, $options: "i" } }
     ];
+  }
+
+  if (userId) {
+    const teams = await Team.find({ userId, status: "active" });
+    const projectIds = teams.map((t) => t.projectId);
+    filter._id = { $in: projectIds };
   }
 
   const skip = (page - 1) * limit;

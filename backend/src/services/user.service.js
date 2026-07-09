@@ -9,6 +9,11 @@ export const getDeveloperJourneyStats = async (userId) => {
   const teams = await Team.find({ userId, status: "active" });
   const projectIds = teams.map((t) => t.projectId);
 
+  const activeProjectsCount = await Project.countDocuments({
+    _id: { $in: projectIds },
+    status: { $in: ["recruiting", "in-progress"] },
+  });
+
   const completedProjects = await Project.find({
     _id: { $in: projectIds },
     status: "completed",
@@ -69,6 +74,7 @@ export const getDeveloperJourneyStats = async (userId) => {
   const achievementsUnlocked = gamifiedBadges.length;
 
   return {
+    projectsActive: activeProjectsCount,
     projectsCompleted,
     challengesSolved,
     skillsMastered,
@@ -89,8 +95,14 @@ export const getMyProfile = async (userId) => {
 
   const developerJourney = await getDeveloperJourneyStats(userId);
 
+  const userObj = user.toObject();
+  if (userObj.stats) {
+    userObj.stats.projectsActive = developerJourney.projectsActive;
+    userObj.stats.projectsCompleted = developerJourney.projectsCompleted;
+  }
+
   return {
-    ...user.toObject(),
+    ...userObj,
     developerJourney
   };
 };
@@ -136,8 +148,14 @@ export const getPublicUserProfile = async (userId) => {
 
   const developerJourney = await getDeveloperJourneyStats(userId);
 
+  const userObj = user.toObject();
+  if (userObj.stats) {
+    userObj.stats.projectsActive = developerJourney.projectsActive;
+    userObj.stats.projectsCompleted = developerJourney.projectsCompleted;
+  }
+
   return {
-    ...user.toObject(),
+    ...userObj,
     developerJourney
   };
 };

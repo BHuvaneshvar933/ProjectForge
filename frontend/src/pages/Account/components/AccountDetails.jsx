@@ -1,4 +1,7 @@
+import { Link } from "react-router-dom";
+
 export default function AccountDetails({ user }) {
+
   return (
     <div className="account__card">
       <div className="account__card-title">Account Details</div>

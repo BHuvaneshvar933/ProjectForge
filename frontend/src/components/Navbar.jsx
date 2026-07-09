@@ -67,7 +67,7 @@ export default function Navbar() {
             to="/projects"
             className={`navbar__link ${isActive('/projects') ? 'is-active' : ''}`.trim()}
           >
-            Browse
+            Explore
           </Link>
 
           {/* <Link
