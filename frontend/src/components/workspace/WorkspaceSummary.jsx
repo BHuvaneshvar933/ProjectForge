@@ -4,12 +4,14 @@ import { generateAIContent } from '../../api/aiApi';
 import { getBasicRepoStats } from '../../api/projectApi';
 import { endorseUser } from '../../api/userApi';
 import ReactMarkdown from 'react-markdown';
+import Modal from '../../components/common/Modal';
 import './WorkspaceSummary.css';
 
 export default function WorkspaceSummary({ project, tasks, team, me }) {
   const archiveData = project?.archiveData || {};
   const [aiLoading, setAiLoading] = useState(false);
   const [aiResult, setAiResult] = useState(null);
+  const [endorseState, setEndorseState] = useState({ open: false, user: null, text: "" });
   
   const [githubStats, setGithubStats] = useState(null);
 
@@ -76,7 +78,6 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
     });
 
     const leaderboard = Object.values(contributions)
-      .filter(c => c.count > 0)
       .sort((a, b) => b.count - a.count);
 
     return { totalTasks, completedTasks, completionPercentage, bugsFixed, epicsFinished, leaderboard };
@@ -121,7 +122,8 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
   if (!project) return null;
 
   return (
-    <div className="workspace-summary">
+    <>
+      <div className="workspace-summary">
       <div className="workspace-summary__content">
         
         {/* SECTION 1: Overview & Story */}
@@ -224,9 +226,9 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
 
           {/* RIGHT COL */}
           <div className="summary-col">
-            {/* SECTION 4: Achievements */}
+            {/* SECTION 4: Project Milestones */}
             <div className="summary-section">
-              <h2 className="summary-section__title">Major Achievements</h2>
+              <h2 className="summary-section__title">Major Project Milestones</h2>
               {archiveData.achievements?.length > 0 ? (
                 <ul className="summary-achievements">
                   {archiveData.achievements.map((ach, idx) => (
@@ -234,7 +236,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
                   ))}
                 </ul>
               ) : (
-                <div className="summary-empty">No achievements recorded.</div>
+                <div className="summary-empty">No milestones recorded.</div>
               )}
             </div>
 
@@ -280,17 +282,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
                         <button 
                           className="summary-btn" 
                           style={{ padding: '6px 12px', fontSize: '12px' }}
-                          onClick={() => {
-                            const text = prompt(`Write a short endorsement for ${u.name}:`);
-                            if (text) {
-                              endorseUser(u.id, {
-                                project: project._id,
-                                text,
-                                skills: archiveData.skillsGained?.map(s => s.name || s) || []
-                              }).then(() => toast.success(`Endorsed ${u.name}!`))
-                                .catch(err => toast.error(err.response?.data?.message || "Failed to endorse"));
-                            }
-                          }}
+                          onClick={() => setEndorseState({ open: true, user: u, text: "" })}
                         >
                           🏅 Endorse
                         </button>
@@ -375,6 +367,38 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
         </div>
 
       </div>
-    </div>
+      </div>
+
+      <Modal
+        isOpen={endorseState.open}
+        onClose={() => setEndorseState({ open: false, user: null, text: "" })}
+        title={`Endorse ${endorseState.user?.name}`}
+        onConfirm={() => {
+          if (!endorseState.text.trim()) {
+            toast.error("Endorsement text cannot be empty.");
+            return;
+          }
+          endorseUser(endorseState.user.id, {
+            project: project._id,
+            text: endorseState.text,
+            skills: archiveData.skillsGained?.map(s => s.name || s) || []
+          }).then(() => {
+            toast.success(`Endorsed ${endorseState.user.name}!`);
+            setEndorseState({ open: false, user: null, text: "" });
+          }).catch(err => toast.error(err.response?.data?.message || "Failed to endorse"));
+        }}
+        confirmText="Send Endorsement"
+      >
+        <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "16px", fontSize: "14px" }}>
+          💡 <strong>Pro Tip:</strong> Write a short, professional recommendation for your teammate. Mention a specific technical skill or soft skill they demonstrated. This will be permanently visible on their public profile!
+        </p>
+        <textarea
+          value={endorseState.text}
+          onChange={(e) => setEndorseState(prev => ({ ...prev, text: e.target.value }))}
+          placeholder={`E.g. ${endorseState.user?.name} is an amazing developer who brought incredible energy to the team...`}
+          style={{ width: "100%", padding: "12px", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", minHeight: "100px", resize: "vertical" }}
+        />
+      </Modal>
+    </>
   );
 }

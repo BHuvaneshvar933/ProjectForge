@@ -196,9 +196,9 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
             )}
           </div>
 
-          {/* Key Achievements */}
+          {/* Key Milestones */}
           <div className="journey-card">
-            <h3>Key Achievements 🏆</h3>
+            <h3>Key Milestones 🏆</h3>
             <p className="journey-card__desc">What major milestones did you hit?</p>
             
             <ul className="journey-list">
@@ -213,7 +213,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
             <form onSubmit={handleAddAchievement} className="journey-form-inline">
               <input 
                 type="text" 
-                placeholder="e.g., Integrated Stripe payments" 
+                placeholder="E.g. Migrated database to PostgreSQL..." 
                 value={newAchievement}
                 onChange={(e) => setNewAchievement(e.target.value)}
                 disabled={loading}
