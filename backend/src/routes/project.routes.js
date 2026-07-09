@@ -18,7 +18,8 @@ import {
   getBasicRepoStats,
   getReleases,
   createRelease,
-  saveMyReflections
+  saveMyReflections,
+  removeTeamMember
 } from "../controllers/project.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
@@ -47,4 +48,5 @@ router.patch(
   protect,
   leaveProject
 );
+router.delete("/:projectId/team/:userId", protect, removeTeamMember);
 export default router;

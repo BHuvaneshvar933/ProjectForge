@@ -17,6 +17,7 @@ import Workspace from "./pages/Workspace/Workspace";
 import LearningArchive from "./pages/LearningArchive/LearningArchive";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ChatWidget from './components/chat/ChatWidget';
 
 function App() {
   return (
@@ -98,8 +99,12 @@ function App() {
         hideProgressBar={false}
         newestOnTop
         closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
         pauseOnHover
       />
+      <ChatWidget />
     </BrowserRouter>
   );
 }

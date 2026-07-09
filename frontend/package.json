@@ -19,6 +19,7 @@
     "@react-oauth/google": "^0.13.5",
     "@tanstack/react-virtual": "^3.14.5",
     "axios": "^1.13.6",
+    "html-to-image": "^1.11.13",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",

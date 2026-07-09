@@ -26,6 +26,8 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
   const [inlineCreateParent, setInlineCreateParent] = useState(null);
   const [inlineCreateTitle, setInlineCreateTitle] = useState("");
 
+  const isCompleted = project?.status === "completed";
+
   const handleInlineCreate = async (parentId, defaultType) => {
     if (!inlineCreateTitle.trim()) return;
     setTaskCreating(true);
@@ -129,9 +131,11 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
     <div>
       <div className="workspace__actions" style={{ marginBottom: 14, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", gap: "10px" }}>
-          <Button variant="primary" onClick={() => setTaskModalOpen(true)}>
-            + New Task
-          </Button>
+          {!isCompleted && (
+            <Button variant="primary" onClick={() => setTaskModalOpen(true)}>
+              + New Task
+            </Button>
+          )}
           <Button variant="ghost" onClick={fetchTasks} disabled={tasksLoading}>
             Refresh
           </Button>
@@ -176,14 +180,17 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
               key={col.key} 
               className="workspace-column"
               onDragOver={(e) => {
+                if (isCompleted) return;
                 e.preventDefault();
                 e.dataTransfer.dropEffect = "move";
                 e.currentTarget.classList.add("is-dragover");
               }}
               onDragLeave={(e) => {
+                if (isCompleted) return;
                 e.currentTarget.classList.remove("is-dragover");
               }}
               onDrop={(e) => {
+                if (isCompleted) return;
                 e.preventDefault();
                 e.currentTarget.classList.remove("is-dragover");
                 const taskId = e.dataTransfer.getData("taskId");
@@ -206,7 +213,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                 <div 
                   key={t._id} 
                   className={`workspace-task ${draggedTaskId === t._id ? "is-dragging" : ""}`.trim()}
-                  draggable
+                  draggable={!isCompleted}
                   style={{
                     borderLeft: `4px solid ${t.issueType === "epic" ? "#bf5af2" : t.issueType === "story" ? "#32d74b" : t.issueType === "bug" ? "#ff453a" : "rgba(255,255,255,0.1)"}`
                   }}

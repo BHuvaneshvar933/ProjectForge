@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import Badge from "../common/Badge";
 import './WorkspaceOverview.css';
 
-export default function WorkspaceOverview({ tasks, team }) {
+export default function WorkspaceOverview({ tasks, team, isOwner, onRemoveMember }) {
   const overview = useMemo(() => {
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(t => t.status === 'done').length;
@@ -222,6 +222,38 @@ export default function WorkspaceOverview({ tasks, team }) {
               </div>
             )) : (
               <div style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", padding: "16px" }}>No recent activity.</div>
+            )}
+          </div>
+        </div>
+        {/* Team Management */}
+        <div className="overview-card col-span-2">
+          <h3 className="overview-card-title">Team Members</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
+            {team.length > 0 ? team.map((m, i) => (
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(10,132,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0a84ff", fontWeight: "bold" }}>
+                    {m?.userId?.name?.[0] || 'U'}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: "14px", fontWeight: "500", marginBottom: "2px" }}>{m?.userId?.name || 'Unknown'}</div>
+                    <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{m?.projectRole || 'Member'}</div>
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <Badge variant={m?.role === "owner" ? "owner" : "member"}>{m?.role === "owner" ? "owner" : "member"}</Badge>
+                  {isOwner && m?.role !== "owner" && (
+                    <button 
+                      onClick={() => onRemoveMember && onRemoveMember(m?.userId?._id)}
+                      style={{ background: "transparent", border: "1px solid rgba(255,69,58,0.5)", color: "#ff453a", padding: "4px 8px", borderRadius: "4px", cursor: "pointer", fontSize: "12px" }}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+            )) : (
+              <div style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", padding: "16px" }}>No team members found.</div>
             )}
           </div>
         </div>
