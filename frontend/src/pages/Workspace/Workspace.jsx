@@ -42,6 +42,8 @@ export default function Workspace() {
   const [githubLoading, setGithubLoading] = useState(false);
 
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
+  const [resumeModalOpen, setResumeModalOpen] = useState(false);
+  const [removeMemberId, setRemoveMemberId] = useState(null);
 
   const isOwner = useMemo(() => {
     if (!me?._id || !project?.owner?._id) return false;
@@ -180,10 +182,10 @@ export default function Workspace() {
   };
 
   const handleResumeProject = async () => {
-    if (!window.confirm("Are you sure you want to resume this project?")) return;
     try {
       await updateProject(projectId, { status: "in-progress" });
       toast.success("Project resumed");
+      setResumeModalOpen(false);
       setTab("overview");
       fetchBase();
     } catch (err) {
@@ -191,11 +193,12 @@ export default function Workspace() {
     }
   };
 
-  const handleRemoveMember = async (userId) => {
-    if (!window.confirm("Are you sure you want to remove this member? They will lose access to the active workspace but will retain credit on the showcase.")) return;
+  const handleRemoveMember = async () => {
+    if (!removeMemberId) return;
     try {
-      await removeTeamMember(projectId, userId);
+      await removeTeamMember(projectId, removeMemberId);
       toast.success("Member removed successfully");
+      setRemoveMemberId(null);
       fetchBase();
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to remove member");
@@ -267,7 +270,7 @@ export default function Workspace() {
         </div>
         <div className="workspace__actions">
           {isOwner && !isCompleted && <Button onClick={() => setCompletionModalOpen(true)}>Complete Project</Button>}
-          {isOwner && isCompleted && <Button onClick={handleResumeProject}>Resume Project</Button>}
+          {isOwner && isCompleted && <Button onClick={() => setResumeModalOpen(true)}>Resume Project</Button>}
           <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>Back</Button>
         </div>
       </div>
@@ -299,7 +302,7 @@ export default function Workspace() {
           : <JourneyTab project={project} isMember={isMember} onUpdate={fetchBase} />
       )}
 
-      {tab === "overview" && <WorkspaceOverview tasks={tasks} team={teamSorted} isOwner={isOwner} onRemoveMember={handleRemoveMember} />}
+      {tab === "overview" && <WorkspaceOverview tasks={tasks} team={teamSorted} isOwner={isOwner} onRemoveMember={(id) => setRemoveMemberId(id)} />}
 
       {tab === "calendar" && <WorkspaceCalendar project={project} tasks={tasks} onTaskClick={() => setTab("tasks")} />}
 
@@ -344,6 +347,30 @@ export default function Workspace() {
           setTab("journey");
         }}
       />
+
+      <Modal 
+        isOpen={resumeModalOpen} 
+        onClose={() => setResumeModalOpen(false)} 
+        title="Resume Project"
+        onConfirm={handleResumeProject}
+        confirmText="Yes, Resume"
+      >
+        <p style={{ color: "rgba(255,255,255,0.8)", marginBottom: "16px", fontSize: "14px" }}>
+          Are you sure you want to resume this project? This will move it back to 'in-progress' status.
+        </p>
+      </Modal>
+
+      <Modal 
+        isOpen={!!removeMemberId} 
+        onClose={() => setRemoveMemberId(null)} 
+        title="Remove Team Member"
+        onConfirm={handleRemoveMember}
+        confirmText="Remove Member"
+      >
+        <p style={{ color: "rgba(255,255,255,0.8)", marginBottom: "16px", fontSize: "14px" }}>
+          Are you sure you want to remove this member? They will lose access to the active workspace but will retain credit on their profile.
+        </p>
+      </Modal>
     </div>
   );
 }

@@ -1,4 +1,7 @@
+import { Link } from "react-router-dom";
+
 export default function AccountDetails({ user }) {
+
   return (
     <div className="account__card">
       <div className="account__card-title">Account Details</div>
@@ -43,6 +46,40 @@ export default function AccountDetails({ user }) {
             <span className="account__journey-value">{user?.developerJourney?.teamContributions ?? 0} tasks</span>
           </div>
         </div>
+      </div>
+
+      <div className="account__section">
+        <div className="account__card-title" style={{ marginBottom: 16 }}>
+          Badges & Achievements
+        </div>
+        {user?.developerJourney?.gamifiedBadges?.length > 0 ? (
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            {user.developerJourney.gamifiedBadges.map(badge => (
+              <div key={badge.id} style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '8px',
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                width: 'calc(50% - 6px)'
+              }}>
+                <div style={{ fontSize: '24px', background: 'rgba(0,0,0,0.3)', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
+                  {badge.icon}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 'bold', fontSize: '14px', color: 'rgba(255,255,255,0.9)' }}>{badge.name}</div>
+                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>{badge.description}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="account__muted" style={{ fontStyle: 'italic' }}>
+            No badges unlocked yet. Start completing tasks to earn them!
+          </div>
+        )}
       </div>
 
       <div className="account__section">

@@ -9,6 +9,11 @@ export const getDeveloperJourneyStats = async (userId) => {
   const teams = await Team.find({ userId, status: "active" });
   const projectIds = teams.map((t) => t.projectId);
 
+  const activeProjectsCount = await Project.countDocuments({
+    _id: { $in: projectIds },
+    status: { $in: ["recruiting", "in-progress"] },
+  });
+
   const completedProjects = await Project.find({
     _id: { $in: projectIds },
     status: "completed",
@@ -16,16 +21,12 @@ export const getDeveloperJourneyStats = async (userId) => {
 
   let projectsCompleted = completedProjects.length;
   let challengesSolved = 0;
-  let achievementsUnlocked = 0;
   const uniqueSkills = new Set();
 
   completedProjects.forEach((proj) => {
     if (proj.archiveData) {
       if (proj.archiveData.challenges) {
         challengesSolved += proj.archiveData.challenges.length;
-      }
-      if (proj.archiveData.achievements) {
-        achievementsUnlocked += proj.archiveData.achievements.length;
       }
       if (proj.archiveData.skillsGained) {
         proj.archiveData.skillsGained.forEach((skill) => {
@@ -42,12 +43,44 @@ export const getDeveloperJourneyStats = async (userId) => {
     status: "done",
   });
 
+  const bugsFixed = await Task.countDocuments({
+    assignedTo: userId,
+    status: "done",
+    issueType: "bug",
+  });
+
+  const user = await User.findById(userId);
+
+  const gamifiedBadges = [];
+  if (teamContributions >= 1) {
+    gamifiedBadges.push({ id: "first_blood", name: "First Blood", icon: "🩸", description: "Complete your first task" });
+  }
+  if (teamContributions >= 10) {
+    gamifiedBadges.push({ id: "task_master", name: "Task Master", icon: "⚡", description: "Complete 10 tasks" });
+  }
+  if (projectsCompleted >= 1) {
+    gamifiedBadges.push({ id: "project_pioneer", name: "Project Pioneer", icon: "🚀", description: "Complete your first project" });
+  }
+  if (projectsCompleted >= 5) {
+    gamifiedBadges.push({ id: "veteran_builder", name: "Veteran Builder", icon: "🏛️", description: "Complete 5 projects" });
+  }
+  if (bugsFixed >= 5) {
+    gamifiedBadges.push({ id: "bug_squasher", name: "Bug Squasher", icon: "🐛", description: "Fix 5 bugs" });
+  }
+  if (user?.endorsements?.length > 0) {
+    gamifiedBadges.push({ id: "team_favorite", name: "Team Favorite", icon: "🌟", description: "Receive a peer endorsement" });
+  }
+
+  const achievementsUnlocked = gamifiedBadges.length;
+
   return {
+    projectsActive: activeProjectsCount,
     projectsCompleted,
     challengesSolved,
     skillsMastered,
     achievementsUnlocked,
     teamContributions,
+    gamifiedBadges
   };
 };
 
@@ -62,8 +95,14 @@ export const getMyProfile = async (userId) => {
 
   const developerJourney = await getDeveloperJourneyStats(userId);
 
+  const userObj = user.toObject();
+  if (userObj.stats) {
+    userObj.stats.projectsActive = developerJourney.projectsActive;
+    userObj.stats.projectsCompleted = developerJourney.projectsCompleted;
+  }
+
   return {
-    ...user.toObject(),
+    ...userObj,
     developerJourney
   };
 };
@@ -109,8 +148,14 @@ export const getPublicUserProfile = async (userId) => {
 
   const developerJourney = await getDeveloperJourneyStats(userId);
 
+  const userObj = user.toObject();
+  if (userObj.stats) {
+    userObj.stats.projectsActive = developerJourney.projectsActive;
+    userObj.stats.projectsCompleted = developerJourney.projectsCompleted;
+  }
+
   return {
-    ...user.toObject(),
+    ...userObj,
     developerJourney
   };
 };
