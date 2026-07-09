@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import Team from "../models/team.model.js";
 import Message from "../models/message.model.js";
-
+import Conversation from "../models/conversation.model.js";
+import DirectMessage from "../models/directMessage.model.js";
 const ensureProjectMember = async ({ projectId, userId }) => {
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
     throw new Error("Invalid projectId");
@@ -25,6 +26,80 @@ const ensureProjectMember = async ({ projectId, userId }) => {
 
 export const registerSocketHandlers = (io, socket) => {
   console.log("Handlers registered for:", socket.id);
+
+  // Join User Room (Global connection for direct messages & notifications)
+  socket.on("join-user", async (ack) => {
+    try {
+      if (!socket.user || !socket.user._id) {
+        socket.disconnect(true);
+        return;
+      }
+      const roomName = `user-${socket.user._id}`;
+      socket.join(roomName);
+      console.log(`User ${socket.user._id} joined global room ${roomName}`);
+      if (typeof ack === "function") ack({ ok: true, room: roomName });
+    } catch (err) {
+      console.error("User join error:", err.message);
+    }
+  });
+
+  // Send Direct Message
+  socket.on("send-direct-message", async ({ receiverId, content }, ack) => {
+    try {
+      if (!socket.user || !socket.user._id) {
+        return;
+      }
+      
+      const senderId = socket.user._id;
+      
+      if (!receiverId || !content || content.trim().length === 0) {
+        if (typeof ack === "function") ack({ ok: false, error: "Invalid data" });
+        return;
+      }
+
+      // Find or create conversation
+      let conversation = await Conversation.findOne({
+        participants: { $all: [senderId, receiverId] }
+      });
+
+      if (!conversation) {
+        conversation = await Conversation.create({
+          participants: [senderId, receiverId]
+        });
+      }
+
+      // Create message
+      const message = await DirectMessage.create({
+        conversationId: conversation._id,
+        senderId,
+        content: content.trim(),
+      });
+
+      conversation.lastMessage = message._id;
+      conversation.lastMessageAt = message.createdAt;
+      await conversation.save();
+
+      await message.populate("senderId", "name email avatar");
+
+      const payload = {
+        _id: message._id,
+        conversationId: conversation._id,
+        senderId: message.senderId,
+        content: message.content,
+        createdAt: message.createdAt,
+      };
+
+      // Emit to receiver and sender
+      io.to(`user-${receiverId}`).emit("new-direct-message", payload);
+      socket.emit("new-direct-message", payload); // Send back to sender too
+
+      if (typeof ack === "function") ack({ ok: true, data: payload });
+    } catch (err) {
+      console.error("Direct Message Error:", err);
+      if (typeof ack === "function") ack({ ok: false, error: "Failed to send DM" });
+    }
+  });
+
   // Join Project Room
   socket.on("join-project", async (projectId, ack) => {
     console.log("EVENT TRIGGERED");

@@ -182,6 +182,21 @@ export default function ProjectApplications() {
                     <Button variant="outline" onClick={() => setProfileUser(applicant)}>
                       View Profile
                     </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        const event = new CustomEvent("open-dm", { 
+                          detail: { 
+                            userId: applicant._id, 
+                            name: applicant.name, 
+                            avatar: applicant.avatar 
+                          } 
+                        });
+                        window.dispatchEvent(event);
+                      }}
+                    >
+                      Message
+                    </Button>
                     <Button
                       variant="primary"
                       loading={disabled}

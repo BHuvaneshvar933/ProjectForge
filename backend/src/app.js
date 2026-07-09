@@ -11,6 +11,7 @@ import analyticsRoutes from "./routes/analytics.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
+import directMessageRoutes from "./routes/directMessage.routes.js";
 
 const app = express();
 
@@ -103,6 +104,7 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/direct-messages", directMessageRoutes);
 
 app.use(errorHandler);
 export default app;
