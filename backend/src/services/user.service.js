@@ -73,9 +73,28 @@ export const getDeveloperJourneyStats = async (userId) => {
 
   const achievementsUnlocked = gamifiedBadges.length;
 
+  const applicationsSent = await Application.countDocuments({
+    applicantId: userId,
+    applicationType: "application",
+  });
+
+  const applicationsAccepted = await Application.countDocuments({
+    applicantId: userId,
+    applicationType: "application",
+    status: "accepted",
+  });
+
+  const acceptanceRate = applicationsSent > 0 
+    ? Number(((applicationsAccepted / applicationsSent) * 100).toFixed(0)) 
+    : 0;
+
   return {
     projectsActive: activeProjectsCount,
     projectsCompleted,
+    tasksCompleted: teamContributions,
+    applicationsSent,
+    applicationsAccepted,
+    acceptanceRate,
     challengesSolved,
     skillsMastered,
     achievementsUnlocked,
@@ -99,6 +118,10 @@ export const getMyProfile = async (userId) => {
   if (userObj.stats) {
     userObj.stats.projectsActive = developerJourney.projectsActive;
     userObj.stats.projectsCompleted = developerJourney.projectsCompleted;
+    userObj.stats.tasksCompleted = developerJourney.tasksCompleted;
+    userObj.stats.applicationsSent = developerJourney.applicationsSent;
+    userObj.stats.applicationsAccepted = developerJourney.applicationsAccepted;
+    userObj.stats.acceptanceRate = developerJourney.acceptanceRate;
   }
 
   return {
@@ -152,6 +175,10 @@ export const getPublicUserProfile = async (userId) => {
   if (userObj.stats) {
     userObj.stats.projectsActive = developerJourney.projectsActive;
     userObj.stats.projectsCompleted = developerJourney.projectsCompleted;
+    userObj.stats.tasksCompleted = developerJourney.tasksCompleted;
+    userObj.stats.applicationsSent = developerJourney.applicationsSent;
+    userObj.stats.applicationsAccepted = developerJourney.applicationsAccepted;
+    userObj.stats.acceptanceRate = developerJourney.acceptanceRate;
   }
 
   return {

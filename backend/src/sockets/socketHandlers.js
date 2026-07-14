@@ -25,7 +25,6 @@ const ensureProjectMember = async ({ projectId, userId }) => {
 };
 
 export const registerSocketHandlers = (io, socket) => {
-  console.log("Handlers registered for:", socket.id);
 
   // Join User Room (Global connection for direct messages & notifications)
   socket.on("join-user", async (ack) => {
@@ -36,7 +35,6 @@ export const registerSocketHandlers = (io, socket) => {
       }
       const roomName = `user-${socket.user._id}`;
       socket.join(roomName);
-      console.log(`User ${socket.user._id} joined global room ${roomName}`);
       if (typeof ack === "function") ack({ ok: true, room: roomName });
     } catch (err) {
       console.error("User join error:", err.message);
@@ -102,34 +100,26 @@ export const registerSocketHandlers = (io, socket) => {
 
   // Join Project Room
   socket.on("join-project", async (projectId, ack) => {
-    console.log("EVENT TRIGGERED");
     try {
-      console.log("Project ID:", projectId);
       if (!socket.user || !socket.user._id) {
         socket.disconnect(true);
         return;
       }
 
-       console.log("Checking membership for user:", String(socket.user._id));
-
        await ensureProjectMember({ projectId, userId: socket.user._id });
 
-       const roomName = `project-${projectId}`;
+      const roomName = `project-${projectId}`;
 
       socket.join(roomName);
-
-      console.log(`User ${socket.user._id} joined ${roomName}`);
 
       socket.emit("joined-project", roomName);
       if (typeof ack === "function") ack({ ok: true, room: roomName });
 
     } catch (err) {
-        console.error("Join error FULL:", err);
       console.error("Join error:", err.message);
       const msg = err?.message === "Invalid projectId" ? "Invalid projectId" : err?.message === "Access denied" ? "Access denied" : "Failed to join project";
       if (typeof ack === "function") ack({ ok: false, error: msg });
       else socket.emit("error", msg);
-      console.log("");
     }
   });
 

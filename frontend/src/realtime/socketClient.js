@@ -4,7 +4,7 @@ let socket;
 
 const SOCKET_URL =
   (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_SOCKET_URL) ||
-  "http://localhost:5000";
+  "";
 
 const getToken = () => {
   try {
@@ -50,7 +50,6 @@ export const getSocket = () => {
   });
 
   socket.on("reconnect", (attemptNumber) => {
-    console.log("Socket reconnected successfully after", attemptNumber, "attempts");
   });
 
   return socket;
