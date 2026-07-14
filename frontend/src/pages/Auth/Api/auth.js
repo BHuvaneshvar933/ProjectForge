@@ -1,9 +1,9 @@
 import axios from "axios";
-const url =
+const API_BASE_URL =
   (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_API_URL) ||
-  "http://localhost:5000/api";
+  "/api";
 const api = axios.create({
-    baseURL:url,
+    baseURL: API_BASE_URL,
     headers:{"Content-Type":"application/json"}
 
 })

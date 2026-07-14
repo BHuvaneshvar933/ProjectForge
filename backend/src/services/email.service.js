@@ -5,7 +5,11 @@ const OAuth2 = google.auth.OAuth2;
 // Triggering nodemon restart
 
 export const sendPasswordResetEmail = async (to, resetToken) => {
-  const resetUrl = `${process.env.CLIENT_ORIGIN || "http://localhost:5173"}/reset-password/${resetToken}`;
+  if (!process.env.CLIENT_ORIGIN) {
+    throw new Error("CLIENT_ORIGIN environment variable is not defined");
+  }
+
+  const resetUrl = `${process.env.CLIENT_ORIGIN}/reset-password/${resetToken}`;
 
   const message = {
     from: `"ProjectForge" <${process.env.OAUTH_EMAIL || "noreply@projectforge.com"}>`,
@@ -61,7 +65,11 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
 
       console.log("✉️ Email sent successfully via Gmail HTTP API (bypassing SMTP)");
     } else {
-      // Fallback to Ethereal
+      if (process.env.NODE_ENV === "production") {
+        throw new Error("Missing OAuth credentials for email service in production");
+      }
+      
+      // Fallback to Ethereal only in development
       console.warn("⚠️ No OAuth credentials found in .env. Falling back to Ethereal Email.");
       const testAccount = await nodemailer.createTestAccount();
       const transporter = nodemailer.createTransport({

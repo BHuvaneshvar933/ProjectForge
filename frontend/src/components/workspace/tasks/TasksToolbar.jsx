@@ -27,7 +27,7 @@ export default function TasksToolbar({
           />
         </div>
         
-        {/* Simple Type Filter Dropdown mock */}
+
         <select 
           className="workspace-select" 
           onChange={(e) => toggleFilter("type", e.target.value)}
