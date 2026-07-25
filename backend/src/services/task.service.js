@@ -82,6 +82,8 @@ export const createTask = async (projectId, payload, currentUser) => {
           taskNumber: nextTaskNumber,
           issueType: payload.issueType || "task",
           parentId: payload.parentId || null,
+          attachmentUrl: payload.attachmentUrl || null,
+          attachmentName: payload.attachmentName || null,
         },
       ],
       { session }
@@ -396,6 +398,8 @@ export const updateTask = async (taskId, updateData, userId) => {
     "tags",
     "issueType",
     "parentId",
+    "attachmentUrl",
+    "attachmentName",
   ];
 
   allowedFields.forEach((field) => {

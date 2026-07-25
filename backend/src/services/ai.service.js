@@ -1,5 +1,6 @@
 import Groq from "groq-sdk";
 import Team from "../models/team.model.js";
+import Project from "../models/project.model.js";
 
 let groqInstance = null;
 const getGroq = () => {
@@ -154,4 +155,99 @@ export const generateCareerAssets = async (projectData, projectId, userId) => {
     console.error("AI Generation Error: ", e);
     throw new Error("Failed to generate career assets correctly. Please try again.");
   }
+};
+
+export const generateProjectHealthScore = async (projectId, projectData, tasks, team) => {
+  const prompt = `
+    You are an expert Agile Project Manager and AI health assessor.
+    Based on the following project context, calculate a realistic Project Health Score (0-100) and provide a status, reasoning, and actionable suggestion.
+
+    Project Title: ${projectData.title}
+    Status: ${projectData.status}
+    Timeline: ${JSON.stringify(projectData.timeline)}
+    
+    Total Team Members: ${team.length}
+    Total Tasks: ${tasks.length}
+    Completed Tasks: ${tasks.filter(t => t.status === 'done').length}
+    Overdue Tasks: ${tasks.filter(t => t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'done').length}
+    In-Progress Tasks: ${tasks.filter(t => t.status === 'in-progress').length}
+    
+    Analyze the task completion rate, team activity, and deadline proximity.
+    Output EXACTLY the following JSON format. Do not include any other text.
+    {
+      "health_score": 75,
+      "status": "At Risk",
+      "reasoning": "Brief explanation of why this score was given.",
+      "suggestion": "One actionable step to improve."
+    }
+  `;
+
+  const chatCompletion = await getGroq().chat.completions.create({
+    messages: [{ role: "user", content: prompt }],
+    model: "llama-3.3-70b-versatile",
+    temperature: 0.2,
+    max_tokens: 500,
+    response_format: { type: "json_object" }
+  });
+
+  try {
+    const result = JSON.parse(chatCompletion.choices[0]?.message?.content || "{}");
+    
+    await Project.findByIdAndUpdate(projectId, {
+      $set: {
+        "metrics.aiHealthScore": result.health_score,
+        "metrics.aiHealthStatus": result.status,
+        "metrics.aiHealthReasoning": result.reasoning,
+        "metrics.aiHealthSuggestion": result.suggestion,
+        "metrics.aiLastGeneratedAt": new Date()
+      }
+    });
+
+    return result;
+  } catch (e) {
+    console.error("AI Health Score Error: ", e);
+    throw new Error("Failed to generate health score.");
+  }
+};
+
+export const generateWeeklyProjectSummary = async (projectId, projectData, tasks, team) => {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  
+  const completedThisWeek = tasks.filter(t => t.status === 'done' && t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo);
+  const createdThisWeek = tasks.filter(t => t.createdAt && new Date(t.createdAt) > sevenDaysAgo);
+  const overdueTasks = tasks.filter(t => t.dueDate && new Date(t.dueDate) < now && t.status !== 'done');
+
+  const prompt = `
+    You are an expert Project Manager. Write a concise, 1-2 paragraph weekly digest for the project owner.
+    
+    Project Title: ${projectData.title}
+    Total Team Size: ${team.length}
+    Tasks Completed This Week: ${completedThisWeek.length}
+    New Tasks Created This Week: ${createdThisWeek.length}
+    Total Overdue Tasks: ${overdueTasks.length}
+
+    Summarize the week's progress. Be highly professional but readable. Point out any blocking issues (like overdue tasks) and provide a recommendation for next week.
+    Do not use introductory greetings (like "Here is the summary"). Just return the raw summary text.
+  `;
+
+  const chatCompletion = await getGroq().chat.completions.create({
+    messages: [{ role: "user", content: prompt }],
+    model: "llama-3.3-70b-versatile",
+    temperature: 0.5,
+    max_tokens: 600,
+  });
+
+  const summary = chatCompletion.choices[0]?.message?.content || "";
+
+  if (summary) {
+    await Project.findByIdAndUpdate(projectId, {
+      $set: {
+        "metrics.aiWeeklySummary": summary,
+        "metrics.aiLastGeneratedAt": new Date()
+      }
+    });
+  }
+
+  return summary;
 };

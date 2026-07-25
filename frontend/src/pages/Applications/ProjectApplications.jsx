@@ -165,7 +165,7 @@ export default function ProjectApplications() {
 
                 {a?.message && (
                   <div className="apps-card__message">
-                    <div className="apps-card__message-label">{a?.applicationType === "invitation" ? "Invitation note" : "Message"}</div>
+                    <div className="apps-card__message-label">{a?.applicationType === "invitation" ? "Invitation Note" : "Application Note"}</div>
                     <div className="apps-card__message-text">{a.message}</div>
                   </div>
                 )}
@@ -184,15 +184,26 @@ export default function ProjectApplications() {
                     </Button>
                     <Button 
                       variant="outline" 
-                      onClick={() => {
-                        const event = new CustomEvent("open-dm", { 
-                          detail: { 
-                            userId: applicant._id, 
-                            name: applicant.name, 
-                            avatar: applicant.avatar 
-                          } 
-                        });
-                        window.dispatchEvent(event);
+                      onClick={async () => {
+                        try {
+                          // Ensure we only pass projectId and applicantId as spec requires
+                          // I'll dynamically import messageApi here to avoid breaking top-level imports
+                          const { startConversation } = await import("../../api/messageApi");
+                          const res = await startConversation({ projectId, applicantId: applicant._id });
+                          const conversationId = res.data.data._id;
+                          
+                          const event = new CustomEvent("open-dm", { 
+                            detail: { 
+                              conversationId,
+                              userId: applicant._id, 
+                              name: applicant.name, 
+                              avatar: applicant.avatar 
+                            } 
+                          });
+                          window.dispatchEvent(event);
+                        } catch (err) {
+                          toast.error(err?.response?.data?.message || "Failed to start conversation");
+                        }
                       }}
                     >
                       Message

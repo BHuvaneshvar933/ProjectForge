@@ -42,7 +42,7 @@ export const registerSocketHandlers = (io, socket) => {
   });
 
   // Send Direct Message
-  socket.on("send-direct-message", async ({ receiverId, content }, ack) => {
+  socket.on("send-direct-message", async ({ conversationId, text }, ack) => {
     try {
       if (!socket.user || !socket.user._id) {
         return;
@@ -50,27 +50,28 @@ export const registerSocketHandlers = (io, socket) => {
       
       const senderId = socket.user._id;
       
-      if (!receiverId || !content || content.trim().length === 0) {
+      if (!conversationId || !text || text.trim().length === 0) {
         if (typeof ack === "function") ack({ ok: false, error: "Invalid data" });
         return;
       }
 
-      // Find or create conversation
-      let conversation = await Conversation.findOne({
-        participants: { $all: [senderId, receiverId] }
-      });
-
+      // Verify conversation and access
+      const conversation = await Conversation.findById(conversationId);
       if (!conversation) {
-        conversation = await Conversation.create({
-          participants: [senderId, receiverId]
-        });
+        if (typeof ack === "function") ack({ ok: false, error: "Conversation not found" });
+        return;
+      }
+
+      if (String(conversation.ownerId) !== String(senderId) && String(conversation.applicantId) !== String(senderId)) {
+        if (typeof ack === "function") ack({ ok: false, error: "Access denied" });
+        return;
       }
 
       // Create message
       const message = await DirectMessage.create({
         conversationId: conversation._id,
         senderId,
-        content: content.trim(),
+        text: text.trim(),
       });
 
       conversation.lastMessage = message._id;
@@ -83,11 +84,12 @@ export const registerSocketHandlers = (io, socket) => {
         _id: message._id,
         conversationId: conversation._id,
         senderId: message.senderId,
-        content: message.content,
+        text: message.text,
         createdAt: message.createdAt,
       };
 
       // Emit to receiver and sender
+      const receiverId = String(conversation.ownerId) === String(senderId) ? conversation.applicantId : conversation.ownerId;
       io.to(`user-${receiverId}`).emit("new-direct-message", payload);
       socket.emit("new-direct-message", payload); // Send back to sender too
 
@@ -95,6 +97,30 @@ export const registerSocketHandlers = (io, socket) => {
     } catch (err) {
       console.error("Direct Message Error:", err);
       if (typeof ack === "function") ack({ ok: false, error: "Failed to send DM" });
+    }
+  });
+
+  // Message Seen
+  socket.on("message-seen", async ({ messageId }, ack) => {
+    try {
+      if (!socket.user || !socket.user._id) return;
+      
+      const userId = socket.user._id;
+      const message = await DirectMessage.findById(messageId).populate("conversationId");
+      if (!message) return;
+
+      const conversation = message.conversationId;
+      if (String(conversation.ownerId) !== String(userId) && String(conversation.applicantId) !== String(userId)) return;
+      if (String(message.senderId) === String(userId)) return;
+
+      message.seen = true;
+      await message.save();
+
+      const senderId = message.senderId;
+      io.to(`user-${senderId}`).emit("message-seen", { messageId, conversationId: conversation._id });
+      if (typeof ack === "function") ack({ ok: true });
+    } catch (err) {
+      console.error("Message Seen Error:", err);
     }
   });
 

@@ -63,6 +63,16 @@ const taskSchema = new mongoose.Schema(
       default: "medium",
     },
 
+    attachmentUrl: {
+      type: String,
+      default: null,
+    },
+
+    attachmentName: {
+      type: String,
+      default: null,
+    },
+
     tags: {
   type: [String],
   default: [],

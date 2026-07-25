@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { getConversations, getDirectMessages } from "../../api/messageApi";
 import { getSocket } from "../../realtime/socketClient";
 import { getMyProfile } from "../../api/userApi";
@@ -12,25 +13,35 @@ export default function ChatWidget() {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+
+  const isAuthRoute = 
+    location.pathname === "/login" || 
+    location.pathname === "/register" || 
+    location.pathname === "/forgot-password" ||
+    location.pathname.startsWith("/reset-password");
 
   const messagesEndRef = useRef(null);
 
+  const token = localStorage.getItem("token") || localStorage.getItem("pf_token") || localStorage.getItem("projectforge_token");
+
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const token = localStorage.getItem("token") || localStorage.getItem("pf_token") || localStorage.getItem("projectforge_token");
-        if (token) {
+      if (token) {
+        try {
           const { data } = await getMyProfile();
           if (data?.data?.user) {
             setUser(data.data.user);
           }
+        } catch (e) {
+          setUser(null);
         }
-      } catch (e) {
-        // Not authenticated
+      } else {
+        setUser(null);
       }
     };
     fetchUser();
-  }, []);
+  }, [token]);
 
   // Load conversations on open
   useEffect(() => {
@@ -54,7 +65,7 @@ export default function ChatWidget() {
           if (prev.find((m) => m._id === msg._id)) return prev;
           return [...prev, msg];
         });
-      } else if (activeChat && !activeChat.conversationId && (msg.senderId === activeChat.userId || msg.senderId?._id === activeChat.userId)) {
+      } else if (activeChat && !activeChat.conversationId && (String(msg.senderId) === String(activeChat.userId) || String(msg.senderId?._id) === String(activeChat.userId))) {
         // Edge case: receiving a message from them while we just opened a new empty chat with them
         setMessages((prev) => {
           if (prev.find((m) => m._id === msg._id)) return prev;
@@ -86,10 +97,10 @@ export default function ChatWidget() {
   // Open Chat from outside (e.g. clicking "Message" on an applicant)
   useEffect(() => {
     const handleOpenChat = (e) => {
-      const { userId, name, avatar } = e.detail;
+      const { userId, name, avatar, conversationId } = e.detail;
       setIsOpen(true);
-      setActiveChat({ userId, name, avatar, conversationId: null });
-      loadMessages(userId);
+      setActiveChat({ userId, name, avatar, conversationId });
+      loadMessages(userId, conversationId);
     };
     window.addEventListener("open-dm", handleOpenChat);
     return () => window.removeEventListener("open-dm", handleOpenChat);
@@ -106,10 +117,14 @@ export default function ChatWidget() {
   };
 
   const loadMessages = async (otherUserId, conversationId = null) => {
+    if (!conversationId) {
+      setMessages([]);
+      return;
+    }
+    
     setLoading(true);
     try {
-      const params = conversationId ? { conversationId } : { otherUserId };
-      const { data } = await getDirectMessages(params);
+      const { data } = await getDirectMessages(conversationId);
       setMessages(data.data?.messages || []);
       
       // Update active chat with the real conversationId if it exists
@@ -132,7 +147,7 @@ export default function ChatWidget() {
 
     try {
       const socket = getSocket();
-      socket.emit("send-direct-message", { receiverId: activeChat.userId, content }, (res) => {
+      socket.emit("send-direct-message", { conversationId: activeChat.conversationId, text: content }, (res) => {
         if (!res.ok) {
            console.error("Failed to send message via socket", res.error);
         } else {
@@ -151,7 +166,7 @@ export default function ChatWidget() {
     }
   };
 
-  if (!user) return null;
+  if (!user || isAuthRoute) return null;
 
   return (
     <div className={`chat-widget ${isOpen ? "open" : ""}`}>
@@ -193,7 +208,11 @@ export default function ChatWidget() {
                 <div className="chat-widget__empty">No messages yet.</div>
               ) : (
                 conversations.map((conv) => {
-                  const otherUser = conv.participants.find((p) => p._id !== user._id) || conv.participants[0];
+                  const ownerIdStr = String(conv.ownerId?._id || conv.ownerId);
+                  const myIdStr = String(user._id);
+                  const isOwner = ownerIdStr === myIdStr;
+                  const otherUser = isOwner ? conv.applicantId : conv.ownerId;
+                  
                   return (
                     <div 
                       key={conv._id} 
@@ -213,15 +232,15 @@ export default function ChatWidget() {
                           <img src={otherUser.avatar} alt="avatar" />
                         ) : (
                           <div className="chat-widget__conv-avatar-placeholder">
-                            {otherUser.name.charAt(0).toUpperCase()}
+                            {otherUser.name ? otherUser.name.charAt(0).toUpperCase() : "?"}
                           </div>
                         )}
                       </div>
                       <div className="chat-widget__conv-info">
-                        <div className="chat-widget__conv-name">{otherUser.name}</div>
+                        <div className="chat-widget__conv-name">{otherUser.name || "User"}</div>
                         <div className="chat-widget__conv-last">
                           {conv.lastMessage?.senderId === user._id ? "You: " : ""}
-                          {conv.lastMessage?.content || "No messages"}
+                          {conv.lastMessage?.text || "No messages"}
                         </div>
                       </div>
                     </div>
@@ -239,12 +258,16 @@ export default function ChatWidget() {
                   <div className="chat-widget__empty">Say hi!</div>
                 ) : (
                   messages.map((msg) => {
-                    const isMe = msg.senderId === user._id || msg.senderId?._id === user._id;
+                    const senderStr = String(msg.senderId?._id || msg.senderId);
+                    const myIdStr = String(user._id);
+                    const isMe = senderStr === myIdStr;
+                    
                     return (
                       <div key={msg._id} className={`chat-widget__message ${isMe ? "me" : "them"}`}>
                         <div className="chat-widget__message-content">
-                          {msg.content}
+                          {msg.text}
                         </div>
+                        {isMe && msg.seen && <div style={{ fontSize: "10px", textAlign: "right", marginTop: "2px", opacity: 0.6 }}>Seen</div>}
                       </div>
                     );
                   })
