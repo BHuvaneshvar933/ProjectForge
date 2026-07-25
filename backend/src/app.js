@@ -12,6 +12,7 @@ import messageRoutes from "./routes/message.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
 import directMessageRoutes from "./routes/directMessage.routes.js";
+import { setupSwagger } from "./docs/swagger.js";
 
 const app = express();
 
@@ -105,6 +106,8 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/direct-messages", directMessageRoutes);
+
+setupSwagger(app);
 
 app.use(errorHandler);
 export default app;
