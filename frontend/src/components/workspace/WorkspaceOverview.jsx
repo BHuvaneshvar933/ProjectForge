@@ -1,8 +1,16 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 import Badge from "../common/Badge";
+import Button from "../common/Button";
+import Spinner from "../common/Spinner";
+import { generateAIContent } from "../../api/aiApi";
 import './WorkspaceOverview.css';
 
-export default function WorkspaceOverview({ tasks, team, isOwner, onRemoveMember }) {
+export default function WorkspaceOverview({ project, tasks, team, isOwner, onRemoveMember }) {
+  const [aiLoading, setAiLoading] = useState(false);
+  
+  // Local state to instantly reflect new insights before full project refetch
+  const [localMetrics, setLocalMetrics] = useState(project?.metrics || {});
   const overview = useMemo(() => {
     const totalTasks = tasks.length;
     const completedTasks = tasks.filter(t => t.status === 'done').length;
@@ -103,10 +111,95 @@ export default function WorkspaceOverview({ tasks, team, isOwner, onRemoveMember
 
   return (
     <div className="workspace-overview">
-      <div className="overview-header">
-        <h2>Project Overview</h2>
-        <p>Insights and metrics for your team's performance.</p>
+      <div className="overview-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <h2>Project Overview</h2>
+          <p>Insights and metrics for your team's performance.</p>
+        </div>
+        
+        {project?.status !== "completed" && (
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Button 
+              variant="outline" 
+              onClick={async () => {
+                setAiLoading(true);
+                try {
+                  const res = await generateAIContent("health-score", null, project._id);
+                  setLocalMetrics(prev => ({ 
+                    ...prev, 
+                    aiHealthScore: res.data.data.result.health_score,
+                    aiHealthStatus: res.data.data.result.status,
+                    aiHealthReasoning: res.data.data.result.reasoning,
+                    aiHealthSuggestion: res.data.data.result.suggestion
+                  }));
+                  toast.success("Health Score generated!");
+                } catch (e) {
+                  toast.error("Failed to generate Health Score");
+                } finally {
+                  setAiLoading(false);
+                }
+              }}
+              disabled={aiLoading}
+            >
+              {aiLoading ? <Spinner size="sm" /> : "❤️ Refresh Health Score"}
+            </Button>
+
+            <Button 
+              variant="outline" 
+              onClick={async () => {
+                setAiLoading(true);
+                try {
+                  const res = await generateAIContent("weekly-summary", null, project._id);
+                  setLocalMetrics(prev => ({ 
+                    ...prev, 
+                    aiWeeklySummary: res.data.data.result 
+                  }));
+                  toast.success("Weekly Summary generated!");
+                } catch (e) {
+                  toast.error("Failed to generate Weekly Summary");
+                } finally {
+                  setAiLoading(false);
+                }
+              }}
+              disabled={aiLoading}
+            >
+              {aiLoading ? <Spinner size="sm" /> : "📝 Refresh Weekly Summary"}
+            </Button>
+          </div>
+        )}
       </div>
+      
+      {/* AI Insights Section */}
+      {(localMetrics.aiHealthScore || localMetrics.aiWeeklySummary) && (
+        <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
+          {localMetrics.aiHealthScore && (
+            <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: localMetrics.aiHealthScore < 50 ? "4px solid #ff453a" : localMetrics.aiHealthScore < 80 ? "4px solid #ff9f0a" : "4px solid #32d74b" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                <h3 style={{ fontSize: "16px", margin: 0 }}>❤️ AI Health Score</h3>
+                <Badge variant={localMetrics.aiHealthScore < 50 ? "danger" : localMetrics.aiHealthScore < 80 ? "warning" : "success"}>
+                  {localMetrics.aiHealthScore}/100 - {localMetrics.aiHealthStatus}
+                </Badge>
+              </div>
+              <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", marginBottom: "12px", lineHeight: "1.5" }}>
+                <strong>Reasoning:</strong> {localMetrics.aiHealthReasoning}
+              </p>
+              <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)" }}>
+                <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>💡 AI Suggestion</span>
+                <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.9)" }}>{localMetrics.aiHealthSuggestion}</span>
+              </div>
+            </div>
+          )}
+
+          {localMetrics.aiWeeklySummary && (
+            <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: "4px solid #bf5af2" }}>
+              <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "12px" }}>📝 AI Weekly Summary</h3>
+              <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
+                {localMetrics.aiWeeklySummary}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
       
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
         <div className="workspace__card" style={{ padding: "16px" }}>

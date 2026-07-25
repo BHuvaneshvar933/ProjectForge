@@ -6,6 +6,10 @@ export const initializeSocket = (io) => {
   if (process.env.REDIS_URL) {
     const pubClient = new Redis(process.env.REDIS_URL);
     const subClient = pubClient.duplicate();
+
+    pubClient.on("error", (err) => console.error("Redis PubClient Error:", err.message));
+    subClient.on("error", (err) => console.error("Redis SubClient Error:", err.message));
+
     io.adapter(createAdapter(pubClient, subClient));
   }
 

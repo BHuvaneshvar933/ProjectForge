@@ -6,6 +6,12 @@ const metricsSchema = new mongoose.Schema({
   totalHoursLogged: { type: Number, default: 0 },
   velocityScore: { type: Number, default: 0 },
   completionPercentage: { type: Number, default: 0 },
+  aiHealthScore: { type: Number },
+  aiHealthStatus: { type: String },
+  aiHealthReasoning: { type: String },
+  aiHealthSuggestion: { type: String },
+  aiWeeklySummary: { type: String },
+  aiLastGeneratedAt: { type: Date },
 }, { _id: false });
 
 const projectSchema = new mongoose.Schema(

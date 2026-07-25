@@ -23,19 +23,19 @@
 
 ## About The Project
 
-**ProjectForge** is a full-stack, real-time platform designed to streamline the way professionals and students discover projects, form teams, and collaborate. Whether you are looking to recruit skilled individuals for your next big idea, or seeking opportunities to contribute to exciting projects, ProjectForge provides the ecosystem to make it happen.
+ProjectForge is a full-stack, real-time platform designed to streamline the way professionals and students discover projects, form teams, and collaborate. Whether you are looking to recruit skilled individuals for your next big idea, or seeking opportunities to contribute to exciting projects, ProjectForge provides the ecosystem to make it happen.
 
 Built with performance, scalability, and user experience in mind, the platform bridges the gap between project ideation and execution.
 
 ### Key Features
 
-* **Real-time Collaboration:** Instant messaging and notifications powered by Socket.io.
-* **Project Discovery:** Browse, filter, and search through a diverse pool of projects.
-* **Application System:** Seamlessly apply to projects or review incoming applications with custom workflows.
-* **Team & Task Management:** Organize teams, assign roles, and track project tasks efficiently.
+* **Real-time Collaboration:** Instant messaging, direct applicant messaging, and project workspace chats powered by Socket.io.
+* **Project Discovery:** Browse, filter, and search through a diverse pool of projects to find the perfect match.
+* **Application System:** Seamlessly apply to projects or review incoming applications with custom workflows. Project owners can privately message applicants before making a decision.
+* **Team & Task Management:** Organize teams, assign roles, and track project tasks efficiently within dedicated project workspaces.
 * **Comprehensive Analytics:** Gain insights into user engagement, project traction, and application success rates.
 * **Secure Authentication:** JWT-based authentication with bcrypt password hashing.
-* **Responsive UI:** A modern, mobile-first design built with Tailwind CSS and React 19.
+* **Responsive UI:** A modern, mobile-first design built with Tailwind CSS and React.
 
 ---
 
@@ -89,8 +89,8 @@ Follow these instructions to set up the project locally.
 ### Prerequisites
 
 Ensure you have the following installed:
-* [Node.js](https://nodejs.org/) (v18 or higher)
-* [MongoDB](https://www.mongodb.com/) (Local instance or MongoDB Atlas)
+* Node.js (v18 or higher)
+* MongoDB (Local instance or MongoDB Atlas)
 * Git
 
 ### Installation
@@ -144,7 +144,7 @@ The application will now be running on `http://localhost:5173` and the API serve
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)

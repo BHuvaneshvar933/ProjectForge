@@ -303,7 +303,7 @@ export default function Workspace() {
           : <JourneyTab project={project} isMember={isMember} onUpdate={fetchBase} />
       )}
 
-      {tab === "overview" && <WorkspaceOverview tasks={tasks} team={teamSorted} isOwner={isOwner} onRemoveMember={(id) => setRemoveMemberId(id)} />}
+      {tab === "overview" && <WorkspaceOverview project={project} tasks={tasks} team={teamSorted} isOwner={isOwner} onRemoveMember={(id) => setRemoveMemberId(id)} />}
 
       {tab === "calendar" && <WorkspaceCalendar project={project} tasks={tasks} onTaskClick={() => setTab("tasks")} />}
 

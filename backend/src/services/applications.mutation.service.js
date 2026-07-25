@@ -56,20 +56,36 @@ export const applyToProject = async (userId, data) => {
   });
 
   if (existingApplication) {
-    throw new Error("You have already applied to this project");
+    if (["pending", "accepted"].includes(existingApplication.status)) {
+      throw new Error("You already have an active or pending application for this project");
+    }
   }
 
   const matchScore = calculateMatchScore(user, project);
 
-  // Create Application
-  const application = await Application.create({
-    projectId,
-    applicantId: userId,
-    message,
-    matchScore,
-    status: "pending",
-    applicationType: "application",
-  });
+  let application;
+  if (existingApplication) {
+    // Re-apply by updating the existing rejected/withdrawn application
+    existingApplication.status = "pending";
+    existingApplication.message = message;
+    existingApplication.matchScore = matchScore;
+    existingApplication.applicationType = "application";
+    existingApplication.rejectionReason = null;
+    existingApplication.reviewedAt = null;
+    existingApplication.reviewedBy = null;
+    await existingApplication.save();
+    application = existingApplication;
+  } else {
+    // Create new Application
+    application = await Application.create({
+      projectId,
+      applicantId: userId,
+      message,
+      matchScore,
+      status: "pending",
+      applicationType: "application",
+    });
+  }
 
   // Update user stats
   user.stats.applicationsSent += 1;

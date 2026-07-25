@@ -1,13 +1,13 @@
 import express from "express";
-import { getConversations, getMessages, sendDirectMessage } from "../controllers/directMessage.controller.js";
+import * as directMessageController from "../controllers/directMessage.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.use(protect);
-
-router.get("/conversations", getConversations);
-router.get("/", getMessages);
-router.post("/", sendDirectMessage);
+router.post("/conversations/start", protect, directMessageController.startConversation);
+router.get("/conversations", protect, directMessageController.getConversations);
+router.get("/conversations/:id", protect, directMessageController.getMessages);
+router.post("/conversations/:id/message", protect, directMessageController.sendDirectMessage);
+router.patch("/messages/:id/seen", protect, directMessageController.markMessageSeen);
 
 export default router;
