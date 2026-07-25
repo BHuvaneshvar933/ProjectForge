@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from "react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import Input from "../common/Input";
 import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
 import { createTask, updateTaskStatus, assignTask } from "../../api/taskApi";
+import { uploadFile } from "../../api/uploadApi";
 import TasksListView from "./tasks/TasksListView";
 
 export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, tasksLoading, onTaskChange, fetchTasks }) {
@@ -20,7 +22,10 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
     assignedTo: "",
     startedAt: "",
     dueDate: "",
+    attachmentUrl: "",
+    attachmentName: "",
   });
+  const [taskUploading, setTaskUploading] = useState(false);
   const [draggedTaskId, setDraggedTaskId] = useState(null);
   const [expandedEpics, setExpandedEpics] = useState({});
   const [inlineCreateParent, setInlineCreateParent] = useState(null);
@@ -97,10 +102,12 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
         assignedTo: taskForm.assignedTo || null,
         startedAt: taskForm.startedAt || null,
         dueDate: taskForm.dueDate || null,
+        attachmentUrl: taskForm.attachmentUrl || null,
+        attachmentName: taskForm.attachmentName || null,
       });
       toast.success("Task created");
       setTaskModalOpen(false);
-      setTaskForm({ title: "", description: "", priority: "medium", issueType: "task", parentId: "", assignedTo: "", startedAt: "", dueDate: "" });
+      setTaskForm({ title: "", description: "", priority: "medium", issueType: "task", parentId: "", assignedTo: "", startedAt: "", dueDate: "", attachmentUrl: "", attachmentName: "" });
       if (onTaskChange) await onTaskChange();
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to create task");
@@ -124,6 +131,25 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
       if (onTaskChange) await onTaskChange();
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to assign task");
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setTaskUploading(true);
+    try {
+      const res = await uploadFile(file);
+      if (res.data.success) {
+        onChangeTaskForm("attachmentUrl", res.data.data.url);
+        onChangeTaskForm("attachmentName", res.data.data.filename);
+        toast.success("File uploaded successfully");
+      }
+    } catch (err) {
+      toast.error("Failed to upload file");
+    } finally {
+      setTaskUploading(false);
     }
   };
 
@@ -170,65 +196,46 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
           fetchTasks={fetchTasks}
         />
       ) : (
+        <DragDropContext onDragEnd={(result) => {
+          if (isCompleted) return;
+          if (!result.destination) return;
+          const { source, destination, draggableId } = result;
+          if (source.droppableId !== destination.droppableId) {
+             onUpdateStatus(draggableId, destination.droppableId);
+          }
+        }}>
         <div className="workspace-tasks">
           {[
             { key: "todo", label: "To Do" },
             { key: "in-progress", label: "In Progress" },
             { key: "done", label: "Done" },
           ].map((col) => (
-            <div 
-              key={col.key} 
-              className="workspace-column"
-              onDragOver={(e) => {
-                if (isCompleted) return;
-                e.preventDefault();
-                e.dataTransfer.dropEffect = "move";
-                e.currentTarget.classList.add("is-dragover");
-              }}
-              onDragLeave={(e) => {
-                if (isCompleted) return;
-                e.currentTarget.classList.remove("is-dragover");
-              }}
-              onDrop={(e) => {
-                if (isCompleted) return;
-                e.preventDefault();
-                e.currentTarget.classList.remove("is-dragover");
-                const taskId = e.dataTransfer.getData("taskId");
-                if (taskId && taskId !== "undefined") {
-                  const task = tasks.find((t) => String(t._id) === taskId);
-                  if (task && task.status !== col.key) {
-                    onUpdateStatus(taskId, col.key);
-                  }
-                }
-                setDraggedTaskId(null);
-              }}
-            >
-              <div className="workspace-column__title">
-                <div className="workspace-column__title-text">
-                  {col.label} ({tasksByStatus[col.key].length})
-                </div>
-              </div>
-
-              {tasksByStatus[col.key].map((t) => (
+            <Droppable droppableId={col.key} key={col.key} isDropDisabled={isCompleted}>
+              {(provided, snapshot) => (
                 <div 
-                  key={t._id} 
-                  className={`workspace-task ${draggedTaskId === t._id ? "is-dragging" : ""}`.trim()}
-                  draggable={!isCompleted}
-                  style={{
-                    borderLeft: `4px solid ${t.issueType === "epic" ? "#bf5af2" : t.issueType === "story" ? "#32d74b" : t.issueType === "bug" ? "#ff453a" : "rgba(255,255,255,0.1)"}`
-                  }}
-                  onDragStart={(e) => {
-                    setDraggedTaskId(t._id);
-                    e.dataTransfer.setData("taskId", t._id);
-                    e.dataTransfer.effectAllowed = "move";
-                    if (e.dataTransfer.setDragImage) {
-                      const dragImg = new Image(0, 0);
-                      dragImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                      e.dataTransfer.setDragImage(dragImg, 0, 0);
-                    }
-                  }}
-                  onDragEnd={() => setDraggedTaskId(null)}
+                  className={`workspace-column ${snapshot.isDraggingOver ? 'is-dragover' : ''}`.trim()}
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
                 >
+                  <div className="workspace-column__title">
+                    <div className="workspace-column__title-text">
+                      {col.label} ({tasksByStatus[col.key].length})
+                    </div>
+                  </div>
+
+                  {tasksByStatus[col.key].map((t, index) => (
+                    <Draggable key={t._id} draggableId={String(t._id)} index={index} isDragDisabled={isCompleted}>
+                      {(provided, snapshot) => (
+                        <div 
+                          className={`workspace-task ${snapshot.isDragging ? "is-dragging" : ""}`.trim()}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={{
+                            ...provided.draggableProps.style,
+                            borderLeft: `4px solid ${t.issueType === "epic" ? "#bf5af2" : t.issueType === "story" ? "#32d74b" : t.issueType === "bug" ? "#ff453a" : "rgba(255,255,255,0.1)"}`
+                          }}
+                        >
                   {t.parentId && (
                     <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
                       <span style={{ background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "2px 6px", borderRadius: "4px" }}>
@@ -247,6 +254,13 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                     </span>
                     {t.title}
                   </div>
+                  {t.attachmentUrl && (
+                    <div style={{ marginTop: "4px" }}>
+                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#32d74b", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                        📎 {t.attachmentName?.substring(0, 20) || "Attachment"}
+                      </a>
+                    </div>
+                  )}
                   <div className="workspace-task__meta" style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginTop: "8px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span>prio: {t.priority}</span>
@@ -289,10 +303,16 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                     </select>
                   </div>
                 </div>
-              ))}
-            </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
           ))}
         </div>
+        </DragDropContext>
       )}
 
       <Modal
@@ -417,6 +437,31 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
             onChange={(e) => onChangeTaskForm("description", e.target.value)}
             placeholder="What needs to be done?"
           />
+        </div>
+
+        <div style={{ marginTop: "16px" }}>
+          <label className="input__label">Attachment (Optional)</label>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "4px" }}>
+            <label style={{ 
+              background: "rgba(255,255,255,0.1)", 
+              padding: "8px 16px", 
+              borderRadius: "6px", 
+              cursor: "pointer", 
+              fontSize: "14px",
+              color: "#fff",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px"
+            }}>
+              {taskUploading ? <Spinner size="sm" /> : "📎 Upload File"}
+              <input type="file" style={{ display: "none" }} onChange={handleFileUpload} disabled={taskUploading} />
+            </label>
+            {taskForm.attachmentName && (
+              <span style={{ fontSize: "12px", color: "#32d74b" }}>
+                ✓ {taskForm.attachmentName}
+              </span>
+            )}
+          </div>
         </div>
       </Modal>
     </div>

@@ -18,6 +18,7 @@ import LearningArchive from "./pages/LearningArchive/LearningArchive";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatWidget from './components/chat/ChatWidget';
+import CommandPalette from './components/common/CommandPalette';
 
 function App() {
   return (
@@ -105,6 +106,7 @@ function App() {
         pauseOnHover
       />
       <ChatWidget />
+      <CommandPalette />
     </BrowserRouter>
   );
 }

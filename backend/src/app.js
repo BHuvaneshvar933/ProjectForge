@@ -1,5 +1,17 @@
 import express from "express";
+import * as Sentry from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 import cors from "cors";
+
+// Initialize Sentry early
+Sentry.init({
+  dsn: process.env.SENTRY_DSN || "", // User needs to add this in .env
+  integrations: [
+    nodeProfilingIntegration(),
+  ],
+  tracesSampleRate: 1.0, 
+  profilesSampleRate: 1.0, 
+});
 import errorHandler from "./middleware/error.middleware.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -12,6 +24,7 @@ import messageRoutes from "./routes/message.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import aiRoutes from "./routes/ai.routes.js";
 import directMessageRoutes from "./routes/directMessage.routes.js";
+import uploadRoutes from "./routes/upload.routes.js";
 import { setupSwagger } from "./docs/swagger.js";
 
 const app = express();
@@ -106,8 +119,12 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/direct-messages", directMessageRoutes);
+app.use("/api/upload", uploadRoutes);
 
 setupSwagger(app);
+
+// Sentry error handler must be registered before your custom error handler
+Sentry.setupExpressErrorHandler(app);
 
 app.use(errorHandler);
 export default app;
