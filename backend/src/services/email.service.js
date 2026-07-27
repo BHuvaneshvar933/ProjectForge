@@ -1,8 +1,4 @@
 import nodemailer from "nodemailer";
-import { google } from "googleapis";
-
-const OAuth2 = google.auth.OAuth2;
-// Triggering nodemon restart
 
 export const sendPasswordResetEmail = async (to, resetToken) => {
   if (!process.env.CLIENT_ORIGIN) {
@@ -12,7 +8,7 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
   const resetUrl = `${process.env.CLIENT_ORIGIN}/reset-password/${resetToken}`;
 
   const message = {
-    from: `"ProjectForge" <${process.env.OAUTH_EMAIL || "noreply@projectforge.com"}>`,
+    from: `"ProjectForge" <${process.env.EMAIL_USER || "noreply@projectforge.com"}>`,
     to,
     subject: "Password Reset Request",
     text: `You requested a password reset. Please click the following link to reset your password: \n\n${resetUrl}\n\nIf you did not request this, please ignore this email.`,
@@ -25,52 +21,25 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
   };
 
   try {
-    if (process.env.OAUTH_CLIENT_ID && process.env.OAUTH_REFRESH_TOKEN) {
-      // Use OAuth2
-      const oauth2Client = new OAuth2(
-        process.env.OAUTH_CLIENT_ID,
-        process.env.OAUTH_CLIENT_SECRET,
-        "https://developers.google.com/oauthplayground"
-      );
-
-      oauth2Client.setCredentials({
-        refresh_token: process.env.OAUTH_REFRESH_TOKEN,
-      });
-
-      const gmail = google.gmail({ version: "v1", auth: oauth2Client });
-
-      const emailLines = [
-        `To: ${to}`,
-        `From: "ProjectForge" <${process.env.OAUTH_EMAIL}>`,
-        `Subject: Password Reset Request`,
-        `Content-type: text/html;charset=utf-8`,
-        `MIME-Version: 1.0`,
-        ``,
-        message.html
-      ];
-      
-      const emailRaw = emailLines.join("\r\n");
-      const encodedMessage = Buffer.from(emailRaw)
-        .toString("base64")
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
-
-      await gmail.users.messages.send({
-        userId: "me",
-        requestBody: {
-          raw: encodedMessage,
+    if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
+      // Use Nodemailer with Gmail SMTP and an App Password (never expires)
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
         },
       });
 
-      console.log("✉️ Email sent successfully via Gmail HTTP API (bypassing SMTP)");
+      await transporter.sendMail(message);
+      console.log("✉️ Email sent successfully via Gmail SMTP");
     } else {
       if (process.env.NODE_ENV === "production") {
-        throw new Error("Missing OAuth credentials for email service in production");
+        throw new Error("Missing EMAIL_USER and EMAIL_PASSWORD in .env for production emails");
       }
       
       // Fallback to Ethereal only in development
-      console.warn("⚠️ No OAuth credentials found in .env. Falling back to Ethereal Email.");
+      console.warn("⚠️ No email credentials found in .env. Falling back to Ethereal Email.");
       const testAccount = await nodemailer.createTestAccount();
       const transporter = nodemailer.createTransport({
         host: "smtp.ethereal.email",
