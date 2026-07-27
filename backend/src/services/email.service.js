@@ -29,6 +29,8 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASSWORD,
         },
+        connectionTimeout: 8000, // Fail fast after 8 seconds
+        socketTimeout: 8000,
       });
 
       await transporter.sendMail(message);
@@ -40,7 +42,13 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
       
       // Fallback to Ethereal only in development
       console.warn("⚠️ No email credentials found in .env. Falling back to Ethereal Email.");
-      const testAccount = await nodemailer.createTestAccount();
+      
+      // Wrap createTestAccount in a timeout because Ethereal frequently hangs on cloud providers
+      const testAccount = await Promise.race([
+        nodemailer.createTestAccount(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Ethereal API timed out (Render blocking)")), 8000))
+      ]);
+      
       const transporter = nodemailer.createTransport({
         host: "smtp.ethereal.email",
         port: 587,
@@ -49,6 +57,8 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
           user: testAccount.user,
           pass: testAccount.pass,
         },
+        connectionTimeout: 8000,
+        socketTimeout: 8000,
       });
 
       const info = await transporter.sendMail(message);
