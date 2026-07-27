@@ -35,7 +35,7 @@ Built with performance, scalability, and user experience in mind, the platform b
 * **Team & Task Management:** Organize teams, assign roles, and track project tasks efficiently within dedicated project workspaces.
 * **Comprehensive Analytics:** Gain insights into user engagement, project traction, and application success rates.
 * **Secure Authentication:** JWT-based authentication with bcrypt password hashing.
-* **Responsive UI:** A modern, mobile-first design built with Tailwind CSS and React.
+* **Responsive UI:** A modern, mobile-first design built with Tailwind CSS and ReactJS.
 
 ---
 
