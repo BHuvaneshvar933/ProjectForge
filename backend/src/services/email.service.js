@@ -24,13 +24,19 @@ export const sendPasswordResetEmail = async (to, resetToken) => {
     if (process.env.EMAIL_USER && process.env.EMAIL_PASSWORD) {
       // Use Nodemailer with Gmail SMTP and an App Password (never expires)
       const transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: true,
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASSWORD,
         },
         connectionTimeout: 8000, // Fail fast after 8 seconds
         socketTimeout: 8000,
+        tls: {
+          rejectUnauthorized: false
+        },
+        family: 4 // Force IPv4 to bypass Render's IPv6 ENETUNREACH
       });
 
       await transporter.sendMail(message);
