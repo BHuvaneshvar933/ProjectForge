@@ -3,7 +3,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 48px 24px;
-  animation: fadeIn 0.5s ease;
+  animation: fadeIn 0.4s ease;
 }
 
 .workspace__header {
@@ -16,15 +16,15 @@
 }
 
 .workspace__title {
-  font-size: 34px;
-  font-weight: 800;
+  font-size: 27px;
+  font-weight: 400;
   letter-spacing: -0.03em;
   margin-bottom: 8px;
 }
 
 .workspace__subtitle {
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 14px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
   line-height: 1.6;
   max-width: 60ch;
 }
@@ -45,34 +45,41 @@
 
 .workspace__tabs {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   margin: 20px 0 24px;
   padding: 4px;
-  border-radius: 16px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.04);
   width: fit-content;
   overflow-x: auto;
 }
 
 .workspace__tab {
-  padding: 8px 18px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.5);
-  transition: all 0.3s ease;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.82);
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
 .workspace__tab:hover {
   background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .workspace__tab.is-active {
-  background: #0a84ff;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.workspace__tab.is-active:hover {
+  background: #000000;
   color: #ffffff;
-  box-shadow: 0 0 10px rgba(10, 132, 255, 0.25);
+  border-color: #ffffff;
 }
 
 .workspace__grid {
@@ -82,15 +89,15 @@
 }
 
 .workspace__card {
-  background: rgba(28, 28, 30, 0.4);
+  background: rgba(18, 18, 18, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
+  border-radius: 8px;
   padding: 18px;
 }
 
 .workspace__card-title {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 400;
   letter-spacing: -0.01em;
   margin-bottom: 12px;
   color: rgba(255, 255, 255, 0.9);
@@ -105,30 +112,30 @@
 .workspace__kvi {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
+  border-radius: 6px;
   padding: 14px;
 }
 
 .workspace__kvi-label {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .workspace__kvi-value {
   margin-top: 8px;
-  font-size: 22px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 400;
   letter-spacing: -0.02em;
   color: #ffffff;
 }
 
 .workspace__kvi-sub {
   margin-top: 6px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* Members */
@@ -139,9 +146,9 @@
 }
 
 .workspace-member {
-  background: rgba(28, 28, 30, 0.4);
+  background: rgba(18, 18, 18, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 22px;
+  border-radius: 8px;
   padding: 14px;
   display: flex;
   justify-content: space-between;
@@ -157,21 +164,21 @@
 }
 
 .workspace-member__avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  color: #ffffff;
 }
 
 .workspace-member__name {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.92);
   white-space: nowrap;
   overflow: hidden;
@@ -180,8 +187,8 @@
 
 .workspace-member__role {
   margin-top: 4px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 /* Chat */
@@ -200,7 +207,6 @@
   gap: 10px;
 }
 
-/* WhatsApp/Instagram style bubbles */
 .workspace-chat__row {
   display: flex;
   align-items: flex-end;
@@ -218,62 +224,67 @@
 .workspace-chat__avatar {
   width: 28px;
   height: 28px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 12px;
+  font-weight: 400;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.9);
   flex: 0 0 auto;
 }
 
 .workspace-chat__bubble {
   max-width: min(560px, 78%);
-  padding: 10px 12px;
-  border-radius: 18px;
+  padding: 10px 14px;
+  border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .workspace-chat__bubble.is-mine {
-  background: linear-gradient(180deg, rgba(10, 132, 255, 0.28), rgba(10, 132, 255, 0.18));
-  border-color: rgba(10, 132, 255, 0.25);
-  border-bottom-right-radius: 8px;
+  background: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.workspace-chat__bubble.is-mine .workspace-chat__text {
+  color: #000000;
+}
+
+.workspace-chat__bubble.is-mine .workspace-chat__time {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .workspace-chat__bubble.is-theirs {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.10);
-  border-bottom-left-radius: 8px;
 }
 
 .workspace-chat__sender {
-  font-size: 12px;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 400;
   letter-spacing: -0.01em;
-  color: rgba(255, 255, 255, 0.78);
-  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 4px;
 }
 
 .workspace-chat__text {
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.95);
   font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.5;
   word-break: break-word;
   white-space: pre-wrap;
 }
 
 .workspace-chat__time {
-  margin-top: 6px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.82);
   text-align: right;
 }
-
 
 .workspace-chat__typing-row {
   display: flex;
@@ -282,30 +293,19 @@
   padding: 2px 2px 8px;
 }
 
-.workspace-chat__typing-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.4);
-  box-shadow:
-    10px 0 0 rgba(255, 255, 255, 0.22),
-    20px 0 0 rgba(255, 255, 255, 0.12);
-}
-
 .workspace-chat__typing {
   margin: 0;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.72);
 }
-
 
 .workspace-chat__attachment-btn {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.82);
   cursor: pointer;
   padding: 8px;
-  border-radius: 50%;
+  border-radius: 4px;
   display: grid;
   place-items: center;
   transition: all 0.2s;
@@ -319,7 +319,7 @@
 .workspace-chat__image-attachment {
   max-width: 100%;
   max-height: 200px;
-  border-radius: 8px;
+  border-radius: 6px;
   margin-top: 8px;
   cursor: pointer;
 }
@@ -327,7 +327,7 @@
 .workspace-chat__menu-btn {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.82);
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s;
@@ -342,9 +342,9 @@
   position: absolute;
   right: 0;
   top: 100%;
-  background: #1c1c1e;
+  background: #121212;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
   z-index: 10;
   min-width: 100px;
@@ -381,9 +381,9 @@
   min-height: 44px;
   max-height: 140px;
   resize: none;
-  padding: 12px 14px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.10);
   color: rgba(255, 255, 255, 0.9);
   outline: none;
@@ -391,26 +391,26 @@
 }
 
 .workspace-chat__input:focus {
-  border-color: rgba(10, 132, 255, 0.5);
-  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(128, 0, 32, 0.2);
 }
 
 .workspace-chat__send {
   width: 44px;
   height: 44px;
-  border-radius: 999px;
+  border-radius: 6px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid #ffffff;
+  background: #ffffff;
+  color: #ffffff;
   transition: transform 0.12s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 
 .workspace-chat__send:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .workspace-chat__send:active {
@@ -441,9 +441,9 @@
 }
 
 .workspace-column {
-  background: rgba(28, 28, 30, 0.4);
+  background: rgba(18, 18, 18, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 22px;
+  border-radius: 8px;
   padding: 14px;
   min-height: 60vh;
 }
@@ -458,21 +458,21 @@
 
 .workspace-column__title-text {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.9);
 }
 
 .workspace-task {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
+  border-radius: 6px;
   padding: 12px;
   margin-bottom: 10px;
 }
 
 .workspace-task__title {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.92);
 }
 
@@ -481,8 +481,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  color: rgba(255, 255, 255, 0.45);
-  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
 }
 
 .workspace-task__actions {
@@ -493,8 +493,8 @@
 }
 
 .workspace-select {
-  padding: 8px 10px;
-  border-radius: 14px;
+  padding: 6px 10px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.85);
@@ -502,8 +502,8 @@
 }
 
 .workspace-select:focus {
-  border-color: rgba(10, 132, 255, 0.5);
-  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(128, 0, 32, 0.2);
 }
 
 .workspace-modal__grid {
@@ -514,7 +514,7 @@
 
 .workspace-modal__textarea {
   width: 100%;
-  border-radius: 18px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.10);
   color: rgba(255, 255, 255, 0.9);
@@ -524,8 +524,8 @@
 }
 
 .workspace-modal__textarea:focus {
-  border-color: rgba(10, 132, 255, 0.5);
-  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(128, 0, 32, 0.2);
 }
 
 @media (max-width: 980px) {
@@ -539,8 +539,8 @@
 
 /* Drag and Drop Styles */
 .workspace-column.is-dragover {
-  background: rgba(28, 28, 30, 0.7);
-  border: 1px dashed rgba(10, 132, 255, 0.5);
+  background: rgba(18, 18, 18, 0.8);
+  border: 1px dashed #ffffff;
 }
 
 .workspace-task {
@@ -555,5 +555,6 @@
 .workspace-task.is-dragging {
   opacity: 0.5;
   transform: scale(0.98);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
+

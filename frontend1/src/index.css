@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jost:ital,wght@0,100..900;1,100..900&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Outfit:wght@100..900&display=swap');
+
+@import "tailwindcss";
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: 'Jost', 'Google Sans', sans-serif;
+	background: #000000;
+	color: #ffffff;
+	min-height: 100vh;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	letter-spacing: 0.01em;
+	font-size: 13px;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+	transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Jost', sans-serif;
+	font-weight: 400;
+	margin: 0 0 10px 0;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: #ffffff;
+}
+
+h1 {
+	font-size: 2.25rem;
+	font-weight: 400;
+	letter-spacing: 0.06em;
+}
+
+button {
+	font-family: 'Jost', sans-serif;
+	cursor: pointer;
+	transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+/* Disable hover motion/translation across the app for Bugatti precision */
+*, *:before, *:after {
+	transform: none !important;
+}
+
+/* Icon Alignment Utility - Perfect Flex Center */
+.icon-center, .icon-align-center {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+}
+
+input, select, textarea {
+	font-family: 'Jost', sans-serif;
+}
+
+select {
+	background-color: rgba(255, 255, 255, 0.04);
+	color: rgba(255, 255, 255, 0.9);
+}
+
+select option {
+	background-color: #0a0a0c;
+	color: rgba(255, 255, 255, 0.9);
+}
+
+/* Minimalist Bugatti sleek scrollbar */
+::-webkit-scrollbar {
+	width: 4px;
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.15);
+	border-radius: 0px;
+}
+/* Scrollbar thumb hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #ffffff;
+}
+
+/* Focus ring */
+*:focus-visible {
+	outline: 1px solid #ffffff;
+	outline-offset: 1px;
+}
+
+/* Utility Classes for #ffffff */
+.bg-teal {
+	background-color: #ffffff;
+}
+.bg-teal-hover:hover {
+	background-color: rgba(255, 255, 255, 0.2);
+}
+.text-teal {
+	color: #ffffff;
+}
+.border-teal {
+	border-color: #ffffff;
+}
+
+/* Force all SVG icons site-wide to be clean white by default */
+svg {
+	color: #ffffff;
+}
+
+svg path, svg circle, svg rect, svg polygon, svg line {
+	stroke: inherit;
+}
+
+/* Global Icon Whitening Overrides */
+.input__icon,
+.browse-page__search-icon,
+.browse-people__search-icon,
+.browse-page__empty-icon-svg,
+.my-projects__empty-icon-svg,
+.apps-empty__icon-svg,
+.browse-page__nav-icon,
+.my-projects__new-icon,
+.project-detail__back-icon,
+.educational-tip__icon,
+.notification-bell__icon,
+.badge__remove {
+	color: #ffffff !important;
+	stroke: #ffffff !important;
+}
+
+/* Smart Icon Contrast Inversion for White Buttons */
+button.bg-white svg,
+.btn--primary:not(:hover) svg,
+.my-projects__new-button:not(:hover) svg,
+.browse-page__search-button:not(:hover) svg,
+.project-card__action--primary:not(:hover) svg,
+.project-req__add:not(:hover) svg {
+	color: #000000 !important;
+	stroke: #000000 !important;
+}
+
+button.bg-white:hover svg,
+.btn--primary:hover svg,
+.my-projects__new-button:hover svg,
+.browse-page__search-button:hover svg,
+.project-card__action--primary:hover svg,
+.project-req__add:hover svg {
+	color: #ffffff !important;
+	stroke: #ffffff !important;
+}
+
+/* Global White Button Hover Inversion Rules */
+button.bg-white:hover,
+.bg-white:hover,
+.btn--primary:hover {
+	background: #000000 !important;
+	color: #ffffff !important;
+	border-color: #ffffff !important;
+}
+
+
+
+

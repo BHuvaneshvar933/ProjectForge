@@ -1,5 +1,6 @@
 import React, { useRef, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { Plus } from "lucide-react";
 import TaskTableRow from "./TaskTableRow";
 
 export default function TasksTable({ 
@@ -180,7 +181,7 @@ export default function TasksTable({
                           flex: 1, 
                           padding: "4px 12px", 
                           background: "rgba(255,255,255,0.05)", 
-                          border: "1px solid #0a84ff", 
+                          border: "1px solid rgba(255,255,255,0.2)", 
                           borderRadius: "4px", 
                           color: "#fff", 
                           outline: "none", 
@@ -199,17 +200,21 @@ export default function TasksTable({
                       style={{ 
                         background: "transparent", 
                         border: "none", 
-                        color: "#0a84ff", 
+                        color: "rgba(255,255,255,0.5)", 
                         cursor: "pointer", 
-                        fontSize: "13px", 
+                        fontSize: "12px", 
                         fontWeight: "500", 
                         padding: "4px 8px", 
-                        borderRadius: "4px" 
+                        borderRadius: "4px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        transition: "all 0.15s ease"
                       }}
-                      onMouseOver={(e) => e.target.style.background = "rgba(10,132,255,0.1)"}
-                      onMouseOut={(e) => e.target.style.background = "transparent"}
+                      onMouseOver={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#ffffff"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
                     >
-                      + Create child issue
+                      <Plus size={14} /> Create child issue
                     </button>
                   )}
                 </div>

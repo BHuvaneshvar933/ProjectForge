@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { Zap, Bookmark, CheckSquare, Bug, Target } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
@@ -233,30 +234,35 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                           {...provided.dragHandleProps}
                           style={{
                             ...provided.draggableProps.style,
-                            borderLeft: `4px solid ${t.issueType === "epic" ? "#bf5af2" : t.issueType === "story" ? "#32d74b" : t.issueType === "bug" ? "#ff453a" : "rgba(255,255,255,0.1)"}`
+                            borderLeft: "4px solid rgba(255, 255, 255, 0.2)"
                           }}
                         >
                   {t.parentId && (
                     <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
-                      <span style={{ background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "2px 6px", borderRadius: "4px" }}>
+                      <span style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)", padding: "2px 6px", borderRadius: "4px" }}>
                         {project?.key}-{tasks.find(p => p._id === t.parentId)?.taskNumber || "Parent"}
                       </span>
                     </div>
                   )}
-                  <div className="workspace-task__title">
-                    {t.issueType === "epic" ? "🟣" : 
-                     t.issueType === "story" ? "📗" : 
-                     t.issueType === "sub-task" ? "🔲" : 
-                     t.issueType === "bug" ? "🐛" : 
-                     t.issueType === "feature" ? "✨" : "📝"}
-                    <span style={{ fontWeight: 800, color: "#0a84ff", marginLeft: 6, marginRight: 6 }}>
-                      {project?.key}-{t.taskNumber || "X"}
-                    </span>
-                    {t.title}
+                  <div className="workspace-task__title" style={{ display: "flex", alignItems: "flex-start", gap: "6px" }}>
+                    <div style={{ display: "flex", flexShrink: 0, marginTop: "2px" }}>
+                      {t.issueType === "epic" ? <div style={{ background: "rgba(191, 90, 242, 0.15)", color: "#bf5af2", padding: "4px", borderRadius: "4px", display: "flex" }}><Zap size={14} /></div> : 
+                       t.issueType === "story" ? <div style={{ background: "rgba(50, 215, 75, 0.15)", color: "#32d74b", padding: "4px", borderRadius: "4px", display: "flex" }}><Bookmark size={14} /></div> : 
+                       t.issueType === "sub-task" ? <div style={{ background: "rgba(94, 92, 230, 0.15)", color: "#5e5ce6", padding: "4px", borderRadius: "4px", display: "flex" }}><CheckSquare size={14} /></div> : 
+                       t.issueType === "bug" ? <div style={{ background: "rgba(255, 69, 58, 0.15)", color: "#ff453a", padding: "4px", borderRadius: "4px", display: "flex" }}><Bug size={14} /></div> : 
+                       t.issueType === "feature" ? <div style={{ background: "rgba(10, 132, 255, 0.15)", color: "#0a84ff", padding: "4px", borderRadius: "4px", display: "flex" }}><Target size={14} /></div> : 
+                       <div style={{ background: "rgba(94, 92, 230, 0.15)", color: "#5e5ce6", padding: "4px", borderRadius: "4px", display: "flex" }}><CheckSquare size={14} /></div>}
+                    </div>
+                    <div style={{ flex: 1, wordBreak: "break-word" }}>
+                      <span style={{ fontWeight: 600, color: "rgba(255,255,255,0.6)", marginRight: 6 }}>
+                        {project?.key}-{t.taskNumber || "X"}
+                      </span>
+                      {t.title}
+                    </div>
                   </div>
                   {t.attachmentUrl && (
                     <div style={{ marginTop: "4px" }}>
-                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#32d74b", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}>
                         📎 {t.attachmentName?.substring(0, 20) || "Attachment"}
                       </a>
                     </div>

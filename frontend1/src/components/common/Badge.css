@@ -1,0 +1,90 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  border: none;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+}
+
+.badge--default {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+}
+
+.badge--recruiting {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: none;
+}
+
+.badge--in-progress,
+.badge--completed {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  border: none;
+}
+
+.badge--archived {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.72);
+  border: none;
+}
+
+.badge--owner {
+  background: #ffffff;
+  color: #ffffff;
+  border: none;
+}
+
+.badge--member {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border: none;
+}
+
+.badge--skill {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.badge--skill:hover {
+  background: #ffffff;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.badge--personal,
+.badge--startup,
+.badge--open-source,
+.badge--academic,
+.badge--web,
+.badge--mobile,
+.badge--ml,
+.badge--hackathon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.badge--clickable {
+  cursor: pointer;
+}
+
+.badge__remove {
+  margin-left: 4px;
+  color: rgba(255, 255, 255, 0.82);
+  transition: color 0.15s ease;
+}
+
+.badge__remove:hover {
+  color: #ff453a;
+}
+
+
