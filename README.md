@@ -16,7 +16,7 @@
   <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="Express.js" />
   <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
   <img src="https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101" alt="Socket.io" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/AWS_S3-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" alt="AWS S3" />
 </div>
 
 ---
@@ -29,13 +29,14 @@ Built with performance, scalability, and user experience in mind, the platform b
 
 ### Key Features
 
-* **Real-time Collaboration:** Instant messaging, direct applicant messaging, and project workspace chats powered by Socket.io.
-* **Project Discovery:** Browse, filter, and search through a diverse pool of projects to find the perfect match.
-* **Application System:** Seamlessly apply to projects or review incoming applications with custom workflows. Project owners can privately message applicants before making a decision.
-* **Team & Task Management:** Organize teams, assign roles, and track project tasks efficiently within dedicated project workspaces.
+* **Real-time Collaboration Workspace:** Instant messaging powered by Socket.io, featuring markdown rendering, live typing indicators, read receipts, and file attachments.
+* **Intelligent Project Discovery:** Skill-based project recommendation engine powered by MongoDB aggregation pipelines (Overlap Coefficient Algorithm).
+* **Application System & Server-side Pagination:** Apple-style paginated workflows with status-based filtering to seamlessly apply to projects or review incoming applications. 
+* **Advanced Task Management:** Organize your team with infinite-depth hierarchical subtasks, visual tree-branching in List view, and synchronized drag-and-drop Kanban boards.
+* **Transaction-Safe Team Formation:** Secure MongoDB multi-document transactions to eliminate race conditions during concurrent project recruitment.
+* **Smart UI & Theming:** A modern, highly polished dashboard layout featuring a custom "Smart Invert" Dark Mode architecture and responsive design.
+* **Cloud Storage Integration:** Secure and scalable file uploads utilizing AWS S3 and multer-s3.
 * **Comprehensive Analytics:** Gain insights into user engagement, project traction, and application success rates.
-* **Secure Authentication:** JWT-based authentication with bcrypt password hashing.
-* **Responsive UI:** A modern, mobile-first design built with Tailwind CSS and ReactJS.
 
 ---
 
@@ -43,18 +44,20 @@ Built with performance, scalability, and user experience in mind, the platform b
 
 ### Frontend
 - **React (v19)** - UI Library
-- **Vite** - Frontend Build Tool
-- **TailwindCSS (v4)** - Utility-first CSS Framework
-- **React Router** - Navigation
-- **Socket.io-client** - Real-time communication
+- **Vite** - High-performance Frontend Build Tool
+- **TailwindCSS & Vanilla CSS** - Styling and layout foundation
+- **React Router** - Navigation & Routing
+- **Socket.io-client** - Real-time websocket communication
 - **Axios** - HTTP client
+- **Markdown & Syntax Highlighting** - Custom message rendering in chat
 
 ### Backend
 - **Node.js & Express** - Runtime & Web Framework
-- **MongoDB & Mongoose** - Database & ODM
-- **Socket.io** - WebSocket server
+- **MongoDB & Mongoose** - Database & ODM (Multi-document transactions utilized)
+- **Socket.io** - WebSocket server for real-time events
 - **JWT & Bcrypt** - Security & Authentication
-- **Multer** - File uploads handling
+- **AWS SDK (S3)** - Cloud object storage for file attachments
+- **Multer & Multer-S3** - File uploads handling and streaming
 
 ---
 
