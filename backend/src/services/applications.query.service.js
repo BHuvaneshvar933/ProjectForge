@@ -2,7 +2,7 @@ import Application from "../models/application.model.js";
 import Project from "../models/project.model.js";
 
 export const getMyApplications = async (userId, query) => {
-  const { page = 1, limit = 10 } = query;
+  const { page = 1, limit = 10, status } = query;
 
   const skip = (page - 1) * limit;
 
@@ -10,6 +10,10 @@ export const getMyApplications = async (userId, query) => {
     applicantId: userId,
     isDeleted: false
   };
+  
+  if (status && status !== 'all') {
+    filter.status = status;
+  }
 
   const applications = await Application.find(filter)
     .sort({ createdAt: -1 })
@@ -39,7 +43,7 @@ export const getMyApplications = async (userId, query) => {
 };
 
 export const getProjectApplications = async (userId, projectId, query) => {
-  const { page = 1, limit = 10 } = query;
+  const { page = 1, limit = 10, status } = query;
 
   const project = await Project.findById(projectId);
 
@@ -57,6 +61,10 @@ export const getProjectApplications = async (userId, projectId, query) => {
     projectId,
     isDeleted: false
   };
+  
+  if (status && status !== 'all') {
+    filter.status = status;
+  }
 
   const applications = await Application.find(filter)
     .sort({ matchScore: -1, createdAt: -1 })

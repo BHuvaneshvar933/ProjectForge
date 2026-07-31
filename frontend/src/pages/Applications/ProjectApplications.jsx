@@ -5,6 +5,7 @@ import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import Modal from "../../components/common/Modal";
 import Spinner from "../../components/common/Spinner";
+import DashboardPagination from "../../components/common/DashboardPagination";
 import { displaySkillLabel } from "../../utils/display";
 import {
   acceptApplication,
@@ -23,6 +24,7 @@ export default function ProjectApplications() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0, limit: 10 });
+  const [filter, setFilter] = useState("all");
 
   const [busyId, setBusyId] = useState("");
   const [profileUser, setProfileUser] = useState(null);
@@ -37,7 +39,7 @@ export default function ProjectApplications() {
     try {
       const [projRes, appsRes] = await Promise.all([
         getProjectById(projectId),
-        getProjectApplications(projectId, { page, limit: 10 }),
+        getProjectApplications(projectId, { page, limit: 10, status: filter === "all" ? undefined : filter }),
       ]);
 
       setProject(projRes.data?.data?.project ?? null);
@@ -52,7 +54,7 @@ export default function ProjectApplications() {
     } finally {
       setLoading(false);
     }
-  }, [page, projectId]);
+  }, [page, filter, projectId]);
 
   useEffect(() => {
     fetchAll();
@@ -102,37 +104,61 @@ export default function ProjectApplications() {
     }
   };
 
+  const filteredItems = items;
+
   if (loading) {
     return (
-      <div className="apps-page apps-page--loading">
+      <div className="dashboard-page" style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <Spinner size="lg" />
-        <p className="apps-page__hint">Loading project applications...</p>
+        <p style={{ color: 'rgba(255, 255, 255, 0.82)', marginTop: 16 }}>Loading project applications...</p>
       </div>
     );
   }
 
   return (
-    <div className="apps-page">
-      <div className="apps-page__header">
+    <div className="dashboard-page">
+      <div className="dashboard-header">
         <div>
-          <h1 className="apps-page__title">Applications</h1>
-          <p className="apps-page__subtitle">
+          <h1 className="dashboard-title">Applications</h1>
+          <p className="dashboard-subtitle">
             {project?.title ? `For: ${project.title}` : "Review applications for this project."}
           </p>
         </div>
         <Link to={`/projects/${projectId}`}>
-          <Button variant="secondary">Back to Project</Button>
+          <Button variant="secondary" className="dashboard-header__btn">Back to Project</Button>
         </Link>
       </div>
 
-      {items.length === 0 ? (
-        <div className="apps-empty">
-          <p className="apps-empty__title">No applications received</p>
-          <p className="apps-empty__subtitle">When students apply, they will appear here.</p>
-        </div>
-      ) : (
-        <div className="apps-list">
-          {items.map((a) => {
+      <div className="dashboard-layout">
+        <aside className="dashboard-sidebar">
+          <div className="dashboard-sidebar__section">
+            <h3 className="dashboard-sidebar__heading">Status</h3>
+            <div className="dashboard-sidebar__tabs">
+              {['all', 'pending', 'accepted', 'rejected', 'withdrawn'].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => {
+                    setFilter(status);
+                    setPage(1);
+                  }}
+                  className={`dashboard-sidebar__tab ${filter === status ? 'is-active' : ''}`.trim()}
+                >
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        <main className="dashboard-content">
+          {filteredItems.length === 0 ? (
+            <div className="apps-empty">
+              <p className="apps-empty__title">No applications found</p>
+              <p className="apps-empty__subtitle">You don't have any applications with this status.</p>
+            </div>
+          ) : (
+            <div className="apps-list">
+              {filteredItems.map((a) => {
             const applicant = a?.applicantId;
             const skills = Array.isArray(applicant?.skills) ? applicant.skills : [];
             const disabled = busyId === a._id;
@@ -243,18 +269,14 @@ export default function ProjectApplications() {
       )}
 
       {items.length > 0 && (
-        <div className="apps-page__pager">
-          <Button variant="ghost" disabled={!canPrev} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-            Prev
-          </Button>
-          <div className="apps-page__pager-text">
-            Page {page} of {pagination?.pages || 1}
-          </div>
-          <Button variant="ghost" disabled={!canNext} onClick={() => setPage((p) => p + 1)}>
-            Next
-          </Button>
-        </div>
+        <DashboardPagination 
+          page={page} 
+          totalPages={pagination?.pages || 1} 
+          setPage={setPage} 
+        />
       )}
+      </main>
+      </div>
 
       <Modal
         isOpen={Boolean(profileUser)}
@@ -263,7 +285,7 @@ export default function ProjectApplications() {
       >
         {profileUser && (
           <div className="apps-profile">
-            <p className="apps-page__hint">{profileUser.bio || "No bio provided."}</p>
+            <p style={{ color: 'rgba(255, 255, 255, 0.82)', fontSize: 13, lineHeight: 1.6 }}>{profileUser.bio || "No bio provided."}</p>
             <div className="apps-profile__grid">
               <div><strong>Email:</strong> {profileUser.email || "-"}</div>
               <div><strong>Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
@@ -307,7 +329,7 @@ export default function ProjectApplications() {
         onConfirm={onAccept}
         confirmText={busyId === acceptState.id ? "Accepting..." : "Accept"}
       >
-        <p className="apps-page__hint">Choose the role this person should get in the project.</p>
+        <p style={{ color: 'rgba(255, 255, 255, 0.82)', fontSize: 13, lineHeight: 1.6, marginBottom: 12 }}>Choose the role this person should get in the project.</p>
         <input
           className="apps-textarea apps-textarea--single"
           value={acceptState.projectRole}
@@ -340,7 +362,7 @@ export default function ProjectApplications() {
         onConfirm={onReject}
         confirmText={rejectLoading ? "Rejecting..." : "Reject"}
       >
-        <p className="apps-page__hint">Optionally provide a reason (visible to the applicant).</p>
+        <p style={{ color: 'rgba(255, 255, 255, 0.82)', fontSize: 13, lineHeight: 1.6, marginBottom: 12 }}>Optionally provide a reason (visible to the applicant).</p>
         <textarea
           className="apps-textarea"
           rows={4}

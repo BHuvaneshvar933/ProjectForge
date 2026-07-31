@@ -202,83 +202,136 @@ export default function BrowseProjects() {
             </p>
           )}
         </div>
-        
-        {tab === 'projects' && (
-          <form onSubmit={handleSearch} className="browse-page__search">
-            <div className="browse-page__search-field">
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search projects..."
-                className="browse-page__search-input"
-              />
-              <svg 
-                className="browse-page__search-icon"
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
+      </div>
+
+      <div className="dashboard-layout">
+        {/* Left Sidebar */}
+        <aside className="dashboard-sidebar">
+          <div className="dashboard-sidebar__section">
+            <div className="dashboard-sidebar__tabs">
+              <button
+                type="button"
+                className={`dashboard-sidebar__tab ${tab === 'projects' ? 'is-active' : ''}`.trim()}
+                onClick={() => setTab('projects')}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+                Projects
+              </button>
+              <button
+                type="button"
+                className={`dashboard-sidebar__tab ${tab === 'people' ? 'is-active' : ''}`.trim()}
+                onClick={() => setTab('people')}
+                disabled={!tokenPresent}
+                title={!tokenPresent ? 'Login required' : ''}
+              >
+                People
+              </button>
             </div>
-            <button type="submit" className="browse-page__search-button">
-              Search
-            </button>
-          </form>
-        )}
-      </div>
+          </div>
 
-      <div className="browse-page__tabs">
-        <button
-          type="button"
-          className={`browse-page__tab ${tab === 'projects' ? 'is-active' : ''}`.trim()}
-          onClick={() => setTab('projects')}
-        >
-          Projects
-        </button>
-        <button
-          type="button"
-          className={`browse-page__tab ${tab === 'people' ? 'is-active' : ''}`.trim()}
-          onClick={() => setTab('people')}
-          disabled={!tokenPresent}
-          title={!tokenPresent ? 'Login required' : ''}
-        >
-          People
-        </button>
-      </div>
+          {tab === 'projects' && (
+            <div className="dashboard-sidebar__section">
+              <h3 className="dashboard-sidebar__heading">Search</h3>
+              <form onSubmit={handleSearch} className="browse-page__search" style={{ flexDirection: 'column' }}>
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search projects..."
+                  style={{ width: '100%', marginBottom: '8px' }}
+                />
+                <button type="submit" className="dashboard-sidebar__btn">
+                  Search
+                </button>
+              </form>
 
-      {tab === 'people' ? (
-        <BrowsePeopleTab
-          ownedProjects={ownedProjects}
-          selectedProjectId={selectedProjectId}
-          setSelectedProjectId={setSelectedProjectId}
-          peopleSearch={peopleSearch}
-          setPeopleSearch={setPeopleSearch}
-          searchPeople={() => searchPeople(1)}
-          peopleLoading={peopleLoading}
-          selectedProject={selectedProject}
-          inviteRole={inviteRole}
-          setInviteRole={setInviteRole}
-          inviteMessage={inviteMessage}
-          setInviteMessage={setInviteMessage}
-          people={people}
-          inviteBusyId={inviteBusyId}
-          sendInvite={sendInvite}
-          invitedUserIds={invitedUserIds}
-          peoplePagination={peoplePagination}
-          loadMorePeople={loadMorePeople}
-        />
-      ) : (
-        <BrowseProjectsTab
-          filters={filters}
-          setFilters={setFilters}
-          loading={loading}
-          tokenPresent={tokenPresent}
-          recommendations={recommendations}
-          projects={projects}
-          pagination={pagination}
-        />
-      )}
+              <h3 className="dashboard-sidebar__heading" style={{ marginTop: '24px' }}>Filters</h3>
+              <select
+                value={filters.projectType}
+                onChange={(e) => setFilters({ ...filters, projectType: e.target.value, page: 1 })}
+                className="dashboard-sidebar__select"
+              >
+                <option value="">All Types</option>
+                <option value="web">Web</option>
+                <option value="mobile">Mobile</option>
+                <option value="ml">ML</option>
+                <option value="hackathon">Hackathon</option>
+              </select>
+            </div>
+          )}
+
+          {tab === 'people' && (
+            <div className="dashboard-sidebar__section">
+              <h3 className="dashboard-sidebar__heading">Search People</h3>
+              <form onSubmit={(e) => { e.preventDefault(); searchPeople(1); }} className="browse-page__search" style={{ flexDirection: 'column' }}>
+                <Input
+                  value={peopleSearch}
+                  onChange={(e) => setPeopleSearch(e.target.value)}
+                  placeholder="Search skills, bio..."
+                  style={{ width: '100%', marginBottom: '8px' }}
+                />
+                <button type="submit" className="dashboard-sidebar__btn">
+                  Search
+                </button>
+              </form>
+
+              <h3 className="dashboard-sidebar__heading" style={{ marginTop: '24px' }}>Invite to Project</h3>
+              {ownedProjects.length === 0 ? (
+                <div className="dashboard-sidebar__note">
+                  You need an active recruiting project to invite users.
+                </div>
+              ) : (
+                <select
+                  value={selectedProjectId}
+                  onChange={(e) => setSelectedProjectId(e.target.value)}
+                  className="dashboard-sidebar__select"
+                >
+                  <option value="" disabled>Select a project...</option>
+                  {ownedProjects.map(p => (
+                    <option key={p._id} value={p._id}>{p.title}</option>
+                  ))}
+                </select>
+              )}
+            </div>
+          )}
+        </aside>
+
+        {/* Main Content Area */}
+        <main className="dashboard-content">
+          {tab === 'people' ? (
+            <BrowsePeopleTab
+              ownedProjects={ownedProjects}
+              selectedProjectId={selectedProjectId}
+              setSelectedProjectId={setSelectedProjectId}
+              peopleSearch={peopleSearch}
+              setPeopleSearch={setPeopleSearch}
+              searchPeople={() => searchPeople(1)}
+              peopleLoading={peopleLoading}
+              selectedProject={selectedProject}
+              inviteRole={inviteRole}
+              setInviteRole={setInviteRole}
+              inviteMessage={inviteMessage}
+              setInviteMessage={setInviteMessage}
+              people={people}
+              inviteBusyId={inviteBusyId}
+              sendInvite={sendInvite}
+              invitedUserIds={invitedUserIds}
+              peoplePagination={peoplePagination}
+              loadMorePeople={loadMorePeople}
+              hideControls={true}
+            />
+          ) : (
+            <BrowseProjectsTab
+              filters={filters}
+              setFilters={setFilters}
+              loading={loading}
+              tokenPresent={tokenPresent}
+              recommendations={recommendations}
+              projects={projects}
+              pagination={pagination}
+              hideControls={true}
+            />
+          )}
+        </main>
+      </div>
     </div>
   );
 }

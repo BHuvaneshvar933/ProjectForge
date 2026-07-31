@@ -237,7 +237,7 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
                           {m.attachments && m.attachments.length > 0 && (
                             <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: m.content ? "8px" : "0" }}>
                               {m.attachments.map(att => (
-                                <a key={att.url} href={att.url} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "8px", background: "rgba(0,0,0,0.05)", borderRadius: "6px", textDecoration: "none", color: mine ? "#000" : "inherit", fontSize: "12px", border: "1px solid rgba(128,128,128,0.2)" }}>
+                                <a key={att.url} href={att.url} target="_blank" rel="noreferrer" className="workspace-chat__attachment-link">
                                   <Paperclip size={14} />
                                   <span style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "200px" }}>{att.originalName || att.filename || "Attachment"}</span>
                                 </a>
@@ -295,10 +295,10 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
               {attachments.length > 0 && (
                 <div style={{ display: "flex", gap: "8px", padding: "8px", flexWrap: "wrap", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                   {attachments.map((att, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "center", gap: "4px", background: "rgba(0,0,0,0.2)", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", color: "rgba(255,255,255,0.8)" }}>
+                    <div key={i} className="workspace-chat__attachment-pill">
                       <Paperclip size={12} />
                       <span style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{att.originalName || att.filename}</span>
-                      <button type="button" onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer", display: "flex", padding: "2px" }}>
+                      <button type="button" onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="workspace-chat__attachment-remove">
                         <X size={12} />
                       </button>
                     </div>
