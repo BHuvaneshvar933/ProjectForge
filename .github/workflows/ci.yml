@@ -49,5 +49,4 @@ jobs:
 
     - name: Verify Backend Syntax (Dry Run)
       working-directory: ./backend
-      # We just check if the server can be parsed by Node without crashing immediately on syntax errors.
       run: node --check server.js
