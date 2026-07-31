@@ -7,7 +7,7 @@ import Spinner from "../../components/common/Spinner";
 import Modal from "../../components/common/Modal";
 import { getProjectSummary } from "../../api/analyticsApi";
 import { getCurrentUser } from "../../api/authApi";
-import { getProjectById, getProjectTeam, getGitHubMetrics, updateProject, updateArchiveData, removeTeamMember } from "../../api/projectApi";
+import { getProjectById, getProjectTeam, getGitHubMetrics, updateProject, removeTeamMember } from "../../api/projectApi";
 import { getProjectTasks } from "../../api/taskApi";
 import JourneyTab from "./JourneyTab";
 
@@ -33,7 +33,7 @@ export default function Workspace() {
   const [project, setProject] = useState(null);
   const [me, setMe] = useState(null);
   const [team, setTeam] = useState([]);
-  const [summary, setSummary] = useState(null);
+
 
   // Tasks
   const [tasksLoading, setTasksLoading] = useState(false);
@@ -83,10 +83,9 @@ export default function Workspace() {
 
   const fetchSummary = useCallback(async () => {
     try {
-      const res = await getProjectSummary(projectId);
-      setSummary(res.data?.data?.summary ?? null);
+      await getProjectSummary(projectId);
     } catch {
-      setSummary(null);
+      // Do nothing
     }
   }, [projectId]);
 
@@ -178,7 +177,7 @@ export default function Workspace() {
       setCompletionModalOpen(false);
       setTab("celebration");
       fetchBase();
-    } catch (err) {
+    } catch {
       toast.error("Failed to complete project");
     }
   };
@@ -190,7 +189,7 @@ export default function Workspace() {
       setResumeModalOpen(false);
       setTab("overview");
       fetchBase();
-    } catch (err) {
+    } catch {
       toast.error("Failed to resume project");
     }
   };

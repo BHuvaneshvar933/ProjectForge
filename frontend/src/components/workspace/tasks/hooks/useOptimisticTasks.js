@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { updateTaskStatus, updateTask } from "../../../../api/taskApi";
 import { toast } from "react-toastify";
 
-export function useOptimisticTasks(tasks, setTasks, fetchTasks) {
+export function useOptimisticTasks(tasks, setTasks) {
   // Keep track of original tasks for rollback
   const originalTasksRef = useRef({});
 

@@ -14,6 +14,7 @@ export default function WorkspaceFiles({ projectId, isMember }) {
 
   useEffect(() => {
     fetchFiles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   const fetchFiles = async () => {
@@ -23,7 +24,7 @@ export default function WorkspaceFiles({ projectId, isMember }) {
       if (res.data?.success) {
         setFiles(res.data.data.files || []);
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to load project files");
     } finally {
       setLoading(false);
@@ -49,7 +50,7 @@ export default function WorkspaceFiles({ projectId, isMember }) {
         toast.success("File uploaded to project clipboard");
         fetchFiles();
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to upload file");
     } finally {
       setUploading(false);

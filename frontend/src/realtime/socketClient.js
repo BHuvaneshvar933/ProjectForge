@@ -23,7 +23,6 @@ export const getSocket = () => {
   if (socket?.connected) return socket;
   if (socket) return socket;
 
-  const token = getToken();
 
   socket = io(SOCKET_URL, {
     auth: (cb) => {
@@ -49,7 +48,7 @@ export const getSocket = () => {
     }
   });
 
-  socket.on("reconnect", (attemptNumber) => {
+  socket.on("reconnect", () => {
   });
 
   return socket;

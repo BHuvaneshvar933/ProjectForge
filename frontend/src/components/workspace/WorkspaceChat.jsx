@@ -168,7 +168,7 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
       } else {
         toast.error("Upload failed");
       }
-    } catch (err) {
+    } catch {
       toast.error("Upload failed");
     } finally {
       setUploading(false);

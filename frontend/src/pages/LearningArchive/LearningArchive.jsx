@@ -33,6 +33,7 @@ export default function LearningArchive() {
       fetchArchive();
     }, 300);
     return () => clearTimeout(delay);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, projectType]);
 
   return (

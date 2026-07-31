@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 
-export function useTaskFilters(tasks, team) {
+export function useTaskFilters(tasks) {
   const [search, setSearch] = useState("");
   const [activeFilters, setActiveFilters] = useState({
     status: [], // e.g. ["todo", "in-progress"]

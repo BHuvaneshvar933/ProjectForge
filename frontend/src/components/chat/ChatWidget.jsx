@@ -33,7 +33,7 @@ export default function ChatWidget() {
           if (data?.data?.user) {
             setUser(data.data.user);
           }
-        } catch (e) {
+        } catch {
           setUser(null);
         }
       } else {

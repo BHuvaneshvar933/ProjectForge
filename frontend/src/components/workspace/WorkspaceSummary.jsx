@@ -23,7 +23,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
             setGithubStats(res.data.data.stats);
           }
         })
-        .catch(err => console.error("Could not fetch repo stats"));
+        .catch(() => console.error("Could not fetch repo stats"));
     }
   }, [archiveData.deliverables?.sourceCodeUrl]);
 
@@ -42,7 +42,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
       };
       const res = await generateAIContent(type, payload);
       setAiResult({ type, content: res.data.data.result });
-    } catch (e) {
+    } catch {
       toast.error("Failed to generate AI content");
     } finally {
       setAiLoading(false);
@@ -86,7 +86,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
   const durationDays = useMemo(() => {
     if (!project?.createdAt) return 0;
     const start = new Date(project.createdAt).getTime();
-    // eslint-disable-next-line react-hooks/purity
+
     const end = project.status === "completed" && project.updatedAt 
       ? new Date(project.updatedAt).getTime() 
       : Date.now();

@@ -7,7 +7,6 @@ export default function TasksToolbar({
   activeFilters, 
   toggleFilter, 
   clearFilters, 
-  team, 
   columns, 
   toggleColumnVisibility, 
   resetColumns 

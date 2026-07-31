@@ -41,8 +41,6 @@ export default function MyApplications() {
     fetchMyApplications();
   }, [fetchMyApplications]);
 
-  const canPrev = page > 1;
-  const canNext = page < (pagination?.pages || 1);
 
   const statusVariant = useMemo(() => {
     return {
