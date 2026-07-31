@@ -103,6 +103,11 @@ export default function TaskTableRow({
       case "title":
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%" }}>
+            {level > 0 && (
+              <span style={{ color: "rgba(255,255,255,0.3)", fontFamily: "monospace", fontSize: "14px", userSelect: "none" }}>
+                └─
+              </span>
+            )}
             {isEditingTitle ? (
               <input 
                 autoFocus
