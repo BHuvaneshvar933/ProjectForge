@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import Spinner from "../common/Spinner";
 import { getSocket } from "../../realtime/socketClient";
 import { getProjectMessages } from "../../api/messageApi";
+import { uploadFile } from "../../api/uploadApi";
+import { Paperclip, X } from "lucide-react";
 
 export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) {
   const [chatLoading, setChatLoading] = useState(false);
@@ -10,6 +12,9 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
   const [chatInput, setChatInput] = useState("");
   const [typingUsers, setTypingUsers] = useState([]);
   const [editingMessageId, setEditingMessageId] = useState(null);
+  const [attachments, setAttachments] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
   
   const listRef = useRef(null);
   const chatInputRef = useRef(null);
@@ -122,7 +127,7 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
 
   const onSend = async () => {
     const content = chatInput.trim();
-    if (!content) return;
+    if (!content && attachments.length === 0) return;
     if (!isMember) return;
 
     const socket = getSocket();
@@ -138,15 +143,36 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
     }
 
     // Handle Send
-    socket.emit("send-message", { projectId, content }, (res) => {
+    socket.emit("send-message", { projectId, content, attachments }, (res) => {
       if (!res?.ok) {
         toast.error(res?.error || "Failed to send message");
       }
     });
 
     setChatInput("");
+    setAttachments([]);
     if (chatInputRef.current) {
       chatInputRef.current.style.height = "";
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      const res = await uploadFile(file);
+      if (res.data?.success) {
+        setAttachments(prev => [...prev, res.data.data]);
+      } else {
+        toast.error("Upload failed");
+      }
+    } catch (err) {
+      toast.error("Upload failed");
+    } finally {
+      setUploading(false);
+      e.target.value = null; // Reset input
     }
   };
 
@@ -208,6 +234,16 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
                         </div>
                       ) : (
                         <>
+                          {m.attachments && m.attachments.length > 0 && (
+                            <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: m.content ? "8px" : "0" }}>
+                              {m.attachments.map(att => (
+                                <a key={att.url} href={att.url} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "8px", background: "rgba(0,0,0,0.05)", borderRadius: "6px", textDecoration: "none", color: mine ? "#000" : "inherit", fontSize: "12px", border: "1px solid rgba(128,128,128,0.2)" }}>
+                                  <Paperclip size={14} />
+                                  <span style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "200px" }}>{att.originalName || att.filename || "Attachment"}</span>
+                                </a>
+                              ))}
+                            </div>
+                          )}
                           {m.content && (
                             <div className="workspace-chat__text">
                               {m.content}
@@ -255,8 +291,30 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
         ) : (
           <div className="workspace-chat__composer-wrapper" style={{ position: "relative" }}>
             
-            <div className="workspace-chat__composer">
-
+            <div className="workspace-chat__composer" style={{ display: "flex", flexDirection: "column", background: "rgba(255, 255, 255, 0.05)", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "4px" }}>
+              {attachments.length > 0 && (
+                <div style={{ display: "flex", gap: "8px", padding: "8px", flexWrap: "wrap", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                  {attachments.map((att, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: "4px", background: "rgba(0,0,0,0.2)", padding: "4px 8px", borderRadius: "4px", fontSize: "12px", color: "rgba(255,255,255,0.8)" }}>
+                      <Paperclip size={12} />
+                      <span style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{att.originalName || att.filename}</span>
+                      <button type="button" onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} style={{ background: "transparent", border: "none", color: "inherit", cursor: "pointer", display: "flex", padding: "2px" }}>
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+              <input type="file" ref={fileInputRef} onChange={handleFileUpload} style={{ display: "none" }} />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.6)", padding: "12px", cursor: "pointer", display: "flex" }}
+              >
+                {uploading ? <Spinner size="sm" /> : <Paperclip size={18} />}
+              </button>
               <textarea
                 ref={chatInputRef}
                 className="workspace-chat__input"
@@ -291,9 +349,9 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
                 type="button"
                 className="workspace-chat__send"
                 onClick={onSend}
-                disabled={chatInput.trim().length === 0}
+                disabled={chatInput.trim().length === 0 && attachments.length === 0}
                 aria-label="Send message"
-                title={chatInput.trim().length > 0 ? "Send" : "Type a message to send"}
+                title={(chatInput.trim().length > 0 || attachments.length > 0) ? "Send" : "Type a message to send"}
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -310,6 +368,7 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
                   <path d="M22 2l-7 20-4-9-9-4 20-7z" />
                 </svg>
               </button>
+              </div>
             </div>
           </div>
         )}

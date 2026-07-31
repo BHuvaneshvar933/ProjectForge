@@ -403,7 +403,7 @@
   place-items: center;
   border: 1px solid #ffffff;
   background: #ffffff;
-  color: #ffffff;
+  color: #000000;
   transition: transform 0.12s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 

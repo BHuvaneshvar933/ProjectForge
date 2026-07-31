@@ -102,3 +102,21 @@ select option {
 	border-color: #ffffff;
 }
 
+/* SMART INVERT LIGHT MODE ENGINE */
+/* This intelligently mirrors the monochrome Bugatti design */
+[data-theme="light"] {
+	filter: invert(1) hue-rotate(180deg);
+	background: #ffffff;
+}
+
+/* Un-invert images, media, and explicitly protected elements so they look normal */
+[data-theme="light"] img,
+[data-theme="light"] video,
+[data-theme="light"] .un-invert,
+[data-theme="light"] input[type="checkbox"],
+[data-theme="light"] [class*="avatar"] {
+	filter: invert(1) hue-rotate(180deg);
+}
+
+/* We also need to un-invert any background images if necessary, but we'll stick to img for now */
+

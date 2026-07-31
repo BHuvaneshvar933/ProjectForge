@@ -237,13 +237,6 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                             borderLeft: "4px solid rgba(255, 255, 255, 0.2)"
                           }}
                         >
-                  {t.parentId && (
-                    <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
-                      <span style={{ background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.8)", padding: "2px 6px", borderRadius: "4px" }}>
-                        {project?.key}-{tasks.find(p => p._id === t.parentId)?.taskNumber || "Parent"}
-                      </span>
-                    </div>
-                  )}
                   <div className="workspace-task__title" style={{ display: "flex", alignItems: "flex-start", gap: "6px" }}>
                     <div style={{ display: "flex", flexShrink: 0, marginTop: "2px" }}>
                       {t.issueType === "epic" ? <div style={{ background: "rgba(191, 90, 242, 0.15)", color: "#bf5af2", padding: "4px", borderRadius: "4px", display: "flex" }}><Zap size={14} /></div> : 
@@ -255,7 +248,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                     </div>
                     <div style={{ flex: 1, wordBreak: "break-word" }}>
                       <span style={{ fontWeight: 600, color: "rgba(255,255,255,0.6)", marginRight: 6 }}>
-                        {project?.key}-{t.taskNumber || "X"}
+                        {project?.key || "TASK"}-{t.taskNumber || "X"}
                       </span>
                       {t.title}
                     </div>

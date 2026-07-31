@@ -184,7 +184,10 @@ export default function TaskTableRow({
         background: isSelected ? "rgba(10, 132, 255, 0.15)" : hovered ? "rgba(255,255,255,0.03)" : "transparent",
         transition: "background 0.1s ease",
         height: "40px",
-        alignItems: "center"
+        alignItems: "center",
+        marginLeft: `${level * 24}px`,
+        width: `calc(100% - ${level * 24}px)`,
+        borderLeft: level > 0 ? "2px solid rgba(255,255,255,0.2)" : "none"
       }}
     >
       {/* Fixed first column: Expand & Checkbox */}
@@ -220,7 +223,7 @@ export default function TaskTableRow({
             padding: "0 12px", 
             display: "flex", 
             alignItems: "center",
-            paddingLeft: column.id === "title" ? paddingLeft : 12,
+            paddingLeft: 12,
             overflow: "hidden"
           }}
         >

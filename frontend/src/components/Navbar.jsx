@@ -2,12 +2,23 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import NotificationBell from "./common/NotificationBell";
 import topNavbarIcon from "../assets/logo/top-navbar.jpg";
+import { Sun, Moon } from "lucide-react";
 import './Navbar.css';
 
 export default function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [theme, setTheme] = useState(window.localStorage.getItem("theme") || "dark");
+
+  useEffect(() => {
+    if (theme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+    window.localStorage.setItem("theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -148,6 +159,16 @@ export default function Navbar() {
               </button>
             </>
           )}
+
+          <button
+            type="button"
+            className="navbar__link un-invert"
+            style={{ display: "flex", alignItems: "center", padding: "8px", background: "transparent", border: "none", cursor: "pointer", marginLeft: "10px" }}
+            onClick={() => setTheme(prev => prev === "dark" ? "light" : "dark")}
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={18} color="rgba(255,255,255,0.8)" /> : <Moon size={18} color="#000" />}
+          </button>
         </div>
       </div>
     </nav>

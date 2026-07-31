@@ -19,7 +19,9 @@ import {
   getReleases,
   createRelease,
   saveMyReflections,
-  removeTeamMember
+  removeTeamMember,
+  getProjectFiles,
+  addProjectFile
 } from "../controllers/project.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
@@ -49,4 +51,6 @@ router.patch(
   leaveProject
 );
 router.delete("/:projectId/team/:userId", protect, removeTeamMember);
+router.get("/:id/files", protect, getProjectFiles);
+router.post("/:id/files", protect, addProjectFile);
 export default router;

@@ -326,3 +326,22 @@ export const saveMyReflections = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getProjectFiles = async (req, res, next) => {
+  try {
+    const files = await projectService.getProjectFiles(req.params.id, req.user._id);
+    res.status(200).json({ success: true, data: { files } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addProjectFile = async (req, res, next) => {
+  try {
+    const file = await projectService.addProjectFile(req.params.id, req.user._id, req.body);
+    res.status(201).json({ success: true, data: { file } });
+  } catch (error) {
+    next(error);
+  }
+};
+

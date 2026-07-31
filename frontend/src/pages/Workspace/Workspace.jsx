@@ -20,6 +20,7 @@ import WorkspaceReleases from "../../components/workspace/WorkspaceReleases";
 import WorkspaceSummary from "../../components/workspace/WorkspaceSummary";
 import ProjectCompletionModal from "../../components/workspace/ProjectCompletionModal";
 import CelebrationTab from "./CelebrationTab";
+import WorkspaceFiles from "../../components/workspace/WorkspaceFiles";
 
 import "./Workspace.css";
 
@@ -214,6 +215,7 @@ export default function Workspace() {
     { id: "journey", label: "Journey" },
     { id: "tasks", label: "Tasks" },
     { id: "calendar", label: "Calendar" },
+    { id: "files", label: "Files" },
     { id: "chat", label: "Chat" },
     { id: "development", label: "Development" },
     { id: "releases", label: "Releases" },
@@ -338,6 +340,8 @@ export default function Workspace() {
       )}
 
       {tab === "chat" && <WorkspaceChat projectId={projectId} isMember={isMember} me={me} isCompleted={isCompleted} />}
+
+      {tab === "files" && <WorkspaceFiles projectId={projectId} isMember={isMember} />}
 
       <ProjectCompletionModal 
         isOpen={completionModalOpen}
