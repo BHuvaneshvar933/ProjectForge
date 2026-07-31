@@ -5,6 +5,7 @@ import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import Modal from "../../components/common/Modal";
 import Spinner from "../../components/common/Spinner";
+import DashboardPagination from "../../components/common/DashboardPagination";
 import { getMyApplications, respondToInvitation, withdrawApplication } from "../../api/applicationApi";
 import "./applications.css";
 
@@ -13,6 +14,7 @@ export default function MyApplications() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0, limit: 10 });
+  const [filter, setFilter] = useState("all");
 
   const [withdrawId, setWithdrawId] = useState("");
   const [withdrawLoading, setWithdrawLoading] = useState(false);
@@ -21,7 +23,7 @@ export default function MyApplications() {
   const fetchMyApplications = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getMyApplications({ page, limit: 10 });
+      const res = await getMyApplications({ page, limit: 10, status: filter === "all" ? undefined : filter });
       const applications = res.data?.data?.applications ?? res.data?.data?.result?.applications;
       const meta = res.data?.data?.pagination ?? res.data?.data?.result?.pagination;
 
@@ -33,7 +35,7 @@ export default function MyApplications() {
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, filter]);
 
   useEffect(() => {
     fetchMyApplications();
@@ -80,37 +82,62 @@ export default function MyApplications() {
     }
   };
 
+  const filteredItems = items;
+
   if (loading) {
     return (
-      <div className="apps-page apps-page--loading">
+      <div className="dashboard-page" style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <Spinner size="lg" />
-        <p className="apps-page__hint">Loading applications...</p>
+        <p style={{ color: 'rgba(255, 255, 255, 0.82)', marginTop: 16 }}>Loading applications...</p>
       </div>
     );
   }
 
   return (
-    <div className="apps-page">
-      <div className="apps-page__header">
+    <div className="dashboard-page">
+      <div className="dashboard-header">
         <div>
-          <h1 className="apps-page__title">My Applications</h1>
+          <h1 className="dashboard-title">My Applications</h1>
+          <p className="dashboard-subtitle">Track your project applications and invitations</p>
         </div>
         <Link to="/projects">
-          <Button variant="secondary">Browse Projects</Button>
+          <Button variant="secondary" className="dashboard-header__btn">Browse Projects</Button>
         </Link>
       </div>
 
-      {items.length === 0 ? (
-        <div className="apps-empty">
-          <p className="apps-empty__title">No applications yet</p>
-          <p className="apps-empty__subtitle">Apply to a recruiting project to see it here.</p>
-          <Link to="/projects">
-            <button className="apps-empty__action">Explore Projects</button>
-          </Link>
-        </div>
-      ) : (
-        <div className="apps-list">
-          {items.map((a) => {
+      <div className="dashboard-layout">
+        <aside className="dashboard-sidebar">
+          <div className="dashboard-sidebar__section">
+            <h3 className="dashboard-sidebar__heading">Status</h3>
+            <div className="dashboard-sidebar__tabs">
+              {['all', 'pending', 'accepted', 'rejected', 'withdrawn'].map((status) => (
+                <button
+                  key={status}
+                  onClick={() => {
+                    setFilter(status);
+                    setPage(1);
+                  }}
+                  className={`dashboard-sidebar__tab ${filter === status ? 'is-active' : ''}`.trim()}
+                >
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
+
+        <main className="dashboard-content">
+          {filteredItems.length === 0 ? (
+            <div className="apps-empty">
+              <p className="apps-empty__title">No applications found</p>
+              <p className="apps-empty__subtitle">You haven't received or sent any applications with this status.</p>
+              <Link to="/projects">
+                <button className="apps-empty__action">Explore Projects</button>
+              </Link>
+            </div>
+          ) : (
+            <div className="apps-list">
+              {filteredItems.map((a) => {
             const project = a?.projectId;
             const projectId = project?._id || a?.projectId;
             const isInvitation = a?.applicationType === "invitation";
@@ -194,18 +221,14 @@ export default function MyApplications() {
       )}
 
       {items.length > 0 && (
-        <div className="apps-page__pager">
-          <Button variant="ghost" disabled={!canPrev} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-            Prev
-          </Button>
-          <div className="apps-page__pager-text">
-            Page {page} of {pagination?.pages || 1}
-          </div>
-          <Button variant="ghost" disabled={!canNext} onClick={() => setPage((p) => p + 1)}>
-            Next
-          </Button>
-        </div>
+        <DashboardPagination 
+          page={page} 
+          totalPages={pagination?.pages || 1} 
+          setPage={setPage} 
+        />
       )}
+      </main>
+      </div>
 
       <Modal
         isOpen={Boolean(withdrawId)}
@@ -214,7 +237,7 @@ export default function MyApplications() {
         onConfirm={onWithdraw}
         confirmText={withdrawLoading ? "Withdrawing..." : "Withdraw"}
       >
-        <p className="apps-page__hint">
+        <p style={{ color: 'rgba(255, 255, 255, 0.82)', fontSize: 13, lineHeight: 1.6 }}>
           This will withdraw your pending application. You can apply again later if the project is still recruiting.
         </p>
       </Modal>

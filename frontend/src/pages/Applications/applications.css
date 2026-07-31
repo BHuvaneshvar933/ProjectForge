@@ -1,46 +1,4 @@
-.apps-page {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 48px 24px;
-  animation: fadeIn 0.4s ease;
-}
-
-.apps-page--loading {
-  min-height: 50vh;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-  justify-content: center;
-}
-
-.apps-page__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 16px;
-  margin-bottom: 28px;
-}
-
-.apps-page__title {
-  font-family: 'Jost', sans-serif;
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #ffffff;
-  margin: 0 0 4px;
-  padding-bottom: 4px;
-  border-bottom: 2px solid #ffffff;
-  display: inline-block;
-}
-
-.apps-page__subtitle,
-.apps-page__hint {
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 13px;
-  line-height: 1.6;
-}
+/* Applications page specific styles */
 
 .apps-list {
   display: grid;
@@ -252,18 +210,6 @@
   font-weight: 400;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-}
-
-@media (min-width: 768px) {
-  .apps-page {
-    padding: 48px 32px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .apps-page {
-    padding: 48px 40px;
-  }
 }
 
 

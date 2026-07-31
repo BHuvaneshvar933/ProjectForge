@@ -23,43 +23,46 @@ export default function BrowsePeopleTab({
   sendInvite,
   invitedUserIds = [],
   peoplePagination = { page: 1, pages: 1 },
-  loadMorePeople
+  loadMorePeople,
+  hideControls
 }) {
   const [profileUser, setProfileUser] = useState(null);
 
   return (
     <div className="browse-people">
-      <div className="browse-people__controls">
-        <div className="browse-people__select">
-          <div className="browse-people__label">Invite for project</div>
-          <select
-            className="browse-page__select"
-            value={selectedProjectId}
-            onChange={(e) => setSelectedProjectId(e.target.value)}
-          >
-            {ownedProjects.length === 0 ? (
-              <option value="">No recruiting projects</option>
-            ) : (
-              ownedProjects.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.title}
-                </option>
-              ))
-            )}
-          </select>
-        </div>
+      {!hideControls && (
+        <div className="browse-people__controls">
+          <div className="browse-people__select">
+            <div className="browse-people__label">Invite for project</div>
+            <select
+              className="browse-page__select"
+              value={selectedProjectId}
+              onChange={(e) => setSelectedProjectId(e.target.value)}
+            >
+              {ownedProjects.length === 0 ? (
+                <option value="">No recruiting projects</option>
+              ) : (
+                ownedProjects.map((p) => (
+                  <option key={p._id} value={p._id}>
+                    {p.title}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
 
-        <div className="browse-people__search">
-          <Input
-            value={peopleSearch}
-            onChange={(e) => setPeopleSearch(e.target.value)}
-            placeholder="Search people by name or bio..."
-          />
-          <Button variant="primary" onClick={searchPeople} loading={peopleLoading}>
-            Search
-          </Button>
+          <div className="browse-people__search">
+            <Input
+              value={peopleSearch}
+              onChange={(e) => setPeopleSearch(e.target.value)}
+              placeholder="Search people by name or bio..."
+            />
+            <Button variant="primary" onClick={searchPeople} loading={peopleLoading}>
+              Search
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {selectedProject && (
         <div className="browse-people__project-hint">

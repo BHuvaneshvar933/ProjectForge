@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getJoinedProjects, getMyProjects } from '../../api/projectApi';
 import ProjectCard from '../../components/common/ProjectCard';
+import DashboardPagination from '../../components/common/DashboardPagination';
 import { toast } from 'react-toastify';
 import './MyProjects.css';
 
@@ -10,9 +11,12 @@ export default function MyProjects() {
   const [loading, setLoading] = useState(true);
   const [mode, setMode] = useState('owned'); // owned | joined
   const [filter, setFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 8;
 
   useEffect(() => {
     setFilter('all');
+    setPage(1);
   }, [mode]);
 
   const fetchProjects = useCallback(async () => {
@@ -41,6 +45,8 @@ export default function MyProjects() {
 
   const renderProjectList = () => {
     const filtered = filterProjects(projects);
+    const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
+    const currentList = filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
     
     if (filtered.length === 0) {
       return (
@@ -72,8 +78,9 @@ export default function MyProjects() {
     }
 
     return (
+      <div className="my-projects__content-wrapper">
         <div className="my-projects__grid">
-          {filtered.map(project => (
+          {currentList.map(project => (
             <ProjectCard 
               key={project._id} 
               project={project} 
@@ -81,7 +88,16 @@ export default function MyProjects() {
             />
           ))}
         </div>
-      );
+        
+        {totalPages >= 1 && (
+          <DashboardPagination 
+            page={page} 
+            totalPages={totalPages} 
+            setPage={setPage} 
+          />
+        )}
+      </div>
+    );
   };
 
   if (loading) {
@@ -94,16 +110,16 @@ export default function MyProjects() {
   }
 
   return (
-    <div className="my-projects">
-      <div className="my-projects__header">
+    <div className="dashboard-page">
+      <div className="dashboard-header">
         <div>
-          <h1 className="my-projects__title">My Projects</h1>
-          {mode !== 'owned'}
+          <h1 className="dashboard-title">My Projects</h1>
+          <p className="dashboard-subtitle">Manage projects you own and contribute to</p>
         </div>
         {mode === 'owned' && (
           <Link to="/projects/create">
-            <button className="my-projects__new-button">
-              <svg className="my-projects__new-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button className="dashboard-header__btn">
+              <svg style={{width: 16, height: 16}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
               New Project
@@ -112,37 +128,52 @@ export default function MyProjects() {
         )}
       </div>
 
-      <div className="my-projects__mode">
-        <button
-          onClick={() => setMode('owned')}
-          className={`my-projects__filter-btn ${mode === 'owned' ? 'is-active' : ''}`.trim()}
-        >
-          Owned
-        </button>
-        <button
-          onClick={() => setMode('joined')}
-          className={`my-projects__filter-btn ${mode === 'joined' ? 'is-active' : ''}`.trim()}
-        >
-          Joined
-        </button>
-      </div>
+      <div className="dashboard-layout">
+        <aside className="dashboard-sidebar">
+          <div className="dashboard-sidebar__section">
+            <h3 className="dashboard-sidebar__heading">Project Type</h3>
+            <div className="dashboard-sidebar__tabs">
+              <button
+                onClick={() => setMode('owned')}
+                className={`dashboard-sidebar__tab ${mode === 'owned' ? 'is-active' : ''}`.trim()}
+              >
+                Owned Projects
+              </button>
+              <button
+                onClick={() => setMode('joined')}
+                className={`dashboard-sidebar__tab ${mode === 'joined' ? 'is-active' : ''}`.trim()}
+              >
+                Joined Projects
+              </button>
+            </div>
+          </div>
 
-      <div className="my-projects__filters">
-        {['all', 'recruiting', 'in-progress', 'completed', 'archived']
-          .filter(status => status !== 'archived' || mode === 'owned')
-          .map((status) => (
-          <button
-            key={status}
-            onClick={() => setFilter(status)}
-            className={`my-projects__filter-btn ${filter === status ? 'is-active' : ''}`.trim()}
-          >
-            {status === 'in-progress' ? 'In-Progress' : status}
-          </button>
-        ))}
-      </div>
+          <div className="dashboard-sidebar__section">
+            <h3 className="dashboard-sidebar__heading">Status</h3>
+            <div className="dashboard-sidebar__tabs">
+              {['all', 'recruiting', 'in-progress', 'completed', 'archived']
+                .filter(status => status !== 'archived' || mode === 'owned')
+                .map((status) => (
+                <button
+                  key={status}
+                  onClick={() => {
+                    setFilter(status);
+                    setPage(1);
+                  }}
+                  className={`dashboard-sidebar__tab ${filter === status ? 'is-active' : ''}`.trim()}
+                >
+                  {status === 'in-progress' ? 'In-Progress' : status.charAt(0).toUpperCase() + status.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </aside>
 
-      <div className="my-projects__content">
-        {renderProjectList()}
+        <main className="dashboard-content">
+          <div className="my-projects__content">
+            {renderProjectList()}
+          </div>
+        </main>
       </div>
     </div>
   );
