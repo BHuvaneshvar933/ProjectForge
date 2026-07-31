@@ -27,38 +27,10 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
     attachmentName: "",
   });
   const [taskUploading, setTaskUploading] = useState(false);
-  const [draggedTaskId, setDraggedTaskId] = useState(null);
-  const [expandedEpics, setExpandedEpics] = useState({});
-  const [inlineCreateParent, setInlineCreateParent] = useState(null);
-  const [inlineCreateTitle, setInlineCreateTitle] = useState("");
 
   const isCompleted = project?.status === "completed";
 
-  const handleInlineCreate = async (parentId, defaultType) => {
-    if (!inlineCreateTitle.trim()) return;
-    setTaskCreating(true);
-    try {
-      await createTask(projectId, {
-        title: inlineCreateTitle.trim(),
-        description: "",
-        priority: "medium",
-        issueType: defaultType,
-        parentId: parentId,
-      });
-      setInlineCreateTitle("");
-      setInlineCreateParent(null);
-      toast.success("Task created");
-      fetchTasks();
-    } catch (e) {
-      toast.error("Failed to create task");
-    } finally {
-      setTaskCreating(false);
-    }
-  };
 
-  const toggleEpic = (epicId) => {
-    setExpandedEpics(prev => ({ ...prev, [epicId]: prev[epicId] === false }));
-  };
 
   const tasksByStatus = useMemo(() => {
     return {
@@ -130,8 +102,8 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
     try {
       await assignTask(taskId, userId || null);
       if (onTaskChange) await onTaskChange();
-    } catch (e) {
-      toast.error(e?.response?.data?.message || "Failed to assign task");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to assign task");
     }
   };
 
@@ -147,7 +119,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
         onChangeTaskForm("attachmentName", res.data.data.filename);
         toast.success("File uploaded successfully");
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to upload file");
     } finally {
       setTaskUploading(false);

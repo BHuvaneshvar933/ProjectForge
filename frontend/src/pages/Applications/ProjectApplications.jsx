@@ -69,8 +69,6 @@ export default function ProjectApplications() {
     };
   }, []);
 
-  const canPrev = page > 1;
-  const canNext = page < (pagination?.pages || 1);
 
   const onAccept = async () => {
     const applicationId = acceptState.id;

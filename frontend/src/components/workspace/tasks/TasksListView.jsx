@@ -49,7 +49,7 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
       setInlineCreateParent(null);
       toast.success("Task created");
       fetchTasks();
-    } catch (e) {
+    } catch {
       toast.error("Failed to create task");
     } finally {
       setTaskCreating(false);
@@ -62,7 +62,7 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
       toast.success("Tasks deleted");
       clearSelection();
       fetchTasks();
-    } catch (e) {
+    } catch {
       toast.error("Bulk delete failed");
     }
   };
@@ -73,7 +73,7 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
       toast.success(`Updated status for ${selectedIds.size} tasks`);
       clearSelection();
       fetchTasks();
-    } catch (e) {
+    } catch {
       toast.error("Bulk update failed");
     }
   };
@@ -84,7 +84,7 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
       toast.success(`Assigned ${selectedIds.size} tasks`);
       clearSelection();
       fetchTasks();
-    } catch (e) {
+    } catch {
       toast.error("Bulk assignment failed");
     }
   };

@@ -43,7 +43,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       setNewAchievement("");
       onUpdate();
       toast.success("Achievement added!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to add achievement");
     } finally {
       setLoading(false);
@@ -56,7 +56,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       await updateArchiveData(project._id, { type: "delete_achievement", index });
       onUpdate();
       toast.success("Achievement removed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to remove achievement");
     } finally {
       setLoading(false);
@@ -72,7 +72,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       setNewChallenge({ problem: "", solution: "" });
       onUpdate();
       toast.success("Challenge added!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to add challenge");
     } finally {
       setLoading(false);
@@ -85,7 +85,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       await updateArchiveData(project._id, { type: "delete_challenge", index });
       onUpdate();
       toast.success("Challenge removed!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to remove challenge");
     } finally {
       setLoading(false);
@@ -98,7 +98,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       await updateArchiveData(project._id, { type: "takeaway", takeaway });
       onUpdate();
       toast.success("Takeaway saved!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to save takeaway");
     } finally {
       setLoading(false);
@@ -111,7 +111,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       await updateArchiveData(project._id, { type: "deliverables", deliverables });
       onUpdate();
       toast.success("Deliverables saved!");
-    } catch (err) {
+    } catch {
       toast.error("Failed to save deliverables");
     } finally {
       setLoading(false);
@@ -131,7 +131,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       // update local state to reflect UI changes immediately
       const addedSkill = availableSkills.find(s => s._id === skillId);
       setSelectedSkills([...selectedSkills, addedSkill]);
-    } catch (err) {
+    } catch {
       toast.error("Failed to add skill");
     } finally {
       setLoading(false);
@@ -146,7 +146,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
       onUpdate();
       toast.success("Skill removed!");
       setSelectedSkills(selectedSkills.filter(s => s._id !== skillId));
-    } catch (err) {
+    } catch {
       toast.error("Failed to remove skill");
     } finally {
       setLoading(false);

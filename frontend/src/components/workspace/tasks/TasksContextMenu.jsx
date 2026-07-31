@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-export default function TasksContextMenu({ x, y, task, onClose, onDelete, onUpdateStatus, onAssign, teamSorted }) {
+export default function TasksContextMenu({ x, y, task, onClose, onDelete, onUpdateStatus, onAssign }) {
   const menuRef = useRef(null);
 
   useEffect(() => {

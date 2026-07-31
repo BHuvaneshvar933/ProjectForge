@@ -133,7 +133,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                     aiHealthSuggestion: res.data.data.result.suggestion
                   }));
                   toast.success("Health Score generated!");
-                } catch (e) {
+                } catch {
                   toast.error("Failed to generate Health Score");
                 } finally {
                   setAiLoading(false);
@@ -155,7 +155,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                     aiWeeklySummary: res.data.data.result 
                   }));
                   toast.success("Weekly Summary generated!");
-                } catch (e) {
+                } catch {
                   toast.error("Failed to generate Weekly Summary");
                 } finally {
                   setAiLoading(false);

@@ -177,7 +177,7 @@ export default function TaskTableRow({
     }
   };
 
-  const paddingLeft = level * 24 + 16; // Indent based on hierarchy level
+
 
   return (
     <div 

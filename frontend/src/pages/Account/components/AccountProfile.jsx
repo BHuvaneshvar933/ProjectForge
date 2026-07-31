@@ -24,7 +24,7 @@ export default function AccountProfile({ form, setForm }) {
   useEffect(() => {
     const q = skillInput.trim();
     if (!q) {
-      setSkillResults([]);
+      setTimeout(() => setSkillResults([]), 0);
       return;
     }
 

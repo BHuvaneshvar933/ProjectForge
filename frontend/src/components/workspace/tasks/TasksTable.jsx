@@ -84,6 +84,7 @@ export default function TasksTable({
   }, [tasks, expandedEpics]);
 
   // Virtualizer setup
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: visibleTasks.length,
     getScrollElement: () => parentRef.current,
