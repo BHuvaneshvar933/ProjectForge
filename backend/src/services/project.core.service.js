@@ -258,25 +258,7 @@ export const closeRecruitment = async (projectId, userId) => {
   return project;
 };
 
-// ARCHIVE PROJECT
-export const archiveProject = async (projectId, userId) => {
-  const project = await Project.findById(projectId);
 
-  if (!project || project.isDeleted) {
-    throw new Error("Project not found");
-  }
-
-  if (project.owner.toString() !== userId.toString()) {
-    throw new Error("Not authorized");
-  }
-
-  project.status = "archived";
-  project.deletedAt = new Date();
-
-  await project.save();
-
-  return project;
-};
 
 export const updateArchiveData = async (userId, projectId, data) => {
   const project = await Project.findOne({ _id: projectId, isDeleted: false });

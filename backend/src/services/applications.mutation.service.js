@@ -507,8 +507,8 @@ export const rejectApplication = async (ownerId, applicationId, data) => {
     throw new Error("Not authorized");
   }
 
-  if (project.status === "archived") {
-    throw new Error("Project is archived");
+  if (project.status === "completed") {
+    throw new Error("Project is completed");
   }
 
   // Update application

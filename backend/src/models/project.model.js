@@ -83,7 +83,7 @@ const projectSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["recruiting", "in-progress", "completed", "archived"],
+      enum: ["recruiting", "in-progress", "completed"],
       default: "recruiting",
       index: true,
     },

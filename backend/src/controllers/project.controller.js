@@ -94,23 +94,6 @@ export const closeRecruitment = async (req, res, next) => {
   }
 };
 
-export const archiveProject = async (req, res, next) => {
-  try {
-    const project = await projectService.archiveProject(
-      req.params.id,
-      req.user._id
-    );
-
-    res.status(200).json({
-      success: true,
-      message: "Project archived",
-      data: { project },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const getProjectTeam = async (req, res, next) => {
   try {
     const team = await projectService.getProjectTeam(req.params.id, req.user._id);

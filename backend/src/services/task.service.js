@@ -16,8 +16,8 @@ export const createTask = async (projectId, payload, currentUser) => {
     throw new Error("Project not found");
   }
 
-  if (project.status === "archived") {
-    throw new Error("Project is archived");
+  if (project.status === "completed") {
+    throw new Error("Project is completed");
   }
   if (!project.metrics) {
   project.metrics = {
@@ -177,8 +177,8 @@ export const assignTask = async (taskId, payload, currentUser) => {
     throw new Error("Project not found");
   }
 
-  if (project.status === "archived") {
-    throw new Error("Cannot modify tasks of archived project");
+  if (project.status === "completed") {
+    throw new Error("Cannot modify tasks of completed project");
   }
 
   const teamMember = await Team.findOne({
@@ -234,8 +234,8 @@ export async function updateTaskStatus(taskId, newStatus, userId) {
     throw new Error("Project not found");
   }
 
-  if (project.status === "archived") {
-    throw new Error("Project is archived");
+  if (project.status === "completed") {
+    throw new Error("Project is completed");
   }
 
   const isMember = await Team.findOne({
@@ -340,8 +340,8 @@ export const deleteTask = async (taskId, userId) => {
     throw new Error("Project not found");
   }
 
-  if (project.status === "archived") {
-    throw new Error("Project is archived");
+  if (project.status === "completed") {
+    throw new Error("Project is completed");
   }
 
   const member = await Team.findOne({
@@ -375,8 +375,8 @@ export const updateTask = async (taskId, updateData, userId) => {
     throw new Error("Project not found");
   }
 
-  if (project.status === "archived") {
-    throw new Error("Project is archived");
+  if (project.status === "completed") {
+    throw new Error("Project is completed");
   }
 
   const member = await Team.findOne({

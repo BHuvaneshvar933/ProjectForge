@@ -151,8 +151,7 @@ export default function MyProjects() {
           <div className="dashboard-sidebar__section">
             <h3 className="dashboard-sidebar__heading">Status</h3>
             <div className="dashboard-sidebar__tabs">
-              {['all', 'recruiting', 'in-progress', 'completed', 'archived']
-                .filter(status => status !== 'archived' || mode === 'owned')
+              {['all', 'recruiting', 'in-progress', 'completed']
                 .map((status) => (
                 <button
                   key={status}
