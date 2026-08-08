@@ -15,7 +15,6 @@ export default function ProjectHeader({
   setShowApplyModal,
   isOwner,
   goToApplications,
-  setShowArchiveModal,
 }) {
   const navigate = useNavigate();
   const { _id: id } = project;
@@ -85,9 +84,6 @@ export default function ProjectHeader({
             <Link to={`/projects/${id}/edit`}>
               <Button variant="secondary">Edit Project</Button>
             </Link>
-            <Button variant="danger" onClick={() => setShowArchiveModal(true)}>
-              Archive
-            </Button>
           </>
         )}
       </div>

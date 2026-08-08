@@ -6,7 +6,6 @@ import {
   getMyProjects,
   updateProject,
   closeRecruitment,
-  archiveProject,
   getProjectTeam,
   getJoinedProjects,
   leaveProject,
@@ -36,7 +35,6 @@ router.get("/github-stats", getBasicRepoStats);
 router.get("/:id", getProject);
 router.put("/:id", protect, updateProject);
 router.patch("/:id/close-recruitment", protect, closeRecruitment);
-router.patch("/:id/archive", protect, archiveProject);
 router.put("/:id/archive-data", protect, updateArchiveData);
 router.put("/:id/my-reflections", protect, saveMyReflections);
 router.get("/:id/team", protect, getProjectTeam);

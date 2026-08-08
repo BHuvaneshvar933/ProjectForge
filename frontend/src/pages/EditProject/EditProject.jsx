@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProjectById, updateProject, archiveProject } from '../../api/projectApi';
+import { getProjectById, updateProject } from '../../api/projectApi';
 import ProjectBasicInfo from '../../components/forms/ProjectBasicInfo';
 import ProjectRequirements from '../../components/forms/ProjectRequirements';
 import ProjectReview from '../../components/forms/ProjectReview';
@@ -16,7 +16,7 @@ export default function EditProject() {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
-  const [showArchiveModal, setShowArchiveModal] = useState(false);
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -141,21 +141,6 @@ export default function EditProject() {
     }
   };
 
-  const handleArchive = async () => {
-    setLoading(true);
-    try {
-      await archiveProject(id);
-      toast.success('Project archived successfully');
-      navigate('/my-projects');
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to archive project');
-    } finally {
-      setLoading(false);
-      setShowArchiveModal(false);
-    }
-  };
-
   const renderStep = () => {
     switch (currentStep) {
       case 0:
@@ -201,13 +186,6 @@ export default function EditProject() {
           <h1 className="edit-project__title">Edit Project</h1>
           <p className="edit-project__subtitle">Update your project details</p>
         </div>
-        <button
-          onClick={() => setShowArchiveModal(true)}
-          disabled={loading}
-          className={`edit-project__archive ${loading ? 'is-disabled' : ''}`.trim()}
-        >
-          Archive Project
-        </button>
       </div>
       
       <div className="edit-project__stepper">
@@ -302,17 +280,7 @@ export default function EditProject() {
         )}
       </div>
 
-      <Modal
-        isOpen={showArchiveModal}
-        onClose={() => setShowArchiveModal(false)}
-        title="Archive Project"
-        onConfirm={handleArchive}
-        confirmText="Archive"
-      >
-        <p className="edit-project__modal-text">
-          Are you sure you want to archive this project? This action cannot be undone.
-        </p>
-      </Modal>
+
     </div>
   );
 }

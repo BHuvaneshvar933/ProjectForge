@@ -23,10 +23,6 @@ export const createProject = (data) =>
 export const updateProject = (id, data) =>
   API.put(`/projects/${id}`, data);
 
-// Archive project
-export const archiveProject = (id) =>
-  API.patch(`/projects/${id}/archive`);
-
 // Get project team
 export const getProjectTeam = (id) =>
   API.get(`/projects/${id}/team`);

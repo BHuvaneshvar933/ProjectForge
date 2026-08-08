@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { archiveProject, getJoinedProjects, getProjectById } from '../../api/projectApi';
+import { getJoinedProjects, getProjectById } from '../../api/projectApi';
 import { getCurrentUser } from '../../api/authApi';
 import { applyToProject, getMyApplications } from '../../api/applicationApi';
 import Button from '../../components/common/Button';
@@ -31,7 +31,6 @@ export default function ProjectDetail() {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [applyMessage, setApplyMessage] = useState('');
   const [applyLoading, setApplyLoading] = useState(false);
-  const [showArchiveModal, setShowArchiveModal] = useState(false);
 
   const fetchProject = useCallback(async () => {
     try {
@@ -188,23 +187,6 @@ export default function ProjectDetail() {
     }
   };
 
-  const handleArchive = async () => {
-    if (!isOwner) return;
-
-    try {
-      await archiveProject(id);
-      toast.success('Project archived');
-      setShowArchiveModal(false);
-      navigate('/my-projects');
-    } catch (e) {
-      toast.error(e.response?.data?.message || 'Failed to archive');
-    }
-  };
-
-  const goToApplications = () => {
-    navigate(`/projects/${id}/applications`);
-  };
-
   const matchPercent = (() => {
     try {
       const userSkills = Array.isArray(currentUser?.skills) ? currentUser.skills : [];
@@ -252,8 +234,7 @@ export default function ProjectDetail() {
         applyLoading={applyLoading}
         setShowApplyModal={setShowApplyModal}
         isOwner={isOwner}
-        goToApplications={goToApplications}
-        setShowArchiveModal={setShowArchiveModal}
+        goToApplications={() => navigate(`/projects/${id}/applications`)}
       />
 
       <ProjectAbout
@@ -284,18 +265,6 @@ export default function ProjectDetail() {
           onChange={(e) => setApplyMessage(e.target.value)}
           placeholder="Example: I can take the Frontend role, I have experience with React and shipping Vite apps..."
         />
-      </Modal>
-
-      <Modal
-        isOpen={showArchiveModal}
-        onClose={() => setShowArchiveModal(false)}
-        title="Archive Project"
-        onConfirm={handleArchive}
-        confirmText="Archive"
-      >
-        <p className="project-detail__modal-hint">
-          This will archive the project and remove it from public browsing.
-        </p>
       </Modal>
     </div>
   );
