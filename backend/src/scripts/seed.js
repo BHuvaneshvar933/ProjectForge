@@ -304,6 +304,96 @@ const main = async () => {
     teamSizeRequired: 4,
   });
 
+  const p7 = await createProjectIfMissing({
+    ownerId: bob._id,
+    title: "Quantum Computing Simulator",
+    description: "A web-based simulator for quantum circuits and algorithms.",
+    projectType: "web",
+    requiredSkills: [skillBy("Python"), skillBy("React"), skillBy("TypeScript")].filter(Boolean),
+    openRoles: ["Frontend Developer", "Python Developer"],
+    teamSizeRequired: 3,
+  });
+
+  const p8 = await createProjectIfMissing({
+    ownerId: charlie._id,
+    title: "Minimalist Note-taking App",
+    description: "A distraction-free, local-first note taking app with markdown support.",
+    projectType: "web",
+    requiredSkills: [skillBy("React"), skillBy("UI/UX"), skillBy("Figma")].filter(Boolean),
+    openRoles: ["Frontend Developer"],
+    teamSizeRequired: 2,
+  });
+
+  const p9 = await createProjectIfMissing({
+    ownerId: evan._id,
+    title: "Social Network for Pets",
+    description: "A fun app where pet owners can share pictures and stories of their pets.",
+    projectType: "web",
+    requiredSkills: [skillBy("JavaScript"), skillBy("Node.js"), skillBy("MongoDB"), skillBy("React")].filter(Boolean),
+    openRoles: ["Backend Developer", "UI/UX Designer"],
+    teamSizeRequired: 4,
+  });
+
+  const p10 = await createProjectIfMissing({
+    ownerId: hannah._id,
+    title: "Automated Plant Watering System",
+    description: "IoT project using sensors and ML to predict when plants need water.",
+    projectType: "ml",
+    requiredSkills: [skillBy("Python"), skillBy("ML"), skillBy("Node.js")].filter(Boolean),
+    openRoles: ["IoT Engineer", "Data Scientist"],
+    teamSizeRequired: 3,
+  });
+
+  const p11 = await createProjectIfMissing({
+    ownerId: julia._id,
+    title: "Freelance Marketplace",
+    description: "A specialized platform connecting freelance designers with startups.",
+    projectType: "web",
+    requiredSkills: [skillBy("React"), skillBy("Express"), skillBy("MongoDB"), skillBy("Figma")].filter(Boolean),
+    openRoles: ["Full Stack Developer", "QA Engineer"],
+    teamSizeRequired: 5,
+  });
+
+  const p12 = await createProjectIfMissing({
+    ownerId: alice._id,
+    title: "Crypto Portfolio Tracker",
+    description: "Real-time dashboard to track multiple cryptocurrency wallets.",
+    projectType: "web",
+    requiredSkills: [skillBy("React"), skillBy("Node.js"), skillBy("Socket.io")].filter(Boolean),
+    openRoles: ["Backend Developer", "Frontend Developer"],
+    teamSizeRequired: 3,
+  });
+
+  const p13 = await createProjectIfMissing({
+    ownerId: diana._id,
+    title: "Weather Forecasting API",
+    description: "High-performance microservice providing hyper-local weather predictions.",
+    projectType: "web",
+    requiredSkills: [skillBy("Python"), skillBy("FastAPI"), skillBy("PostgreSQL")].filter(Boolean),
+    openRoles: ["Backend Engineer"],
+    teamSizeRequired: 2,
+  });
+
+  const p14 = await createProjectIfMissing({
+    ownerId: george._id,
+    title: "Language Learning Game",
+    description: "A gamified app for learning new languages through interactive stories.",
+    projectType: "web",
+    requiredSkills: [skillBy("React"), skillBy("TypeScript"), skillBy("UI/UX")].filter(Boolean),
+    openRoles: ["Game Designer", "Frontend Developer"],
+    teamSizeRequired: 4,
+  });
+
+  const p15 = await createProjectIfMissing({
+    ownerId: fiona._id,
+    title: "Container Orchestration UI",
+    description: "A beautiful web interface for managing Docker Swarm clusters.",
+    projectType: "web",
+    requiredSkills: [skillBy("Docker"), skillBy("React"), skillBy("TypeScript")].filter(Boolean),
+    openRoles: ["Frontend Developer"],
+    teamSizeRequired: 2,
+  });
+
   // Helper functions
   const ensureApplication = async ({ projectId, applicantId, message }) => {
     const existing = await Application.findOne({ projectId, applicantId }).lean();
