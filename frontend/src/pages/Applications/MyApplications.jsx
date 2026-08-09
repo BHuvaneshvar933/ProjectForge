@@ -44,10 +44,10 @@ export default function MyApplications() {
 
   const statusVariant = useMemo(() => {
     return {
-      pending: "recruiting",
-      accepted: "completed",
-      rejected: "archived",
-      withdrawn: "default",
+      pending: "pending",
+      accepted: "accepted",
+      rejected: "rejected",
+      withdrawn: "withdrawn",
     };
   }, []);
 
