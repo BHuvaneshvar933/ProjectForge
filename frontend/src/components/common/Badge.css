@@ -88,3 +88,27 @@
 }
 
 
+
+.badge--pending {
+  background: transparent;
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+}
+
+.badge--accepted {
+  background: transparent;
+  color: #34d399;
+  border: 1px solid #34d399;
+}
+
+.badge--rejected {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.badge--withdrawn {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
