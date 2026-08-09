@@ -179,8 +179,7 @@ export default function BrowsePeopleTab({
               <div><strong style={{ color: 'var(--color-zinc-200)' }}>Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
               <div><strong style={{ color: 'var(--color-zinc-200)' }}>Projects Completed:</strong> {profileUser?.stats?.projectsCompleted ?? 0}</div>
               <div><strong style={{ color: 'var(--color-zinc-200)' }}>Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Applications Sent:</strong> {profileUser?.stats?.applicationsSent ?? 0}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Applications Accepted:</strong> {profileUser?.stats?.applicationsAccepted ?? 0}</div>
+
               <div><strong style={{ color: 'var(--color-zinc-200)' }}>Acceptance Rate:</strong> {profileUser?.stats?.acceptanceRate ? `${(profileUser.stats.acceptanceRate * 100).toFixed(0)}%` : "0%"}</div>
               <div><strong style={{ color: 'var(--color-zinc-200)' }}>Member Since:</strong> {profileUser?.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "-"}</div>
             </div>
