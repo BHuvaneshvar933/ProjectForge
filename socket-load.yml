@@ -1,0 +1,15 @@
+config:
+  target: "http://localhost:5001"
+  phases:
+    - duration: 15
+      arrivalRate: 20
+      name: "Sustained load"
+  engines:
+    socketio: {}
+scenarios:
+  - name: "Connect and disconnect"
+    engine: "socketio"
+    flow:
+      - emit:
+          channel: "ping"
+      - think: 1
