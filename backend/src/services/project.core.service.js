@@ -196,7 +196,8 @@ export const browseProjects = async (query) => {
     .skip(skip)
     .limit(Number(limit))
     .populate("owner", "name")
-    .populate("requiredSkills", "name");
+    .populate("requiredSkills", "name")
+    .lean();
 
   const total = await Project.countDocuments(filter);
 

@@ -5,10 +5,8 @@ import cors from "cors";
 
 // Initialize Sentry early
 Sentry.init({
-  dsn: process.env.SENTRY_DSN || "", // User needs to add this in .env
-  integrations: [
-    nodeProfilingIntegration(),
-  ],
+  dsn: process.env.SENTRY_DSN || "", 
+  integrations: [],
   tracesSampleRate: 1.0, 
   profilesSampleRate: 1.0, 
 });
