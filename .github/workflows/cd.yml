@@ -44,6 +44,10 @@ jobs:
           PORT: 5001
           JWT_SECRET: dummysecret
           MONGO_URI: mongodb://127.0.0.1:27017/projectforge
+          AWS_S3_BUCKET_NAME: dummy-bucket
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: dummy_key
+          AWS_SECRET_ACCESS_KEY: dummy_secret
 
       - name: Wait for server to start
         run: sleep 5

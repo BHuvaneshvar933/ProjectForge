@@ -65,6 +65,10 @@ jobs:
           JWT_SECRET: e2e_test_secret_123
           PORT: 5001
           VITE_API_URL: http://127.0.0.1:5001/api
+          AWS_S3_BUCKET_NAME: dummy-bucket
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: dummy_key
+          AWS_SECRET_ACCESS_KEY: dummy_secret
 
       - name: Upload Playwright Report
         if: always()
