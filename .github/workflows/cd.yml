@@ -1,0 +1,47 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Since we are focusing on SDET skills, we perform a mock deployment 
+      # and a smoke test to simulate post-deployment verification.
+      # If you connect this repository to Vercel/Render, their integrations 
+      # will handle the actual deployment, and you can run smoke tests against the production URL.
+
+      - name: Mock Build & Deploy
+        run: |
+          echo "Building production artifacts..."
+          cd frontend && npm ci && npm run build
+          echo "Deploying to production environment..."
+
+      - name: Start Production Server (Background)
+        run: |
+          cd backend
+          npm ci
+          node server.js &
+        env:
+          PORT: 5001
+          JWT_SECRET: dummysecret
+          MONGO_URI: mongodb://localhost:27017/projectforge
+
+      - name: Wait for server to start
+        run: sleep 5
+
+      - name: Smoke Test (Health Check)
+        run: |
+          echo "Verifying deployment health..."
+          curl -f http://localhost:5001/ || exit 1
+          echo "Smoke test passed. Deployment successful."
