@@ -7,6 +7,14 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    
+    # Add a MongoDB service container for the backend
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -53,6 +61,8 @@ jobs:
       - name: Run Playwright E2E Tests
         run: npx playwright test
         env:
+          MONGO_URI: mongodb://127.0.0.1:27017/projectforge_e2e
+          JWT_SECRET: e2e_test_secret_123
           PORT: 5001
           VITE_API_URL: http://localhost:5001/api
 
