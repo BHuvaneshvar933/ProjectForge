@@ -7,6 +7,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    
+    # Add a MongoDB service container for the backend to start successfully
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,11 +39,11 @@ jobs:
         run: |
           cd backend
           npm ci
-          node server.js &
+          node server.js > server.log 2>&1 &
         env:
           PORT: 5001
           JWT_SECRET: dummysecret
-          MONGO_URI: mongodb://localhost:27017/projectforge
+          MONGO_URI: mongodb://127.0.0.1:27017/projectforge
 
       - name: Wait for server to start
         run: sleep 5
@@ -43,5 +51,5 @@ jobs:
       - name: Smoke Test (Health Check)
         run: |
           echo "Verifying deployment health..."
-          curl -f http://localhost:5001/ || exit 1
+          curl -f http://localhost:5001/ || (cat backend/server.log && exit 1)
           echo "Smoke test passed. Deployment successful."
