@@ -6,13 +6,13 @@ import app from '../../src/app.js';
 import User from '../../src/models/user.model.js';
 import Project from '../../src/models/project.model.js';
 
-describe('Project API Integration Tests', () => {
+describe('project api stuff', () => {
   let mongoServer;
   let authToken;
   let userId;
 
   beforeAll(async () => {
-    // Start isolated MongoDB instance
+    // start db
     mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
 
@@ -30,18 +30,18 @@ describe('Project API Integration Tests', () => {
   });
 
   beforeEach(async () => {
-    // Clear collections
+    // drop db before each
     const collections = mongoose.connection.collections;
     for (const key in collections) {
       await collections[key].deleteMany();
     }
 
-    // Create a test user and get auth token for protected routes
+    // get user and token
     const userRes = await request(app)
       .post('/api/auth/register')
       .send({
-        name: 'Project Tester',
-        email: 'tester@example.com',
+        name: 'test guy',
+        email: 'test@example.com',
         password: 'Password123!'
       });
       
@@ -50,10 +50,10 @@ describe('Project API Integration Tests', () => {
   });
 
   describe('POST /api/projects', () => {
-    it('should create a new project successfully (201)', async () => {
+    it('makes project ok', async () => {
       const projectPayload = {
         title: 'Test Project',
-        description: 'A project for testing',
+        description: 'testing',
         teamSizeRequired: 5,
         projectType: 'web',
         requiredSkills: [new mongoose.Types.ObjectId().toString()]
@@ -71,10 +71,10 @@ describe('Project API Integration Tests', () => {
       expect(res.body.data.project.owner.toString()).toBe(userId.toString());
     });
 
-    it('should fail with 401 if authentication token is missing', async () => {
+    it('fails if no token', async () => {
       const projectPayload = {
-        title: 'Unauthorized Project',
-        description: 'Should fail',
+        title: 'fail project',
+        description: 'fail',
         teamSizeRequired: 2,
         projectType: 'web',
         requiredSkills: [new mongoose.Types.ObjectId().toString()]
@@ -89,10 +89,10 @@ describe('Project API Integration Tests', () => {
       expect(res.body.message).toMatch(/Not authorized/i);
     });
 
-    it('should fail with 400 if required fields are missing', async () => {
-      // Missing 'description', 'teamSizeRequired', and 'projectType'
+    it('fails if missing fields', async () => {
+      // bad payload
       const invalidPayload = {
-        title: 'Incomplete Project'
+        title: 'Incomplete'
       };
 
       const res = await request(app)
@@ -105,7 +105,7 @@ describe('Project API Integration Tests', () => {
   });
 
   describe('GET /api/projects/:id', () => {
-    it('should return 404 or 500 for a project that does not exist', async () => {
+    it('fails if not there', async () => {
       const fakeId = new mongoose.Types.ObjectId();
       const res = await request(app)
         .get(`/api/projects/${fakeId}`);
@@ -113,18 +113,18 @@ describe('Project API Integration Tests', () => {
       expect(res.body.success).toBe(false);
     });
 
-    it('should fail with 500/400 for an invalid ObjectId format', async () => {
+    it('fails if garbage id format', async () => {
       const res = await request(app)
-        .get(`/api/projects/invalid-id-format`);
+        .get(`/api/projects/garbage-id`);
       
       expect(res.body.success).toBe(false);
     });
 
-    it('should successfully retrieve an existing project', async () => {
-      // First create a project
+    it('gets existing project', async () => {
+      // make one first
       const projectPayload = {
         title: 'Get Me Project',
-        description: 'Retrieve this',
+        description: 'get this',
         teamSizeRequired: 3,
         projectType: 'ml',
         requiredSkills: [new mongoose.Types.ObjectId().toString()]
@@ -137,7 +137,7 @@ describe('Project API Integration Tests', () => {
         
       const projectId = createRes.body.data.project._id;
 
-      // Now fetch it
+      // get it
       const fetchRes = await request(app)
         .get(`/api/projects/${projectId}`)
         .expect(200);
@@ -147,3 +147,4 @@ describe('Project API Integration Tests', () => {
     });
   });
 });
+

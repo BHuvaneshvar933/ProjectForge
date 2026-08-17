@@ -3,7 +3,7 @@ import { parseDays, ensureProjectMemberOrOwner, startOfDayUtc, addDaysUtc } from
 import Project from '../../src/models/project.model.js';
 import Team from '../../src/models/team.model.js';
 
-// Mock mongoose models
+// mock db
 vi.mock('../../src/models/project.model.js', () => ({
   default: {
     findOne: vi.fn()
@@ -16,39 +16,39 @@ vi.mock('../../src/models/team.model.js', () => ({
   }
 }));
 
-describe('Analytics Helpers (Unit Tests)', () => {
+describe('analytics helpers', () => {
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(); // reset mocks
   });
 
-  describe('parseDays()', () => {
-    it('should parse valid numbers within bounds (Normal Case)', () => {
+  describe('parsedays', () => {
+    it('parses ok numbers', () => {
       expect(parseDays('30', 7)).toBe(30);
       expect(parseDays(45, 7)).toBe(45);
     });
 
-    it('should return fallback for non-finite values (Invalid Input)', () => {
+    it('falls back on bad input', () => {
       expect(parseDays('abc', 7)).toBe(7);
       expect(parseDays(NaN, 14)).toBe(14);
     });
 
-    it('should clamp values to max 90 (Edge Case)', () => {
+    it('caps at 90', () => {
       expect(parseDays(100, 7)).toBe(90);
       expect(parseDays(999, 7)).toBe(90);
     });
 
-    it('should clamp values to min 1 (Edge Case)', () => {
+    it('bottoms at 1', () => {
       expect(parseDays(0, 7)).toBe(1);
       expect(parseDays(-5, 7)).toBe(1);
     });
   });
 
-  describe('ensureProjectMemberOrOwner()', () => {
+  describe('check project membership', () => {
     const mockProjectId = '12345';
     const mockRequesterId = '98765';
 
-    it('should return project and isOwner=true if requester is the owner (Normal Case)', async () => {
+    it('works if owner', async () => {
       Project.findOne.mockReturnValue({
         select: vi.fn().mockReturnValue({
           lean: vi.fn().mockResolvedValue({ _id: mockProjectId, owner: mockRequesterId })
@@ -63,7 +63,7 @@ describe('Analytics Helpers (Unit Tests)', () => {
       expect(Team.findOne).not.toHaveBeenCalled();
     });
 
-    it('should return project and isOwner=false if requester is a team member (Normal Case)', async () => {
+    it('works if team member', async () => {
       Project.findOne.mockReturnValue({
         select: vi.fn().mockReturnValue({
           lean: vi.fn().mockResolvedValue({ _id: mockProjectId, owner: 'someoneElse' })
@@ -82,7 +82,7 @@ describe('Analytics Helpers (Unit Tests)', () => {
       expect(Team.findOne).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw "Project not found" if project does not exist (Error Handling)', async () => {
+    it('throws if missing project', async () => {
       Project.findOne.mockReturnValue({
         select: vi.fn().mockReturnValue({
           lean: vi.fn().mockResolvedValue(null)
@@ -93,7 +93,7 @@ describe('Analytics Helpers (Unit Tests)', () => {
         .rejects.toThrow('Project not found');
     });
 
-    it('should throw "Not authorized" if user is neither owner nor team member (Authorization Failure)', async () => {
+    it('throws if not auth', async () => {
       Project.findOne.mockReturnValue({
         select: vi.fn().mockReturnValue({
           lean: vi.fn().mockResolvedValue({ _id: mockProjectId, owner: 'someoneElse' })
@@ -111,14 +111,14 @@ describe('Analytics Helpers (Unit Tests)', () => {
     });
   });
 
-  describe('Date Helpers', () => {
-    it('startOfDayUtc should zero out hours/mins/secs/ms', () => {
+  describe('dates', () => {
+    it('startofday clears time', () => {
       const d = new Date('2023-10-15T15:30:45.123Z');
       const start = startOfDayUtc(d);
       expect(start.toISOString()).toBe('2023-10-15T00:00:00.000Z');
     });
 
-    it('addDaysUtc should add days correctly', () => {
+    it('adddays adds days', () => {
       const d = new Date('2023-10-15T00:00:00.000Z');
       const future = addDaysUtc(d, 5);
       expect(future.toISOString()).toBe('2023-10-20T00:00:00.000Z');

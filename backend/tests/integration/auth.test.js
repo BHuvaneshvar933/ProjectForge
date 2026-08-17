@@ -5,15 +5,15 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import app from '../../src/app.js';
 import User from '../../src/models/user.model.js';
 
-describe('Auth Integration Tests', () => {
+describe('auth stuff', () => {
   let mongoServer;
 
   beforeAll(async () => {
-    // Start an isolated, in-memory MongoDB instance
+    // start db
     mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
 
-    // Connect mongoose to the in-memory instance
+    // connect db
     if (mongoose.connection.readyState !== 0) {
       await mongoose.disconnect();
     }
@@ -21,7 +21,7 @@ describe('Auth Integration Tests', () => {
   });
 
   afterAll(async () => {
-    // Clean up connections
+    // stop db
     await mongoose.disconnect();
     if (mongoServer) {
       await mongoServer.stop();
@@ -29,7 +29,7 @@ describe('Auth Integration Tests', () => {
   });
 
   beforeEach(async () => {
-    // Clear collections between tests for true isolation
+    // clear db
     const collections = mongoose.connection.collections;
     for (const key in collections) {
       const collection = collections[key];
@@ -38,10 +38,10 @@ describe('Auth Integration Tests', () => {
   });
 
   describe('POST /api/auth/register', () => {
-    it('should register a new user and return a JWT', async () => {
+    it('registers user ok', async () => {
       const payload = {
-        name: 'Test User',
-        email: 'test@example.com',
+        name: 'test',
+        email: 'test@test.com',
         password: 'Password123!',
       };
 
@@ -53,31 +53,31 @@ describe('Auth Integration Tests', () => {
       expect(res.body.success).toBe(true);
       expect(res.body.data).toHaveProperty('token');
       expect(res.body.data.user).toMatchObject({
-        name: 'Test User',
-        email: 'test@example.com',
+        name: 'test',
+        email: 'test@test.com',
       });
 
-      // Verify it was actually saved in DB
-      const userInDb = await User.findOne({ email: 'test@example.com' });
+      // check db just in case
+      const userInDb = await User.findOne({ email: 'test@test.com' });
       expect(userInDb).not.toBeNull();
-      expect(userInDb.name).toBe('Test User');
+      expect(userInDb.name).toBe('test');
     });
 
-    it('should return 400 Bad Request if email already exists', async () => {
+    it('yells if duplicate email', async () => {
       const payload = {
-        name: 'Duplicate User',
-        email: 'duplicate@example.com',
+        name: 'dup',
+        email: 'dup@test.com',
         password: 'Password123!',
       };
 
-      // Create user first
+      // do it once
       await request(app).post('/api/auth/register').send(payload);
 
-      // Attempt to create again
+      // do it again
       const res = await request(app)
         .post('/api/auth/register')
         .send(payload)
-        // Note: The API currently returns 500 instead of 400 for existing emails due to missing statusCode assignment.
+        // api throws 500 cause lazy error handling
         .expect(500);
 
       expect(res.body.success).toBe(false);
@@ -86,21 +86,21 @@ describe('Auth Integration Tests', () => {
   });
 
   describe('POST /api/auth/login', () => {
-    it('should successfully login an existing user', async () => {
+    it('logs in ok', async () => {
       const registerPayload = {
-        name: 'Login User',
-        email: 'login@example.com',
+        name: 'login guy',
+        email: 'login@test.com',
         password: 'SecretPassword123!',
       };
 
-      // Register the user
+      // reg
       await request(app).post('/api/auth/register').send(registerPayload);
 
-      // Attempt login
+      // login
       const res = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'login@example.com',
+          email: 'login@test.com',
           password: 'SecretPassword123!'
         })
         .expect(200);
@@ -109,14 +109,14 @@ describe('Auth Integration Tests', () => {
       expect(res.body.data).toHaveProperty('token');
     });
 
-    it('should return 400 if credentials are wrong', async () => {
+    it('fails if bad password', async () => {
       const res = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'nonexistent@example.com',
+          email: 'nope@test.com',
           password: 'WrongPassword'
         })
-        // Note: The API currently returns 500 instead of 400 for bad credentials due to missing statusCode assignment.
+        // 500 cause bad err handling
         .expect(500);
 
       expect(res.body.success).toBe(false);
@@ -124,30 +124,30 @@ describe('Auth Integration Tests', () => {
     });
   });
 
-  describe('Protected Endpoints (GET /api/users/me)', () => {
-    it('should successfully retrieve profile with valid token', async () => {
-      // 1. Register a user
+  describe('GET /api/users/me', () => {
+    it('gets profile if token good', async () => {
+      // 1. reg
       const registerRes = await request(app)
         .post('/api/auth/register')
         .send({
-          name: 'Protected User',
-          email: 'protected@example.com',
+          name: 'safe guy',
+          email: 'safe@test.com',
           password: 'Password123!'
         });
       
       const token = registerRes.body.data.token;
 
-      // 2. Access protected route
+      // 2. get stuff
       const res = await request(app)
         .get('/api/users/me')
         .set('Authorization', `Bearer ${token}`)
         .expect(200);
 
       expect(res.body.success).toBe(true);
-      expect(res.body.data.user.email).toBe('protected@example.com');
+      expect(res.body.data.user.email).toBe('safe@test.com');
     });
 
-    it('should reject request with 401 if no token provided', async () => {
+    it('bounces if no token', async () => {
       const res = await request(app)
         .get('/api/users/me')
         .expect(401);

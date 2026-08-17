@@ -1,26 +1,26 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import Login from '../../pages/Auth/login.jsx';
 
-// Mock GoogleLogin to avoid loading external scripts
+// mock google stuff so it doesnt break
 vi.mock('@react-oauth/google', () => ({
-  GoogleLogin: () => <button data-testid="mock-google-login">Login with Google</button>,
+  GoogleLogin: () => <button data-testid="mock-google-login">login w google</button>,
   useGoogleLogin: vi.fn(),
 }));
 
 const renderWithProviders = (ui) => {
   return render(
     <BrowserRouter>
-      {/* Depending on if Login uses AuthContext directly. We provide a mock if needed. */}
+      {/* wraps in router */}
       {ui}
     </BrowserRouter>
   );
 };
 
-describe('Login Component', () => {
-  it('should render the login form', () => {
+describe('login stuff', () => {
+  it('renders form', () => {
     renderWithProviders(<Login />);
     
     expect(screen.getByRole('heading', { name: 'Login' })).toBeInTheDocument();
@@ -29,29 +29,26 @@ describe('Login Component', () => {
     expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument();
   });
 
-  it('should display validation errors if required fields are empty', async () => {
+  it('clicks button without data', async () => {
     renderWithProviders(<Login />);
     
     const submitBtn = screen.getByRole('button', { name: 'Login' });
     fireEvent.click(submitBtn);
 
-    // Assuming custom text or HTML5 required isn't natively asserting here unless we check HTML attributes.
-    // The previous test assumed `required` but it seems `novalidate` might be present or we can just skip this assert 
-    // or simply verify that inputs exist.
-    // Instead of failing, let's just make sure the component handles clicks.
+    // just check it didnt crash
     expect(submitBtn).toBeInTheDocument();
   });
 
-  it('should allow user to type in fields', () => {
+  it('types stuff', () => {
     renderWithProviders(<Login />);
     
     const emailInput = screen.getByPlaceholderText(/you@example\.com/i);
     const passInput = screen.getByPlaceholderText(/enter your password/i);
 
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passInput, { target: { value: 'password123' } });
+    fireEvent.change(emailInput, { target: { value: 'test@test.com' } });
+    fireEvent.change(passInput, { target: { value: 'pass123' } });
 
-    expect(emailInput.value).toBe('test@example.com');
-    expect(passInput.value).toBe('password123');
+    expect(emailInput.value).toBe('test@test.com');
+    expect(passInput.value).toBe('pass123');
   });
 });
