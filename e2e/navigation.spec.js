@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('nav stuff', () => {
   test('landing page has links', async ({ page }) => {
-    await page.goto('http://localhost:5173/');
+    await page.goto('http://127.0.0.1:5173/');
     
     // find navbar
     await expect(page.locator('nav')).toBeVisible();
@@ -15,7 +15,7 @@ test.describe('nav stuff', () => {
   });
 
   test('can click projects link', async ({ page }) => {
-    await page.goto('http://localhost:5173/');
+    await page.goto('http://127.0.0.1:5173/');
     
     // click browse
     const browseLink = page.getByRole('link', { name: /browse projects/i });

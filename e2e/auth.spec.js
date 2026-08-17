@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('auth stuff', () => {
   test('can see login form', async ({ page }) => {
     // go to frontend
-    await page.goto('http://localhost:5173/login');
+    await page.goto('http://127.0.0.1:5173/login');
     
     // check if it loaded
     await expect(page.getByRole('heading', { name: /welcome back/i })).toBeVisible();
@@ -12,7 +12,7 @@ test.describe('auth stuff', () => {
   });
 
   test('complains when empty', async ({ page }) => {
-    await page.goto('http://localhost:5173/login');
+    await page.goto('http://127.0.0.1:5173/login');
     
     // click sign in blindly
     await page.getByRole('button', { name: /sign in/i }).click();
