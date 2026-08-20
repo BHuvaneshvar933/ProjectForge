@@ -69,7 +69,7 @@ export const generateInterviewStory = async (projectData) => {
         content: prompt,
       },
     ],
-    model: "llama-3.3-70b-versatile",
+    model: "llama3-70b-8192",
     temperature: 0.7,
     max_tokens: 500,
   });
@@ -134,7 +134,7 @@ export const generateCareerAssets = async (projectData, projectId, userId) => {
         content: prompt,
       },
     ],
-    model: "llama-3.3-70b-versatile",
+    model: "llama3-70b-8192",
     temperature: 0.7,
     max_tokens: 3000,
     response_format: { type: "json_object" }
@@ -184,7 +184,7 @@ export const generateProjectHealthScore = async (projectId, projectData, tasks, 
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "llama-3.3-70b-versatile",
+    model: "llama3-70b-8192",
     temperature: 0.2,
     max_tokens: 500,
     response_format: { type: "json_object" }
@@ -233,7 +233,7 @@ export const generateWeeklyProjectSummary = async (projectId, projectData, tasks
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "llama-3.3-70b-versatile",
+    model: "llama3-70b-8192",
     temperature: 0.5,
     max_tokens: 600,
   });
