@@ -63,16 +63,11 @@ export const getProjectRecommendations = async ({ userId, limit = 5 }) => {
     },
     {
       $addFields: {
-        minSkillCount: { $min: [userSkills.length, "$projectSkillCount"] }
-      }
-    },
-    {
-      $addFields: {
         matchScore: {
           $cond: [
-            { $eq: ["$minSkillCount", 0] },
+            { $eq: ["$projectSkillCount", 0] },
             0,
-            { $multiply: [{ $divide: ["$commonCount", "$minSkillCount"] }, 100] },
+            { $multiply: [{ $divide: ["$commonCount", "$projectSkillCount"] }, 100] },
           ],
         },
       },
@@ -110,7 +105,6 @@ export const getProjectRecommendations = async ({ userId, limit = 5 }) => {
         matchScore: { $round: ["$matchScore", 2] },
         commonCount: 1,
         projectSkillCount: 1,
-        minSkillCount: 1,
         owner: {
           _id: "$ownerDoc._id",
           name: "$ownerDoc.name",
