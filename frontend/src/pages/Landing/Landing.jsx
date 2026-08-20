@@ -153,7 +153,7 @@ export default function Landing() {
       {/* ── FOOTER ── */}
       <footer className="landing__footer">
         <span className="landing__footer-brand">PROJECTFORGE</span>
-        <span className="landing__footer-copy">© 2025. Built for builders.</span>
+        <span className="landing__footer-copy">© 2026. Built for builders.</span>
       </footer>
 
     </div>
