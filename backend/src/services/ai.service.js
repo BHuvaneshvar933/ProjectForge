@@ -136,12 +136,13 @@ export const generateCareerAssets = async (projectData, projectId, userId) => {
     ],
     model: "openai/gpt-oss-20b",
     temperature: 0.7,
-    max_tokens: 3000,
-    response_format: { type: "json_object" }
+    max_tokens: 3000
   });
 
   try {
-    const assets = JSON.parse(chatCompletion.choices[0]?.message?.content || "{}");
+    let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
+    rawContent = rawContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+    const assets = JSON.parse(rawContent);
     
     if (projectId && userId && Object.keys(assets).length > 0) {
       await Team.findOneAndUpdate(
@@ -186,12 +187,13 @@ export const generateProjectHealthScore = async (projectId, projectData, tasks, 
     messages: [{ role: "user", content: prompt }],
     model: "openai/gpt-oss-20b",
     temperature: 0.2,
-    max_tokens: 500,
-    response_format: { type: "json_object" }
+    max_tokens: 500
   });
 
   try {
-    const result = JSON.parse(chatCompletion.choices[0]?.message?.content || "{}");
+    let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
+    rawContent = rawContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+    const result = JSON.parse(rawContent);
     
     await Project.findByIdAndUpdate(projectId, {
       $set: {
