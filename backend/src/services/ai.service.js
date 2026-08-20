@@ -69,7 +69,7 @@ export const generateInterviewStory = async (projectData) => {
         content: prompt,
       },
     ],
-    model: "openai/gpt-oss-20b",
+    model: "openai/gpt-oss-120b",
     temperature: 0.7,
     max_tokens: 500,
   });
@@ -114,7 +114,8 @@ export const generateCareerAssets = async (projectData, projectId, userId) => {
     Project Data:
     ${JSON.stringify(projectData, null, 2)}
 
-    Output EXACTLY the following JSON format. Do not include any other text, markdown blocks, or introductory text. Output ONLY valid, parseable JSON.
+    You MUST output ONLY a valid JSON object. Do not include any other text, markdown blocks, or introductory text. Output ONLY valid, parseable JSON.
+    Example format:
     {
       "resumeBullets": ["bullet 1", "bullet 2", "bullet 3"],
       "portfolioDescription": "A professional 2-paragraph summary...",
@@ -134,7 +135,7 @@ export const generateCareerAssets = async (projectData, projectId, userId) => {
         content: prompt,
       },
     ],
-    model: "openai/gpt-oss-20b",
+    model: "openai/gpt-oss-120b",
     temperature: 0.7,
     max_tokens: 3000
   });
@@ -144,6 +145,10 @@ export const generateCareerAssets = async (projectData, projectId, userId) => {
     const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
     const jsonString = jsonMatch ? jsonMatch[0] : "{}";
     const assets = JSON.parse(jsonString);
+    
+    if (!assets || Object.keys(assets).length === 0) {
+      throw new Error("AI returned empty assets");
+    }
     
     if (projectId && userId && Object.keys(assets).length > 0) {
       await Team.findOneAndUpdate(
@@ -175,7 +180,8 @@ export const generateProjectHealthScore = async (projectId, projectData, tasks, 
     In-Progress Tasks: ${tasks.filter(t => t.status === 'in-progress').length}
     
     Analyze the task completion rate, team activity, and deadline proximity.
-    Output EXACTLY the following JSON format. Do not include any other text.
+    You MUST output ONLY a valid JSON object. Do not explain anything outside the JSON.
+    Example:
     {
       "health_score": 75,
       "status": "At Risk",
@@ -186,7 +192,7 @@ export const generateProjectHealthScore = async (projectId, projectData, tasks, 
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "openai/gpt-oss-20b",
+    model: "openai/gpt-oss-120b",
     temperature: 0.2,
     max_tokens: 500
   });
@@ -198,11 +204,15 @@ export const generateProjectHealthScore = async (projectId, projectData, tasks, 
     const parsed = JSON.parse(jsonString);
     
     const result = {
-      health_score: parsed.health_score || parsed.HealthScore || parsed.healthScore || parsed.score || 75,
-      status: parsed.status || parsed.Status || "Unknown",
-      reasoning: parsed.reasoning || parsed.Reasoning || "No reasoning provided.",
-      suggestion: parsed.suggestion || parsed.Suggestion || "No suggestion provided."
+      health_score: parsed.health_score || parsed.HealthScore || parsed.healthScore || parsed.score,
+      status: parsed.status || parsed.Status,
+      reasoning: parsed.reasoning || parsed.Reasoning,
+      suggestion: parsed.suggestion || parsed.Suggestion
     };
+    
+    if (result.health_score === undefined || !result.status || !result.reasoning || !result.suggestion) {
+      throw new Error("AI failed to return the required JSON structure. Raw output: " + rawContent);
+    }
     
     await Project.findByIdAndUpdate(projectId, {
       $set: {
@@ -217,7 +227,7 @@ export const generateProjectHealthScore = async (projectId, projectData, tasks, 
     return result;
   } catch (e) {
     console.error("AI Health Score Error: ", e);
-    throw new Error("Failed to generate health score.");
+    throw new Error("Failed to generate health score: " + e.message);
   }
 };
 
