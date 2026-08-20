@@ -33,15 +33,26 @@ describe('Applications Helpers', () => {
       expect(score).toBe(100);
     });
 
-    it('should calculate correctly based on the minimum set size', () => {
+    it('should calculate match percentage relative to project requirements', () => {
       const user = { skills: ['React', 'Docker', 'AWS'] }; // 3 skills
       const project = { requiredSkills: ['React', 'Node.js'] }; // 2 skills
       
       // Intersection = 1 ('React')
-      // Denominator = Math.min(3, 2) = 2
+      // Denominator = projectSet.size = 2
       // Score = (1 / 2) * 100 = 50
       const score = calculateMatchScore(user, project);
       expect(score).toBe(50);
+    });
+
+    it('should calculate fractional match for users with fewer skills than required', () => {
+      const user = { skills: ['React'] }; // 1 skill
+      const project = { requiredSkills: ['React', 'Node.js', 'Docker'] }; // 3 skills
+      
+      // Intersection = 1 ('React')
+      // Denominator = projectSet.size = 3
+      // Score = Math.round((1 / 3) * 100) = 33
+      const score = calculateMatchScore(user, project);
+      expect(score).toBe(33);
     });
 
     it('should return 0 if there are no matching skills', () => {

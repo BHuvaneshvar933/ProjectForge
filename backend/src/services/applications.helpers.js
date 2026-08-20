@@ -21,10 +21,7 @@ export const calculateMatchScore = (user, project) => {
         skill => projectSet.has(skill)
     ).length;
 
-    const denominator = Math.min(
-        userSet.size,
-        projectSet.size
-    );
+    const denominator = projectSet.size;
 
     matchScore = denominator > 0 ? Math.round((intersection / denominator) * 100) : 0;
   }
