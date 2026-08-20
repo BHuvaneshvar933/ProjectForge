@@ -141,8 +141,9 @@ export const generateCareerAssets = async (projectData, projectId, userId) => {
 
   try {
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
-    rawContent = rawContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-    const assets = JSON.parse(rawContent);
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : "{}";
+    const assets = JSON.parse(jsonString);
     
     if (projectId && userId && Object.keys(assets).length > 0) {
       await Team.findOneAndUpdate(
@@ -192,8 +193,16 @@ export const generateProjectHealthScore = async (projectId, projectData, tasks, 
 
   try {
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
-    rawContent = rawContent.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-    const result = JSON.parse(rawContent);
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : "{}";
+    const parsed = JSON.parse(jsonString);
+    
+    const result = {
+      health_score: parsed.health_score || parsed.HealthScore || parsed.healthScore || parsed.score || 75,
+      status: parsed.status || parsed.Status || "Unknown",
+      reasoning: parsed.reasoning || parsed.Reasoning || "No reasoning provided.",
+      suggestion: parsed.suggestion || parsed.Suggestion || "No suggestion provided."
+    };
     
     await Project.findByIdAndUpdate(projectId, {
       $set: {
