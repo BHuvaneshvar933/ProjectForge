@@ -8,7 +8,7 @@ import {
 } from "./metrics.service.js";
 
 export const createTask = async (projectId, payload, currentUser) => {
-  // VALIDATION PHASE
+  // Let's make sure the project exists and the user is actually allowed to add a task.
 
   const project = await Project.findById(projectId);
 
@@ -44,7 +44,7 @@ export const createTask = async (projectId, payload, currentUser) => {
     throw new Error("Task title is required");
   }
 
-  // Validate assignedTo (if provided)
+  // If someone is being assigned right away, double-check they're on the team!
   if (payload.assignedTo) {
     const assignee = await Team.findOne({
       projectId,
@@ -58,7 +58,7 @@ export const createTask = async (projectId, payload, currentUser) => {
     }
   }
 
-  //TRANSACTION PHASE
+  // We use a transaction here so that if anything fails, we don't end up with half-created data.
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -89,7 +89,7 @@ export const createTask = async (projectId, payload, currentUser) => {
       { session }
     );
 
-    // Update metrics
+    // Bump the project's total task count
     project.metrics.totalTasks += 1;
 
     project.metrics.completionPercentage =
@@ -192,7 +192,7 @@ export const assignTask = async (taskId, payload, currentUser) => {
     throw new Error("You are not a member of this project");
   }
 
-  // If assignedTo provided
+  // Only assign them if they're actively on the project.
   if (payload.assignedTo) {
     const assignee = await Team.findOne({
       projectId: task.projectId,
@@ -254,12 +254,12 @@ export async function updateTaskStatus(taskId, newStatus, userId) {
     return task;
   }
 
-  //Cannot mark done if no assignee
+  // It doesn't make sense to finish a task that nobody is working on!
   if (newStatus === "done" && !task.assignedTo) {
     throw new Error("Task must be assigned before marking as done");
   }
 
-  // Simple transition (no metrics change)
+  // Easy status swap, no need to touch the completion metrics yet.
   if (
     (oldStatus !== "done" && newStatus !== "done")
   ) {
@@ -277,7 +277,7 @@ export async function updateTaskStatus(taskId, newStatus, userId) {
     return task;
   }
 
-  //Complex transitions require transaction
+  // If a task is being marked 'done' or 'reopened', we need to carefully update the project metrics in a transaction.
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -428,14 +428,14 @@ export async function bulkUpdateTasks(projectId, userId, action, taskIds, payloa
   });
   if (!isMember) throw new Error("Not authorized");
 
-  // Validate tasks belong to project
+  // Make sure all these tasks actually belong to this project before doing a mass delete.
   const tasks = await Task.find({ _id: { $in: taskIds }, projectId, isDeleted: false });
   if (tasks.length !== taskIds.length) {
     throw new Error("Some tasks were not found in this project");
   }
 
   if (action === "delete") {
-    // Delete all matched tasks and their subtasks
+    // Bye bye tasks!
     await Task.updateMany({ _id: { $in: taskIds } }, { $set: { isDeleted: true } });
     await Task.updateMany({ parentId: { $in: taskIds } }, { $set: { isDeleted: true } });
     return { count: tasks.length, message: "Tasks deleted" };

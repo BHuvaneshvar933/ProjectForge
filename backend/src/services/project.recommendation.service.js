@@ -4,12 +4,9 @@ import Team from "../models/team.model.js";
 import Application from "../models/application.model.js";
 import User from "../models/user.model.js";
 
-// GET PROJECT RECOMMENDATIONS (Jaccard similarity)
-// Rules:
-// - Only public + recruiting
-// - Exclude projects owned by requester
-// - Exclude projects requester already joined (active team membership)
-// - Exclude projects requester already applied to (any non-deleted application)
+// Get project recommendations using Jaccard similarity.
+// We only show public projects that are actively recruiting.
+// Naturally, we hide projects the user already owns, joined, or applied to!
 export const getProjectRecommendations = async ({ userId, limit = 5 }) => {
   const lim = Number.isFinite(Number(limit)) ? Math.min(20, Math.max(1, Number(limit))) : 5;
 

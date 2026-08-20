@@ -27,7 +27,7 @@ export const normalizeOpenRoles = (value) => {
   return roles;
 };
 
-// CREATE PROJECT
+// Let's create a brand new project and set the creator as the owner.
 export const createProject = async (userId, data) => {
   const {
     requiredSkills,
@@ -108,7 +108,7 @@ export const createProject = async (userId, data) => {
   return project;
 };
 
-// GET PROJECT BY ID
+// Fetch a specific project by its ID, complete with its team and skills.
 export const getProjectById = async (projectId) => {
   const project = await Project.findOne({
     _id: projectId,
@@ -152,7 +152,7 @@ export const getProjectById = async (projectId) => {
   };
 };
 
-// BROWSE PROJECTS (PUBLIC)
+// Browse all public projects. Perfect for the explore page!
 export const browseProjects = async (query) => {
   const {
     page = 1,
@@ -212,7 +212,7 @@ export const browseProjects = async (query) => {
   };
 };
 
-// GET MY PROJECTS
+// Get all projects that I own.
 export const getMyProjects = async (userId) => {
   return await Project.find({
     owner: userId
@@ -222,7 +222,7 @@ export const getMyProjects = async (userId) => {
     .populate("requiredSkills", "name");
 };
 
-// UPDATE PROJECT
+// Update project details. Only the owner can do this!
 export const updateProject = async (projectId, userId, updateData) => {
   const project = await Project.findById(projectId);
 
@@ -241,7 +241,7 @@ export const updateProject = async (projectId, userId, updateData) => {
   return project;
 };
 
-// CLOSE RECRUITMENT
+// Close recruitment so no one else can apply.
 export const closeRecruitment = async (projectId, userId) => {
   const project = await Project.findById(projectId);
 
