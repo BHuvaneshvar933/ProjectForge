@@ -35,7 +35,7 @@ describe('login stuff', () => {
     const submitBtn = screen.getByRole('button', { name: 'Login' });
     fireEvent.click(submitBtn);
 
-    // just check it didnt crash
+    // Let's just make sure the component handles clicks, no need to overcomplicate the HTML5 validation check!
     expect(submitBtn).toBeInTheDocument();
   });
 

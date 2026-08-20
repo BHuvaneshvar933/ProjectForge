@@ -16,14 +16,14 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
     const completedTasks = tasks.filter(t => t.status === 'done').length;
     const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-    // 7 days metrics
+    // Let's grab some stats from the last 7 days to see recent momentum.
     const now = Date.now();
     const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
     const sevenDaysFromNow = now + 7 * 24 * 60 * 60 * 1000;
     let created7d = 0;
     let dueSoon7d = 0;
 
-    // Priority Breakdown
+    // How many high, medium, and low priority tasks are we juggling?
     const priorityCount = { high: 0, medium: 0, low: 0 };
     tasks.forEach(t => {
       if (t.priority === 'high') priorityCount.high++;
@@ -36,7 +36,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
       if (t.status !== "done" && dueTime && dueTime >= now && dueTime <= sevenDaysFromNow) dueSoon7d++;
     });
 
-    // Workload Distribution
+    // Who is doing what? Let's tally up active tasks per team member.
     const workload = {};
     team.forEach(m => {
       if (m?.userId) {
@@ -60,7 +60,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
         percentage: activeTasksCount > 0 ? (w.count / activeTasksCount) * 100 : 0
       }));
 
-    // Velocity (Tasks completed in the last 7 days)
+    // Calculate our velocity: how many tasks did we finish each day over the last week?
     const velocity = [];
     const nowDate = new Date();
     let completed7d = 0;
@@ -88,7 +88,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
     const maxVelocity = Math.max(...velocity.map(v => v.count), 5); // Minimum scale of 5
     
-    // Recent activity: top 5 recently updated tasks
+    // Grab the 5 most recently touched tasks so we can see what's currently active.
     const recentTasks = [...tasks]
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       .slice(0, 5);

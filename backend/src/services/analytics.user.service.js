@@ -9,7 +9,7 @@ export const getUserAnalytics = async ({ userId, requesterId }) => {
     throw new Error("Invalid userId");
   }
 
-  // Privacy-safe default: users can only view their own analytics.
+  // Users can only view their own stats.
   if (userId.toString() !== requesterId.toString()) {
     throw new Error("Not authorized");
   }
@@ -67,12 +67,12 @@ export const getUserProjectAnalytics = async ({ userId, projectId, requesterId }
     requesterId,
   });
 
-  // By default: user can see their own per-project analytics; owner can see any member.
+  // Project owners can see anyone's stats. Regular members only see their own.
   if (!isOwner && userId.toString() !== requesterId.toString()) {
     throw new Error("Not authorized");
   }
 
-  // Target user must be an active member (or the owner).
+  // Make sure the target user is actually on the team!
   const targetIsOwner = project.owner?.toString() === userId.toString();
   if (!targetIsOwner) {
     const targetMembership = await Team.findOne({

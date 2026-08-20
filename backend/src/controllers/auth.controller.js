@@ -1,6 +1,6 @@
 import * as authService from "../services/auth.service.js";
 
-//registr
+// Sign up a new user!
 export const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -24,7 +24,7 @@ export const register = async (req, res, next) => {
   }
 };
 
-//login
+// Log the user in and hand them a token.
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -66,7 +66,7 @@ export const googleLogin = async (req, res, next) => {
   }
 };
 
-//get user
+// Get the currently logged in user profile.
 export const getCurrentUser = async (req, res) => {
   return res.status(200).json({
     success: true,
