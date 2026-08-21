@@ -326,10 +326,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-<div align="center">
-  <b>Built by the ProjectForge Team</b>
-</div>
-
 ## Testing & CI/CD
 
 ### How to Run Tests Locally
