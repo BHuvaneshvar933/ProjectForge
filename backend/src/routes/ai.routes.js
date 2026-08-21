@@ -11,7 +11,7 @@ router.post("/generate", protect, async (req, res) => {
   try {
     const { type, projectData } = req.body;
 
-    if (!projectData && type !== "health-score" && type !== "weekly-summary") {
+    if (!projectData && type !== "health-score" && type !== "weekly-summary" && type !== "contribution-suggestion") {
       return res.status(400).json({ success: false, message: "Project data is required" });
     }
 
@@ -23,7 +23,7 @@ router.post("/generate", protect, async (req, res) => {
       result = await aiService.generateInterviewStory(projectData);
     } else if (type === "career-assets") {
       result = await aiService.generateCareerAssets(projectData, req.body.projectId, req.user._id);
-    } else if (type === "health-score" || type === "weekly-summary") {
+    } else if (type === "health-score" || type === "weekly-summary" || type === "contribution-suggestion") {
       if (!req.body.projectId) {
         return res.status(400).json({ success: false, message: "Project ID is required" });
       }
@@ -31,12 +31,16 @@ router.post("/generate", protect, async (req, res) => {
       if (!project) return res.status(404).json({ success: false, message: "Project not found" });
 
       const tasks = await Task.find({ projectId: project._id, isDeleted: false });
-      const team = await Team.find({ projectId: project._id, status: "active", isDeleted: false });
-
-      if (type === "health-score") {
-        result = await aiService.generateProjectHealthScore(project._id, project, tasks, team);
+      
+      if (type === "contribution-suggestion") {
+        result = await aiService.generateDeveloperContribution(req.user._id, tasks, project);
       } else {
-        result = await aiService.generateWeeklyProjectSummary(project._id, project, tasks, team);
+        const team = await Team.find({ projectId: project._id, status: "active", isDeleted: false });
+        if (type === "health-score") {
+          result = await aiService.generateProjectHealthScore(project._id, project, tasks, team);
+        } else {
+          result = await aiService.generateWeeklyProjectSummary(project._id, project, tasks, team);
+        }
       }
     } else {
       return res.status(400).json({ success: false, message: "Invalid generation type" });

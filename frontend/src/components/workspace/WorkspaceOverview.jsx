@@ -60,6 +60,44 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
         percentage: activeTasksCount > 0 ? (w.count / activeTasksCount) * 100 : 0
       }));
 
+    // Team Health Metrics
+    let unassigned7d = 0;
+    let stale7d = 0;
+    let overdueCount = 0;
+
+    tasks.forEach(t => {
+      if (t.status !== 'done') {
+        if (!t.assignedTo) unassigned7d++;
+        
+        const dueTime = t.dueDate ? new Date(t.dueDate).getTime() : null;
+        if (dueTime && dueTime < now) overdueCount++;
+
+        const updatedTime = t.updatedAt ? new Date(t.updatedAt).getTime() : new Date(t.createdAt).getTime();
+        if (updatedTime < sevenDaysAgo) stale7d++;
+      }
+    });
+
+    const activeMembersCount = workloadList.filter(w => w.count > 0);
+    const meanWorkload = activeMembersCount.length > 0 
+      ? activeMembersCount.reduce((sum, w) => sum + w.count, 0) / activeMembersCount.length 
+      : 0;
+    const maxWorkload = activeMembersCount.length > 0 ? activeMembersCount[0].count : 0;
+    const isImbalanced = activeMembersCount.length > 1 && maxWorkload > meanWorkload * 1.5 && maxWorkload - meanWorkload >= 2;
+
+    const teamHealth = {
+      problems: [
+        ...(overdueCount > 0 ? [`${overdueCount} overdue task${overdueCount > 1 ? 's' : ''}`] : []),
+        ...(isImbalanced ? [`Severe workload imbalance detected`] : [])
+      ],
+      risks: [
+        ...(stale7d > 0 ? [`${stale7d} stale task${stale7d > 1 ? 's' : ''} (not updated in 7+ days)`] : []),
+        ...(unassigned7d > 0 ? [`${unassigned7d} unassigned active task${unassigned7d > 1 ? 's' : ''}`] : [])
+      ],
+      awareness: [
+        ...(dueSoon7d > 0 ? [`${dueSoon7d} task${dueSoon7d > 1 ? 's' : ''} approaching deadline`] : [])
+      ]
+    };
+
     // Calculate our velocity: how many tasks did we finish each day over the last week?
     const velocity = [];
     const nowDate = new Date();
@@ -105,7 +143,8 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
       created7d,
       completed7d,
       dueSoon7d,
-      recentTasks
+      recentTasks,
+      teamHealth
     };
   }, [tasks, team]);
 
@@ -129,7 +168,8 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                     ...prev, 
                     aiHealthScore: res.data.data.result.health_score,
                     aiHealthStatus: res.data.data.result.status,
-                    aiHealthReasoning: res.data.data.result.reasoning,
+                    aiHealthComponents: res.data.data.result.components,
+                    aiHealthMainRisk: res.data.data.result.main_risk,
                     aiHealthSuggestion: res.data.data.result.suggestion
                   }));
                   toast.success("Health Score generated!");
@@ -172,17 +212,34 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
       {/* AI Insights Section */}
       {(localMetrics.aiHealthScore || localMetrics.aiWeeklySummary) && (
         <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
-          {localMetrics.aiHealthScore && (
+          {localMetrics.aiHealthScore !== undefined && (
             <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: localMetrics.aiHealthScore < 50 ? "4px solid #ff453a" : localMetrics.aiHealthScore < 80 ? "4px solid #ff9f0a" : "4px solid #32d74b" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                 <h3 style={{ fontSize: "16px", margin: 0 }}>❤️ AI Health Score</h3>
                 <Badge variant={localMetrics.aiHealthScore < 50 ? "danger" : localMetrics.aiHealthScore < 80 ? "warning" : "success"}>
                   {localMetrics.aiHealthScore}/100 - {localMetrics.aiHealthStatus}
                 </Badge>
               </div>
-              <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", marginBottom: "12px", lineHeight: "1.5" }}>
-                <strong>Reasoning:</strong> {localMetrics.aiHealthReasoning}
-              </p>
+              
+              {localMetrics.aiHealthComponents && localMetrics.aiHealthComponents.length > 0 && (
+                <div style={{ marginBottom: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {localMetrics.aiHealthComponents.map((c, i) => (
+                    <div key={i} style={{ fontSize: "14px" }}>
+                      <span style={{ color: c.impact < 0 ? "#ff453a" : c.impact > 0 ? "#32d74b" : "rgba(255,255,255,0.7)", fontWeight: "bold", marginRight: "8px" }}>
+                        {c.name} {c.impact > 0 ? `+${c.impact}` : c.impact}
+                      </span>
+                      <span style={{ color: "rgba(255,255,255,0.8)" }}>{c.reasoning || c.fact}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {localMetrics.aiHealthMainRisk && (
+                <div style={{ marginBottom: "12px", fontSize: "14px" }}>
+                  <strong style={{ color: "#ff9f0a" }}>Main Risk:</strong> <span style={{ color: "rgba(255,255,255,0.9)" }}>{localMetrics.aiHealthMainRisk}</span>
+                </div>
+              )}
+
               <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)" }}>
                 <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>💡 AI Suggestion</span>
                 <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.9)" }}>{localMetrics.aiHealthSuggestion}</span>
@@ -193,11 +250,86 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
           {localMetrics.aiWeeklySummary && (
             <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: "4px solid #bf5af2" }}>
               <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "12px" }}>📝 AI Weekly Summary</h3>
-              <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
-                {localMetrics.aiWeeklySummary}
-              </p>
+              {typeof localMetrics.aiWeeklySummary === 'object' ? (
+                <div>
+                  <h4 style={{ fontSize: "15px", color: "rgba(255,255,255,0.9)", marginBottom: "16px" }}>{localMetrics.aiWeeklySummary.headline}</h4>
+                  
+                  {localMetrics.aiWeeklySummary.completed?.length > 0 && (
+                    <div style={{ marginBottom: "12px" }}>
+                      <strong style={{ fontSize: "13px", color: "#32d74b", textTransform: "uppercase" }}>Completed</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+                        {localMetrics.aiWeeklySummary.completed.map((item, i) => <li key={i}>{item}</li>)}
+                      </ul>
+                    </div>
+                  )}
+
+                  {localMetrics.aiWeeklySummary.started?.length > 0 && (
+                    <div style={{ marginBottom: "12px" }}>
+                      <strong style={{ fontSize: "13px", color: "#0a84ff", textTransform: "uppercase" }}>Started</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+                        {localMetrics.aiWeeklySummary.started.map((item, i) => <li key={i}>{item}</li>)}
+                      </ul>
+                    </div>
+                  )}
+
+                  {localMetrics.aiWeeklySummary.risks?.length > 0 && (
+                    <div style={{ marginBottom: "12px" }}>
+                      <strong style={{ fontSize: "13px", color: "#ff9f0a", textTransform: "uppercase" }}>Risks</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+                        {localMetrics.aiWeeklySummary.risks.map((item, i) => <li key={i}>{item}</li>)}
+                      </ul>
+                    </div>
+                  )}
+
+                  {localMetrics.aiWeeklySummary.next_actions?.length > 0 && (
+                    <div style={{ marginBottom: "12px" }}>
+                      <strong style={{ fontSize: "13px", color: "#bf5af2", textTransform: "uppercase" }}>Next Actions</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+                        {localMetrics.aiWeeklySummary.next_actions.map((item, i) => <li key={i}>{item}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
+                  {localMetrics.aiWeeklySummary}
+                </p>
+              )}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Team Health Alerts */}
+      {(overview.teamHealth.problems.length > 0 || overview.teamHealth.risks.length > 0 || overview.teamHealth.awareness.length > 0) && (
+        <div className="workspace__card" style={{ padding: "20px", marginBottom: "24px" }}>
+          <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "16px" }}>🩺 Team Health</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {overview.teamHealth.problems.length > 0 && (
+              <div>
+                <h4 style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginBottom: "8px" }}>🔴 Problems</h4>
+                {overview.teamHealth.problems.map((prob, i) => (
+                  <div key={`prob-${i}`} style={{ fontSize: "14px", color: "rgba(255,255,255,0.9)", marginBottom: "4px" }}>• {prob}</div>
+                ))}
+              </div>
+            )}
+            {overview.teamHealth.risks.length > 0 && (
+              <div>
+                <h4 style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginBottom: "8px" }}>🟠 Risks</h4>
+                {overview.teamHealth.risks.map((risk, i) => (
+                  <div key={`risk-${i}`} style={{ fontSize: "14px", color: "rgba(255,255,255,0.9)", marginBottom: "4px" }}>• {risk}</div>
+                ))}
+              </div>
+            )}
+            {overview.teamHealth.awareness.length > 0 && (
+              <div>
+                <h4 style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginBottom: "8px" }}>🟡 Awareness</h4>
+                {overview.teamHealth.awareness.map((awar, i) => (
+                  <div key={`awar-${i}`} style={{ fontSize: "14px", color: "rgba(255,255,255,0.9)", marginBottom: "4px" }}>• {awar}</div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
       
@@ -259,25 +391,24 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
           </div>
         </div>
 
-        {/* Workload Distribution */}
+        {/* Team Workload */}
         <div className="overview-card">
-          <h3 className="overview-card-title">Workload Distribution</h3>
+          <h3 className="overview-card-title">Team Workload</h3>
           {overview.workloadList.length > 0 ? (
             <div className="overview-workload-list">
               {overview.workloadList.slice(0, 5).map((w, i) => (
-                <div key={i} className="workload-item">
-                  <div className="workload-info">
-                    <span className="workload-name">{w.name}</span>
-                    <span className="workload-count">{w.count} tasks</span>
-                  </div>
-                  <div className="workload-bar-bg">
-                    <div 
-                      className="workload-bar-fill" 
-                      style={{ width: `${w.percentage}%` }}
-                    ></div>
-                  </div>
+                <div key={i} className="workload-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <span className="workload-name" style={{ fontSize: '14px', color: 'rgba(255,255,255,0.9)' }}>{w.name}</span>
+                  <span className="workload-count" style={{ fontSize: '14px', fontWeight: 'bold' }}>{w.count}</span>
                 </div>
               ))}
+              {overview.teamHealth.problems.includes('Severe workload imbalance detected') && (
+                <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(255, 69, 58, 0.1)', borderRadius: '6px', border: '1px solid rgba(255, 69, 58, 0.2)' }}>
+                  <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.9)' }}>
+                    <strong>Insight:</strong> Workload is unevenly distributed. Consider reassigning tasks to available members.
+                  </span>
+                </div>
+              )}
             </div>
           ) : (
             <div className="overview-empty">No active tasks assigned.</div>

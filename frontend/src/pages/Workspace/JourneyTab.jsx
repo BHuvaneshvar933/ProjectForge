@@ -2,12 +2,16 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Button from "../../components/common/Button";
 import { updateArchiveData, updatePersonalJourney } from "../../api/projectApi";
+import { generateAIContent } from "../../api/aiApi";
 import { getAllSkills } from "../../api/skillApi";
 import EducationalTip from "../../components/common/EducationalTip";
+import Spinner from "../../components/common/Spinner";
 import "./JourneyTab.css";
 
-export default function JourneyTab({ project, teamRecord, isMember, onUpdate }) {
+export default function JourneyTab({ project, teamRecord, tasks = [], isMember, onUpdate }) {
   const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState(null);
   const [activeTab, setActiveTab] = useState("personal"); // "personal" | "team"
   const archiveData = project?.archiveData || {};
   const personalJourney = teamRecord?.journey || { contributions: [], challenges: [], skills: [], learnings: [], evidence: [] };
@@ -46,6 +50,19 @@ export default function JourneyTab({ project, teamRecord, isMember, onUpdate }) 
       toast.error("Failed to update personal journey");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSuggestContribution = async () => {
+    setAiLoading(true);
+    setAiSuggestion(null);
+    try {
+      const res = await generateAIContent("contribution-suggestion", null, project._id);
+      setAiSuggestion(res.data.data.result);
+    } catch {
+      toast.error("Failed to generate suggestion");
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -140,10 +157,73 @@ export default function JourneyTab({ project, teamRecord, isMember, onUpdate }) 
 
       {activeTab === "personal" && (
         <div className="journey-tab__grid">
+          {/* MY PROGRESS (Auto-calculated) */}
+          <div className="journey-card full-width" style={{ background: "rgba(10, 132, 255, 0.05)", border: "1px solid rgba(10, 132, 255, 0.2)" }}>
+            <h3 style={{ color: "#0a84ff" }}>My Progress</h3>
+            <div style={{ display: "flex", gap: "24px", marginTop: "12px" }}>
+              <div>
+                <div style={{ fontSize: "24px", fontWeight: "bold" }}>
+                  {tasks.filter(t => {
+                    const aId = typeof t.assignedTo === 'object' && t.assignedTo !== null ? t.assignedTo._id : t.assignedTo;
+                    const uId = typeof teamRecord.userId === 'object' && teamRecord.userId !== null ? teamRecord.userId._id : teamRecord.userId;
+                    return aId === uId && t.status === 'done';
+                  }).length}
+                </div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase" }}>Tasks Completed</div>
+              </div>
+              <div>
+                <div style={{ fontSize: "24px", fontWeight: "bold" }}>{personalJourney.contributions?.length || 0}</div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase" }}>Contributions</div>
+              </div>
+              <div>
+                <div style={{ fontSize: "24px", fontWeight: "bold" }}>{personalJourney.challenges?.length || 0}</div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase" }}>Challenges Documented</div>
+              </div>
+              <div>
+                <div style={{ fontSize: "24px", fontWeight: "bold" }}>{personalJourney.skills?.length || 0}</div>
+                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase" }}>Skills Added</div>
+              </div>
+            </div>
+          </div>
+
           {/* CONTRIBUTIONS */}
           <div className="journey-card full-width">
-            <h3>My Contributions & Achievements</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3>My Contributions & Achievements</h3>
+              <Button variant="outline" size="small" onClick={handleSuggestContribution} disabled={aiLoading}>
+                {aiLoading ? <Spinner size="sm" /> : "✨ Suggest from my activity"}
+              </Button>
+            </div>
             <p className="journey-card__desc">What did I actually build? Link to impact where possible.</p>
+            
+            {aiSuggestion && (
+              <div style={{ background: "rgba(191, 90, 242, 0.1)", border: "1px solid rgba(191, 90, 242, 0.3)", padding: "16px", borderRadius: "8px", marginBottom: "16px" }}>
+                <h4 style={{ color: "#bf5af2", margin: "0 0 12px 0", fontSize: "14px" }}>✨ AI Suggestion</h4>
+                <div style={{ marginBottom: "12px" }}><strong>Contribution:</strong> {aiSuggestion.summary}</div>
+                {aiSuggestion.potentialAchievements?.length > 0 && (
+                  <div style={{ marginBottom: "12px" }}><strong>Potential Achievement:</strong> {aiSuggestion.potentialAchievements[0]}</div>
+                )}
+                {aiSuggestion.skills?.length > 0 && (
+                  <div style={{ marginBottom: "12px" }}><strong>Skills Detected:</strong> {aiSuggestion.skills.join(", ")}</div>
+                )}
+                <div style={{ display: "flex", gap: "8px", marginTop: "16px" }}>
+                  <Button 
+                    variant="primary" 
+                    size="small"
+                    onClick={() => {
+                      setNewContribution({
+                        contribution: aiSuggestion.summary,
+                        impact: aiSuggestion.potentialAchievements?.[0] || ""
+                      });
+                      setAiSuggestion(null);
+                    }}
+                  >
+                    Edit & Add to Journey
+                  </Button>
+                  <Button variant="outline" size="small" onClick={() => setAiSuggestion(null)}>Dismiss</Button>
+                </div>
+              </div>
+            )}
             <div className="journey-list-wrapper">
               {personalJourney.contributions?.map((c, i) => (
                 <div key={i} className="journey-list-item">
