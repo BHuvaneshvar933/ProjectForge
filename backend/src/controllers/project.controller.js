@@ -190,6 +190,24 @@ export const updateArchiveData = async (req, res, next) => {
   }
 };
 
+export const updatePersonalJourney = async (req, res, next) => {
+  try {
+    const journey = await projectService.updatePersonalJourney(
+      req.user._id,
+      req.params.id,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Personal journey updated successfully",
+      data: { journey }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 import { getGitHubMetrics as fetchGitHubMetrics } from "../services/github.service.js";
 
 export const connectGitHub = async (req, res, next) => {

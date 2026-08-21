@@ -19,3 +19,6 @@ frontend/dist/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Internal Docs
+AI_FEATURES_DOCUMENTATION.md

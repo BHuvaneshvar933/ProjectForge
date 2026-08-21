@@ -134,22 +134,7 @@ const projectSchema = new mongoose.Schema(
           date: { type: Date, default: Date.now },
         }
       ],
-      challenges: [
-        {
-          problem: String,
-          solution: String,
-        }
-      ],
-      achievements: [String],
-      skillsGained: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Skill",
-      }],
-      takeaway: String,
-      biggestChallenge: String,
-      biggestAchievement: String,
-      favoriteFeature: String,
-      whatToImprove: String,
+
       deliverables: {
         sourceCodeUrl: String,
         demoVideoUrl: String,

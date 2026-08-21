@@ -23,14 +23,14 @@ export const getDeveloperJourneyStats = async (userId) => {
   let challengesSolved = 0;
   const uniqueSkills = new Set();
 
-  completedProjects.forEach((proj) => {
-    if (proj.archiveData) {
-      if (proj.archiveData.challenges) {
-        challengesSolved += proj.archiveData.challenges.length;
+  teams.forEach((team) => {
+    if (team.journey) {
+      if (team.journey.challenges) {
+        challengesSolved += team.journey.challenges.length;
       }
-      if (proj.archiveData.skillsGained) {
-        proj.archiveData.skillsGained.forEach((skill) => {
-          uniqueSkills.add(skill.toString());
+      if (team.journey.skills) {
+        team.journey.skills.forEach((s) => {
+          if (s.skill) uniqueSkills.add(s.skill.toString());
         });
       }
     }
