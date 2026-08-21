@@ -34,7 +34,7 @@ export const generateResumeBullet = async (projectData) => {
     ],
     model: "openai/gpt-oss-120b",
     temperature: 0.7,
-    max_tokens: 150,
+    max_tokens: 500,
   });
 
   return chatCompletion.choices[0]?.message?.content || "";
@@ -254,7 +254,7 @@ export const generateWeeklyProjectSummary = async (projectId, projectData, tasks
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "openai/gpt-oss-20b",
+    model: "openai/gpt-oss-120b",
     temperature: 0.5,
     max_tokens: 600,
   });
