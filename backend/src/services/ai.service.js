@@ -12,9 +12,9 @@ const getGroq = () => {
 
 export const generateResumeBullet = async (projectData) => {
   const prompt = `
-    You are an expert technical recruiter and resume writer. 
+    You are an expert technical recruiter, resume writer, and ATS (Applicant Tracking System) optimization specialist. 
     Based on the following software engineering project details, generate a single, highly impressive, action-oriented resume bullet point (using the STAR method ideally). 
-    It must sound extremely professional, quantify results where possible, and highlight the technical stack.
+    It must sound extremely professional, quantify results where possible, and highlight the technical stack in a way that passes ATS parsers perfectly (avoid overly complex phrasing that ATS might misread, use standard keywords).
 
     Project Title: ${projectData.title}
     Description: ${projectData.description}
@@ -42,9 +42,9 @@ export const generateResumeBullet = async (projectData) => {
 
 export const generateInterviewStory = async (projectData) => {
   const prompt = `
-    You are an expert career coach for software engineers. 
-    Based on the following project details, write a compelling "STAR" (Situation, Task, Action, Result) method story that the developer can use in a behavioral interview when asked a question like: 
-    "Tell me about a challenging project you worked on," or "Tell me about a time you overcame a technical obstacle."
+    You are an expert career coach and technical recruiter. 
+    Based on the following project details, write a compelling "STAR" (Situation, Task, Action, Result) method story that the developer can use in a behavioral interview.
+    Ensure the story incorporates the technical stack naturally as industry-standard keywords so the candidate can adapt it easily for ATS-friendly written applications or verbal interviews.
 
     Project Title: ${projectData.title}
     Description: ${projectData.description}
@@ -71,7 +71,7 @@ export const generateInterviewStory = async (projectData) => {
     ],
     model: "openai/gpt-oss-120b",
     temperature: 0.7,
-    max_tokens: 500,
+    max_tokens: 1500,
   });
 
   return chatCompletion.choices[0]?.message?.content || "";
