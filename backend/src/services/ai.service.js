@@ -15,6 +15,10 @@ export const generateResumeBullet = async (projectData) => {
     You are an expert technical recruiter, resume writer, and ATS (Applicant Tracking System) optimization specialist. 
     Based on the following software engineering project details, generate 3 to 4 highly impressive, action-oriented resume bullet points (using the STAR method ideally). 
     They must sound extremely professional, quantify results where possible, and highlight the technical stack in a way that passes ATS parsers perfectly (avoid overly complex phrasing that ATS might misread, use standard keywords).
+    
+    IMPORTANT STRICT RULES:
+    1. You must ONLY use the facts, metrics, tools, and achievements explicitly provided in the project details below. DO NOT invent, hallucinate, or make up any data, scale, technologies, or results.
+    2. If the provided data is too sparse or empty (e.g., no skills, no achievements, and a very short description), you MUST return exactly the phrase: "Too less info" and nothing else.
 
     Project Title: ${projectData.title}
     Description: ${projectData.description}
@@ -45,6 +49,10 @@ export const generateInterviewStory = async (projectData) => {
     You are an expert career coach and technical recruiter. 
     Based on the following project details, write a compelling "STAR" (Situation, Task, Action, Result) method story that the developer can use in a behavioral interview.
     Ensure the story incorporates the technical stack naturally as industry-standard keywords so the candidate can adapt it easily for ATS-friendly written applications or verbal interviews.
+    
+    IMPORTANT STRICT RULES:
+    1. You must ONLY use the facts, metrics, tools, and achievements explicitly provided in the project details below. DO NOT invent, hallucinate, or make up any data, scale, technologies, or results.
+    2. If the provided data is too sparse or empty (e.g., no skills, no achievements, and a very short description), you MUST return exactly the phrase: "Too less info" and nothing else.
 
     Project Title: ${projectData.title}
     Description: ${projectData.description}
@@ -110,6 +118,10 @@ export const generateCareerAssets = async (projectData, projectId, userId) => {
        - Answer the prompt: "Tell me about a challenging technical problem you solved on this project."
        - MUST follow strict proportions: Situation (10%), Task (10%), Action (60%), Result (20%).
        - The Action section MUST use "I" statements, focusing on the individual's specific technical decisions and problem-solving steps.
+       
+    IMPORTANT STRICT RULES:
+    1. You must ONLY use the facts, metrics, tools, and achievements explicitly provided in the project details below. DO NOT invent, hallucinate, or make up any data, scale, technologies, or results.
+    2. If the provided data is too sparse or empty (e.g., no skills, no achievements, and a very short description), you MUST return a JSON object with empty strings or arrays for all fields, or fields saying "Too less info".
        
     Project Data:
     ${JSON.stringify(projectData, null, 2)}
