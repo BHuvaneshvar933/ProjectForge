@@ -13,8 +13,8 @@ const getGroq = () => {
 export const generateResumeBullet = async (projectData) => {
   const prompt = `
     You are an expert technical recruiter, resume writer, and ATS (Applicant Tracking System) optimization specialist. 
-    Based on the following software engineering project details, generate a single, highly impressive, action-oriented resume bullet point (using the STAR method ideally). 
-    It must sound extremely professional, quantify results where possible, and highlight the technical stack in a way that passes ATS parsers perfectly (avoid overly complex phrasing that ATS might misread, use standard keywords).
+    Based on the following software engineering project details, generate 3 to 4 highly impressive, action-oriented resume bullet points (using the STAR method ideally). 
+    They must sound extremely professional, quantify results where possible, and highlight the technical stack in a way that passes ATS parsers perfectly (avoid overly complex phrasing that ATS might misread, use standard keywords).
 
     Project Title: ${projectData.title}
     Description: ${projectData.description}
@@ -22,7 +22,7 @@ export const generateResumeBullet = async (projectData) => {
     My Key Achievements: ${projectData.achievements?.join(", ")}
     Challenges Overcome: ${projectData.challenges?.join(", ")}
 
-    Do NOT include any introductory or concluding text (like "Here is your bullet:"). Output ONLY the bullet point text starting with an action verb. Keep it to one powerful sentence or a two-sentence max.
+    Do NOT include any introductory or concluding text (like "Here are your bullets:"). Output ONLY the bullet points, each on a new line starting with a bullet symbol (-) and an action verb. Keep each bullet to one powerful sentence or a two-sentence max.
   `;
 
   const chatCompletion = await getGroq().chat.completions.create({
