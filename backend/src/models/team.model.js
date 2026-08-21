@@ -62,6 +62,14 @@ const teamSchema = new mongoose.Schema(
       whatToImprove: String,
     },
 
+    journey: {
+      contributions: [{ contribution: String, impact: String }],
+      challenges: [{ problem: String, action: String, result: String, learning: String }],
+      skills: [{ skill: { type: mongoose.Schema.Types.ObjectId, ref: "Skill" }, before: String, usedFor: String, after: String }],
+      learnings: [{ category: String, text: String }],
+      evidence: [{ title: String, url: String, description: String }]
+    },
+
     careerAssets: {
       resumeBullets: [String],
       portfolioDescription: String,

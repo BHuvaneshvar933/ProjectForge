@@ -31,6 +31,9 @@ export const getProjectTeam = (id) =>
 export const updateArchiveData = (id, data) =>
   API.put(`/projects/${id}/archive-data`, data);
 
+export const updatePersonalJourney = (id, data) =>
+  API.put(`/projects/${id}/journey/personal`, data);
+
 export const saveMyReflections = (id, data) =>
   API.put(`/projects/${id}/my-reflections`, data);
 

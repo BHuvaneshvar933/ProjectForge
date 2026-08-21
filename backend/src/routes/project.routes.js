@@ -11,6 +11,7 @@ import {
   leaveProject,
   getProjectRecommendations,
   updateArchiveData,
+  updatePersonalJourney,
   connectGitHub,
   disconnectGitHub,
   getGitHubMetrics,
@@ -36,6 +37,7 @@ router.get("/:id", getProject);
 router.put("/:id", protect, updateProject);
 router.patch("/:id/close-recruitment", protect, closeRecruitment);
 router.put("/:id/archive-data", protect, updateArchiveData);
+router.put("/:id/journey/personal", protect, updatePersonalJourney);
 router.put("/:id/my-reflections", protect, saveMyReflections);
 router.get("/:id/team", protect, getProjectTeam);
 router.post("/:id/github", protect, connectGitHub);

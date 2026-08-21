@@ -115,8 +115,7 @@ export const getProjectById = async (projectId) => {
     isDeleted: false
   })
     .populate("owner", "name bio")
-    .populate("requiredSkills", "name")
-    .populate("archiveData.skillsGained", "name");
+    .populate("requiredSkills", "name");
 
   if (!project) {
     throw new Error("Project not found");
@@ -277,39 +276,62 @@ export const updateArchiveData = async (userId, projectId, data) => {
   }
 
   if (!project.archiveData) {
-    project.archiveData = { timelineEvents: [], challenges: [], achievements: [], skillsGained: [], takeaway: "", deliverables: {} };
+    project.archiveData = { timelineEvents: [], deliverables: {} };
   }
 
   if (data.type === "timeline") {
     project.archiveData.timelineEvents.push(data.event);
-  } else if (data.type === "challenge") {
-    project.archiveData.challenges.push(data.challenge);
-  } else if (data.type === "delete_challenge") {
-    project.archiveData.challenges.splice(data.index, 1);
-  } else if (data.type === "achievement") {
-    if (data.achievement && data.achievement.trim()) {
-      project.archiveData.achievements.push(data.achievement.trim());
-    }
-  } else if (data.type === "delete_achievement") {
-    project.archiveData.achievements.splice(data.index, 1);
-  } else if (data.type === "takeaway") {
-    project.archiveData.takeaway = data.takeaway;
-  } else if (data.type === "skills") {
-    project.archiveData.skillsGained = data.skills;
   } else if (data.type === "deliverables") {
     project.archiveData.deliverables = {
       ...project.archiveData.deliverables,
       ...data.deliverables
     };
-  } else if (data.type === "completion_answers") {
-    project.archiveData.biggestChallenge = data.biggestChallenge;
-    project.archiveData.biggestAchievement = data.biggestAchievement;
-    project.archiveData.favoriteFeature = data.favoriteFeature;
-    project.archiveData.whatToImprove = data.whatToImprove;
   }
 
   await project.save();
   return project;
+};
+
+export const updatePersonalJourney = async (userId, projectId, data) => {
+  const teamMember = await Team.findOne({
+    projectId,
+    userId,
+    status: "active",
+    isDeleted: false,
+  });
+
+  if (!teamMember) {
+    throw new Error("Only active team members can update personal journey data");
+  }
+
+  if (!teamMember.journey) {
+    teamMember.journey = { contributions: [], challenges: [], skills: [], learnings: [], evidence: [] };
+  }
+
+  if (data.type === "add_contribution") {
+    teamMember.journey.contributions.push(data.contribution);
+  } else if (data.type === "delete_contribution") {
+    teamMember.journey.contributions.splice(data.index, 1);
+  } else if (data.type === "add_challenge") {
+    teamMember.journey.challenges.push(data.challenge);
+  } else if (data.type === "delete_challenge") {
+    teamMember.journey.challenges.splice(data.index, 1);
+  } else if (data.type === "add_skill") {
+    teamMember.journey.skills.push(data.skill);
+  } else if (data.type === "delete_skill") {
+    teamMember.journey.skills.splice(data.index, 1);
+  } else if (data.type === "add_learning") {
+    teamMember.journey.learnings.push(data.learning);
+  } else if (data.type === "delete_learning") {
+    teamMember.journey.learnings.splice(data.index, 1);
+  } else if (data.type === "add_evidence") {
+    teamMember.journey.evidence.push(data.evidence);
+  } else if (data.type === "delete_evidence") {
+    teamMember.journey.evidence.splice(data.index, 1);
+  }
+
+  await teamMember.save();
+  return teamMember.journey;
 };
 
 export const connectGitHub = async (userId, projectId, payload) => {
