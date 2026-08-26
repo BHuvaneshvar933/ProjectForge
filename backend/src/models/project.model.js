@@ -8,9 +8,16 @@ const metricsSchema = new mongoose.Schema({
   completionPercentage: { type: Number, default: 0 },
   aiHealthScore: { type: Number },
   aiHealthStatus: { type: String },
-  aiHealthReasoning: { type: String },
+  aiHealthComponents: [{ name: String, impact: Number, reasoning: String }],
+  aiHealthMainRisk: { type: String },
   aiHealthSuggestion: { type: String },
-  aiWeeklySummary: { type: String },
+  aiWeeklySummary: {
+    headline: String,
+    completed: [String],
+    started: [String],
+    risks: [String],
+    next_actions: [String]
+  },
   aiLastGeneratedAt: { type: Date },
 }, { _id: false });
 
@@ -134,22 +141,7 @@ const projectSchema = new mongoose.Schema(
           date: { type: Date, default: Date.now },
         }
       ],
-      challenges: [
-        {
-          problem: String,
-          solution: String,
-        }
-      ],
-      achievements: [String],
-      skillsGained: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Skill",
-      }],
-      takeaway: String,
-      biggestChallenge: String,
-      biggestAchievement: String,
-      favoriteFeature: String,
-      whatToImprove: String,
+
       deliverables: {
         sourceCodeUrl: String,
         demoVideoUrl: String,

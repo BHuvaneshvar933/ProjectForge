@@ -21,3 +21,6 @@ frontend/dist/
 /playwright/.auth/
 
 coverage/
+
+# Internal Docs
+AI_FEATURES_DOCUMENTATION.md

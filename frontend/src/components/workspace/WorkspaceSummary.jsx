@@ -341,14 +341,14 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
                     onClick={() => handleAIGenerate('resume')}
                     disabled={aiLoading}
                   >
-                    ✨ Generate Resume Bullet
+                    Generate Resume Bullet points
                   </button>
                   <button 
                     className="summary-btn ai-btn" 
                     onClick={() => handleAIGenerate('interview')}
                     disabled={aiLoading}
                   >
-                    ✨ Generate Interview Story
+                    Generate Interview Story
                   </button>
                 </div>
                 {aiLoading && <div className="mt-4 text-sm opacity-50">Generating...</div>}

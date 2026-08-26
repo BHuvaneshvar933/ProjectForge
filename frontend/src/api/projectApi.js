@@ -31,6 +31,9 @@ export const getProjectTeam = (id) =>
 export const updateArchiveData = (id, data) =>
   API.put(`/projects/${id}/archive-data`, data);
 
+export const updatePersonalJourney = (id, data) =>
+  API.put(`/projects/${id}/journey/personal`, data);
+
 export const saveMyReflections = (id, data) =>
   API.put(`/projects/${id}/my-reflections`, data);
 
@@ -41,17 +44,26 @@ export const connectGitHub = (id, data) =>
 export const disconnectGitHub = (id) =>
   API.delete(`/projects/${id}/github`);
 
+
+
 export const getGitHubMetrics = (id) =>
   API.get(`/projects/${id}/github`);
 
 export const getBasicRepoStats = (url) =>
   API.get(`/projects/github-stats`, { params: { url } });
 
-export const getProjectReleases = (id) =>
-  API.get(`/projects/${id}/releases`);
+export const getProjectFiles = (projectId) => API.get(`/projects/${projectId}/files`);
+export const addProjectFile = (projectId, payload) => API.post(`/projects/${projectId}/files`, payload);
+export const getEngineeringAssessment = (projectId) => API.get(`/projects/${projectId}/engineering-assessment`);
 
-export const createProjectRelease = (id, data) =>
-  API.post(`/projects/${id}/releases`, data);
+export const getProjectReleases = (projectId) =>
+  API.get(`/projects/${projectId}/releases`);
+
+export const createProjectRelease = (projectId, payload) =>
+  API.post(`/projects/${projectId}/releases`, payload);
+
+export const updateProjectRelease = (projectId, releaseId, payload) =>
+  API.patch(`/projects/${projectId}/releases/${releaseId}`, payload);
 
 export const leaveProject = (projectId) => API.patch(`/projects/${projectId}/leave`);
 export const removeTeamMember = (projectId, userId) => API.delete(`/projects/${projectId}/team/${userId}`);

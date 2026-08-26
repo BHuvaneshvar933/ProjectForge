@@ -1,4 +1,5 @@
 import Notification from "../models/notification.model.js";
+import { getIO } from "../sockets/socket.js";
 
 export const createNotification = async ({
   userId,
@@ -14,6 +15,12 @@ export const createNotification = async ({
     message,
     actionUrl
   });
+
+  try {
+    getIO().to(`user-${userId}`).emit("new-notification", notification);
+  } catch (e) {
+    console.error("Failed to emit notification:", e.message);
+  }
 
   return notification;
 };

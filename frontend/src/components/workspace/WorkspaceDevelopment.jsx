@@ -4,7 +4,7 @@ import Modal from "../common/Modal";
 import Input from "../common/Input";
 import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
-import { connectGitHub, disconnectGitHub } from "../../api/projectApi";
+import { connectGitHub, disconnectGitHub, getEngineeringAssessment } from "../../api/projectApi";
 
 export default function WorkspaceDevelopment({ projectId, project, devMetrics, githubMetrics, githubLoading, fetchGitHubData, onProjectChange }) {
   const [githubModalOpen, setGithubModalOpen] = useState(false);
@@ -12,6 +12,21 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
   const [githubConnectLoading, setGithubConnectLoading] = useState(false);
   const [disconnectModalOpen, setDisconnectModalOpen] = useState(false);
   const [disconnectLoading, setDisconnectLoading] = useState(false);
+  const [assessment, setAssessment] = useState(null);
+  const [assessmentLoading, setAssessmentLoading] = useState(false);
+
+  const handleGetAssessment = async () => {
+    setAssessmentLoading(true);
+    try {
+      const res = await getEngineeringAssessment(projectId);
+      setAssessment(res.data?.data?.assessment);
+      toast.success("Assessment generated!");
+    } catch (e) {
+      toast.error("Failed to generate assessment");
+    } finally {
+      setAssessmentLoading(false);
+    }
+  };
 
   const handleConnectGitHub = async () => {
     let repoName = githubForm.repoName.trim();
@@ -67,10 +82,78 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
   return (
     <div className="workspace-development" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+ main
         <h2 style={{ fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
           Key Metrics <span style={{ fontSize: "10px", background: "var(--color-paper)", color: "var(--color-text-dark)", padding: "2px 8px", borderRadius: "999px", fontWeight: "700", border: "1px solid var(--border-color)" }}>BETA</span>
+
+        <h2 style={{ fontSize: "18px", fontWeight: "600", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+          Development <span style={{ fontSize: "10px", background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>AI MENTOR</span>
+ main
         </h2>
       </div>
+
+      {/* Top Section: AI Engineering Assessment */}
+      <div style={{ background: "rgba(10,132,255,0.05)", border: "1px solid rgba(10,132,255,0.2)", borderRadius: "8px", padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <h3 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+             AI Engineering Assessment
+          </h3>
+          <Button onClick={handleGetAssessment} disabled={assessmentLoading}>
+            {assessmentLoading ? "Analyzing Metrics..." : (assessment ? "Refresh Assessment" : "Get Mentor Feedback")}
+          </Button>
+        </div>
+
+        {assessmentLoading && (
+          <div style={{ padding: "24px", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
+            <Spinner />
+            <p>Interpreting deterministic project data...</p>
+          </div>
+        )}
+
+        {!assessmentLoading && !assessment && (
+          <div style={{ padding: "16px 0", color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>
+            Click "Get Mentor Feedback" to analyze your team's execution evidence (completed tasks, open bugs, PR cycle time) and receive actionable engineering guidance.
+          </div>
+        )}
+
+        {!assessmentLoading && assessment && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginTop: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span style={{ fontWeight: "bold", fontSize: "14px", textTransform: "uppercase", padding: "4px 10px", borderRadius: "4px", background: assessment.status === 'Stable' ? 'rgba(50, 215, 75, 0.2)' : assessment.status === 'Needs Attention' ? 'rgba(255, 159, 10, 0.2)' : 'rgba(255, 69, 58, 0.2)', color: assessment.status === 'Stable' ? '#32d74b' : assessment.status === 'Needs Attention' ? '#ff9f0a' : '#ff453a' }}>
+                Execution Status: {assessment.status}
+              </span>
+              <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.9)", lineHeight: "1.5" }}>{assessment.message}</p>
+            </div>
+            
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+              <div style={{ background: "rgba(0,0,0,0.2)", padding: "16px", borderRadius: "8px" }}>
+                <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#32d74b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Strengths</h4>
+                <ul style={{ margin: 0, paddingLeft: "20px", color: "rgba(255,255,255,0.8)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {assessment.strengths?.map((s, i) => <li key={i}>{s}</li>)}
+                </ul>
+              </div>
+              <div style={{ background: "rgba(0,0,0,0.2)", padding: "16px", borderRadius: "8px" }}>
+                <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#ff9f0a", textTransform: "uppercase", letterSpacing: "0.5px" }}>Areas for Improvement</h4>
+                <ul style={{ margin: 0, paddingLeft: "20px", color: "rgba(255,255,255,0.8)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {assessment.areasForImprovement?.map((a, i) => <li key={i}>{a}</li>)}
+                </ul>
+              </div>
+            </div>
+            
+            <div style={{ background: "rgba(255,255,255,0.03)", padding: "16px", borderRadius: "8px", borderLeft: "3px solid #0a84ff" }}>
+              <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#0a84ff", textTransform: "uppercase", letterSpacing: "0.5px" }}>Actionable Recommendations</h4>
+              <ul style={{ margin: 0, paddingLeft: "20px", color: "rgba(255,255,255,0.9)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                {assessment.recommendedActions?.map((r, i) => <li key={i}>{r}</li>)}
+              </ul>
+            </div>
+            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textAlign: "right" }}>
+              *Why did I get this? Review "The Evidence" below.
+            </div>
+          </div>
+        )}
+      </div>
+
+      <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "16px 0 0 0", color: "rgba(255,255,255,0.7)" }}>The Evidence (Raw Metrics)</h3>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {/* Top Row: 4 Large Cards */}

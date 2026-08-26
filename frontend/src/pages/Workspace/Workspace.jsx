@@ -302,7 +302,7 @@ export default function Workspace() {
       {tab === "journey" && (
         isCompleted 
           ? <WorkspaceSummary project={project} tasks={tasks} team={teamSorted} me={me} />
-          : <JourneyTab project={project} isMember={isMember} onUpdate={fetchBase} />
+          : <JourneyTab project={project} teamRecord={team.find(m => m.userId?._id === me?._id || m.userId === me?._id)} tasks={tasks} isMember={isMember} onUpdate={fetchBase} />
       )}
 
       {tab === "overview" && <WorkspaceOverview project={project} tasks={tasks} team={teamSorted} isOwner={isOwner} onRemoveMember={(id) => setRemoveMemberId(id)} />}

@@ -190,6 +190,24 @@ export const updateArchiveData = async (req, res, next) => {
   }
 };
 
+export const updatePersonalJourney = async (req, res, next) => {
+  try {
+    const journey = await projectService.updatePersonalJourney(
+      req.user._id,
+      req.params.id,
+      req.body
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Personal journey updated successfully",
+      data: { journey }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 import { getGitHubMetrics as fetchGitHubMetrics } from "../services/github.service.js";
 
 export const connectGitHub = async (req, res, next) => {
@@ -292,6 +310,24 @@ export const createRelease = async (req, res, next) => {
   }
 };
 
+export const updateRelease = async (req, res, next) => {
+  try {
+    const release = await projectService.updateProjectRelease(
+      req.user._id,
+      req.params.id,
+      req.params.releaseId,
+      req.body
+    );
+    res.status(200).json({
+      success: true,
+      message: "Release updated successfully",
+      data: { release }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const saveMyReflections = async (req, res, next) => {
   try {
     const { id: projectId } = req.params;
@@ -323,6 +359,68 @@ export const addProjectFile = async (req, res, next) => {
   try {
     const file = await projectService.addProjectFile(req.params.id, req.user._id, req.body);
     res.status(201).json({ success: true, data: { file } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+import { generateEngineeringAssessment as generateAssessmentAI } from "../services/ai.service.js";
+import Task from "../models/task.model.js";
+
+export const getEngineeringAssessment = async (req, res, next) => {
+  try {
+    const projectId = req.params.id;
+    const project = await projectService.getProjectById(projectId, req.user._id);
+    
+    // Gather deterministic metrics for the AI to interpret
+    const tasks = await Task.find({ projectId, isDeleted: false });
+    
+    const now = new Date();
+    const openTasks = tasks.filter(t => t.status !== "done");
+    const completedTasks = tasks.filter(t => t.status === "done");
+    const overdueTasks = openTasks.filter(t => t.dueDate && new Date(t.dueDate) < now);
+    const openBugs = openTasks.filter(t => t.type === "bug");
+    
+    let githubData = "Not connected";
+    let githubMetrics = null;
+    
+    if (project.githubIntegration && project.githubIntegration.isConnected) {
+       githubData = "Connected to repository: " + project.githubIntegration.repoName;
+       try {
+         githubMetrics = await fetchGitHubMetrics(
+           project.githubIntegration.repoName,
+           project.githubIntegration.accessToken
+         );
+       } catch (err) {
+         console.error("Failed to fetch GitHub metrics for assessment", err);
+       }
+    }
+
+    const projectData = {
+      title: project.title,
+      totalTasks: tasks.length,
+      completedTasks: completedTasks.length,
+      openBugs: openBugs.length,
+      overdueTasks: overdueTasks.length,
+      githubStatus: githubData,
+      githubMetrics: githubMetrics
+    };
+
+    let systemStatus = "Stable";
+    const completionRate = tasks.length > 0 ? completedTasks.length / tasks.length : 0;
+    
+    if (overdueTasks.length > 3 || openBugs.length > 3) {
+      systemStatus = "Critical";
+    } else if (overdueTasks.length >= 1 || openBugs.length >= 1 || completionRate <= 0.5) {
+      systemStatus = "Needs Attention";
+    } else {
+      systemStatus = "Stable";
+    }
+
+    const assessment = await generateAssessmentAI(projectData);
+    assessment.status = systemStatus;
+
+    res.status(200).json({ success: true, data: { assessment } });
   } catch (error) {
     next(error);
   }

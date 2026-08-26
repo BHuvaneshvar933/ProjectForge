@@ -82,6 +82,7 @@ export const createTask = async (projectId, payload, currentUser) => {
           taskNumber: nextTaskNumber,
           issueType: payload.issueType || "task",
           parentId: payload.parentId || null,
+          releaseId: payload.releaseId || null,
           attachmentUrl: payload.attachmentUrl || null,
           attachmentName: payload.attachmentName || null,
         },
@@ -398,6 +399,7 @@ export const updateTask = async (taskId, updateData, userId) => {
     "tags",
     "issueType",
     "parentId",
+    "releaseId",
     "attachmentUrl",
     "attachmentName",
   ];

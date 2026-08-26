@@ -5,6 +5,7 @@ import { searchUsers } from '../../api/userApi';
 import { inviteUserToProject } from '../../api/applicationApi';
 import Input from '../../components/common/Input';
 import { toast } from 'react-toastify';
+import { getSocket } from '../../realtime/socketClient';
 
 import BrowsePeopleTab from './components/BrowsePeopleTab';
 import BrowseProjectsTab from './components/BrowseProjectsTab';
@@ -183,6 +184,30 @@ export default function BrowseProjects() {
     // refresh people search when project changes
     searchPeople(1);
   }, [searchPeople, selectedProjectId, tab]);
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+    
+    const handleApplicationUpdated = (updatedApp) => {
+      // If an application gets rejected or withdrawn, allow inviting again
+      if (updatedApp.status === 'rejected' || updatedApp.status === 'withdrawn') {
+        setInvitedUserIds(prev => prev.filter(id => id !== updatedApp.applicantId));
+      } else if (updatedApp.status === 'pending' || updatedApp.status === 'accepted') {
+        setInvitedUserIds(prev => {
+          if (!prev.includes(updatedApp.applicantId)) {
+            return [...prev, updatedApp.applicantId];
+          }
+          return prev;
+        });
+      }
+    };
+
+    socket.on("application-updated", handleApplicationUpdated);
+    return () => {
+      socket.off("application-updated", handleApplicationUpdated);
+    };
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
