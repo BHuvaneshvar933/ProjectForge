@@ -82,13 +82,8 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
   return (
     <div className="workspace-development" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
- main
         <h2 style={{ fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-          Key Metrics <span style={{ fontSize: "10px", background: "var(--color-paper)", color: "var(--color-text-dark)", padding: "2px 8px", borderRadius: "999px", fontWeight: "700", border: "1px solid var(--border-color)" }}>BETA</span>
-
-        <h2 style={{ fontSize: "18px", fontWeight: "600", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
           Development <span style={{ fontSize: "10px", background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>AI MENTOR</span>
- main
         </h2>
       </div>
 
