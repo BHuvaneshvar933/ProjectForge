@@ -181,7 +181,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               }}
               disabled={aiLoading}
             >
-              {aiLoading ? <Spinner size="sm" /> : "❤️ Refresh Health Score"}
+              {aiLoading ? <Spinner size="sm" /> : "Refresh Health Score"}
             </Button>
 
             <Button 
@@ -215,7 +215,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
           {localMetrics.aiHealthScore !== undefined && (
             <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: localMetrics.aiHealthScore < 50 ? "4px solid #ff453a" : localMetrics.aiHealthScore < 80 ? "4px solid #ff9f0a" : "4px solid #32d74b" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                <h3 style={{ fontSize: "16px", margin: 0 }}>❤️ AI Health Score</h3>
+                <h3 style={{ fontSize: "16px", margin: 0 }}>AI Health Score</h3>
                 <Badge variant={localMetrics.aiHealthScore < 50 ? "danger" : localMetrics.aiHealthScore < 80 ? "warning" : "success"}>
                   {localMetrics.aiHealthScore}/100 - {localMetrics.aiHealthStatus}
                 </Badge>

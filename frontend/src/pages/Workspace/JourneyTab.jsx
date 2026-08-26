@@ -191,14 +191,14 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <h3>My Contributions & Achievements</h3>
               <Button variant="outline" size="small" onClick={handleSuggestContribution} disabled={aiLoading}>
-                {aiLoading ? <Spinner size="sm" /> : "✨ Suggest from my activity"}
+                {aiLoading ? <Spinner size="sm" /> : "Suggest from my activity"}
               </Button>
             </div>
             <p className="journey-card__desc">What did I actually build? Link to impact where possible.</p>
             
             {aiSuggestion && (
               <div style={{ background: "rgba(191, 90, 242, 0.1)", border: "1px solid rgba(191, 90, 242, 0.3)", padding: "16px", borderRadius: "8px", marginBottom: "16px" }}>
-                <h4 style={{ color: "#bf5af2", margin: "0 0 12px 0", fontSize: "14px" }}>✨ AI Suggestion</h4>
+                <h4 style={{ color: "#bf5af2", margin: "0 0 12px 0", fontSize: "14px" }}>AI Suggestion</h4>
                 <div style={{ marginBottom: "12px" }}><strong>Contribution:</strong> {aiSuggestion.summary}</div>
                 {aiSuggestion.potentialAchievements?.length > 0 && (
                   <div style={{ marginBottom: "12px" }}><strong>Potential Achievement:</strong> {aiSuggestion.potentialAchievements[0]}</div>
