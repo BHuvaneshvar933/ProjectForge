@@ -379,7 +379,22 @@ export const disconnectGitHub = async (userId, projectId) => {
 
 export const getProjectReleases = async (projectId) => {
   const Release = (await import("../models/release.model.js")).default;
-  return await Release.find({ projectId, isDeleted: false }).sort({ createdAt: -1 });
+  const Task = (await import("../models/task.model.js")).default;
+  
+  const releases = await Release.find({ projectId, isDeleted: false }).sort({ createdAt: -1 }).lean();
+  
+  // Compute progress for each release
+  for (const release of releases) {
+    const tasks = await Task.find({ releaseId: release._id, isDeleted: false });
+    if (tasks.length === 0) {
+      release.progress = 0;
+    } else {
+      const completed = tasks.filter(t => t.status === "done").length;
+      release.progress = Math.round((completed / tasks.length) * 100);
+    }
+  }
+  
+  return releases;
 };
 
 export const createProjectRelease = async (userId, projectId, payload) => {
@@ -402,5 +417,29 @@ export const createProjectRelease = async (userId, projectId, payload) => {
     description: payload.description || "",
   });
 
+  return release;
+};
+
+export const updateProjectRelease = async (userId, projectId, releaseId, payload) => {
+  const project = await Project.findById(projectId);
+  if (!project) throw new Error("Project not found");
+  
+  const member = await Team.findOne({ projectId, userId, status: "active", isDeleted: false });
+  if (!member && String(project.owner) !== String(userId)) {
+    throw new Error("Only team members can update releases");
+  }
+
+  const Release = (await import("../models/release.model.js")).default;
+  const release = await Release.findOne({ _id: releaseId, projectId, isDeleted: false });
+  if (!release) throw new Error("Release not found");
+
+  const allowedFields = ["version", "status", "startDate", "releaseDate", "description"];
+  allowedFields.forEach((field) => {
+    if (payload[field] !== undefined) {
+      release[field] = payload[field];
+    }
+  });
+
+  await release.save();
   return release;
 };
