@@ -5,9 +5,21 @@
 
 .my-projects__grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-	gap: 16px;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 24px;
 	align-items: stretch;
+}
+
+@media (max-width: 1100px) {
+	.my-projects__grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 700px) {
+	.my-projects__grid {
+		grid-template-columns: 1fr;
+	}
 }
 
 .my-projects__loading {
@@ -22,34 +34,33 @@
 	width: 32px;
 	height: 32px;
 	border-radius: 50%;
-	border: 2px solid rgba(255, 255, 255, 0.08);
-	border-top-color: #ffffff;
+	border: 2px solid var(--border-color);
+	border-top-color: var(--color-text-dark);
 	animation: spin 1s linear infinite;
 	margin-bottom: 16px;
 }
 
 .my-projects__loading-text {
-	font-size: 13px;
-	font-weight: 400;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.72);
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-text-muted);
 }
 
 .my-projects__empty {
 	text-align: center;
 	padding: 80px 0;
-	border-radius: 2px;
-	background: rgba(10, 10, 12, 0.6);
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 12px;
+	background: #ffffff;
+	border: 1px solid var(--border-color);
 }
 
 .my-projects__empty-icon {
 	width: 48px;
 	height: 48px;
 	margin: 0 auto 16px;
-	border-radius: 2px;
-	background: rgba(255, 255, 255, 0.2);
+	border-radius: 10px;
+	background: var(--color-paper);
+	border: 1px solid var(--border-color);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -58,40 +69,37 @@
 .my-projects__empty-icon-svg {
 	width: 20px;
 	height: 20px;
-	color: #ffffff;
+	color: var(--color-text-dark);
 }
 
 .my-projects__empty-title {
-	font-size: 13px;
-	font-weight: 400;
-	color: rgba(255, 255, 255, 0.7);
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--color-text-dark);
 	margin-bottom: 6px;
 }
 
 .my-projects__empty-subtitle {
-	font-size: 13px;
-	color: rgba(255, 255, 255, 0.72);
+	font-size: 14px;
+	color: var(--color-text-muted);
 	margin-bottom: 20px;
 }
 
 .my-projects__empty-action {
-	padding: 8px 18px;
-	border-radius: 2px;
-	background: #ffffff;
-	color: #000000;
+	padding: 10px 22px;
+	border-radius: 999px;
+	background: var(--color-text-dark);
+	color: #ffffff;
 	font-size: 13px;
-	font-weight: 400;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+	font-weight: 600;
 	transition: all 0.15s ease;
-	border: 1px solid #ffffff;
+	border: 1px solid var(--color-text-dark);
 }
 
 .my-projects__empty-action:hover {
-	background: #000000;
+	background: #33333A;
 	color: #ffffff;
-	border-color: #ffffff;
+	border-color: #33333A;
 }
 
 

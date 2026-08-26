@@ -27,8 +27,7 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, onClose, 
           <a href="#" style={{ color: "#0a84ff", textDecoration: "none", fontWeight: "600" }}>{project?.key}-{task.taskNumber}</a>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <button style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "16px" }}>•••</button>
-          <button onClick={onClose} style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "20px" }}>×</button>
+          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", color: "var(--text-sand)", cursor: "pointer", fontSize: "13px", padding: "4px 10px", borderRadius: "4px" }}>Close</button>
         </div>
       </div>
 

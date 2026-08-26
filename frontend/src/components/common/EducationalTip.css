@@ -2,46 +2,37 @@
   margin-bottom: 14px;
   font-size: 13px;
   line-height: 1.5;
-  color: #F5DEB3;
+  color: var(--text-muted);
 }
 
 .educational-tip__inline {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  color: #F5DEB3;
-}
-
-.educational-tip__icon {
-  width: 16px;
-  height: 16px;
-  color: #F5DEB3;
-  flex-shrink: 0;
   display: inline-block;
-  vertical-align: middle;
+  color: var(--text-muted);
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+  width: 100%;
 }
 
-.educational-tip--inline strong {
-  color: #F5DEB3;
+.educational-tip__label {
+  color: var(--accent-soft);
+  font-weight: 600;
 }
 
 .educational-tip--box {
-  background: rgba(245, 222, 179, 0.06);
-  border: 1px solid rgba(245, 222, 179, 0.25);
-  border-radius: 4px;
-  padding: 14px 16px;
-  color: #F5DEB3;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 6px;
+  padding: 12px 16px;
+  color: var(--text-sand);
 }
 
 .educational-tip__box-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   margin-bottom: 4px;
 }
 
 .educational-tip--box strong {
-  color: #F5DEB3;
-  font-weight: 500;
+  color: var(--accent-soft);
+  font-weight: 600;
 }

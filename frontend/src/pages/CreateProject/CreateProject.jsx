@@ -157,13 +157,7 @@ export default function CreateProject() {
                 <div
                   className={`create-project__step-circle ${isCompleted ? 'is-completed' : isCurrent ? 'is-current' : 'is-upcoming'}`.trim()}
                 >
-                  {isCompleted ? (
-                    <svg className="create-project__step-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : (
-                    index + 1
-                  )}
+                  {index + 1}
                 </div>
                 <span
                   className={`create-project__step-label ${isCompleted ? 'is-completed' : isCurrent ? 'is-current' : 'is-upcoming'}`.trim()}
@@ -186,12 +180,7 @@ export default function CreateProject() {
           disabled={currentStep === 0 || loading}
           className={`create-project__button create-project__button--secondary ${currentStep === 0 || loading ? 'is-disabled' : ''}`.trim()}
         >
-          <span className="create-project__button-content">
-            <svg className="create-project__button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back
-          </span>
+          Back
         </button>
         
         {currentStep < steps.length - 1 ? (
@@ -200,12 +189,7 @@ export default function CreateProject() {
             disabled={loading}
             className={`create-project__button create-project__button--primary ${loading ? 'is-disabled' : ''}`.trim()}
           >
-            <span className="create-project__button-content">
-              Continue
-              <svg className="create-project__button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </span>
+            Continue
           </button>
         ) : (
           <button
@@ -213,22 +197,7 @@ export default function CreateProject() {
             disabled={loading}
             className={`create-project__button create-project__button--success ${loading ? 'is-disabled' : ''}`.trim()}
           >
-            {loading ? (
-              <span className="create-project__button-content">
-                <svg className="create-project__spinner" viewBox="0 0 24 24">
-                  <circle className="create-project__spinner-track" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" />
-                  <path className="create-project__spinner-fill" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                Creating...
-              </span>
-            ) : (
-              <span className="create-project__button-content">
-                Create Project
-                <svg className="create-project__button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-            )}
+            {loading ? 'Creating...' : 'Create Project'}
           </button>
         )}
       </div>

@@ -1,30 +1,26 @@
 .learning-archive {
-  max-width: 1400px;
+  width: 95vw;
+  max-width: 1800px;
   margin: 0 auto;
-  padding: 48px 24px;
-  animation: fadeIn 0.5s ease;
+  padding: 40px 0;
 }
 
 .learning-archive__header {
-  text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
 .learning-archive__title {
-  font-size: 35px;
-  font-weight: 400;
-  letter-spacing: -0.04em;
+  font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
   margin-bottom: 12px;
-  background: linear-gradient(135deg, #fff, #a1a1aa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-text-dark);
 }
 
 .learning-archive__subtitle {
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 13px;
-  max-width: 600px;
-  margin: 0 auto;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  max-width: 720px;
   line-height: 1.6;
 }
 
@@ -32,45 +28,54 @@
   display: flex;
   gap: 16px;
   margin-bottom: 32px;
-  justify-content: center;
   flex-wrap: wrap;
 }
 
 .learning-archive__input {
   padding: 12px 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
-  min-width: 250px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--color-text-dark);
+  min-width: 280px;
+  font-size: 14px;
   outline: none;
+  transition: border-color 0.15s ease;
 }
 
 .learning-archive__input:focus {
-  border-color: rgba(10, 132, 255, 0.5);
+  border-color: var(--color-text-dark);
 }
 
 .learning-archive__select {
   padding: 12px 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.04);
-  color: #fff;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--color-text-dark);
+  font-size: 14px;
+  font-weight: 600;
   outline: none;
 }
 
 .learning-archive__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
 
+@media (max-width: 900px) {
+  .learning-archive__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .learning-archive__card {
-  background: rgba(28, 28, 30, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 24px;
-  transition: all 0.3s ease;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 28px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   display: flex;
   flex-direction: column;
   text-decoration: none;
@@ -78,9 +83,8 @@
 }
 
 .learning-archive__card:hover {
-  transform: translateY(-4px);
-  background: rgba(38, 38, 40, 0.8);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(18, 18, 20, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 .learning-archive__card-header {
@@ -90,26 +94,28 @@
 }
 
 .learning-archive__type {
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(10, 132, 255, 0.15);
-  color: #0a84ff;
+  background: #F2EFE9;
+  color: #121214;
+  border: 1px solid rgba(18, 18, 20, 0.12);
 }
 
 .learning-archive__card-title {
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
   margin-bottom: 12px;
-  color: #fff;
+  color: var(--color-text-dark);
 }
 
 .learning-archive__card-desc {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+  color: var(--color-text-muted);
   margin-bottom: 24px;
   line-height: 1.6;
   flex: 1;
@@ -119,16 +125,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.72);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--border-color);
   padding-top: 16px;
 }
 
 .learning-archive__empty {
   text-align: center;
   padding: 64px 0;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 13px;
+  color: var(--color-text-muted);
+  font-size: 14px;
   grid-column: 1 / -1;
 }

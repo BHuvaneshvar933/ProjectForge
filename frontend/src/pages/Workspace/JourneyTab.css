@@ -1,21 +1,22 @@
 .journey-tab {
-  padding: 24px;
+  padding: 8px 0;
   animation: fadeIn 0.3s ease;
 }
 
 .journey-tab__header {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .journey-tab__header h2 {
-  font-size: 13px;
-  margin-bottom: 8px;
-  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--color-text-dark);
 }
 
 .journey-tab__header p {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
+  color: var(--color-text-muted);
+  font-size: 14px;
 }
 
 .journey-tab__grid {
@@ -31,16 +32,18 @@
 }
 
 .journey-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 20px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
 
 .journey-card h3 {
-  font-size: 13px;
-  color: #fff;
-  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 6px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -48,7 +51,7 @@
 
 .journey-card__desc {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--color-text-muted);
   margin-bottom: 16px;
 }
 
@@ -63,21 +66,23 @@
 }
 
 .journey-list li {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-paper);
+  border: 1px solid var(--border-color);
   padding: 10px 14px;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  color: var(--color-text-dark);
+  font-weight: 500;
 }
 
 .journey-list button,
 .journey-challenge-delete {
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--color-text-muted);
   font-size: 13px;
   cursor: pointer;
   transition: color 0.2s;
@@ -85,13 +90,13 @@
 
 .journey-list button:hover,
 .journey-challenge-delete:hover {
-  color: #ff4d4f;
+  color: #dc2626;
 }
 
 /* Forms */
 .journey-form-inline {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .journey-form-inline input {
@@ -105,21 +110,23 @@
 }
 
 .journey-form-block label {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: -8px; /* tight spacing before input */
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .journey-tab input,
 .journey-tab textarea,
 .journey-tab select {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--color-paper);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 14px;
-  color: #fff;
+  color: var(--color-text-dark);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   transition: all 0.2s;
   width: 100%;
 }
@@ -128,13 +135,13 @@
 .journey-tab textarea:focus,
 .journey-tab select:focus {
   outline: none;
-  border-color: #0a84ff;
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-text-dark);
+  background: #ffffff;
 }
 
 .journey-tab textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 85px;
 }
 
 /* Challenges */
@@ -146,16 +153,17 @@
 }
 
 .journey-challenge-item {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 14px;
+  background: var(--color-paper);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 16px;
   position: relative;
 }
 
 .journey-challenge-delete {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
 }
 
 .journey-challenge-row {
@@ -169,15 +177,16 @@
 
 .journey-challenge-row strong {
   display: block;
-  font-size: 13px;
-  color: #0a84ff;
+  font-size: 11px;
+  color: var(--color-text-muted);
   margin-bottom: 2px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
 }
 
 .journey-challenge-row span {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-dark);
+  font-weight: 600;
 }
 
 /* Skills */
@@ -189,12 +198,13 @@
 }
 
 .journey-skill-chip {
-  background: rgba(10, 132, 255, 0.1);
-  border: 1px solid rgba(10, 132, 255, 0.3);
-  color: #0a84ff;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
+  background: #F4F3EF;
+  border: 1px solid rgba(18, 18, 20, 0.12);
+  color: #33333A;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -220,8 +230,8 @@
 .journey-tab__empty {
   padding: 40px;
   text-align: center;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 13px;
+  color: var(--color-text-muted);
+  font-size: 14px;
 }
 
 @media (max-width: 900px) {
@@ -234,10 +244,10 @@
 .journey-timeline {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   position: relative;
   padding-left: 20px;
-  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  border-left: 2px solid var(--border-color);
   margin-top: 10px;
 }
 
@@ -253,25 +263,27 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #0a84ff;
-  border: 2px solid #1a1a1a;
+  background: var(--color-text-dark);
+  border: 2px solid #ffffff;
 }
 
 .journey-timeline__date {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
   margin-bottom: 2px;
 }
 
 .journey-timeline__content strong {
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-text-dark);
+  font-size: 14px;
   display: block;
   margin-bottom: 4px;
 }
 
 .journey-timeline__content p {
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--color-text-dark);
   margin: 0;
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.5;
 }

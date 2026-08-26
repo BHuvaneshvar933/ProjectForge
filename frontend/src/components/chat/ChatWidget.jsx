@@ -168,15 +168,26 @@ export default function ChatWidget() {
 
   if (!user || isAuthRoute) return null;
 
-  return (
-    <div className={`chat-widget ${isOpen ? "open" : ""}`}>
-      {/* Header */}
-      <div 
-        className="chat-widget__header" 
-        onClick={() => setIsOpen(!isOpen)}
+  if (!isOpen) {
+    return (
+      <button 
+        className="chat-widget__trigger"
+        onClick={() => setIsOpen(true)}
+        title="Open Messages"
       >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </button>
+    );
+  }
+
+  return (
+    <div className="chat-widget open">
+      {/* Header */}
+      <div className="chat-widget__header">
         <div className="chat-widget__header-left">
-          {activeChat && isOpen ? (
+          {activeChat ? (
             <button 
               className="chat-widget__back"
               onClick={(e) => {
@@ -186,110 +197,111 @@ export default function ChatWidget() {
                 loadConversations();
               }}
             >
-              ←
+              Back
             </button>
           ) : null}
           <div className="chat-widget__title">
-            {activeChat && isOpen ? activeChat.name : "Messages"}
+            {activeChat ? activeChat.name : "Messages"}
           </div>
         </div>
-        <div className="chat-widget__header-right">
-          {isOpen ? "▼" : "▲"}
-        </div>
+        <button 
+          className="chat-widget__close-btn"
+          onClick={() => setIsOpen(false)}
+        >
+          ✕
+        </button>
       </div>
 
       {/* Body */}
-      {isOpen && (
-        <div className="chat-widget__body">
-          {!activeChat ? (
-            // CONVERSATIONS LIST
-            <div className="chat-widget__conversations">
-              {conversations.length === 0 ? (
-                <div className="chat-widget__empty">No messages yet.</div>
+      <div className="chat-widget__body">
+        {!activeChat ? (
+          // CONVERSATIONS LIST
+          <div className="chat-widget__conversations">
+            {conversations.length === 0 ? (
+              <div className="chat-widget__empty">No messages yet.</div>
+            ) : (
+              conversations.map((conv) => {
+                const ownerIdStr = String(conv.ownerId?._id || conv.ownerId);
+                const myIdStr = String(user._id);
+                const isOwner = ownerIdStr === myIdStr;
+                const otherUser = isOwner ? conv.applicantId : conv.ownerId;
+                
+                return (
+                  <div 
+                    key={conv._id} 
+                    className="chat-widget__conv-item"
+                    onClick={() => {
+                      setActiveChat({
+                        userId: otherUser._id,
+                        name: otherUser.name,
+                        avatar: otherUser.avatar,
+                        conversationId: conv._id
+                      });
+                      loadMessages(null, conv._id);
+                    }}
+                  >
+                    <div className="chat-widget__conv-avatar">
+                      {otherUser.avatar ? (
+                        <img src={otherUser.avatar} alt="avatar" />
+                      ) : (
+                        <div className="chat-widget__conv-avatar-placeholder">
+                          {otherUser.name ? otherUser.name.charAt(0).toUpperCase() : "?"}
+                        </div>
+                      )}
+                    </div>
+                    <div className="chat-widget__conv-info">
+                      <div className="chat-widget__conv-name">{otherUser.name || "User"}</div>
+                      <div className="chat-widget__conv-last">
+                        {conv.lastMessage?.senderId === user._id ? "You: " : ""}
+                        {conv.lastMessage?.text || "No messages"}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        ) : (
+          // ACTIVE CHAT
+          <div className="chat-widget__chat">
+            <div className="chat-widget__messages">
+              {loading ? (
+                <div className="chat-widget__loading">Loading...</div>
+              ) : messages.length === 0 ? (
+                <div className="chat-widget__empty">Start a conversation.</div>
               ) : (
-                conversations.map((conv) => {
-                  const ownerIdStr = String(conv.ownerId?._id || conv.ownerId);
+                messages.map((msg) => {
+                  const senderStr = String(msg.senderId?._id || msg.senderId);
                   const myIdStr = String(user._id);
-                  const isOwner = ownerIdStr === myIdStr;
-                  const otherUser = isOwner ? conv.applicantId : conv.ownerId;
+                  const isMe = senderStr === myIdStr;
                   
                   return (
-                    <div 
-                      key={conv._id} 
-                      className="chat-widget__conv-item"
-                      onClick={() => {
-                        setActiveChat({
-                          userId: otherUser._id,
-                          name: otherUser.name,
-                          avatar: otherUser.avatar,
-                          conversationId: conv._id
-                        });
-                        loadMessages(null, conv._id);
-                      }}
-                    >
-                      <div className="chat-widget__conv-avatar">
-                        {otherUser.avatar ? (
-                          <img src={otherUser.avatar} alt="avatar" />
-                        ) : (
-                          <div className="chat-widget__conv-avatar-placeholder">
-                            {otherUser.name ? otherUser.name.charAt(0).toUpperCase() : "?"}
-                          </div>
-                        )}
+                    <div key={msg._id} className={`chat-widget__message ${isMe ? "me" : "them"}`}>
+                      <div className="chat-widget__message-content">
+                        {msg.text}
                       </div>
-                      <div className="chat-widget__conv-info">
-                        <div className="chat-widget__conv-name">{otherUser.name || "User"}</div>
-                        <div className="chat-widget__conv-last">
-                          {conv.lastMessage?.senderId === user._id ? "You: " : ""}
-                          {conv.lastMessage?.text || "No messages"}
-                        </div>
-                      </div>
+                      {isMe && msg.seen && <div style={{ fontSize: "10px", textAlign: "right", marginTop: "2px", opacity: 0.6 }}>Seen</div>}
                     </div>
                   );
                 })
               )}
+              <div ref={messagesEndRef} />
             </div>
-          ) : (
-            // ACTIVE CHAT
-            <div className="chat-widget__chat">
-              <div className="chat-widget__messages">
-                {loading ? (
-                  <div className="chat-widget__loading">Loading...</div>
-                ) : messages.length === 0 ? (
-                  <div className="chat-widget__empty">Say hi!</div>
-                ) : (
-                  messages.map((msg) => {
-                    const senderStr = String(msg.senderId?._id || msg.senderId);
-                    const myIdStr = String(user._id);
-                    const isMe = senderStr === myIdStr;
-                    
-                    return (
-                      <div key={msg._id} className={`chat-widget__message ${isMe ? "me" : "them"}`}>
-                        <div className="chat-widget__message-content">
-                          {msg.text}
-                        </div>
-                        {isMe && msg.seen && <div style={{ fontSize: "10px", textAlign: "right", marginTop: "2px", opacity: 0.6 }}>Seen</div>}
-                      </div>
-                    );
-                  })
-                )}
-                <div ref={messagesEndRef} />
-              </div>
 
-              <form className="chat-widget__composer" onSubmit={handleSend}>
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                />
-                <button type="submit" disabled={!inputText.trim()}>
-                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                </button>
-              </form>
-            </div>
-          )}
-        </div>
-      )}
+            <form className="chat-widget__composer" onSubmit={handleSend}>
+              <input
+                type="text"
+                placeholder="Type a message..."
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+              />
+              <button type="submit" disabled={!inputText.trim()}>
+                Send
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

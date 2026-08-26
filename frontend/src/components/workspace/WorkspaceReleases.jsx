@@ -55,51 +55,51 @@ export default function WorkspaceReleases({ projectId }) {
   if (loading) return <Spinner />;
 
   return (
-    <div className="workspace-releases">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-        <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "600" }}>Releases</h2>
+    <div className="workspace-releases" style={{ width: "100%", color: "var(--color-text-dark)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", paddingBottom: "12px", borderBottom: "1px solid var(--border-color)" }}>
+        <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)" }}>Releases</h2>
         <Button onClick={() => setModalOpen(true)}>Create release</Button>
       </div>
 
       {releases.length === 0 ? (
-        <div style={{ padding: "60px 20px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <div style={{ fontSize: "60px", marginBottom: "24px" }}>🚢</div>
-          <h3 style={{ margin: "0 0 8px 0", fontSize: "18px" }}>Track your releases</h3>
-          <p style={{ color: "rgba(255,255,255,0.5)", margin: "0 0 24px 0", maxWidth: "400px" }}>
+        <div style={{ padding: "60px 24px", textAlign: "center", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <h3 style={{ margin: "0 0 8px 0", fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)" }}>Track your releases</h3>
+          <p style={{ color: "var(--color-text-muted)", margin: "0 0 24px 0", maxWidth: "440px", fontSize: "14px" }}>
             Releases help you track project milestones and software versions. Group tasks into releases to see progress and ensure you're ready to ship.
           </p>
+          <Button onClick={() => setModalOpen(true)}>Create Release</Button>
         </div>
       ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", color: "#fff", fontSize: "14px", textAlign: "left" }}>
+        <div style={{ overflowX: "auto", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px", padding: "8px" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", color: "var(--color-text-dark)", fontSize: "14px", textAlign: "left" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Release</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Status</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Progress</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Start date</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Release date</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Description</th>
+              <tr style={{ borderBottom: "1px solid var(--border-color)" }}>
+                <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Release</th>
+                <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</th>
+                <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Progress</th>
+                <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Start date</th>
+                <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Release date</th>
+                <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Description</th>
               </tr>
             </thead>
             <tbody>
               {releases.map(r => (
-                <tr key={r._id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                  <td style={{ padding: "12px 16px", color: "#0a84ff", fontWeight: "500" }}>{r.version}</td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <span style={{ padding: "2px 8px", borderRadius: "4px", fontSize: "12px", background: "rgba(255,255,255,0.1)", textTransform: "uppercase" }}>{r.status}</span>
+                <tr key={r._id} style={{ borderBottom: "1px solid var(--border-color)" }}>
+                  <td style={{ padding: "14px 18px", color: "var(--color-text-dark)", fontWeight: "700" }}>{r.version}</td>
+                  <td style={{ padding: "14px 18px" }}>
+                    <span style={{ padding: "4px 10px", borderRadius: "999px", fontSize: "11px", fontWeight: "700", background: "var(--color-paper)", border: "1px solid var(--border-color)", color: "var(--color-text-dark)", textTransform: "uppercase" }}>{r.status}</span>
                   </td>
-                  <td style={{ padding: "12px 16px" }}>
-                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                      <div style={{ width: "100px", height: "6px", background: "rgba(255,255,255,0.1)", borderRadius: "3px", overflow: "hidden" }}>
-                         <div style={{ width: `${r.progress}%`, height: "100%", background: "#32d74b" }}></div>
+                  <td style={{ padding: "14px 18px" }}>
+                    <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                      <div style={{ width: "100px", height: "6px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "999px", overflow: "hidden" }}>
+                         <div style={{ width: `${r.progress}%`, height: "100%", background: "var(--color-text-dark)" }}></div>
                       </div>
-                      <span>{r.progress}%</span>
+                      <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--color-text-dark)" }}>{r.progress}%</span>
                     </div>
                   </td>
-                  <td style={{ padding: "12px 16px" }}>{r.startDate ? new Date(r.startDate).toLocaleDateString() : "-"}</td>
-                  <td style={{ padding: "12px 16px" }}>{r.releaseDate ? new Date(r.releaseDate).toLocaleDateString() : "-"}</td>
-                  <td style={{ padding: "12px 16px", color: "rgba(255,255,255,0.5)" }}>{r.description || "-"}</td>
+                  <td style={{ padding: "14px 18px", color: "var(--color-text-dark)" }}>{r.startDate ? new Date(r.startDate).toLocaleDateString() : "-"}</td>
+                  <td style={{ padding: "14px 18px", color: "var(--color-text-dark)" }}>{r.releaseDate ? new Date(r.releaseDate).toLocaleDateString() : "-"}</td>
+                  <td style={{ padding: "14px 18px", color: "var(--color-text-muted)" }}>{r.description || "-"}</td>
                 </tr>
               ))}
             </tbody>

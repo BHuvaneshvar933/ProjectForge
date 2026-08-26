@@ -8,14 +8,14 @@ export default function AccountDetails({ user }) {
 
       <div className="account__section">
         <div className="account__muted">Email</div>
-        <div style={{ marginTop: 6, fontWeight: 800, color: "rgba(255,255,255,0.9)" }}>
+        <div style={{ marginTop: 4, fontWeight: 700, color: "var(--color-text-dark)", fontSize: "15px" }}>
           {user.email || "-"}
         </div>
       </div>
 
       <div className="account__section">
         <div className="account__muted">Member Since</div>
-        <div style={{ marginTop: 6, fontWeight: 800, color: "rgba(255,255,255,0.9)" }}>
+        <div style={{ marginTop: 4, fontWeight: 700, color: "var(--color-text-dark)", fontSize: "15px" }}>
           {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}
         </div>
       </div>
@@ -56,8 +56,8 @@ export default function AccountDetails({ user }) {
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             {user.developerJourney.gamifiedBadges.map(badge => (
               <div key={badge.id} style={{
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'var(--color-paper)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '8px',
                 padding: '12px',
                 display: 'flex',
@@ -65,12 +65,14 @@ export default function AccountDetails({ user }) {
                 gap: '12px',
                 width: 'calc(50% - 6px)'
               }}>
-                <div style={{ fontSize: '24px', background: 'rgba(0,0,0,0.3)', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}>
-                  {badge.icon}
+                <div style={{ background: '#121214', color: '#ffffff', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
                 </div>
                 <div>
-                  <div style={{ fontWeight: 'bold', fontSize: '14px', color: 'rgba(255,255,255,0.9)' }}>{badge.name}</div>
-                  <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>{badge.description}</div>
+                  <div style={{ fontWeight: '700', fontSize: '13px', color: 'var(--color-text-dark)' }}>{badge.name}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>{badge.description}</div>
                 </div>
               </div>
             ))}
@@ -87,33 +89,34 @@ export default function AccountDetails({ user }) {
           Peer Endorsements
         </div>
         {user?.endorsements?.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {user.endorsements.map((e, idx) => (
               <div key={idx} style={{ 
-                background: 'rgba(255, 255, 255, 0.03)', 
-                padding: '16px', 
+                background: 'var(--color-paper)', 
+                padding: '14px', 
                 borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.05)'
+                border: '1px solid var(--border-color)'
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <strong>{e.endorsedBy?.name || 'Unknown'}</strong>
-                  <span style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.5)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                  <strong style={{ color: 'var(--color-text-dark)', fontSize: '13px' }}>{e.endorsedBy?.name || 'Unknown'}</strong>
+                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
                     {new Date(e.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255, 255, 255, 0.8)', fontStyle: 'italic' }}>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-text-dark)', fontStyle: 'italic' }}>
                   "{e.text}"
                 </p>
                 {e.skills?.length > 0 && (
-                  <div style={{ display: 'flex', gap: '8px', marginTop: '12px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', gap: '6px', marginTop: '10px', flexWrap: 'wrap' }}>
                     {e.skills.map(s => (
                       <span key={s} style={{ 
-                        background: 'rgba(10, 132, 255, 0.1)', 
-                        color: '#0a84ff', 
-                        padding: '4px 8px', 
-                        borderRadius: '12px', 
+                        background: '#F4F3EF', 
+                        color: '#33333A', 
+                        padding: '3px 8px', 
+                        borderRadius: '4px', 
                         fontSize: '11px',
-                        fontWeight: '600'
+                        fontWeight: '600',
+                        border: '1px solid rgba(18,18,20,0.12)'
                       }}>{s}</span>
                     ))}
                   </div>

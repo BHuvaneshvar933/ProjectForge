@@ -39,9 +39,9 @@ export default function LearningArchive() {
   return (
     <div className="learning-archive">
       <div className="learning-archive__header">
-        <h1 className="learning-archive__title">Learning Archive</h1>
+        <h1 className="learning-archive__title">Technical Publications & Archives</h1>
         <p className="learning-archive__subtitle">
-          Explore completed projects to discover technical insights, challenges faced, and lessons learned from past teams.
+          Explore completed projects to discover technical post-mortems, architectural decisions, and lessons learned from shipped software builds.
         </p>
       </div>
 

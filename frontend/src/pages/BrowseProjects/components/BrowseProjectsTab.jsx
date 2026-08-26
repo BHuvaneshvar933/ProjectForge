@@ -44,8 +44,8 @@ export default function BrowseProjectsTab({
       ) : (
         <>
           {tokenPresent && validRecommendations.length > 0 && (
-            <div style={{ marginBottom: 30 }}>
-              <h2 className="browse-page__title" style={{ fontSize: 18, marginBottom: 15 }}>
+            <div style={{ marginBottom: 36 }}>
+              <h2 className="browse-page__section-title">
                 Recommended For You
               </h2>
               <div className="browse-page__grid">
@@ -69,8 +69,8 @@ export default function BrowseProjectsTab({
           ) : (
             <>
               {otherProjects.length > 0 && (
-                <div style={{ marginBottom: 30 }}>
-                  <h2 className="browse-page__title" style={{ fontSize: 18, marginBottom: 15 }}>
+                <div style={{ marginBottom: 36 }}>
+                  <h2 className="browse-page__section-title">
                     {validRecommendations.length > 0 ? 'Other Projects' : 'Explore Projects'}
                   </h2>
                   <div className="browse-page__grid">

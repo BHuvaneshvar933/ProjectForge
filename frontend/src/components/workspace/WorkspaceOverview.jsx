@@ -202,17 +202,23 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
       )}
       
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
-        <div className="workspace__card" style={{ padding: "16px" }}>
-          <div style={{ fontSize: "14px", fontWeight: "600", marginBottom: "8px", color: "rgba(255,255,255,0.7)" }}>Completed (7d)</div>
-          <div style={{ fontSize: "28px", fontWeight: "bold" }}>{overview.completed7d}</div>
+        <div className="workspace__card" style={{ padding: "20px", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px" }}>
+          <div style={{ fontSize: "13px", fontWeight: "700", marginBottom: "10px", color: "var(--color-text-dark)", borderBottom: "1px solid var(--border-color)", paddingBottom: "6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>To Do</div>
+          <div style={{ fontSize: "32px", fontWeight: "800", color: "var(--color-text-dark)" }}>
+            {tasks.filter(t => t.status === "todo").length}
+          </div>
         </div>
-        <div className="workspace__card" style={{ padding: "16px" }}>
-          <div style={{ fontSize: "14px", fontWeight: "600", marginBottom: "8px", color: "rgba(255,255,255,0.7)" }}>Created (7d)</div>
-          <div style={{ fontSize: "28px", fontWeight: "bold" }}>{overview.created7d}</div>
+        <div className="workspace__card" style={{ padding: "20px", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px" }}>
+          <div style={{ fontSize: "13px", fontWeight: "700", marginBottom: "10px", color: "var(--color-text-dark)", borderBottom: "1px solid var(--border-color)", paddingBottom: "6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>In Progress</div>
+          <div style={{ fontSize: "32px", fontWeight: "800", color: "var(--color-text-dark)" }}>
+            {tasks.filter(t => t.status === "in-progress").length}
+          </div>
         </div>
-        <div className="workspace__card" style={{ padding: "16px" }}>
-          <div style={{ fontSize: "14px", fontWeight: "600", marginBottom: "8px", color: "rgba(255,255,255,0.7)" }}>Due Soon</div>
-          <div style={{ fontSize: "28px", fontWeight: "bold", color: overview.dueSoon7d > 0 ? "#ff9f0a" : "inherit" }}>{overview.dueSoon7d}</div>
+        <div className="workspace__card" style={{ padding: "20px", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px" }}>
+          <div style={{ fontSize: "13px", fontWeight: "700", marginBottom: "10px", color: "var(--color-text-dark)", borderBottom: "1px solid var(--border-color)", paddingBottom: "6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Done</div>
+          <div style={{ fontSize: "32px", fontWeight: "800", color: "var(--color-text-dark)" }}>
+            {tasks.filter(t => t.status === "done").length}
+          </div>
         </div>
       </div>
 
@@ -304,49 +310,50 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
         {/* Recent Activity */}
         <div className="overview-card col-span-2">
           <h3 className="overview-card-title">Recent Activity</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}>
             {overview.recentTasks.length > 0 ? overview.recentTasks.map((t, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: "8px" }}>
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "8px" }}>
                 <div>
-                  <div style={{ fontSize: "14px", fontWeight: "500", marginBottom: "4px" }}>{t.title}</div>
-                  <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Updated {new Date(t.updatedAt).toLocaleDateString()}</div>
+                  <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--color-text-dark)", marginBottom: "2px" }}>{t.title}</div>
+                  <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Updated {new Date(t.updatedAt).toLocaleDateString()}</div>
                 </div>
                 <Badge variant={t.status === "done" ? "success" : "default"}>{t.status.replace("-", " ")}</Badge>
               </div>
             )) : (
-              <div style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", padding: "16px" }}>No recent activity.</div>
+              <div style={{ textAlign: "center", color: "var(--color-text-muted)", padding: "16px" }}>No recent activity.</div>
             )}
           </div>
         </div>
         {/* Team Management */}
         <div className="overview-card col-span-2">
           <h3 className="overview-card-title">Team Members</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "16px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}>
             {team.length > 0 ? team.map((m, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: "8px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "rgba(10,132,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#0a84ff", fontWeight: "bold" }}>
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "10px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                  <div style={{ width: "38px", height: "38px", borderRadius: "999px", background: "#ffffff", border: "1px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-dark)", fontWeight: "700", fontSize: "14px", flexShrink: 0 }}>
                     {m?.userId?.name?.[0] || 'U'}
                   </div>
-                  <div>
-                    <div style={{ fontSize: "14px", fontWeight: "500", marginBottom: "2px" }}>{m?.userId?.name || 'Unknown'}</div>
-                    <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{m?.projectRole || 'Member'}</div>
+                  <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                    <div style={{ fontSize: "14px", fontWeight: "700", color: "var(--color-text-dark)", lineHeight: 1.3 }}>{m?.userId?.name || 'Unknown'}</div>
+                    <div style={{ fontSize: "12px", color: "var(--color-text-muted)", fontWeight: "500", marginTop: "2px" }}>{m?.projectRole || 'Member'}</div>
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                   <Badge variant={m?.role === "owner" ? "owner" : "member"}>{m?.role === "owner" ? "owner" : "member"}</Badge>
                   {isOwner && m?.role !== "owner" && (
-                    <button 
+                    <Button 
+                      variant="danger" 
+                      size="sm"
                       onClick={() => onRemoveMember && onRemoveMember(m?.userId?._id)}
-                      style={{ background: "transparent", border: "1px solid rgba(255,69,58,0.5)", color: "#ff453a", padding: "4px 8px", borderRadius: "4px", cursor: "pointer", fontSize: "12px" }}
                     >
                       Remove
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
             )) : (
-              <div style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", padding: "16px" }}>No team members found.</div>
+              <div style={{ textAlign: "center", color: "var(--color-text-muted)", padding: "16px" }}>No team members found.</div>
             )}
           </div>
         </div>
