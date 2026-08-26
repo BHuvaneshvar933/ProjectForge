@@ -256,7 +256,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                   
                   {localMetrics.aiWeeklySummary.completed?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", color: "#32d74b", textTransform: "uppercase" }}>Completed</strong>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase" }}>Completed</strong>
                       <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
                         {localMetrics.aiWeeklySummary.completed.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
@@ -265,7 +265,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
                   {localMetrics.aiWeeklySummary.started?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", color: "#0a84ff", textTransform: "uppercase" }}>Started</strong>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase" }}>Started</strong>
                       <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
                         {localMetrics.aiWeeklySummary.started.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
@@ -274,7 +274,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
                   {localMetrics.aiWeeklySummary.risks?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", color: "#ff9f0a", textTransform: "uppercase" }}>Risks</strong>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase" }}>Risks</strong>
                       <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
                         {localMetrics.aiWeeklySummary.risks.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
@@ -283,7 +283,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
                   {localMetrics.aiWeeklySummary.next_actions?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", color: "#bf5af2", textTransform: "uppercase" }}>Next Actions</strong>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase" }}>Next Actions</strong>
                       <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
                         {localMetrics.aiWeeklySummary.next_actions.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>

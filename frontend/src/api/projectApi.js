@@ -50,11 +50,14 @@ export const getGitHubMetrics = (id) =>
 export const getBasicRepoStats = (url) =>
   API.get(`/projects/github-stats`, { params: { url } });
 
-export const getProjectReleases = (id) =>
-  API.get(`/projects/${id}/releases`);
+export const getProjectReleases = (projectId) =>
+  API.get(`/projects/${projectId}/releases`);
 
-export const createProjectRelease = (id, data) =>
-  API.post(`/projects/${id}/releases`, data);
+export const createProjectRelease = (projectId, payload) =>
+  API.post(`/projects/${projectId}/releases`, payload);
+
+export const updateProjectRelease = (projectId, releaseId, payload) =>
+  API.patch(`/projects/${projectId}/releases/${releaseId}`, payload);
 
 export const leaveProject = (projectId) => API.patch(`/projects/${projectId}/leave`);
 export const removeTeamMember = (projectId, userId) => API.delete(`/projects/${projectId}/team/${userId}`);

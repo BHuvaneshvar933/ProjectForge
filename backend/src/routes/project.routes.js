@@ -18,6 +18,7 @@ import {
   getBasicRepoStats,
   getReleases,
   createRelease,
+  updateRelease,
   saveMyReflections,
   removeTeamMember,
   getProjectFiles,
@@ -45,6 +46,7 @@ router.delete("/:id/github", protect, disconnectGitHub);
 router.get("/:id/github", protect, getGitHubMetrics);
 router.get("/:id/releases", protect, getReleases);
 router.post("/:id/releases", protect, createRelease);
+router.patch("/:id/releases/:releaseId", protect, updateRelease);
 router.patch(
   "/:projectId/leave",
   protect,

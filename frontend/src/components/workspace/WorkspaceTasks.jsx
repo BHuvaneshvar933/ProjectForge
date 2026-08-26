@@ -8,6 +8,7 @@ import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
 import { createTask, updateTaskStatus, assignTask } from "../../api/taskApi";
 import { uploadFile } from "../../api/uploadApi";
+import { getProjectReleases } from "../../api/projectApi";
 import TasksListView from "./tasks/TasksListView";
 
 export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, tasksLoading, onTaskChange, fetchTasks }) {
@@ -21,6 +22,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
     issueType: "task",
     parentId: "",
     assignedTo: "",
+    releaseId: "",
     startedAt: "",
     dueDate: "",
     attachmentUrl: "",
@@ -30,9 +32,18 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
 
   const isCompleted = project?.status === "completed";
 
-
-
-  const tasksByStatus = useMemo(() => {
+  const [releases, setReleases] = useState([]);
+  React.useEffect(() => {
+    const fetchReleases = async () => {
+      try {
+        const res = await getProjectReleases(projectId);
+        setReleases(res.data?.data?.releases || []);
+      } catch (e) {
+        console.error("Failed to fetch releases", e);
+      }
+    };
+    fetchReleases();
+  }, [projectId]);  const tasksByStatus = useMemo(() => {
     return {
       todo: tasks.filter((t) => t.status === "todo"),
       "in-progress": tasks.filter((t) => t.status === "in-progress"),
@@ -73,6 +84,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
         issueType: taskForm.issueType || "task",
         parentId: taskForm.parentId || null,
         assignedTo: taskForm.assignedTo || null,
+        releaseId: taskForm.releaseId || null,
         startedAt: taskForm.startedAt || null,
         dueDate: taskForm.dueDate || null,
         attachmentUrl: taskForm.attachmentUrl || null,
@@ -80,7 +92,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
       });
       toast.success("Task created");
       setTaskModalOpen(false);
-      setTaskForm({ title: "", description: "", priority: "medium", issueType: "task", parentId: "", assignedTo: "", startedAt: "", dueDate: "", attachmentUrl: "", attachmentName: "" });
+      setTaskForm({ title: "", description: "", priority: "medium", issueType: "task", parentId: "", assignedTo: "", releaseId: "", startedAt: "", dueDate: "", attachmentUrl: "", attachmentName: "" });
       if (onTaskChange) await onTaskChange();
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to create task");
@@ -167,6 +179,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
           initialTasks={tasks}
           teamSorted={teamSorted}
           fetchTasks={fetchTasks}
+          releases={releases}
         />
       ) : (
         <DragDropContext onDragEnd={(result) => {
@@ -348,6 +361,24 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                 ))}
               </select>
             </div>
+            <div>
+              <label className="input__label">Release (Optional)</label>
+              <select
+                className="input__field"
+                value={taskForm.releaseId}
+                onChange={(e) => onChangeTaskForm("releaseId", e.target.value)}
+              >
+                <option value="">None</option>
+                {releases.map(r => (
+                  <option key={r._id} value={r._id}>
+                    {r.version}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <div>
               <label className="input__label">Parent Issue (Optional)</label>
               <select

@@ -44,6 +44,13 @@ const taskSchema = new mongoose.Schema(
       index: true,
     },
 
+    releaseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Release",
+      default: null,
+      index: true,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
