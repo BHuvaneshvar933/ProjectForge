@@ -125,12 +125,6 @@ export default function Navbar() {
             Directory
           </Link>
 
-          <Link
-            to="/learning-archive"
-            className={`navbar__link ${isActive('/learning-archive') ? 'is-active' : ''}`.trim()}
-          >
-            Archive
-          </Link>
 
           <Link
             to="/my-projects"
