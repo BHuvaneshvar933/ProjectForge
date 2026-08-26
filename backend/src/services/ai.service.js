@@ -288,7 +288,7 @@ export const generateProjectHealthScore = async (projectId, projectData, tasks, 
 
   try {
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
-    const jsonMatch = rawContent.match(/\\{[\\s\\S]*\\}/);
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
     const jsonString = jsonMatch ? jsonMatch[0] : "{}";
     const parsed = JSON.parse(jsonString);
     
@@ -359,7 +359,7 @@ export const generateWeeklyProjectSummary = async (projectId, projectData, tasks
 
   try {
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
-    const jsonMatch = rawContent.match(/\\{[\\s\\S]*\\}/);
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
     const jsonString = jsonMatch ? jsonMatch[0] : "{}";
     const parsed = JSON.parse(jsonString);
     
@@ -427,7 +427,7 @@ export const generateDeveloperContribution = async (userId, tasks, projectData) 
 
   try {
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
-    const jsonMatch = rawContent.match(/\\{[\\s\\S]*\\}/);
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
     const jsonString = jsonMatch ? jsonMatch[0] : "{}";
     const parsed = JSON.parse(jsonString);
     return {
