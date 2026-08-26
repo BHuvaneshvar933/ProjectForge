@@ -2,7 +2,18 @@ import { registerSocketHandlers } from "./socketHandlers.js";
 import { createAdapter } from "@socket.io/redis-adapter";
 import Redis from "ioredis";
 
+let ioInstance;
+
+export const getIO = () => {
+  if (!ioInstance) {
+    throw new Error("Socket.io not initialized!");
+  }
+  return ioInstance;
+};
+
 export const initializeSocket = (io) => {
+  ioInstance = io;
+
   if (process.env.REDIS_URL) {
     const pubClient = new Redis(process.env.REDIS_URL);
     const subClient = pubClient.duplicate();
