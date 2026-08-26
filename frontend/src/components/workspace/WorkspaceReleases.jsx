@@ -73,17 +73,10 @@ export default function WorkspaceReleases({ projectId }) {
   if (loading) return <Spinner />;
 
   return (
- main
     <div className="workspace-releases" style={{ width: "100%", color: "var(--color-text-dark)" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px", paddingBottom: "12px", borderBottom: "1px solid var(--border-color)" }}>
         <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)" }}>Releases</h2>
-        <Button onClick={() => setModalOpen(true)}>Create release</Button>
-
-    <div className="workspace-releases">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-        <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "600" }}>Releases</h2>
         <Button onClick={openCreateModal}>Create release</Button>
- main
       </div>
 
       {releases.length === 0 ? (
@@ -98,7 +91,6 @@ export default function WorkspaceReleases({ projectId }) {
         <div style={{ overflowX: "auto", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px", padding: "8px" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", color: "var(--color-text-dark)", fontSize: "14px", textAlign: "left" }}>
             <thead>
- main
               <tr style={{ borderBottom: "1px solid var(--border-color)" }}>
                 <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Release</th>
                 <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</th>
@@ -106,16 +98,7 @@ export default function WorkspaceReleases({ projectId }) {
                 <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Start date</th>
                 <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Release date</th>
                 <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Description</th>
-
-              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Release</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Status</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Progress</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Start date</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Release date</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}>Description</th>
-                <th style={{ padding: "12px 16px", fontWeight: "600", color: "rgba(255,255,255,0.6)" }}></th>
- main
+                <th style={{ padding: "14px 18px", fontWeight: "700", color: "var(--color-text-dark)", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}></th>
               </tr>
             </thead>
             <tbody>
@@ -133,17 +116,12 @@ export default function WorkspaceReleases({ projectId }) {
                       <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--color-text-dark)" }}>{r.progress}%</span>
                     </div>
                   </td>
- main
                   <td style={{ padding: "14px 18px", color: "var(--color-text-dark)" }}>{r.startDate ? new Date(r.startDate).toLocaleDateString() : "-"}</td>
                   <td style={{ padding: "14px 18px", color: "var(--color-text-dark)" }}>{r.releaseDate ? new Date(r.releaseDate).toLocaleDateString() : "-"}</td>
                   <td style={{ padding: "14px 18px", color: "var(--color-text-muted)" }}>{r.description || "-"}</td>
-                  <td style={{ padding: "12px 16px" }}>{r.startDate ? new Date(r.startDate).toLocaleDateString() : "-"}</td>
-                  <td style={{ padding: "12px 16px" }}>{r.releaseDate ? new Date(r.releaseDate).toLocaleDateString() : "-"}</td>
-                  <td style={{ padding: "12px 16px", color: "rgba(255,255,255,0.5)" }}>{r.description || "-"}</td>
-                  <td style={{ padding: "12px 16px", textAlign: "right" }}>
+                  <td style={{ padding: "14px 18px", textAlign: "right" }}>
                     <button onClick={() => openEditModal(r)} style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "#fff", padding: "4px 8px", borderRadius: "4px", cursor: "pointer", fontSize: "12px" }}>Edit</button>
                   </td>
- main
                 </tr>
               ))}
             </tbody>

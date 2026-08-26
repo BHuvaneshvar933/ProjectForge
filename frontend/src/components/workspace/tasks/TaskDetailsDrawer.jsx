@@ -26,10 +26,6 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <a href="#" style={{ color: "#0a84ff", textDecoration: "none", fontWeight: "600" }}>{project?.key || "PROJ"}-{task.taskNumber}</a>
         </div>
- main
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", color: "var(--text-sand)", cursor: "pointer", fontSize: "13px", padding: "4px 10px", borderRadius: "4px" }}>Close</button>
-
         <div style={{ display: "flex", alignItems: "center", gap: "12px", position: "relative" }}>
           <button 
             onClick={() => {
@@ -42,7 +38,6 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
             Delete Task
           </button>
           <button onClick={onClose} style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "20px" }}>×</button>
-main
         </div>
       </div>
 
