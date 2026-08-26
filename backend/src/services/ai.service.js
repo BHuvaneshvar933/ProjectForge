@@ -451,20 +451,22 @@ export const generateEngineeringAssessment = async (projectData) => {
     
     IMPORTANT STRICT RULES:
     1. DO NOT claim to objectively determine if a student is "developing well". Instead, frame it as "evidence-based guidance".
-    2. The assessment MUST clearly reference the provided data (e.g., "Because you have 5 overdue tasks...").
-    3. Be encouraging but practical. Do not invent metrics or data.
-    4. Output ONLY a valid, parseable JSON object.
+    2. Every strength, weakness, and recommendation must be directly traceable to one or more supplied metrics. Do not recommend practices merely because they are generally considered good engineering practices (e.g. do not recommend adding automated tests unless you have test metrics). If the available data is insufficient to support an assessment, explicitly state that evidence is unavailable.
+    3. DO NOT judge a metric as "high" or "low" (e.g. deployment frequency) unless you have a baseline. Simply state the metric.
+    4. If pull request data is zero or missing, DO NOT assume there is a lack of code review. Instead, state: "No pull-request activity is currently recorded, so code-review activity cannot be assessed."
+    5. The assessment MUST clearly reference the provided data (e.g., "Because you have 5 overdue tasks...").
+    6. Be encouraging but practical. Do not invent metrics or data.
+    7. Output ONLY a valid, parseable JSON object.
 
     Project Evidence:
     ${JSON.stringify(projectData, null, 2)}
 
     Output your assessment as a strict JSON object with this exact structure:
     {
-      "status": "One of: 'Excellent', 'On Track', 'Needs Attention', 'Critical'",
       "message": "A 2-3 sentence overall mentor evaluation linking the raw metrics to engineering health.",
       "strengths": ["One or two specific positive observations backed by data."],
       "areasForImprovement": ["One or two specific negative observations backed by data."],
-      "recommendedActions": ["1-3 actionable steps the team should take right now to improve."]
+      "recommendedActions": ["1-3 actionable steps the team should take right now to improve, derived strictly from the evidence."]
     }
   `;
 

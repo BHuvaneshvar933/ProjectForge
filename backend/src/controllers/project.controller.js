@@ -382,9 +382,18 @@ export const getEngineeringAssessment = async (req, res, next) => {
     const openBugs = openTasks.filter(t => t.type === "bug");
     
     let githubData = "Not connected";
+    let githubMetrics = null;
+    
     if (project.githubIntegration && project.githubIntegration.isConnected) {
        githubData = "Connected to repository: " + project.githubIntegration.repoName;
-       // We could fetch real-time github data here if we wanted to be more precise
+       try {
+         githubMetrics = await fetchGitHubMetrics(
+           project.githubIntegration.repoName,
+           project.githubIntegration.accessToken
+         );
+       } catch (err) {
+         console.error("Failed to fetch GitHub metrics for assessment", err);
+       }
     }
 
     const projectData = {
@@ -393,10 +402,23 @@ export const getEngineeringAssessment = async (req, res, next) => {
       completedTasks: completedTasks.length,
       openBugs: openBugs.length,
       overdueTasks: overdueTasks.length,
-      githubStatus: githubData
+      githubStatus: githubData,
+      githubMetrics: githubMetrics
     };
 
+    let systemStatus = "Stable";
+    const completionRate = tasks.length > 0 ? completedTasks.length / tasks.length : 0;
+    
+    if (overdueTasks.length > 3 || openBugs.length > 3) {
+      systemStatus = "Critical";
+    } else if (overdueTasks.length >= 1 || openBugs.length >= 1 || completionRate <= 0.5) {
+      systemStatus = "Needs Attention";
+    } else {
+      systemStatus = "Stable";
+    }
+
     const assessment = await generateAssessmentAI(projectData);
+    assessment.status = systemStatus;
 
     res.status(200).json({ success: true, data: { assessment } });
   } catch (error) {
