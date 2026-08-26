@@ -225,10 +225,10 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                 <div style={{ marginBottom: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
                   {localMetrics.aiHealthComponents.map((c, i) => (
                     <div key={i} style={{ fontSize: "14px" }}>
-                      <span style={{ color: c.impact < 0 ? "#ff453a" : c.impact > 0 ? "#32d74b" : "rgba(255,255,255,0.7)", fontWeight: "bold", marginRight: "8px" }}>
+                      <span style={{ color: c.impact < 0 ? "#ff453a" : c.impact > 0 ? "#32d74b" : "var(--color-text-muted)", fontWeight: "bold", marginRight: "8px" }}>
                         {c.name} {c.impact > 0 ? `+${c.impact}` : c.impact}
                       </span>
-                      <span style={{ color: "rgba(255,255,255,0.8)" }}>{c.reasoning || c.fact}</span>
+                      <span style={{ color: "var(--color-text-muted)" }}>{c.reasoning || c.fact}</span>
                     </div>
                   ))}
                 </div>
@@ -236,13 +236,13 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
               {localMetrics.aiHealthMainRisk && (
                 <div style={{ marginBottom: "12px", fontSize: "14px" }}>
-                  <strong style={{ color: "#ff9f0a" }}>Main Risk:</strong> <span style={{ color: "rgba(255,255,255,0.9)" }}>{localMetrics.aiHealthMainRisk}</span>
+                  <strong style={{ color: "#ff9f0a" }}>Main Risk:</strong> <span style={{ color: "var(--color-text-dark)" }}>{localMetrics.aiHealthMainRisk}</span>
                 </div>
               )}
 
               <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)" }}>
                 <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>💡 AI Suggestion</span>
-                <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.9)" }}>{localMetrics.aiHealthSuggestion}</span>
+                <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthSuggestion}</span>
               </div>
             </div>
           )}
@@ -252,12 +252,12 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "12px" }}>📝 AI Weekly Summary</h3>
               {typeof localMetrics.aiWeeklySummary === 'object' ? (
                 <div>
-                  <h4 style={{ fontSize: "15px", color: "rgba(255,255,255,0.9)", marginBottom: "16px" }}>{localMetrics.aiWeeklySummary.headline}</h4>
+                  <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "16px" }}>{localMetrics.aiWeeklySummary.headline}</h4>
                   
                   {localMetrics.aiWeeklySummary.completed?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase" }}>Completed</strong>
-                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Completed</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
                         {localMetrics.aiWeeklySummary.completed.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
@@ -265,8 +265,8 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
                   {localMetrics.aiWeeklySummary.started?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase" }}>Started</strong>
-                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Started</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
                         {localMetrics.aiWeeklySummary.started.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
@@ -274,8 +274,8 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
                   {localMetrics.aiWeeklySummary.risks?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase" }}>Risks</strong>
-                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Risks</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
                         {localMetrics.aiWeeklySummary.risks.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
@@ -283,15 +283,15 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
                   {localMetrics.aiWeeklySummary.next_actions?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase" }}>Next Actions</strong>
-                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Next Actions</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
                         {localMetrics.aiWeeklySummary.next_actions.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
                   )}
                 </div>
               ) : (
-                <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
+                <p style={{ fontSize: "14px", color: "var(--color-text-muted)", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
                   {localMetrics.aiWeeklySummary}
                 </p>
               )}
@@ -307,25 +307,25 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {overview.teamHealth.problems.length > 0 && (
               <div>
-                <h4 style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginBottom: "8px" }}>🔴 Problems</h4>
+                <h4 style={{ fontSize: "13px", color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>🔴 Problems</h4>
                 {overview.teamHealth.problems.map((prob, i) => (
-                  <div key={`prob-${i}`} style={{ fontSize: "14px", color: "rgba(255,255,255,0.9)", marginBottom: "4px" }}>• {prob}</div>
+                  <div key={`prob-${i}`} style={{ fontSize: "14px", color: "var(--color-text-dark)", marginBottom: "4px" }}>• {prob}</div>
                 ))}
               </div>
             )}
             {overview.teamHealth.risks.length > 0 && (
               <div>
-                <h4 style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginBottom: "8px" }}>🟠 Risks</h4>
+                <h4 style={{ fontSize: "13px", color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>🟠 Risks</h4>
                 {overview.teamHealth.risks.map((risk, i) => (
-                  <div key={`risk-${i}`} style={{ fontSize: "14px", color: "rgba(255,255,255,0.9)", marginBottom: "4px" }}>• {risk}</div>
+                  <div key={`risk-${i}`} style={{ fontSize: "14px", color: "var(--color-text-dark)", marginBottom: "4px" }}>• {risk}</div>
                 ))}
               </div>
             )}
             {overview.teamHealth.awareness.length > 0 && (
               <div>
-                <h4 style={{ fontSize: "13px", color: "rgba(255,255,255,0.6)", textTransform: "uppercase", marginBottom: "8px" }}>🟡 Awareness</h4>
+                <h4 style={{ fontSize: "13px", color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>🟡 Awareness</h4>
                 {overview.teamHealth.awareness.map((awar, i) => (
-                  <div key={`awar-${i}`} style={{ fontSize: "14px", color: "rgba(255,255,255,0.9)", marginBottom: "4px" }}>• {awar}</div>
+                  <div key={`awar-${i}`} style={{ fontSize: "14px", color: "var(--color-text-dark)", marginBottom: "4px" }}>• {awar}</div>
                 ))}
               </div>
             )}
@@ -403,14 +403,14 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
           {overview.workloadList.length > 0 ? (
             <div className="overview-workload-list">
               {overview.workloadList.slice(0, 5).map((w, i) => (
-                <div key={i} className="workload-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <span className="workload-name" style={{ fontSize: '14px', color: 'rgba(255,255,255,0.9)' }}>{w.name}</span>
+                <div key={i} className="workload-item" style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border-color)' }}>
+                  <span className="workload-name" style={{ fontSize: '14px', color: 'var(--color-text-dark)' }}>{w.name}</span>
                   <span className="workload-count" style={{ fontSize: '14px', fontWeight: 'bold' }}>{w.count}</span>
                 </div>
               ))}
               {overview.teamHealth.problems.includes('Severe workload imbalance detected') && (
                 <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(255, 69, 58, 0.1)', borderRadius: '6px', border: '1px solid rgba(255, 69, 58, 0.2)' }}>
-                  <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.9)' }}>
+                  <span style={{ fontSize: '13px', color: 'var(--color-text-dark)' }}>
                     <strong>Insight:</strong> Workload is unevenly distributed. Consider reassigning tasks to available members.
                   </span>
                 </div>
