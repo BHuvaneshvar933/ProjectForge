@@ -298,13 +298,13 @@ export default function ProjectApplications() {
             {profileUser.portfolioLinks && Object.values(profileUser.portfolioLinks).some(Boolean) && (
               <div className="apps-profile__links" style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
                 {profileUser.portfolioLinks.github && (
-                  <a href={profileUser.portfolioLinks.github.startsWith('http') ? profileUser.portfolioLinks.github : `https://${profileUser.portfolioLinks.github}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#0a84ff', borderColor: 'rgba(10, 132, 255, 0.3)'}}>GitHub</a>
+                  <a href={profileUser.portfolioLinks.github.startsWith('http') ? profileUser.portfolioLinks.github : `https://${profileUser.portfolioLinks.github}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#3A3635', borderColor: 'rgba(58, 54, 53, 0.3)'}}>GitHub</a>
                 )}
                 {profileUser.portfolioLinks.linkedin && (
-                  <a href={profileUser.portfolioLinks.linkedin.startsWith('http') ? profileUser.portfolioLinks.linkedin : `https://${profileUser.portfolioLinks.linkedin}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#0a84ff', borderColor: 'rgba(10, 132, 255, 0.3)'}}>LinkedIn</a>
+                  <a href={profileUser.portfolioLinks.linkedin.startsWith('http') ? profileUser.portfolioLinks.linkedin : `https://${profileUser.portfolioLinks.linkedin}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#3A3635', borderColor: 'rgba(58, 54, 53, 0.3)'}}>LinkedIn</a>
                 )}
                 {profileUser.portfolioLinks.website && (
-                  <a href={profileUser.portfolioLinks.website.startsWith('http') ? profileUser.portfolioLinks.website : `https://${profileUser.portfolioLinks.website}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#0a84ff', borderColor: 'rgba(10, 132, 255, 0.3)'}}>Website</a>
+                  <a href={profileUser.portfolioLinks.website.startsWith('http') ? profileUser.portfolioLinks.website : `https://${profileUser.portfolioLinks.website}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#3A3635', borderColor: 'rgba(58, 54, 53, 0.3)'}}>Website</a>
                 )}
               </div>
             )}

@@ -13,7 +13,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -22,7 +25,8 @@
     "@hello-pangea/dnd": "^18.0.1",
     "@react-oauth/google": "^0.13.5",
     "@tanstack/react-virtual": "^3.14.5",
-    "axios": "^1.13.6",
+    "@tauri-apps/api": "^2.11.1",
+    "axios": "^1.13.0",
     "cmdk": "^1.1.1",
     "framer-motion": "^12.42.2",
     "html-to-image": "^1.11.13",
@@ -38,6 +42,7 @@
     "@eslint/js": "^9.39.1",
     "@tailwindcss/postcss": "^4.2.1",
     "@tailwindcss/vite": "^4.2.2",
+    "@tauri-apps/cli": "^2.11.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.7",

@@ -44,8 +44,8 @@ export default function WorkspaceCalendar({ project, tasks, onTaskClick }) {
   return (
     <div className="workspace__calendar-layout" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {/* Calendar Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.03)", padding: "16px", borderRadius: "12px" }}>
-        <h2 style={{ fontSize: "18px", fontWeight: "bold", margin: 0 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#ffffff", border: "1px solid var(--border-color)", padding: "18px 24px", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
+        <h2 style={{ fontSize: "18px", fontWeight: "700", margin: 0, color: "var(--color-text-dark)" }}>
           {currentMonthDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
         </h2>
         <div style={{ display: "flex", gap: "8px" }}>
@@ -59,7 +59,7 @@ export default function WorkspaceCalendar({ project, tasks, onTaskClick }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "8px" }}>
         {/* Day Headers */}
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} style={{ textAlign: "center", fontWeight: "600", fontSize: "14px", color: "rgba(255,255,255,0.5)", padding: "8px 0" }}>
+          <div key={day} style={{ textAlign: "center", fontWeight: "700", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-text-dark)", padding: "8px 0" }}>
             {day}
           </div>
         ))}
@@ -74,36 +74,39 @@ export default function WorkspaceCalendar({ project, tasks, onTaskClick }) {
           const isProjectEnd = project?.timeline?.endDate && new Date(project.timeline.endDate).toDateString() === dateStr;
           const dayEvents = project?.archiveData?.timelineEvents?.filter(e => new Date(e.date).toDateString() === dateStr) || [];
 
+          const isToday = dayObj.date.toDateString() === new Date().toDateString();
+
           return (
             <div key={i} style={{ 
               minHeight: "100px", 
-              background: dayObj.isCurrentMonth ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.02)", 
+              background: dayObj.isCurrentMonth ? "#ffffff" : "var(--color-paper)", 
+              border: isToday ? "2px solid var(--color-text-dark)" : "1px solid var(--border-color)", 
               borderRadius: "8px", 
               padding: "8px",
-              opacity: dayObj.isCurrentMonth ? 1 : 0.5,
+              opacity: dayObj.isCurrentMonth ? 1 : 0.6,
               display: "flex",
               flexDirection: "column",
               gap: "4px"
             }}>
-              <div style={{ fontSize: "14px", fontWeight: "500", marginBottom: "4px", color: dayObj.date.toDateString() === new Date().toDateString() ? "#0a84ff" : "inherit" }}>
+              <div style={{ fontSize: "13px", fontWeight: "700", marginBottom: "4px", color: "var(--color-text-dark)" }}>
                 {dayObj.date.getDate()}
               </div>
               
               {isProjectStart && (
-                <div style={{ fontSize: "11px", padding: "2px 6px", background: "rgba(52,199,89,0.2)", color: "#34c759", borderRadius: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title="Project Start">
-                  🚀 Project Start
+                <div style={{ fontSize: "11px", fontWeight: "700", padding: "2px 6px", background: "var(--color-paper)", border: "1px solid var(--border-color)", color: "var(--color-text-dark)", borderRadius: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title="Project Start">
+                  Project Start
                 </div>
               )}
 
               {isProjectEnd && (
-                <div style={{ fontSize: "11px", padding: "2px 6px", background: "rgba(255,69,58,0.2)", color: "#ff453a", borderRadius: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title="Project End">
-                  🏁 Project End
+                <div style={{ fontSize: "11px", fontWeight: "700", padding: "2px 6px", background: "var(--color-paper)", border: "1px solid var(--border-color)", color: "var(--color-text-dark)", borderRadius: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title="Project End">
+                  Project End
                 </div>
               )}
 
               {dayEvents.map((evt, idx) => (
-                <div key={`evt-${idx}`} style={{ fontSize: "11px", padding: "2px 6px", background: "rgba(10,132,255,0.2)", color: "#0a84ff", borderRadius: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={evt.title}>
-                  ⚡ {evt.title}
+                <div key={`evt-${idx}`} style={{ fontSize: "11px", fontWeight: "600", padding: "2px 6px", background: "var(--color-paper)", border: "1px solid var(--border-color)", color: "var(--color-text-dark)", borderRadius: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={evt.title}>
+                  {evt.title}
                 </div>
               ))}
 
@@ -113,9 +116,11 @@ export default function WorkspaceCalendar({ project, tasks, onTaskClick }) {
                   onClick={onTaskClick}
                   style={{ 
                     fontSize: "11px", 
+                    fontWeight: "600",
                     padding: "2px 6px", 
-                    background: t.status === "done" ? "rgba(255,255,255,0.1)" : t.priority === "high" ? "rgba(255,69,58,0.2)" : t.priority === "medium" ? "rgba(255,159,10,0.2)" : "rgba(52,199,89,0.2)", 
-                    color: t.status === "done" ? "rgba(255,255,255,0.5)" : t.priority === "high" ? "#ff453a" : t.priority === "medium" ? "#ff9f0a" : "#34c759", 
+                    background: "var(--color-paper)",
+                    border: "1px solid var(--border-color)",
+                    color: t.status === "done" ? "var(--color-text-muted)" : "var(--color-text-dark)", 
                     borderRadius: "4px", 
                     cursor: "pointer",
                     whiteSpace: "nowrap", 

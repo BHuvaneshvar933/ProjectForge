@@ -13,7 +13,7 @@ export default function ProjectCompletionModal({ isOpen, onClose, project, onCom
     <Modal isOpen={isOpen} onClose={onClose} title="Complete Project" hideDefaultActions={true}>
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <div>
-          <p style={{ color: "rgba(255,255,255,0.8)", marginBottom: "12px" }}>
+          <p style={{ color: "var(--color-text-dark)", marginBottom: "12px", fontSize: "14px" }}>
             Are you sure you want to mark this project as completed? Your team will be able to reflect on the journey and generate personalized career assets.
           </p>
         </div>

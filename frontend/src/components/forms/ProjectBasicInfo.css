@@ -1,94 +1,95 @@
 .project-basic {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
 }
 
 .project-basic__group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .project-basic__label {
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.82);
+  color: var(--color-text-muted);
 }
 
 .project-basic__textarea {
   width: 100%;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 16px 20px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 13px;
+  background: var(--color-paper);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: var(--color-text-dark);
+  font-size: 14px;
   line-height: 1.6;
   outline: none;
-  resize: none;
-  transition: all 0.3s ease;
+  resize: vertical;
+  transition: all 0.15s ease;
 }
 
 .project-basic__textarea::placeholder {
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--color-text-muted);
+  opacity: 0.7;
 }
 
 .project-basic__textarea:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.18);
+  background: #ffffff;
+  border-color: rgba(18, 18, 20, 0.3);
 }
 
 .project-basic__textarea:focus {
-  border-color: rgba(10, 132, 255, 0.5);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+  border-color: var(--color-text-dark);
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(18, 18, 20, 0.1);
 }
 
 .project-basic__select {
   width: 100%;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 14px 20px;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.85);
+  background: var(--color-paper);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--color-text-dark);
   outline: none;
   appearance: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
   padding-right: 40px;
-  background-image: linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.72) 50%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.72) 50%, transparent 50%);
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-text-dark) 50%),
+    linear-gradient(135deg, var(--color-text-dark) 50%, transparent 50%);
   background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
   background-size: 6px 6px, 6px 6px;
   background-repeat: no-repeat;
 }
 
 .project-basic__select:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.18);
+  background-color: #ffffff;
+  border-color: rgba(18, 18, 20, 0.3);
 }
 
 .project-basic__select:focus {
-  border-color: rgba(10, 132, 255, 0.5);
-  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+  border-color: var(--color-text-dark);
+  box-shadow: 0 0 0 2px rgba(18, 18, 20, 0.1);
 }
 
 .project-basic__select option {
-  background: #1c1c1e;
-  color: rgba(255, 255, 255, 0.8);
+  background: #ffffff;
+  color: #121214;
 }
 
 .project-basic__error {
   font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 69, 58, 0.8);
+  font-weight: 500;
+  color: #dc2626;
 }
 
 .project-basic__textarea.is-error,
 .project-basic__select.is-error {
-  border-color: rgba(255, 69, 58, 0.4);
+  border-color: #dc2626;
 }

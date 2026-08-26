@@ -59,27 +59,27 @@ export default function WorkspaceFiles({ projectId, isMember }) {
   };
 
   const getFileIcon = (mimetype) => {
-    if (mimetype?.startsWith("image/")) return <ImageIcon size={32} style={{ color: "rgba(255,255,255,0.6)" }} />;
-    return <File size={32} style={{ color: "rgba(255,255,255,0.6)" }} />;
+    if (mimetype?.startsWith("image/")) return <ImageIcon size={32} style={{ color: "var(--color-text-muted)" }} />;
+    return <File size={32} style={{ color: "var(--color-text-muted)" }} />;
   };
 
   const getSourceBadge = (source, taskKey) => {
     if (source === "chat") {
       return (
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", background: "rgba(255, 255, 255, 0.05)", padding: "2px 6px", borderRadius: "12px", color: "rgba(255,255,255,0.6)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", background: "var(--color-paper)", border: "1px solid var(--border-color)", padding: "2px 8px", borderRadius: "999px", color: "var(--color-text-dark)", fontWeight: "600" }}>
           <MessageSquare size={10} /> Chat
         </div>
       );
     }
     if (source === "task") {
       return (
-        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", background: "rgba(255, 255, 255, 0.05)", padding: "2px 6px", borderRadius: "12px", color: "rgba(255,255,255,0.6)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", background: "var(--color-paper)", border: "1px solid var(--border-color)", padding: "2px 8px", borderRadius: "999px", color: "var(--color-text-dark)", fontWeight: "600" }}>
           <CheckSquare size={10} /> {taskKey ? `Task-${taskKey}` : "Task"}
         </div>
       );
     }
     return (
-      <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", background: "rgba(255, 255, 255, 0.05)", padding: "2px 6px", borderRadius: "12px", color: "rgba(255,255,255,0.6)" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "11px", background: "var(--color-paper)", border: "1px solid var(--border-color)", padding: "2px 8px", borderRadius: "999px", color: "var(--color-text-dark)", fontWeight: "600" }}>
         <Paperclip size={10} /> Manual
       </div>
     );
@@ -90,18 +90,18 @@ export default function WorkspaceFiles({ projectId, isMember }) {
   );
 
   return (
-    <div className="workspace__card" style={{ display: "flex", flexDirection: "column", height: "70vh" }}>
+    <div className="workspace__card" style={{ display: "flex", flexDirection: "column", height: "70vh", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
       {/* Header & Controls */}
-      <div style={{ padding: "16px", borderBottom: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+      <div style={{ padding: "18px 24px", borderBottom: "1px solid var(--border-color)", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
         
         <div style={{ position: "relative", flex: 1, minWidth: "200px", maxWidth: "400px" }}>
-          <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.4)" }} />
+          <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)" }} />
           <input 
             type="text" 
             placeholder="Search project files..." 
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ width: "100%", padding: "10px 12px 10px 36px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "8px", color: "rgba(255,255,255,0.9)", outline: "none", fontSize: "14px" }}
+            style={{ width: "100%", padding: "10px 12px 10px 36px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "8px", color: "var(--color-text-dark)", outline: "none", fontSize: "14px" }}
           />
         </div>
 
@@ -111,9 +111,9 @@ export default function WorkspaceFiles({ projectId, isMember }) {
             <button 
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              style={{ display: "flex", alignItems: "center", gap: "8px", background: "#ffffff", color: "#000000", padding: "8px 16px", borderRadius: "8px", border: "none", fontSize: "14px", fontWeight: "500", cursor: "pointer", transition: "all 0.2s" }}
+              style={{ display: "flex", alignItems: "center", gap: "8px", background: "var(--color-text-dark)", color: "#ffffff", padding: "8px 18px", borderRadius: "999px", border: "none", fontSize: "13px", fontWeight: "600", cursor: "pointer", transition: "all 0.2s" }}
             >
-              {uploading ? <Spinner size="sm" color="#000" /> : <Upload size={16} />}
+              {uploading ? <Spinner size="sm" color="#fff" /> : <Upload size={16} />}
               Upload File
             </button>
           </div>
@@ -121,19 +121,19 @@ export default function WorkspaceFiles({ projectId, isMember }) {
       </div>
 
       {/* Grid View */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
         {loading ? (
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
             <Spinner size="lg" />
           </div>
         ) : filteredFiles.length === 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", color: "rgba(255,255,255,0.5)", textAlign: "center" }}>
-            <Paperclip size={48} style={{ opacity: 0.2, marginBottom: "16px" }} />
-            <p style={{ fontSize: "16px", fontWeight: "500", marginBottom: "4px", color: "rgba(255,255,255,0.8)" }}>No files found</p>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", color: "var(--color-text-muted)", textAlign: "center" }}>
+            <Paperclip size={48} style={{ opacity: 0.3, marginBottom: "16px" }} />
+            <p style={{ fontSize: "16px", fontWeight: "700", marginBottom: "4px", color: "var(--color-text-dark)" }}>No files found</p>
             <p style={{ fontSize: "14px" }}>Upload a file or share one in the chat to see it here.</p>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "16px" }}>
             {filteredFiles.map(file => (
               <a 
                 key={file._id} 
@@ -143,9 +143,9 @@ export default function WorkspaceFiles({ projectId, isMember }) {
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  borderRadius: "12px",
+                  background: "var(--color-paper)",
+                  border: "1px solid var(--border-color)",
+                  borderRadius: "10px",
                   padding: "16px",
                   textDecoration: "none",
                   color: "inherit",
@@ -153,15 +153,13 @@ export default function WorkspaceFiles({ projectId, isMember }) {
                   cursor: "pointer"
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.05)";
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                  e.currentTarget.style.borderColor = "var(--color-text-dark)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.02)";
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
+                  e.currentTarget.style.borderColor = "var(--border-color)";
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100px", background: "rgba(255,255,255,0.02)", borderRadius: "8px", marginBottom: "12px" }}>
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100px", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "8px", marginBottom: "12px" }}>
                   {file.mimetype?.startsWith("image/") ? (
                     <img src={file.url} alt={file.filename} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }} />
                   ) : (
@@ -170,12 +168,12 @@ export default function WorkspaceFiles({ projectId, isMember }) {
                 </div>
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <div style={{ fontWeight: "500", fontSize: "13px", color: "rgba(255,255,255,0.9)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={file.filename}>
+                  <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--color-text-dark)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={file.filename}>
                     {file.filename}
                   </div>
                   
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
-                    <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>
+                    <div style={{ fontSize: "11px", color: "var(--color-text-muted)", fontWeight: "500" }}>
                       {file.size ? `${(file.size / 1024).toFixed(1)} KB` : "Document"}
                     </div>
                     {getSourceBadge(file.source, file.taskKey)}

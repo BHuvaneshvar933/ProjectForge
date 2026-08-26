@@ -219,13 +219,13 @@ export default function BrowseProjects() {
       <div className="browse-page__header">
         <div>
           <h1 className="browse-page__title">
-            {tab === 'projects' ? 'Browse Projects' : 'Find Talent'}
+            {tab === 'projects' ? 'Project Catalog & Index' : 'Talent & Developer Directory'}
           </h1>
-          {tab !== 'projects' && (
-            <p className="browse-page__subtitle">
-              Search and invite skilled developers to your projects
-            </p>
-          )}
+          <p className="browse-page__subtitle">
+            {tab === 'projects' 
+              ? 'Explore open builds, research initiatives, and skill-matched team opportunities.'
+              : 'Search skilled developers, engineers, and researchers to invite to your team.'}
+          </p>
         </div>
       </div>
 

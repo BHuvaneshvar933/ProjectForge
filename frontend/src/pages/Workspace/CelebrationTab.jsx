@@ -82,7 +82,6 @@ export default function CelebrationTab({ project, team, myTeamRecord }) {
   return (
     <div className="celebration-tab">
       <div className="celebration-hero">
-        <div className="celebration-confetti">🎉</div>
         <h1>Congratulations!</h1>
         <p>You completed <strong>{project.title}</strong></p>
 
@@ -113,69 +112,69 @@ export default function CelebrationTab({ project, team, myTeamRecord }) {
       <div className="celebration-assets-section">
         {!hasReflections && (
           <div className="reflection-form">
-            <h3 style={{ marginBottom: "10px" }}>Reflect on your journey</h3>
-            <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "20px" }}>
+            <h3 style={{ marginBottom: "10px", color: "var(--color-text-dark)" }}>Reflect on your journey</h3>
+            <p style={{ color: "var(--color-text-muted)", marginBottom: "20px" }}>
               To generate your personalized AI career assets (resume bullets, LinkedIn posts), please answer these 4 quick questions. These will be permanently saved to your profile!
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "16px", textAlign: "left" }}>
               <div>
-                <label style={{ display: "block", color: "var(--color-zinc-200)", marginBottom: "4px", fontSize: "14px" }}>
+                <label style={{ display: "block", color: "var(--color-text-dark)", fontWeight: "600", marginBottom: "4px", fontSize: "14px" }}>
                   1. What was the biggest technical challenge you overcame?
                 </label>
-                <div style={{ fontSize: "12px", color: "var(--color-blue-400)", marginBottom: "8px" }}>
-                  💡 <strong>Pro Tip:</strong> Don't just say "it was hard." Mention a specific bug, architectural hurdle, or new technology you had to learn to fix it.
+                <div style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "8px" }}>
+                  <strong>Pro Tip:</strong> Don't just say "it was hard." Mention a specific bug, architectural hurdle, or new technology you had to learn to fix it.
                 </div>
                 <textarea 
                   value={answers.biggestChallenge}
                   onChange={(e) => setAnswers({...answers, biggestChallenge: e.target.value})}
                   placeholder="e.g. Setting up real-time WebSockets with authentication..."
-                  style={{ width: "100%", padding: "12px", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", minHeight: "80px", resize: "vertical" }}
+                  style={{ width: "100%", padding: "12px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "8px", color: "var(--color-text-dark)", minHeight: "80px", resize: "vertical" }}
                 />
               </div>
               
               <div>
-                <label style={{ display: "block", color: "var(--color-zinc-200)", marginBottom: "4px", fontSize: "14px" }}>
+                <label style={{ display: "block", color: "var(--color-text-dark)", fontWeight: "600", marginBottom: "4px", fontSize: "14px" }}>
                   2. What is the biggest achievement of this project?
                 </label>
-                <div style={{ fontSize: "12px", color: "var(--color-blue-400)", marginBottom: "8px" }}>
-                  💡 <strong>Pro Tip:</strong> Recruiters love metrics. Try to include a number if you can (e.g., "Reduced load time by 40%", "Built 5 API routes").
+                <div style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "8px" }}>
+                  <strong>Pro Tip:</strong> Recruiters love metrics. Try to include a number if you can (e.g., "Reduced load time by 40%", "Built 5 API routes").
                 </div>
                 <textarea 
                   value={answers.biggestAchievement}
                   onChange={(e) => setAnswers({...answers, biggestAchievement: e.target.value})}
                   placeholder="e.g. Reduced API response time by 50%..."
-                  style={{ width: "100%", padding: "12px", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", minHeight: "80px", resize: "vertical" }}
+                  style={{ width: "100%", padding: "12px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "8px", color: "var(--color-text-dark)", minHeight: "80px", resize: "vertical" }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", color: "var(--color-zinc-200)", marginBottom: "4px", fontSize: "14px" }}>
+                <label style={{ display: "block", color: "var(--color-text-dark)", fontWeight: "600", marginBottom: "4px", fontSize: "14px" }}>
                   3. What is your favorite feature that you built?
                 </label>
-                <div style={{ fontSize: "12px", color: "var(--color-blue-400)", marginBottom: "8px" }}>
-                  💡 <strong>Pro Tip:</strong> Talk about the user impact. Why does this feature matter to the person using the app?
+                <div style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "8px" }}>
+                  <strong>Pro Tip:</strong> Talk about the user impact. Why does this feature matter to the person using the app?
                 </div>
                 <textarea 
                   value={answers.favoriteFeature}
                   onChange={(e) => setAnswers({...answers, favoriteFeature: e.target.value})}
                   placeholder="e.g. The drag-and-drop Kanban board..."
-                  style={{ width: "100%", padding: "12px", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", minHeight: "80px", resize: "vertical" }}
+                  style={{ width: "100%", padding: "12px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "8px", color: "var(--color-text-dark)", minHeight: "80px", resize: "vertical" }}
                 />
               </div>
 
               <div>
-                <label style={{ display: "block", color: "var(--color-zinc-200)", marginBottom: "4px", fontSize: "14px" }}>
+                <label style={{ display: "block", color: "var(--color-text-dark)", fontWeight: "600", marginBottom: "4px", fontSize: "14px" }}>
                   4. If you had another month, what would you improve?
                 </label>
-                <div style={{ fontSize: "12px", color: "var(--color-blue-400)", marginBottom: "8px" }}>
-                  💡 <strong>Pro Tip:</strong> Showing awareness of technical debt (like needing tests, CI/CD, or caching) shows senior-level maturity.
+                <div style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "8px" }}>
+                  <strong>Pro Tip:</strong> Showing awareness of technical debt (like needing tests, CI/CD, or caching) shows senior-level maturity.
                 </div>
                 <textarea 
                   value={answers.whatToImprove}
                   onChange={(e) => setAnswers({...answers, whatToImprove: e.target.value})}
                   placeholder="e.g. Add unit tests and Redis caching..."
-                  style={{ width: "100%", padding: "12px", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", color: "#fff", minHeight: "80px", resize: "vertical" }}
+                  style={{ width: "100%", padding: "12px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "8px", color: "var(--color-text-dark)", minHeight: "80px", resize: "vertical" }}
                 />
               </div>
             </div>

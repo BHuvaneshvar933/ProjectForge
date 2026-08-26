@@ -1,9 +1,8 @@
 /* Create Project page */
 .create-project {
-	max-width: 768px;
+	max-width: 840px;
 	margin: 0 auto;
-	padding: 48px 24px;
-	animation: fadeIn 0.4s ease;
+	padding: 40px 20px;
 }
 
 .create-project__header {
@@ -11,44 +10,40 @@
 }
 
 .create-project__title {
-	font-family: 'Jost', sans-serif;
-	font-size: 20px;
-	font-weight: 500;
-	letter-spacing: 0.1em;
-	text-transform: uppercase;
-	color: #ffffff;
-	margin: 0 0 4px;
-	padding-bottom: 4px;
-	border-bottom: 2px solid #ffffff;
+	font-size: clamp(2rem, 4vw, 3rem);
+	font-weight: 800;
+	color: var(--color-text-dark);
+	margin: 0 0 6px;
 	display: inline-block;
+	letter-spacing: -0.03em;
 }
 
 .create-project__subtitle {
-	font-size: 13px;
-	color: rgba(255, 255, 255, 0.82);
+	font-size: 15px;
+	color: var(--color-text-muted);
 }
 
 .create-project__stepper {
 	position: relative;
-	margin-bottom: 40px;
+	margin-bottom: 36px;
 }
 
 .create-project__stepper-line {
 	position: absolute;
-	top: 18px;
+	top: 17px;
 	left: 48px;
 	right: 48px;
 	height: 2px;
-	background: rgba(255, 255, 255, 0.08);
+	background: var(--border-color);
 }
 
 .create-project__stepper-progress {
 	position: absolute;
-	top: 18px;
+	top: 17px;
 	left: 48px;
 	height: 2px;
-	background: #ffffff;
-	transition: width 0.4s ease;
+	background: var(--color-text-dark);
+	transition: width 0.3s ease;
 }
 
 .create-project__stepper-steps {
@@ -65,66 +60,56 @@
 }
 
 .create-project__step-circle {
-	width: 34px;
-	height: 34px;
-	border-radius: 2px;
+	width: 36px;
+	height: 36px;
+	border-radius: 999px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: 13px;
-	font-weight: 400;
+	font-weight: 700;
 	transition: all 0.2s ease;
 }
 
 .create-project__step-circle.is-completed {
-	background: #ffffff;
-	color: #000000;
+	background: var(--color-text-dark);
+	color: #ffffff;
 }
 
 .create-project__step-circle.is-current {
-	background: rgba(255, 255, 255, 0.2);
-	color: #ffffff;
-	border: 1px solid #ffffff;
+	background: var(--color-paper);
+	color: var(--color-text-dark);
+	border: 2px solid var(--color-text-dark);
 }
 
 .create-project__step-circle.is-upcoming {
-	background: rgba(255, 255, 255, 0.04);
-	color: rgba(255, 255, 255, 0.88);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.create-project__step-icon {
-	width: 16px;
-	height: 16px;
+	background: #ffffff;
+	color: var(--color-text-muted);
+	border: 1px solid var(--border-color);
 }
 
 .create-project__step-label {
-	margin-top: 10px;
+	margin-top: 8px;
 	font-size: 13px;
-	font-weight: 400;
-	letter-spacing: 0.10em;
-	text-transform: uppercase;
+	font-weight: 600;
 }
 
-.create-project__step-label.is-completed {
-	color: #ffffff;
-}
-
+.create-project__step-label.is-completed,
 .create-project__step-label.is-current {
-	color: rgba(255, 255, 255, 0.95);
+	color: var(--color-text-dark);
 }
 
 .create-project__step-label.is-upcoming {
-	color: rgba(255, 255, 255, 0.88);
+	color: var(--color-text-muted);
 }
 
 .create-project__card {
-	border-radius: 2px;
-	padding: 28px;
-	background: rgba(10, 10, 12, 0.6);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-top: 2px solid #ffffff;
-	margin-bottom: 28px;
+	border-radius: 12px;
+	padding: 32px;
+	background: #ffffff;
+	border: 1px solid var(--border-color);
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+	margin-bottom: 32px;
 }
 
 .create-project__actions {
@@ -135,85 +120,43 @@
 }
 
 .create-project__button {
-	border-radius: 2px;
-	padding: 8px 20px;
-	font-size: 13px;
-	font-weight: 400;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
+	border-radius: 999px;
+	padding: 10px 24px;
+	font-size: 14px;
+	font-weight: 600;
 	transition: all 0.15s ease;
 	border: 1px solid transparent;
+	cursor: pointer;
 }
 
 .create-project__button--secondary {
-	color: rgba(255, 255, 255, 0.7);
-	background: rgba(255, 255, 255, 0.04);
-	border-color: rgba(255, 255, 255, 0.1);
+	color: var(--color-text-dark);
+	background: transparent;
+	border-color: var(--border-color);
 }
 
-.create-project__button--secondary:hover {
-	color: #ffffff;
-	background: rgba(255, 255, 255, 0.08);
+.create-project__button--secondary:hover:not(.is-disabled) {
+	background: var(--color-paper);
+	border-color: var(--color-text-dark);
 }
 
 .create-project__button--primary,
 .create-project__button--success {
-	background: #ffffff;
-	color: #000000;
-	border: 1px solid #ffffff;
+	background: var(--color-text-dark);
+	color: #ffffff;
+	border-color: var(--color-text-dark);
 }
 
-.create-project__button--primary:hover,
-.create-project__button--success:hover {
-	background: #000000;
+.create-project__button--primary:hover:not(.is-disabled),
+.create-project__button--success:hover:not(.is-disabled) {
+	background: #33333A;
+	border-color: #33333A;
 	color: #ffffff;
-	border-color: #ffffff;
 }
 
 .create-project__button.is-disabled {
-	opacity: 0.35;
+	opacity: 0.4;
 	cursor: not-allowed;
-}
-
-.create-project__button-content {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.create-project__button-icon {
-	width: 14px;
-	height: 14px;
-}
-
-.create-project__spinner {
-	width: 14px;
-	height: 14px;
-	animation: spin 1s linear infinite;
-}
-
-.create-project__spinner-track {
-	opacity: 0.25;
-}
-
-.create-project__spinner-fill {
-	opacity: 0.75;
-}
-
-@media (min-width: 768px) {
-	.create-project {
-		padding: 48px 32px;
-	}
-
-	.create-project__card {
-		padding: 32px;
-	}
-}
-
-@media (min-width: 1024px) {
-	.create-project {
-		padding: 48px 40px;
-	}
 }
 
 

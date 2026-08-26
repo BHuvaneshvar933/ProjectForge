@@ -1,85 +1,85 @@
 .project-review {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
 }
 
 .project-review__section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .project-review__section--title {
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .project-review__label {
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.12em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--color-text-muted);
 }
 
 .project-review__title {
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 20px;
+  font-weight: 800;
   letter-spacing: -0.02em;
-  color: #ffffff;
+  color: var(--color-text-dark);
 }
 
 .project-review__text {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  color: var(--color-text-dark);
   line-height: 1.6;
 }
 
 .project-review__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
 
 .project-review__card {
-  border-radius: 16px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 18px;
+  background: var(--color-paper);
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .project-review__muted {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--color-text-muted);
 }
 
 .project-review__size {
-  font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-dark);
 }
 
 .project-review__size-unit {
   font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.88);
+  font-weight: 500;
+  color: var(--color-text-muted);
   margin-left: 6px;
 }
 
 .project-review__role {
   font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  color: var(--color-text-dark);
 }
 
 .project-review__skills {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .project-review__timeline {
@@ -96,16 +96,16 @@
 
 .project-review__timeline-label {
   font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.88);
+  font-weight: 600;
+  color: var(--color-text-dark);
 }
 
 .project-review__timeline-value {
   font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+  color: var(--color-text-muted);
 }
 
 .project-review__timeline-arrow {
-  color: rgba(10, 132, 255, 0.5);
+  color: var(--color-text-muted);
 }

@@ -2,64 +2,24 @@
   display: inline-flex;
   align-items: center;
   padding: 3px 8px;
-  border-radius: 2px;
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  border: none;
-  text-transform: uppercase;
-  transition: all 0.15s ease;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid rgba(18, 18, 20, 0.12);
+  line-height: 1.2;
+  background: #F4F3EF;
+  color: #33333A;
+  letter-spacing: 0.03em;
 }
 
-.badge--default {
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.7);
-  border: none;
-}
-
-.badge--recruiting {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border: none;
-}
-
+.badge--default,
+.badge--recruiting,
 .badge--in-progress,
-.badge--completed {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-  border: none;
-}
-
-.badge--archived {
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(255, 255, 255, 0.72);
-  border: none;
-}
-
-.badge--owner {
-  background: #ffffff;
-  color: #000000;
-  border: none;
-}
-
-.badge--member {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.85);
-  border: none;
-}
-
-.badge--skill {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.85);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.badge--skill:hover {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
-}
-
+.badge--completed,
+.badge--archived,
+.badge--owner,
+.badge--member,
+.badge--skill,
 .badge--personal,
 .badge--startup,
 .badge--open-source,
@@ -67,10 +27,19 @@
 .badge--web,
 .badge--mobile,
 .badge--ml,
-.badge--hackathon {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.2);
+.badge--hackathon,
+.badge--pending,
+.badge--accepted,
+.badge--rejected,
+.badge--withdrawn {
+  background: #F4F3EF;
+  color: #33333A;
+  border-color: rgba(18, 18, 20, 0.12);
+}
+
+.badge--skill:hover {
+  background: #E5E2DC;
+  border-color: rgba(18, 18, 20, 0.25);
 }
 
 .badge--clickable {
@@ -78,37 +47,13 @@
 }
 
 .badge__remove {
-  margin-left: 4px;
-  color: rgba(255, 255, 255, 0.82);
+  margin-left: 6px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1;
   transition: color 0.15s ease;
 }
 
 .badge__remove:hover {
-  color: #ff453a;
-}
-
-
-
-.badge--pending {
-  background: transparent;
-  color: #fbbf24;
-  border: 1px solid #fbbf24;
-}
-
-.badge--accepted {
-  background: transparent;
-  color: #34d399;
-  border: 1px solid #34d399;
-}
-
-.badge--rejected {
-  background: transparent;
-  color: #ef4444;
-  border: 1px solid #ef4444;
-}
-
-.badge--withdrawn {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #121214;
 }

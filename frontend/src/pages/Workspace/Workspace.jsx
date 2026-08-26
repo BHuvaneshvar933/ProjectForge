@@ -360,7 +360,7 @@ export default function Workspace() {
         onConfirm={handleResumeProject}
         confirmText="Yes, Resume"
       >
-        <p style={{ color: "rgba(255,255,255,0.8)", marginBottom: "16px", fontSize: "14px" }}>
+        <p style={{ color: "var(--color-text-dark)", marginBottom: "16px", fontSize: "14px" }}>
           Are you sure you want to resume this project? This will move it back to 'in-progress' status.
         </p>
       </Modal>
@@ -372,7 +372,7 @@ export default function Workspace() {
         onConfirm={handleRemoveMember}
         confirmText="Remove Member"
       >
-        <p style={{ color: "rgba(255,255,255,0.8)", marginBottom: "16px", fontSize: "14px" }}>
+        <p style={{ color: "var(--color-text-dark)", marginBottom: "16px", fontSize: "14px" }}>
           Are you sure you want to remove this member? They will lose access to the active workspace but will retain credit on their profile.
         </p>
       </Modal>

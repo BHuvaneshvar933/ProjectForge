@@ -17,10 +17,8 @@ export default function Modal({ isOpen, onClose, title, children, onConfirm, con
     <div className="modal">
       <div className="modal__backdrop" onClick={onClose} />
       <div className="modal__card">
-        <button onClick={onClose} className="modal__close">
-          <svg className="modal__close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+        <button onClick={onClose} className="modal__close" aria-label="Close modal">
+          Close
         </button>
 
         {title && (

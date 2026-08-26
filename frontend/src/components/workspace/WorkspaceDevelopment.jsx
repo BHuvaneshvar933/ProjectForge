@@ -82,8 +82,13 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
   return (
     <div className="workspace-development" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+ main
+        <h2 style={{ fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+          Key Metrics <span style={{ fontSize: "10px", background: "var(--color-paper)", color: "var(--color-text-dark)", padding: "2px 8px", borderRadius: "999px", fontWeight: "700", border: "1px solid var(--border-color)" }}>BETA</span>
+
         <h2 style={{ fontSize: "18px", fontWeight: "600", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
           Development <span style={{ fontSize: "10px", background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>AI MENTOR</span>
+ main
         </h2>
       </div>
 
@@ -153,106 +158,104 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {/* Top Row: 4 Large Cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
-          <div className="workspace__card" style={{ padding: "16px", minHeight: "100px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
-              Work items <span title="Number of stories, tasks, and bugs marked as 'Done' in the past 7 days" style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
+          <div className="workspace__card" style={{ padding: "20px", minHeight: "110px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", display: "flex", alignItems: "center", gap: "4px" }}>
+              Work items <span title="Number of stories, tasks, and bugs marked as 'Done' in the past 7 days" style={{ color: "var(--color-text-muted)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
             </div>
             <div>
-              <div style={{ fontSize: "28px", fontWeight: "600" }}>{devMetrics?.completedThisWeek || 0}</div>
-              <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Completed this week</div>
+              <div style={{ fontSize: "28px", fontWeight: "800", color: "var(--color-text-dark)" }}>{devMetrics?.completedThisWeek || 0}</div>
+              <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Completed this week</div>
             </div>
           </div>
-          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "16px", minHeight: "100px", display: "flex", flexDirection: "column", justifyContent: "space-between", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
-              Pull request cycle time <span title="Average time from first commit to PR merge in the last 7 days" style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
+          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "20px", minHeight: "110px", display: "flex", flexDirection: "column", justifyContent: "space-between", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", display: "flex", alignItems: "center", gap: "4px" }}>
+              Pull request cycle time <span title="Average time from first commit to PR merge in the last 7 days" style={{ color: "var(--color-text-muted)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
             </div>
             <div>
-              <div style={{ fontSize: "28px", fontWeight: "600" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.prCycleTime ?? "0"}</div>
-              <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Rolling 7-day median</div>
+              <div style={{ fontSize: "28px", fontWeight: "800", color: "var(--color-text-dark)" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.prCycleTime ?? "0"}</div>
+              <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Rolling 7-day median</div>
             </div>
           </div>
-          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "16px", minHeight: "100px", display: "flex", flexDirection: "column", justifyContent: "space-between", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
-              Lead time for changes <span title="Average time between a commit and its deployment to production over the last 12 weeks" style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
+          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "20px", minHeight: "110px", display: "flex", flexDirection: "column", justifyContent: "space-between", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", display: "flex", alignItems: "center", gap: "4px" }}>
+              Lead time for changes <span title="Average time between a commit and its deployment to production over the last 12 weeks" style={{ color: "var(--color-text-muted)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
             </div>
             <div>
-              <div style={{ fontSize: "28px", fontWeight: "600" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.leadTimeForChanges ?? "0"}</div>
-              <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Rolling 12-week average</div>
+              <div style={{ fontSize: "28px", fontWeight: "800", color: "var(--color-text-dark)" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.leadTimeForChanges ?? "0"}</div>
+              <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Rolling 12-week average</div>
             </div>
           </div>
-          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "16px", minHeight: "100px", display: "flex", flexDirection: "column", justifyContent: "space-between", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", display: "flex", alignItems: "center", gap: "4px" }}>
-              Deployment frequency <span title="Average number of successful deployments to production per week" style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
+          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "20px", minHeight: "110px", display: "flex", flexDirection: "column", justifyContent: "space-between", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", display: "flex", alignItems: "center", gap: "4px" }}>
+              Deployment frequency <span title="Average number of successful deployments to production per week" style={{ color: "var(--color-text-muted)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
             </div>
             <div>
-              <div style={{ fontSize: "28px", fontWeight: "600" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.deploymentFrequency ?? "0"}</div>
-              <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Weekly average</div>
+              <div style={{ fontSize: "28px", fontWeight: "800", color: "var(--color-text-dark)" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.deploymentFrequency ?? "0"}</div>
+              <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Weekly average</div>
             </div>
           </div>
         </div>
 
         {/* Bottom Row: 5 Small Cards */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px" }}>
-          <div className="workspace__card" style={{ padding: "12px 16px" }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
-              Work items <span title="Items with a due date in the past that are not yet complete" style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
+          <div className="workspace__card" style={{ padding: "16px" }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
+              Work items <span title="Items with a due date in the past that are not yet complete" style={{ color: "var(--color-text-muted)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
             </div>
-            <div style={{ fontSize: "20px", fontWeight: "600", color: devMetrics?.overdueItems > 0 ? "#ff453a" : "inherit" }}>{devMetrics?.overdueItems || 0}</div>
-            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Overdue</div>
+            <div style={{ fontSize: "22px", fontWeight: "800", color: devMetrics?.overdueItems > 0 ? "#dc2626" : "var(--color-text-dark)" }}>{devMetrics?.overdueItems || 0}</div>
+            <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Overdue</div>
           </div>
-          <div className="workspace__card" style={{ padding: "12px 16px" }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
-              Work items <span title="Items moved from 'Done' back to an active state" style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
+          <div className="workspace__card" style={{ padding: "16px" }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
+              Work items <span title="Items moved from 'Done' back to an active state" style={{ color: "var(--color-text-muted)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
             </div>
-            <div style={{ fontSize: "20px", fontWeight: "600" }}>0</div>
-            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Reopened</div>
+            <div style={{ fontSize: "22px", fontWeight: "800", color: "var(--color-text-dark)" }}>0</div>
+            <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Reopened</div>
           </div>
-          <div className="workspace__card" style={{ padding: "12px 16px" }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
-              Bugs <span title="Unresolved bug tickets currently assigned to this project" style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
+          <div className="workspace__card" style={{ padding: "16px" }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
+              Bugs <span title="Unresolved bug tickets currently assigned to this project" style={{ color: "var(--color-text-muted)", fontSize: "12px", cursor: "help" }}>ⓘ</span>
             </div>
-            <div style={{ fontSize: "20px", fontWeight: "600", color: devMetrics?.openBugs > 0 ? "#ff9f0a" : "inherit" }}>{devMetrics?.openBugs || 0}</div>
-            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Open</div>
+            <div style={{ fontSize: "22px", fontWeight: "800", color: devMetrics?.openBugs > 0 ? "#d97706" : "var(--color-text-dark)" }}>{devMetrics?.openBugs || 0}</div>
+            <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Open</div>
           </div>
-          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "12px 16px", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
+          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "16px", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", marginBottom: "4px" }}>
               Pull requests
             </div>
-            <div style={{ fontSize: "20px", fontWeight: "600" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.openPullRequests ?? "0"}</div>
-            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Open</div>
+            <div style={{ fontSize: "22px", fontWeight: "800", color: "var(--color-text-dark)" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.openPullRequests ?? "0"}</div>
+            <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Open</div>
           </div>
-          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "12px 16px", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
-            <div style={{ fontSize: "13px", fontWeight: "600", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
+          <div className={`workspace__card ${!project?.githubIntegration?.isConnected ? "is-disconnected" : ""}`} style={{ padding: "16px", opacity: project?.githubIntegration?.isConnected ? 1 : 0.6 }}>
+            <div style={{ fontSize: "13px", fontWeight: "700", color: "var(--color-text-dark)", marginBottom: "4px" }}>
               Vulnerabilities
             </div>
-            <div style={{ fontSize: "20px", fontWeight: "600", color: githubMetrics?.criticalVulnerabilities > 0 ? "#ff453a" : "inherit" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.criticalVulnerabilities ?? "0"}</div>
-            <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>Critical</div>
+            <div style={{ fontSize: "22px", fontWeight: "800", color: githubMetrics?.criticalVulnerabilities > 0 ? "#dc2626" : "var(--color-text-dark)" }}>{githubLoading ? <Spinner size="sm" /> : githubMetrics?.criticalVulnerabilities ?? "0"}</div>
+            <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Critical</div>
           </div>
         </div>
       </div>
 
       <div>
         {project?.githubIntegration?.isConnected ? (
-          <div style={{ padding: "40px 20px", textAlign: "center", background: "rgba(255,255,255,0.02)", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div style={{ fontSize: "32px", marginBottom: "16px" }}>🐙</div>
-            <h3 style={{ margin: "0 0 8px 0", fontSize: "16px" }}>Connected to GitHub</h3>
-            <p style={{ margin: 0, color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>
-              Repository: <a href={`https://github.com/${project.githubIntegration.repoName}`} target="_blank" rel="noreferrer" style={{ color: "#0a84ff", textDecoration: "none" }}>{project.githubIntegration.repoName}</a>
+          <div style={{ padding: "40px 24px", textAlign: "center", background: "#ffffff", borderRadius: "12px", border: "1px solid var(--border-color)", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <h3 style={{ margin: "0 0 8px 0", fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)" }}>Connected to GitHub</h3>
+            <p style={{ margin: 0, color: "var(--color-text-muted)", fontSize: "14px" }}>
+              Repository: <a href={`https://github.com/${project.githubIntegration.repoName}`} target="_blank" rel="noreferrer" style={{ color: "var(--color-text-dark)", textDecoration: "underline", fontWeight: "600" }}>{project.githubIntegration.repoName}</a>
             </p>
             <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
               <Button variant="secondary" onClick={() => fetchGitHubData && fetchGitHubData()}>
                 Refresh Data
               </Button>
-              <Button style={{ background: "transparent", border: "1px solid rgba(255,69,58,0.5)", color: "#ff453a" }} onClick={handleDisconnectGitHub}>
+              <Button variant="danger" onClick={handleDisconnectGitHub}>
                 Disconnect
               </Button>
             </div>
           </div>
         ) : (
-          <div style={{ padding: "60px 20px", textAlign: "center", background: "rgba(255,255,255,0.02)", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <div style={{ fontSize: "40px", marginBottom: "16px", background: "rgba(10,132,255,0.1)", padding: "16px", borderRadius: "50%" }}>🔌</div>
-            <h3 style={{ margin: "0 0 8px 0", fontSize: "16px" }}>Connect your tools</h3>
-            <p style={{ margin: 0, color: "rgba(255,255,255,0.5)", fontSize: "14px", maxWidth: "400px" }}>
+          <div style={{ padding: "60px 24px", textAlign: "center", background: "#ffffff", borderRadius: "12px", border: "1px solid var(--border-color)", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <h3 style={{ margin: "0 0 8px 0", fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)" }}>Connect your tools</h3>
+            <p style={{ margin: 0, color: "var(--color-text-muted)", fontSize: "14px", maxWidth: "440px" }}>
               Connect your team's code repository (GitHub, GitLab, Bitbucket) to see pull requests, commits, branches, and deployments linked directly to your work items here.
             </p>
             <Button style={{ marginTop: "24px" }} onClick={() => setGithubModalOpen(true)}>Connect GitHub</Button>
@@ -275,7 +278,7 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
               onChange={(e) => setGithubForm({ ...githubForm, repoName: e.target.value })}
               placeholder="e.g. https://github.com/facebook/react"
             />
-            <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", marginTop: "8px" }}>
+            <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginTop: "8px" }}>
               Paste the full URL to the repository. The repository must be public or you must provide a personal access token below.
             </p>
           </div>
@@ -287,8 +290,8 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
               onChange={(e) => setGithubForm({ ...githubForm, accessToken: e.target.value })}
               placeholder="ghp_xxxxxxxxxxxx"
             />
-            <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", marginTop: "8px" }}>
-              <a href="https://github.com/settings/tokens" target="_blank" rel="noreferrer" style={{ color: "#0a84ff", textDecoration: "none" }}>Get a token</a> with 'repo' scope.
+            <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginTop: "8px" }}>
+              <a href="https://github.com/settings/tokens" target="_blank" rel="noreferrer" style={{ color: "var(--color-text-dark)", textDecoration: "underline" }}>Get a token</a> with 'repo' scope.
             </p>
           </div>
         </div>
@@ -300,13 +303,12 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
         title="Disconnect GitHub"
         onConfirm={confirmDisconnectGitHub}
         confirmText={disconnectLoading ? "Disconnecting..." : "Disconnect"}
-        confirmButtonStyle={{ background: "rgba(255,69,58,0.1)", color: "#ff453a", border: "1px solid rgba(255,69,58,0.5)" }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.8)" }}>
+          <p style={{ margin: 0, fontSize: "14px", color: "var(--color-text-dark)" }}>
             Are you sure you want to disconnect <strong>{project?.githubIntegration?.repoName}</strong>?
           </p>
-          <p style={{ margin: 0, fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>
+          <p style={{ margin: 0, fontSize: "13px", color: "var(--color-text-muted)" }}>
             This will remove all GitHub-related metrics and pull request data from this project's dashboard. Your actual GitHub repository will not be modified.
           </p>
         </div>

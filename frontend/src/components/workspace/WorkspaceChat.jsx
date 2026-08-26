@@ -285,89 +285,88 @@ export default function WorkspaceChat({ projectId, isMember, me, isCompleted }) 
         </div>
 
         {isCompleted ? (
-          <div style={{ padding: "16px", textAlign: "center", color: "rgba(255,255,255,0.5)", background: "rgba(255,255,255,0.02)", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+          <div className="workspace-chat__locked">
             Chat is locked for completed projects.
           </div>
         ) : (
-          <div className="workspace-chat__composer-wrapper" style={{ position: "relative" }}>
-            
-            <div className="workspace-chat__composer" style={{ display: "flex", flexDirection: "column", background: "rgba(255, 255, 255, 0.05)", borderRadius: "8px", border: "1px solid rgba(255, 255, 255, 0.08)", padding: "4px" }}>
+          <div className="workspace-chat__composer-wrapper">
+            <div className="workspace-chat__composer-box">
               {attachments.length > 0 && (
-                <div style={{ display: "flex", gap: "8px", padding: "8px", flexWrap: "wrap", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                <div className="workspace-chat__attachments-preview">
                   {attachments.map((att, i) => (
                     <div key={i} className="workspace-chat__attachment-pill">
-                      <Paperclip size={12} />
-                      <span style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{att.originalName || att.filename}</span>
+                      <Paperclip size={13} />
+                      <span className="workspace-chat__attachment-name">{att.originalName || att.filename}</span>
                       <button type="button" onClick={() => setAttachments(prev => prev.filter((_, idx) => idx !== i))} className="workspace-chat__attachment-remove">
-                        <X size={12} />
+                        <X size={13} />
                       </button>
                     </div>
                   ))}
                 </div>
               )}
-              <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-              <input type="file" ref={fileInputRef} onChange={handleFileUpload} style={{ display: "none" }} />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.6)", padding: "12px", cursor: "pointer", display: "flex" }}
-              >
-                {uploading ? <Spinner size="sm" /> : <Paperclip size={18} />}
-              </button>
-              <textarea
-                ref={chatInputRef}
-                className="workspace-chat__input"
-                value={chatInput}
-                onChange={(e) => {
-                  const next = e.target.value;
-                  setChatInput(next);
-                  emitTyping();
-
-                  // Auto-grow up to max height for a chat-app feel.
-                  const el = chatInputRef.current;
-                  if (el) {
-                    el.style.height = "auto";
-                    el.style.height = `${Math.min(el.scrollHeight, 140)}px`;
-                  }
-                }}
-                placeholder={editingMessageId ? "Edit message..." : "Write a message..."}
-                rows={1}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    onSend();
-                  }
-                  if (e.key === "Escape" && editingMessageId) {
-                    setEditingMessageId(null);
-                    setChatInput("");
-                  }
-                }}
-              />
-
-              <button
-                type="button"
-                className="workspace-chat__send"
-                onClick={onSend}
-                disabled={chatInput.trim().length === 0 && attachments.length === 0}
-                aria-label="Send message"
-                title={(chatInput.trim().length > 0 || attachments.length > 0) ? "Send" : "Type a message to send"}
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  width="18"
-                  height="18"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
+              <div className="workspace-chat__composer-row">
+                <input type="file" ref={fileInputRef} onChange={handleFileUpload} style={{ display: "none" }} />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="workspace-chat__attach-btn"
+                  title="Attach file"
                 >
-                  <path d="M22 2L11 13" />
-                  <path d="M22 2l-7 20-4-9-9-4 20-7z" />
-                </svg>
-              </button>
+                  {uploading ? <Spinner size="sm" /> : <Paperclip size={18} />}
+                </button>
+                <textarea
+                  ref={chatInputRef}
+                  className="workspace-chat__input"
+                  value={chatInput}
+                  onChange={(e) => {
+                    const next = e.target.value;
+                    setChatInput(next);
+                    emitTyping();
+
+                    const el = chatInputRef.current;
+                    if (el) {
+                      el.style.height = "auto";
+                      el.style.height = `${Math.min(el.scrollHeight, 140)}px`;
+                    }
+                  }}
+                  placeholder={editingMessageId ? "Edit message..." : "Write a message..."}
+                  rows={1}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      onSend();
+                    }
+                    if (e.key === "Escape" && editingMessageId) {
+                      setEditingMessageId(null);
+                      setChatInput("");
+                    }
+                  }}
+                />
+
+                <button
+                  type="button"
+                  className="workspace-chat__send"
+                  onClick={onSend}
+                  disabled={chatInput.trim().length === 0 && attachments.length === 0}
+                  aria-label="Send message"
+                  title={(chatInput.trim().length > 0 || attachments.length > 0) ? "Send" : "Type a message to send"}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M22 2L11 13" />
+                    <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
