@@ -327,24 +327,28 @@ export const generateWeeklyProjectSummary = async (projectId, projectData, tasks
   const overdueTasks = tasks.filter(t => t.dueDate && new Date(t.dueDate) < now && t.status !== 'done');
   const staleTasks = tasks.filter(t => t.status !== 'done' && t.updatedAt && new Date(t.updatedAt) < sevenDaysAgo);
 
+  const formatTask = t => `${t.title}${t.description ? ` - ${t.description.substring(0, 50)}` : ''}`;
+
   const prompt = `
     You are an expert Project Manager. Write a structured weekly digest for the project owner.
     
     Project Title: ${projectData.title}
     Total Team Size: ${team.length}
-    Tasks Completed This Week: ${completedThisWeek.length > 0 ? completedThisWeek.map(t => t.title).join(", ") : "None"}
-    New Tasks Created This Week: ${createdThisWeek.length > 0 ? createdThisWeek.map(t => t.title).join(", ") : "None"}
-    Overdue Tasks: ${overdueTasks.length > 0 ? overdueTasks.map(t => t.title).join(", ") : "None"}
-    Stale Tasks: ${staleTasks.length > 0 ? staleTasks.map(t => t.title).join(", ") : "None"}
+    Tasks Completed This Week: ${completedThisWeek.length > 0 ? completedThisWeek.map(formatTask).join(" | ") : "None"}
+    New Tasks Created This Week: ${createdThisWeek.length > 0 ? createdThisWeek.map(formatTask).join(" | ") : "None"}
+    Overdue Tasks: ${overdueTasks.length > 0 ? overdueTasks.map(formatTask).join(" | ") : "None"}
+    Stale Tasks: ${staleTasks.length > 0 ? staleTasks.map(formatTask).join(" | ") : "None"}
 
-    Summarize the week's progress. Be highly professional but readable.
+    Summarize the week's progress. Be highly professional but readable. 
+    CRITICAL: Do NOT just repeat the raw task titles verbatim. Write insightful, descriptive sentences summarizing what was accomplished, especially if the original task titles are very short (e.g., "cg"). Group related tasks together.
+
     Output ONLY a valid JSON object matching this exact structure:
     {
       "headline": "A one-line summary at the top (e.g. Strong progress this week)",
-      "completed": ["Task title or summary 1", "Task title or summary 2"],
-      "started": ["Task title or summary 1"],
-      "risks": ["Describe risk 1"],
-      "next_actions": ["Action 1", "Action 2"]
+      "completed": ["Insightful summary of completed work 1", "Insightful summary of completed work 2"],
+      "started": ["Insightful summary of newly started work 1"],
+      "risks": ["Describe risk 1 (e.g., specific overdue tasks or team size constraints)"],
+      "next_actions": ["Actionable next step 1", "Actionable next step 2"]
     }
     
     IMPORTANT: If there are no items for a category, return an empty array []. Do NOT invent or hallucinate tasks or risks if none exist in the data.
@@ -438,5 +442,46 @@ export const generateDeveloperContribution = async (userId, tasks, projectData) 
   } catch (e) {
     console.error("AI Contribution Error: ", e);
     throw new Error("Failed to parse contribution JSON.");
+  }
+};
+
+export const generateEngineeringAssessment = async (projectData) => {
+  const prompt = `
+    You are an expert Senior Engineering Mentor. Your task is to review a software project's deterministic execution metrics and provide an evidence-based assessment.
+    
+    IMPORTANT STRICT RULES:
+    1. DO NOT claim to objectively determine if a student is "developing well". Instead, frame it as "evidence-based guidance".
+    2. The assessment MUST clearly reference the provided data (e.g., "Because you have 5 overdue tasks...").
+    3. Be encouraging but practical. Do not invent metrics or data.
+    4. Output ONLY a valid, parseable JSON object.
+
+    Project Evidence:
+    ${JSON.stringify(projectData, null, 2)}
+
+    Output your assessment as a strict JSON object with this exact structure:
+    {
+      "status": "One of: 'Excellent', 'On Track', 'Needs Attention', 'Critical'",
+      "message": "A 2-3 sentence overall mentor evaluation linking the raw metrics to engineering health.",
+      "strengths": ["One or two specific positive observations backed by data."],
+      "areasForImprovement": ["One or two specific negative observations backed by data."],
+      "recommendedActions": ["1-3 actionable steps the team should take right now to improve."]
+    }
+  `;
+
+  const chatCompletion = await getGroq().chat.completions.create({
+    messages: [{ role: "user", content: prompt }],
+    model: "openai/gpt-oss-120b",
+    temperature: 0.3,
+    max_tokens: 800,
+  });
+
+  try {
+    let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : "{}";
+    return JSON.parse(jsonString);
+  } catch (e) {
+    console.error("AI Engineering Assessment Error: ", e);
+    throw new Error("Failed to parse engineering assessment JSON.");
   }
 };

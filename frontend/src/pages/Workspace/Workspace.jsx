@@ -216,7 +216,7 @@ export default function Workspace() {
     { id: "calendar", label: "Calendar" },
     { id: "files", label: "Files" },
     { id: "chat", label: "Chat" },
-    { id: "development", label: "Development" },
+    { id: "development", label: "Engineering Hub" },
     { id: "releases", label: "Releases" },
   ];
 

@@ -18,10 +18,12 @@ import {
   getBasicRepoStats,
   getReleases,
   createRelease,
+  updateRelease,
   saveMyReflections,
   removeTeamMember,
   getProjectFiles,
-  addProjectFile
+  addProjectFile,
+  getEngineeringAssessment
 } from "../controllers/project.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
@@ -43,8 +45,10 @@ router.get("/:id/team", protect, getProjectTeam);
 router.post("/:id/github", protect, connectGitHub);
 router.delete("/:id/github", protect, disconnectGitHub);
 router.get("/:id/github", protect, getGitHubMetrics);
+router.get("/:id/engineering-assessment", protect, getEngineeringAssessment);
 router.get("/:id/releases", protect, getReleases);
 router.post("/:id/releases", protect, createRelease);
+router.patch("/:id/releases/:releaseId", protect, updateRelease);
 router.patch(
   "/:projectId/leave",
   protect,
