@@ -25,11 +25,13 @@ jobs:
         working-directory: ./backend
         run: npm ci
 
+      - name: Create .env for tests
+        working-directory: ./backend
+        run: echo "JWT_SECRET=dummysecret" > .env
+
       - name: Run Backend Tests
         working-directory: ./backend
         run: npm run test
-        env:
-          JWT_SECRET: dummysecret
 
       # Frontend Checks
       - name: Install Frontend Dependencies
