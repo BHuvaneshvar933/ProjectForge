@@ -192,7 +192,7 @@ export default function CelebrationTab({ project, team, myTeamRecord }) {
           <div className="generate-prompt">
             <h3>Generate Career Assets</h3>
             <p>Turn your hard work into portfolio descriptions, resume bullets, and LinkedIn posts instantly.</p>
-            <Button onClick={handleGenerateAssets} size="lg">Generate with AI ✨</Button>
+            <Button onClick={handleGenerateAssets} size="lg">Generate with AI</Button>
           </div>
         )}
 

@@ -91,7 +91,7 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
       <div style={{ background: "rgba(10,132,255,0.05)", border: "1px solid rgba(10,132,255,0.2)", borderRadius: "8px", padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h3 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontSize: "20px" }}>🧠</span> AI Engineering Assessment
+             AI Engineering Assessment
           </h3>
           <Button onClick={handleGetAssessment} disabled={assessmentLoading}>
             {assessmentLoading ? "Analyzing Metrics..." : (assessment ? "Refresh Assessment" : "Get Mentor Feedback")}
