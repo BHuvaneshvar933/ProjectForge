@@ -444,3 +444,44 @@ export const generateDeveloperContribution = async (userId, tasks, projectData) 
     throw new Error("Failed to parse contribution JSON.");
   }
 };
+
+export const generateEngineeringAssessment = async (projectData) => {
+  const prompt = `
+    You are an expert Senior Engineering Mentor. Your task is to review a software project's deterministic execution metrics and provide an evidence-based assessment.
+    
+    IMPORTANT STRICT RULES:
+    1. DO NOT claim to objectively determine if a student is "developing well". Instead, frame it as "evidence-based guidance".
+    2. The assessment MUST clearly reference the provided data (e.g., "Because you have 5 overdue tasks...").
+    3. Be encouraging but practical. Do not invent metrics or data.
+    4. Output ONLY a valid, parseable JSON object.
+
+    Project Evidence:
+    ${JSON.stringify(projectData, null, 2)}
+
+    Output your assessment as a strict JSON object with this exact structure:
+    {
+      "status": "One of: 'Excellent', 'On Track', 'Needs Attention', 'Critical'",
+      "message": "A 2-3 sentence overall mentor evaluation linking the raw metrics to engineering health.",
+      "strengths": ["One or two specific positive observations backed by data."],
+      "areasForImprovement": ["One or two specific negative observations backed by data."],
+      "recommendedActions": ["1-3 actionable steps the team should take right now to improve."]
+    }
+  `;
+
+  const chatCompletion = await getGroq().chat.completions.create({
+    messages: [{ role: "user", content: prompt }],
+    model: "openai/gpt-oss-120b",
+    temperature: 0.3,
+    max_tokens: 800,
+  });
+
+  try {
+    let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
+    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+    const jsonString = jsonMatch ? jsonMatch[0] : "{}";
+    return JSON.parse(jsonString);
+  } catch (e) {
+    console.error("AI Engineering Assessment Error: ", e);
+    throw new Error("Failed to parse engineering assessment JSON.");
+  }
+};

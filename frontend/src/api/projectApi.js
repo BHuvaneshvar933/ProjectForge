@@ -44,11 +44,17 @@ export const connectGitHub = (id, data) =>
 export const disconnectGitHub = (id) =>
   API.delete(`/projects/${id}/github`);
 
+
+
 export const getGitHubMetrics = (id) =>
   API.get(`/projects/${id}/github`);
 
 export const getBasicRepoStats = (url) =>
   API.get(`/projects/github-stats`, { params: { url } });
+
+export const getProjectFiles = (projectId) => API.get(`/projects/${projectId}/files`);
+export const addProjectFile = (projectId, payload) => API.post(`/projects/${projectId}/files`, payload);
+export const getEngineeringAssessment = (projectId) => API.get(`/projects/${projectId}/engineering-assessment`);
 
 export const getProjectReleases = (projectId) =>
   API.get(`/projects/${projectId}/releases`);
