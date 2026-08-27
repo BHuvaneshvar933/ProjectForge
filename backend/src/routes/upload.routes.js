@@ -1,8 +1,9 @@
 import express from 'express';
-import { upload } from '../config/s3.js';
+import { storage } from '../services/storage.service.js';
 import { protect } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
+const upload = storage.getMulterMiddleware();
 
 router.post('/', (req, res, next) => {
   upload.single('file')(req, res, (err) => {
