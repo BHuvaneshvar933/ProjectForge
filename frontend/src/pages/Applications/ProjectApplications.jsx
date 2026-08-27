@@ -104,14 +104,7 @@ export default function ProjectApplications() {
 
   const filteredItems = items;
 
-  if (loading) {
-    return (
-      <div className="dashboard-page" style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <Spinner size="lg" />
-        <p style={{ color: 'rgba(255, 255, 255, 0.82)', marginTop: 16 }}>Loading project applications...</p>
-      </div>
-    );
-  }
+
 
   return (
     <div className="dashboard-page">
@@ -149,7 +142,12 @@ export default function ProjectApplications() {
         </aside>
 
         <main className="dashboard-content">
-          {filteredItems.length === 0 ? (
+          {loading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 0' }}>
+              <Spinner size="lg" />
+              <p style={{ color: 'rgba(255, 255, 255, 0.82)', marginTop: 16 }}>Loading applications...</p>
+            </div>
+          ) : filteredItems.length === 0 ? (
             <div className="apps-empty">
               <p className="apps-empty__title">No applications found</p>
               <p className="apps-empty__subtitle">You don't have any applications with this status.</p>
