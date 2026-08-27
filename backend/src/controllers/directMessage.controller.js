@@ -24,11 +24,12 @@ export const startConversation = async (req, res, next) => {
       return res.status(403).json({ success: false, message: "Only the project owner can initiate direct messages with applicants" });
     }
 
-    // Find or create conversation
+    // Find or create conversation between these two users
     let conversation = await Conversation.findOne({
-      projectId,
-      ownerId,
-      applicantId
+      $or: [
+        { ownerId, applicantId },
+        { ownerId: applicantId, applicantId: ownerId }
+      ]
     });
 
     if (!conversation) {
