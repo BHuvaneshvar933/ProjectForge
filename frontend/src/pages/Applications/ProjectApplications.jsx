@@ -209,9 +209,8 @@ export default function ProjectApplications() {
                       onClick={async () => {
                         try {
                           // Ensure we only pass projectId and applicantId as spec requires
-                          // I'll dynamically import messageApi here to avoid breaking top-level imports
                           const { startConversation } = await import("../../api/messageApi");
-                          const res = await startConversation({ projectId, applicantId: applicant._id });
+                          const res = await startConversation({ applicationId: a._id });
                           const conversationId = res.data.data._id;
                           
                           const event = new CustomEvent("open-dm", { 

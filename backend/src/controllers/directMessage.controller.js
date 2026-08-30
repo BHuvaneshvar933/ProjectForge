@@ -3,16 +3,25 @@ import Conversation from "../models/conversation.model.js";
 import DirectMessage from "../models/directMessage.model.js";
 import Project from "../models/project.model.js";
 import User from "../models/user.model.js";
+import Application from "../models/application.model.js";
 
 // Owner starts a conversation with an applicant
 export const startConversation = async (req, res, next) => {
   try {
     const ownerId = req.user._id;
-    const { projectId, applicantId } = req.body;
+    const { applicationId } = req.body;
 
-    if (!projectId || !applicantId) {
-      return res.status(400).json({ success: false, message: "Project ID and Applicant ID are required" });
+    if (!applicationId) {
+      return res.status(400).json({ success: false, message: "Application ID is required" });
     }
+
+    const application = await Application.findById(applicationId);
+    if (!application) {
+      return res.status(404).json({ success: false, message: "Application not found" });
+    }
+
+    const projectId = application.projectId;
+    const applicantId = application.applicantId;
 
     // Verify the user is the owner of the project
     const project = await Project.findById(projectId);
@@ -24,16 +33,12 @@ export const startConversation = async (req, res, next) => {
       return res.status(403).json({ success: false, message: "Only the project owner can initiate direct messages with applicants" });
     }
 
-    // Find or create conversation between these two users
-    let conversation = await Conversation.findOne({
-      $or: [
-        { ownerId, applicantId },
-        { ownerId: applicantId, applicantId: ownerId }
-      ]
-    });
+    // Find or create conversation for this specific application
+    let conversation = await Conversation.findOne({ applicationId });
 
     if (!conversation) {
       conversation = await Conversation.create({
+        applicationId,
         projectId,
         ownerId,
         applicantId
@@ -61,6 +66,7 @@ export const getConversations = async (req, res, next) => {
       .populate("ownerId", "name email avatar")
       .populate("applicantId", "name email avatar")
       .populate("projectId", "title")
+      .populate("applicationId", "createdAt status")
       .populate({
         path: "lastMessage",
         select: "text senderId createdAt",

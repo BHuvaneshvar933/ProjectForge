@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { getConversations, getDirectMessages } from "../../api/messageApi";
 import { getSocket } from "../../realtime/socketClient";
 import { getMyProfile } from "../../api/userApi";
+import { Link } from "react-router-dom";
 import "./ChatWidget.css";
 
 export default function ChatWidget() {
@@ -251,6 +252,9 @@ export default function ChatWidget() {
                     </div>
                     <div className="chat-widget__conv-info">
                       <div className="chat-widget__conv-name">{otherUser.name || "User"}</div>
+                      <div className="chat-widget__conv-project" style={{ fontSize: "11px", color: "var(--color-text-muted)", marginBottom: "2px" }}>
+                        {conv.projectId?.title || "Unknown Project"}
+                      </div>
                       <div className="chat-widget__conv-last">
                         {conv.lastMessage?.senderId === user._id ? "You: " : ""}
                         {conv.lastMessage?.text || "No messages"}
@@ -259,6 +263,13 @@ export default function ChatWidget() {
                   </div>
                 );
               })
+            )}
+            {conversations.length > 0 && (
+              <div className="chat-widget__view-all" style={{ padding: "12px", textAlign: "center", borderTop: "1px solid var(--color-border)" }}>
+                <Link to="/messages" onClick={() => setIsOpen(false)} style={{ fontSize: "13px", color: "var(--color-primary)", textDecoration: "none", fontWeight: 500 }}>
+                  View all messages
+                </Link>
+              </div>
             )}
           </div>
         ) : (
