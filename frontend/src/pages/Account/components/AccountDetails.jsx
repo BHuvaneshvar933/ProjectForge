@@ -84,52 +84,6 @@ export default function AccountDetails({ user }) {
         )}
       </div>
 
-      <div className="account__section">
-        <div className="account__card-title" style={{ marginBottom: 16 }}>
-          Peer Endorsements
-        </div>
-        {user?.endorsements?.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {user.endorsements.map((e, idx) => (
-              <div key={idx} style={{ 
-                background: 'var(--color-paper)', 
-                padding: '14px', 
-                borderRadius: '8px',
-                border: '1px solid var(--border-color)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <strong style={{ color: 'var(--color-text-dark)', fontSize: '13px' }}>{e.endorsedBy?.name || 'Unknown'}</strong>
-                  <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                    {new Date(e.createdAt).toLocaleDateString()}
-                  </span>
-                </div>
-                <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-text-dark)', fontStyle: 'italic' }}>
-                  "{e.text}"
-                </p>
-                {e.skills?.length > 0 && (
-                  <div style={{ display: 'flex', gap: '6px', marginTop: '10px', flexWrap: 'wrap' }}>
-                    {e.skills.map(s => (
-                      <span key={s} style={{ 
-                        background: '#F4F3EF', 
-                        color: '#33333A', 
-                        padding: '3px 8px', 
-                        borderRadius: '4px', 
-                        fontSize: '11px',
-                        fontWeight: '600',
-                        border: '1px solid rgba(18,18,20,0.12)'
-                      }}>{s}</span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="account__muted" style={{ fontStyle: 'italic' }}>
-            No endorsements yet. Work on projects with your team to earn them!
-          </div>
-        )}
-      </div>
     </div>
   );
 }
