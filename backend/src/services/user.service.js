@@ -211,6 +211,21 @@ export const getPublicUserProfile = async (userId) => {
     // Omit acceptanceRate and applications data for public profile
   }
 
+  // Sanitize reliability for public viewing
+  if (userObj.reliability) {
+    if (userObj.reliability.status === "RELIABLE") {
+      userObj.reliability = {
+        status: "RELIABLE",
+        label: "Reliable Collaborator"
+      };
+    } else {
+      userObj.reliability = {
+        status: "DEVELOPING",
+        label: "Reliability history developing"
+      };
+    }
+  }
+
   return {
     ...userObj,
     developerJourney

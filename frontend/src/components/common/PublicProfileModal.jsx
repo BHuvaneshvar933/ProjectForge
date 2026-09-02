@@ -57,7 +57,25 @@ export default function PublicProfileModal({ isOpen, onClose, userId, onInvite, 
                 {profile.avatar ? <img src={profile.avatar} alt="avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : profile.name.charAt(0).toUpperCase()}
               </div>
               <div style={{ flex: 1 }}>
-                <h2 style={{ margin: 0, fontSize: 24 }}>{profile.name}</h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <h2 style={{ margin: 0, fontSize: 24 }}>{profile.name}</h2>
+                  {profile.reliability && (
+                    <span style={{ 
+                      fontSize: 12, 
+                      padding: '4px 8px', 
+                      borderRadius: 12, 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 4,
+                      fontWeight: 600,
+                      backgroundColor: profile.reliability.status === "RELIABLE" ? 'rgba(46, 204, 113, 0.15)' : 'transparent',
+                      color: profile.reliability.status === "RELIABLE" ? '#2ecc71' : 'var(--color-text-muted)',
+                      border: profile.reliability.status === "RELIABLE" ? 'none' : '1px solid var(--border-color)'
+                    }}>
+                      {profile.reliability.status === "RELIABLE" && "🟢"} {profile.reliability.label}
+                    </span>
+                  )}
+                </div>
                 {profile.headline && <div style={{ fontSize: 15, color: 'var(--color-text-muted)', marginTop: 4 }}>{profile.headline}</div>}
                 
                 {primaryEd && (

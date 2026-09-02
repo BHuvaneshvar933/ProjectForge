@@ -104,6 +104,22 @@ const userSchema = new mongoose.Schema(
 
     stats: statsSchema,
 
+    reliability: {
+      status: {
+        type: String,
+        enum: ["RELIABLE", "CAUTION", "CONCERN", "INSUFFICIENT_DATA"],
+        default: "INSUFFICIENT_DATA"
+      },
+      confidence: {
+        type: String,
+        enum: ["INSUFFICIENT", "LOW", "MEDIUM", "HIGH"],
+        default: "INSUFFICIENT"
+      },
+      lastCalculatedAt: Date,
+      evidence: { type: mongoose.Schema.Types.Mixed, default: {} },
+      integritySignals: { type: [String], default: [] }
+    },
+
     isActive: {
       type: Boolean,
       default: true,

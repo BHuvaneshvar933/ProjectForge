@@ -163,7 +163,19 @@ export default function ProjectApplications() {
               <div key={a._id} className="apps-card">
                 <div className="apps-card__top">
                   <div>
-                    <div className="apps-card__title">{applicant?.name || "Applicant"}</div>
+                    <div className="apps-card__title" style={{ display: "flex", alignItems: "center" }}>
+                      {applicant?.name || "Applicant"}
+                      {applicant?.reliability?.status === "RELIABLE" && (
+                        <span style={{ fontSize: 12, padding: '2px 6px', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 600, backgroundColor: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', marginLeft: 8 }}>
+                          🟢 {applicant.reliability.label}
+                        </span>
+                      )}
+                      {applicant?.reliability?.status === "DEVELOPING" && (
+                        <span style={{ fontSize: 11, padding: '2px 6px', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 500, backgroundColor: 'transparent', color: 'var(--color-text-muted)', border: '1px solid var(--border-color)', marginLeft: 8 }}>
+                          {applicant.reliability.label}
+                        </span>
+                      )}
+                    </div>
                     <div className="apps-card__meta">
                       <span className="apps-card__meta-item">{a?.applicationType === "invitation" ? "Invitation" : "Application"}</span>
                       <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>

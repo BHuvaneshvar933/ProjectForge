@@ -65,5 +65,5 @@ export const createProjectRelease = (projectId, payload) =>
 export const updateProjectRelease = (projectId, releaseId, payload) =>
   API.patch(`/projects/${projectId}/releases/${releaseId}`, payload);
 
-export const leaveProject = (projectId) => API.patch(`/projects/${projectId}/leave`);
-export const removeTeamMember = (projectId, userId) => API.delete(`/projects/${projectId}/team/${userId}`);
+export const leaveProject = (projectId, payload) => API.patch(`/projects/${projectId}/leave`, payload);
+export const removeTeamMember = (projectId, userId, payload) => API.delete(`/projects/${projectId}/team/${userId}`, { data: payload });

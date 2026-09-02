@@ -124,7 +124,9 @@ export const leaveProject = async (req, res, next) => {
   try {
     const project = await projectService.leaveProject(
       req.user.id,
-      req.params.projectId
+      req.params.projectId,
+      req.body.reason,
+      req.body.note
     );
 
     res.status(200).json({
@@ -142,7 +144,8 @@ export const removeTeamMember = async (req, res, next) => {
     const project = await projectService.removeTeamMember(
       req.user.id,
       req.params.projectId,
-      req.params.userId
+      req.params.userId,
+      req.body.removalReason
     );
 
     res.status(200).json({

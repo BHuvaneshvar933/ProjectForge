@@ -3,6 +3,7 @@ import Project from "../models/project.model.js";
 import Team from "../models/team.model.js";
 import User from "../models/user.model.js";
 import { normalizeProjectRole } from "./project.core.service.js";
+import { calculateUserReliability } from "./reliability.service.js";
 
 // GET PROJECT TEAM
 export const getProjectTeam = async (projectId, requesterId) => {
@@ -67,7 +68,7 @@ export const getJoinedProjects = async (userId) => {
   return projects;
 };
 
-export const leaveProject = async (userId, projectId) => {
+export const leaveProject = async (userId, projectId, reason, note) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -95,6 +96,8 @@ export const leaveProject = async (userId, projectId) => {
     // Update membership
     membership.status = "left";
     membership.leftAt = new Date();
+    if (reason) membership.departureReason = reason;
+    if (note) membership.departureNote = note;
     await membership.save({ session });
 
     // Update project team size
@@ -119,6 +122,10 @@ export const leaveProject = async (userId, projectId) => {
 
     await session.commitTransaction();
     session.endSession();
+
+    calculateUserReliability(userId).catch((err) => {
+      console.error(`Failed to calculate reliability for user ${userId} after leaving:`, err);
+    });
 
     return project;
 
@@ -146,7 +153,7 @@ export const saveMyReflections = async (projectId, userId, reflections) => {
   return membership;
 };
 
-export const removeTeamMember = async (requesterId, projectId, targetUserId) => {
+export const removeTeamMember = async (requesterId, projectId, targetUserId, removalReason) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -178,6 +185,7 @@ export const removeTeamMember = async (requesterId, projectId, targetUserId) => 
     // Update membership
     membership.status = "removed";
     membership.leftAt = new Date();
+    if (removalReason) membership.removalReason = removalReason;
     await membership.save({ session });
 
     // Update project team size
@@ -202,6 +210,10 @@ export const removeTeamMember = async (requesterId, projectId, targetUserId) => 
 
     await session.commitTransaction();
     session.endSession();
+
+    calculateUserReliability(targetUserId).catch((err) => {
+      console.error(`Failed to calculate reliability for user ${targetUserId} after removal:`, err);
+    });
 
     return project;
 

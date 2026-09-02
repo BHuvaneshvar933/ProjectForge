@@ -53,6 +53,23 @@ const teamSchema = new mongoose.Schema(
       default: null,
     },
 
+    departureReason: {
+      type: String,
+      enum: ["PROJECT_INACTIVE", "ACADEMIC_COMMITMENT", "SCHEDULE_CONFLICT", "REQUIREMENTS_CHANGED", "TEAM_CIRCUMSTANCES", "OTHER"],
+      default: null,
+    },
+
+    departureNote: {
+      type: String,
+      default: null,
+    },
+
+    removalReason: {
+      type: String,
+      enum: ["PROJECT_RESTRUCTURING", "PROJECT_CANCELLED", "ROLE_NO_LONGER_NEEDED", "STUDENT_INACTIVE", "VIOLATED_EXPECTATIONS", "OTHER"],
+      default: null,
+    },
+
     contribution: contributionSchema,
 
     reflections: {

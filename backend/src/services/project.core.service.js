@@ -1,5 +1,6 @@
 import Project from "../models/project.model.js";
 import Team from "../models/team.model.js";
+import { calculateUserReliability } from "./reliability.service.js";
 
 export const normalizeProjectRole = (value) => {
   if (typeof value !== "string") return null;
@@ -239,9 +240,21 @@ export const updateProject = async (projectId, userId, updateData) => {
     throw new Error("Not authorized");
   }
 
+  const previousStatus = project.status;
+
   Object.assign(project, updateData);
 
   await project.save();
+
+  if (previousStatus !== "completed" && project.status === "completed") {
+    Team.find({ projectId: project._id }).distinct("userId").then(userIds => {
+      userIds.forEach(uId => {
+        calculateUserReliability(uId).catch(err => {
+          console.error(`Failed to calculate reliability for user ${uId} upon project completion:`, err);
+        });
+      });
+    }).catch(err => console.error("Error fetching team for reliability calculation:", err));
+  }
 
   return project;
 };
