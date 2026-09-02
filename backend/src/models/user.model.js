@@ -48,6 +48,11 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    headline: {
+      type: String,
+      default: "",
+    },
+
     skills: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Skill",
@@ -57,6 +62,43 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    structuredAvailability: {
+      timeCommitment: { type: String, default: "" },
+      preferredSchedule: { type: String, default: "" },
+      projectDuration: { type: String, default: "" },
+      canStart: { type: String, default: "" },
+    },
+
+    education: [{
+      degree: String,
+      program: String,
+      university: String,
+      startYear: String,
+      graduationYear: String,
+      currentYear: String,
+      cgpa: String,
+    }],
+
+    experience: [{
+      role: String,
+      organization: String,
+      startDate: String,
+      endDate: String,
+      description: String,
+    }],
+
+    achievements: [{
+      title: String,
+      organization: String,
+      date: String,
+      description: String,
+    }],
+
+    featuredProjects: [{
+      projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
+      order: { type: Number, default: 0 },
+    }],
 
     portfolioLinks: portfolioLinksSchema,
 

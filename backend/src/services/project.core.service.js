@@ -229,6 +229,12 @@ export const updateProject = async (projectId, userId, updateData) => {
     throw new Error("Project not found");
   }
 
+  if (updateData.__v !== undefined && project.__v !== updateData.__v) {
+    const err = new Error("This project was updated by another user.");
+    err.name = "VersionError";
+    throw err;
+  }
+
   if (project.owner.toString() !== userId.toString()) {
     throw new Error("Not authorized");
   }
@@ -263,6 +269,12 @@ export const closeRecruitment = async (projectId, userId) => {
 export const updateArchiveData = async (userId, projectId, data) => {
   const project = await Project.findOne({ _id: projectId, isDeleted: false });
   if (!project) throw new Error("Project not found");
+
+  if (data.__v !== undefined && project.__v !== data.__v) {
+    const err = new Error("This project was updated by another user.");
+    err.name = "VersionError";
+    throw err;
+  }
 
   const teamMember = await Team.findOne({
     projectId,
@@ -432,6 +444,12 @@ export const updateProjectRelease = async (userId, projectId, releaseId, payload
   const Release = (await import("../models/release.model.js")).default;
   const release = await Release.findOne({ _id: releaseId, projectId, isDeleted: false });
   if (!release) throw new Error("Release not found");
+
+  if (payload.__v !== undefined && release.__v !== payload.__v) {
+    const err = new Error("This release was updated by another user.");
+    err.name = "VersionError";
+    throw err;
+  }
 
   const allowedFields = ["version", "status", "startDate", "releaseDate", "description"];
   allowedFields.forEach((field) => {

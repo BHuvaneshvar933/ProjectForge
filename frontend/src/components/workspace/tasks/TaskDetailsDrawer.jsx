@@ -2,7 +2,7 @@ import React from "react";
 import Input from "../../common/Input";
 import Button from "../../common/Button";
 
-export default function TaskDetailsDrawer({ task, project, teamSorted, releases = [], onClose, onUpdate, onDelete }) {
+export default function TaskDetailsDrawer({ task, project, teamSorted, releases = [], onClose, onUpdate, onDelete, hasConflict, onReloadLatest }) {
   if (!task) return null;
 
   return (
@@ -43,6 +43,13 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
 
       {/* Body */}
       <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
+        {hasConflict && (
+          <div style={{ background: "rgba(255, 69, 58, 0.15)", border: "1px solid #ff453a", color: "#ff453a", padding: "16px", borderRadius: "8px", marginBottom: "20px" }}>
+            <p style={{ fontWeight: 600, margin: "0 0 8px 0", fontSize: "14px" }}>⚠️ This task was updated by another team member.</p>
+            <p style={{ margin: "0 0 16px 0", fontSize: "13px", opacity: 0.9 }}>Your changes have <strong>not</strong> been saved. Your unsaved changes are still here.</p>
+            <Button variant="danger" onClick={onReloadLatest} style={{ fontSize: "12px", padding: "6px 12px" }}>Reload Latest</Button>
+          </div>
+        )}
         <h2 style={{ fontSize: "24px", fontWeight: "600", marginBottom: "24px" }}>{task.title}</h2>
         
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>

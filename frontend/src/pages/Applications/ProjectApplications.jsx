@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import Modal from "../../components/common/Modal";
+import PublicProfileModal from "../../components/common/PublicProfileModal";
 import Spinner from "../../components/common/Spinner";
 import DashboardPagination from "../../components/common/DashboardPagination";
 import { displaySkillLabel } from "../../utils/display";
@@ -273,48 +274,36 @@ export default function ProjectApplications() {
       </main>
       </div>
 
-      <Modal
+      <PublicProfileModal
         isOpen={Boolean(profileUser)}
         onClose={() => setProfileUser(null)}
-        title={profileUser?.name ? `${profileUser.name}'s Profile` : "Applicant Profile"}
-      >
-        {profileUser && (
-          <div className="apps-profile">
-            <p style={{ color: 'rgba(255, 255, 255, 0.82)', fontSize: 13, lineHeight: 1.6 }}>{profileUser.bio || "No bio provided."}</p>
-            <div className="apps-profile__grid">
-              <div><strong>Email:</strong> {profileUser.email || "-"}</div>
-              <div><strong>Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
-              <div><strong>Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
-              <div><strong>Projects Completed:</strong> {profileUser?.stats?.projectsCompleted ?? 0}</div>
-              <div><strong>Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
-
-              <div><strong>Acceptance Rate:</strong> {profileUser?.stats?.acceptanceRate ? `${(profileUser.stats.acceptanceRate * 100).toFixed(0)}%` : "0%"}</div>
-              <div><strong>Member Since:</strong> {profileUser?.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "-"}</div>
-            </div>
-
-            {profileUser.portfolioLinks && Object.values(profileUser.portfolioLinks).some(Boolean) && (
-              <div className="apps-profile__links" style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
-                {profileUser.portfolioLinks.github && (
-                  <a href={profileUser.portfolioLinks.github.startsWith('http') ? profileUser.portfolioLinks.github : `https://${profileUser.portfolioLinks.github}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#3A3635', borderColor: 'rgba(58, 54, 53, 0.3)'}}>GitHub</a>
-                )}
-                {profileUser.portfolioLinks.linkedin && (
-                  <a href={profileUser.portfolioLinks.linkedin.startsWith('http') ? profileUser.portfolioLinks.linkedin : `https://${profileUser.portfolioLinks.linkedin}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#3A3635', borderColor: 'rgba(58, 54, 53, 0.3)'}}>LinkedIn</a>
-                )}
-                {profileUser.portfolioLinks.website && (
-                  <a href={profileUser.portfolioLinks.website.startsWith('http') ? profileUser.portfolioLinks.website : `https://${profileUser.portfolioLinks.website}`} target="_blank" rel="noreferrer" className="apps-role-chip" style={{textDecoration: 'none', color: '#3A3635', borderColor: 'rgba(58, 54, 53, 0.3)'}}>Website</a>
-                )}
-              </div>
-            )}
-            {Array.isArray(profileUser.skills) && profileUser.skills.length > 0 && (
-              <div className="apps-card__skills">
-                {profileUser.skills.map((s) => (
-                  <Badge key={s?._id || s?.name} variant="skill">{displaySkillLabel(s)}</Badge>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
+        userId={profileUser?._id}
+        onInvite={project?.openRoles?.length > 0 ? () => {
+          setAcceptState({ id: items.find(a => String(a.applicantId?._id) === String(profileUser?._id))?._id, projectRole: project?.openRoles[0] || "" });
+          setProfileUser(null);
+        } : undefined}
+        onMessage={async () => {
+          try {
+            const applicationId = items.find(a => String(a.applicantId?._id) === String(profileUser?._id))?._id;
+            const { startConversation } = await import("../../api/messageApi");
+            const res = await startConversation({ applicationId });
+            const conversationId = res.data.data._id;
+            
+            const event = new CustomEvent("open-dm", { 
+              detail: { 
+                conversationId,
+                userId: profileUser._id, 
+                name: profileUser.name, 
+                avatar: profileUser.avatar 
+              } 
+            });
+            window.dispatchEvent(event);
+            setProfileUser(null);
+          } catch (err) {
+            toast.error(err?.response?.data?.message || "Failed to start conversation");
+          }
+        }}
+      />
 
       <Modal
         isOpen={Boolean(acceptState.id)}

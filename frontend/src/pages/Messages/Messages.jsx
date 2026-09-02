@@ -183,7 +183,7 @@ export default function Messages() {
 
   // Group conversations by project for Owners, and separate for Applicants
   const ownedProjects = {};
-  const appliedProjects = {};
+  const appliedConvs = [];
 
   filteredConvs.forEach(c => {
     const pTitle = c.projectId?.title || "Unknown Project";
@@ -191,8 +191,7 @@ export default function Messages() {
       if (!ownedProjects[pTitle]) ownedProjects[pTitle] = [];
       ownedProjects[pTitle].push(c);
     } else {
-      if (!appliedProjects[pTitle]) appliedProjects[pTitle] = [];
-      appliedProjects[pTitle].push(c);
+      appliedConvs.push(c);
     }
   });
 
@@ -302,12 +301,10 @@ export default function Messages() {
               )}
 
               {activeTab === 'applied' && (
-                Object.keys(appliedProjects).length > 0 ? (
+                appliedConvs.length > 0 ? (
                   <div className="messages-section">
-                    {Object.keys(appliedProjects).map(projectTitle => (
-                    <div key={`applied-${projectTitle}`} className="messages-group">
-                      <div className="messages-group-title" style={{ padding: "8px 24px 4px", fontSize: "13px", fontWeight: 600, borderBottom: "1px solid rgba(255,255,255,0.05)", marginBottom: "4px" }}>{projectTitle}</div>
-                      {appliedProjects[projectTitle].map(conv => {
+                    <div className="messages-group">
+                      {appliedConvs.map(conv => {
                         const otherUser = getOtherUser(conv);
                         const isUnread = conv.lastMessage && conv.lastMessage.senderId !== user._id && !conv.lastMessage.seen;
                         return (
@@ -333,7 +330,7 @@ export default function Messages() {
                                 </span>
                               </div>
                               <div className="messages-item-project" style={{ fontSize: "11px", color: "var(--color-primary)", marginBottom: "2px" }}>
-                                Project Owner
+                                {conv.projectId?.title || "Unknown Project"}
                               </div>
                               <div className="messages-item-preview">
                                 {conv.lastMessage?.senderId === user._id ? "You: " : ""}
@@ -344,7 +341,6 @@ export default function Messages() {
                         )
                       })}
                     </div>
-                  ))}
                   </div>
                 ) : (
                   <div className="messages-empty-state">

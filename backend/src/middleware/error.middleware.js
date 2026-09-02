@@ -9,6 +9,13 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  if (err && err.name === "VersionError") {
+    return res.status(409).json({
+      success: false,
+      message: err.message || "Conflict: This resource was modified by another user.",
+    });
+  }
+
   res.status(err.statusCode || 500).json({
     success: false,
     message: err.message || "Internal Server Error",

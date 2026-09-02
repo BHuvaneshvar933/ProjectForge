@@ -150,7 +150,7 @@ const projectSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true, optimisticConcurrency: true }
 );
 
 export default mongoose.model("Project", projectSchema);

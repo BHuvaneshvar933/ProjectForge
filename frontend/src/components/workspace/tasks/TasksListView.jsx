@@ -25,7 +25,7 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
     setTasks(initialTasks);
   }, [initialTasks]);
 
-  const { optimisticUpdate } = useOptimisticTasks(tasks, setTasks, fetchTasks);
+  const { optimisticUpdate, conflicts, clearConflict } = useOptimisticTasks(tasks, setTasks);
   const { search, setSearch, activeFilters, toggleFilter, clearFilters, filteredTasks } = useTaskFilters(tasks, teamSorted);
   const { columns, visibleColumns, toggleColumnVisibility, resetColumns } = useColumnManagement(projectId);
   const { selectedIds, toggleSelection, clearSelection } = useTaskSelection(filteredTasks);
@@ -154,6 +154,11 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
           onClose={() => setSelectedTask(null)}
           onUpdate={optimisticUpdate}
           onDelete={handleDeleteTask}
+          hasConflict={!!conflicts[selectedTask._id]}
+          onReloadLatest={() => {
+            clearConflict(selectedTask._id);
+            fetchTasks();
+          }}
         />
       )}
     </div>

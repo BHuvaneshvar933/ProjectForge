@@ -103,7 +103,8 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
 
   const onUpdateStatus = async (taskId, status) => {
     try {
-      await updateTaskStatus(taskId, status);
+      const task = tasks.find(t => t._id === taskId);
+      await updateTaskStatus(taskId, status, task?.__v);
       if (onTaskChange) await onTaskChange();
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to update status");
@@ -112,7 +113,8 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
 
   const onAssign = async (taskId, userId) => {
     try {
-      await assignTask(taskId, userId || null);
+      const task = tasks.find(t => t._id === taskId);
+      await assignTask(taskId, userId || null, task?.__v);
       if (onTaskChange) await onTaskChange();
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to assign task");

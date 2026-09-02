@@ -21,7 +21,7 @@ export default function BrowseProjects() {
     status: '',
     projectType: '',
     page: 1,
-    limit: 10
+    limit: 12
   });
   const [pagination, setPagination] = useState({
     page: 1,

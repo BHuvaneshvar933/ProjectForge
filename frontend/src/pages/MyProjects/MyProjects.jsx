@@ -12,7 +12,7 @@ export default function MyProjects() {
   const [mode, setMode] = useState('owned'); // owned | joined
   const [filter, setFilter] = useState('all');
   const [page, setPage] = useState(1);
-  const itemsPerPage = 8;
+  const itemsPerPage = 12;
 
   useEffect(() => {
     setFilter('all');

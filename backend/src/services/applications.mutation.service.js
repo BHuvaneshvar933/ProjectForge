@@ -75,6 +75,10 @@ export const applyToProject = async (userId, data) => {
     existingApplication.reviewedAt = null;
     existingApplication.reviewedBy = null;
     await existingApplication.save();
+    
+    await Application.updateOne({ _id: existingApplication._id }, { createdAt: new Date() });
+    existingApplication.createdAt = new Date();
+    
     application = existingApplication;
   } else {
     // Create new Application
@@ -173,6 +177,10 @@ export const inviteUserToProject = async (ownerId, data) => {
     existingApplication.reviewedBy = null;
     existingApplication.rejectionReason = null;
     await existingApplication.save();
+    
+    await Application.updateOne({ _id: existingApplication._id }, { createdAt: new Date() });
+    existingApplication.createdAt = new Date();
+    
     application = existingApplication;
   } else {
     application = await Application.create({

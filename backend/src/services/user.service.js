@@ -140,8 +140,14 @@ export const updateProfile = async (userId, updateData) => {
   const allowedFields = [
     "name",
     "bio",
+    "headline",
     "skills",
     "availabilityHoursPerWeek",
+    "structuredAvailability",
+    "education",
+    "experience",
+    "achievements",
+    "featuredProjects",
     "portfolioLinks",
   ];
 
@@ -153,11 +159,7 @@ export const updateProfile = async (userId, updateData) => {
 
   await user.save();
 
-  const populated = await User.findById(userId)
-    .populate("skills", "name category")
-    .select("-password");
-
-  return populated || user;
+  return getMyProfile(userId);
 };
 
 export const getPublicUserProfile = async (userId) => {
@@ -172,13 +174,41 @@ export const getPublicUserProfile = async (userId) => {
   const developerJourney = await getDeveloperJourneyStats(userId);
 
   const userObj = user.toObject();
+
+  // Populate featured projects with Project details and Team role
+  if (userObj.featuredProjects && userObj.featuredProjects.length > 0) {
+    const projectIds = userObj.featuredProjects.map(fp => fp.projectId);
+    const projects = await Project.find({ _id: { $in: projectIds } }).populate('requiredSkills');
+    const teams = await Team.find({ userId, projectId: { $in: projectIds } });
+
+    userObj.featuredProjects = userObj.featuredProjects.map(fp => {
+      const proj = projects.find(p => String(p._id) === String(fp.projectId));
+      const team = teams.find(t => String(t.projectId) === String(fp.projectId));
+      
+      return {
+        ...fp,
+        project: proj ? {
+          _id: proj._id,
+          title: proj.title,
+          description: proj.description,
+          status: proj.status,
+          githubUrl: proj.githubIntegration?.isConnected && proj.githubIntegration?.repoName ? `https://github.com/${proj.githubIntegration.repoName}` : proj.archiveData?.deliverables?.sourceCodeUrl,
+          liveUrl: proj.archiveData?.deliverables?.demoVideoUrl,
+          deliverables: proj.archiveData?.deliverables,
+          skills: proj.requiredSkills,
+          coverImage: proj.coverImage
+        } : null,
+        teamRole: team ? team.projectRole : null,
+        contributions: team?.journey?.contributions || []
+      };
+    }).filter(fp => fp.project != null).sort((a, b) => a.order - b.order);
+  }
+
   if (userObj.stats) {
     userObj.stats.projectsActive = developerJourney.projectsActive;
     userObj.stats.projectsCompleted = developerJourney.projectsCompleted;
     userObj.stats.tasksCompleted = developerJourney.tasksCompleted;
-    userObj.stats.applicationsSent = developerJourney.applicationsSent;
-    userObj.stats.applicationsAccepted = developerJourney.applicationsAccepted;
-    userObj.stats.acceptanceRate = developerJourney.acceptanceRate;
+    // Omit acceptanceRate and applications data for public profile
   }
 
   return {

@@ -12,7 +12,8 @@ export default function WorkspaceReleases({ projectId }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ version: "", description: "", startDate: "", releaseDate: "", status: "UNRELEASED" });
+  const [conflictError, setConflictError] = useState(false);
+  const [form, setForm] = useState({ version: "", description: "", startDate: "", releaseDate: "", status: "UNRELEASED", __v: undefined });
 
   useEffect(() => {
     const fetchReleases = async () => {
@@ -43,10 +44,15 @@ export default function WorkspaceReleases({ projectId }) {
       }
       setModalOpen(false);
       setEditingId(null);
+      setConflictError(false);
       const res = await getProjectReleases(projectId);
       setReleases(res.data?.data?.releases || []);
-    } catch {
-      toast.error("Failed to save release");
+    } catch (err) {
+      if (err.response?.status === 409) {
+        setConflictError(true);
+      } else {
+        toast.error("Failed to save release");
+      }
     } finally {
       setSaving(false);
     }
@@ -59,13 +65,14 @@ export default function WorkspaceReleases({ projectId }) {
       startDate: release.startDate ? release.startDate.split("T")[0] : "",
       releaseDate: release.releaseDate ? release.releaseDate.split("T")[0] : "",
       status: release.status || "UNRELEASED",
+      __v: release.__v,
     });
     setEditingId(release._id);
     setModalOpen(true);
   };
 
   const openCreateModal = () => {
-    setForm({ version: "", description: "", startDate: "", releaseDate: "", status: "UNRELEASED" });
+    setForm({ version: "", description: "", startDate: "", releaseDate: "", status: "UNRELEASED", __v: undefined });
     setEditingId(null);
     setModalOpen(true);
   };
@@ -129,7 +136,20 @@ export default function WorkspaceReleases({ projectId }) {
         </div>
       )}
 
-      <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? "Edit Release" : "Create Release"} onConfirm={handleSave} confirmText={saving ? "Saving..." : "Save"}>
+      <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setConflictError(false); }} title={editingId ? "Edit Release" : "Create Release"} onConfirm={handleSave} confirmText={saving ? "Saving..." : "Save"}>
+        {conflictError && (
+          <div style={{ background: "rgba(255, 69, 58, 0.15)", border: "1px solid #ff453a", color: "#ff453a", padding: "16px", borderRadius: "8px", marginBottom: "16px" }}>
+            <p style={{ fontWeight: 600, margin: "0 0 8px 0", fontSize: "14px" }}>⚠️ This release was updated by another team member.</p>
+            <p style={{ margin: "0 0 16px 0", fontSize: "13px", opacity: 0.9 }}>Your changes have <strong>not</strong> been saved. Your unsaved changes are still here.</p>
+            <Button variant="danger" onClick={async () => {
+              setConflictError(false);
+              const res = await getProjectReleases(projectId);
+              setReleases(res.data?.data?.releases || []);
+              const updatedRelease = res.data?.data?.releases?.find(r => r._id === editingId);
+              if (updatedRelease) openEditModal(updatedRelease);
+            }} style={{ fontSize: "12px", padding: "6px 12px" }}>Reload Latest</Button>
+          </div>
+        )}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <Input label="Version name" value={form.version} onChange={e => setForm({...form, version: e.target.value})} placeholder="e.g. v1.0.0" />
           {editingId && (

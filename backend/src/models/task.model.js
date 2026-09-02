@@ -110,7 +110,7 @@ const taskSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true }
+  { timestamps: true, optimisticConcurrency: true }
 );
 
 taskSchema.index({ projectId: 1, status: 1 });
