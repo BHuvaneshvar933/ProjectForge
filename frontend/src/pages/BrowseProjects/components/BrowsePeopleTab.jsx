@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
-import Modal from '../../../components/common/Modal';
+import PublicProfileModal from '../../../components/common/PublicProfileModal';
 import { displaySkillLabel } from '../../../utils/display';
 
 export default function BrowsePeopleTab({
@@ -163,43 +163,11 @@ export default function BrowsePeopleTab({
         </div>
       )}
 
-      <Modal
+      <PublicProfileModal
         isOpen={Boolean(profileUser)}
         onClose={() => setProfileUser(null)}
-        title={profileUser?.name ? `${profileUser.name}'s Profile` : "Applicant Profile"}
-      >
-        {profileUser && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <p style={{ color: 'var(--color-zinc-400)', fontSize: '14px', lineHeight: '1.5' }}>
-              {profileUser.bio || "No bio provided."}
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', fontSize: '14px' }}>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Email:</strong> {profileUser.email || "-"}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Projects Completed:</strong> {profileUser?.stats?.projectsCompleted ?? 0}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
-
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Acceptance Rate:</strong> {profileUser?.stats?.acceptanceRate ? `${(profileUser.stats.acceptanceRate * 100).toFixed(0)}%` : "0%"}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Member Since:</strong> {profileUser?.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "-"}</div>
-            </div>
-
-            {profileUser?.portfolioLinks && (Object.values(profileUser.portfolioLinks).some(link => link)) && (
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '8px' }}>
-                {profileUser.portfolioLinks.github && (
-                  <a href={profileUser.portfolioLinks.github} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>GitHub</a>
-                )}
-                {profileUser.portfolioLinks.linkedin && (
-                  <a href={profileUser.portfolioLinks.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>LinkedIn</a>
-                )}
-                {profileUser.portfolioLinks.website && (
-                  <a href={profileUser.portfolioLinks.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>Website</a>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
+        userId={profileUser?._id}
+      />
     </div>
   );
 }

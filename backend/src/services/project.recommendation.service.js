@@ -102,6 +102,7 @@ export const getProjectRecommendations = async ({ userId, limit = 5 }) => {
         matchScore: { $round: ["$matchScore", 2] },
         commonCount: 1,
         projectSkillCount: 1,
+        commonSkills: 1,
         owner: {
           _id: "$ownerDoc._id",
           name: "$ownerDoc.name",

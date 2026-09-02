@@ -177,10 +177,44 @@ export const browseProjects = async (query) => {
   if (projectType) filter.projectType = projectType;
 
   if (search) {
-    filter.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } }
+    const searchRegex = { $regex: search, $options: "i" };
+    
+    const User = (await import("../models/user.model.js")).default;
+    const Skill = (await import("../models/skill.model.js")).default;
+    const Team = (await import("../models/team.model.js")).default;
+
+    const [matchingUsers, matchingSkills] = await Promise.all([
+      User.find({ name: searchRegex }).select("_id").lean(),
+      Skill.find({ name: searchRegex }).select("_id").lean()
+    ]);
+
+    const matchingUserIds = matchingUsers.map(u => u._id);
+    const matchingSkillIds = matchingSkills.map(s => s._id);
+
+    let matchingProjectIdsFromTeams = [];
+    if (matchingUserIds.length > 0) {
+      const matchingTeams = await Team.find({ userId: { $in: matchingUserIds }, status: "active" }).select("projectId").lean();
+      matchingProjectIdsFromTeams = matchingTeams.map(t => t.projectId);
+    }
+
+    const searchConditions = [
+      { title: searchRegex },
+      { description: searchRegex }
     ];
+
+    if (matchingSkillIds.length > 0) {
+      searchConditions.push({ requiredSkills: { $in: matchingSkillIds } });
+    }
+    
+    if (matchingUserIds.length > 0) {
+      searchConditions.push({ owner: { $in: matchingUserIds } });
+    }
+
+    if (matchingProjectIdsFromTeams.length > 0) {
+      searchConditions.push({ _id: { $in: matchingProjectIdsFromTeams } });
+    }
+
+    filter.$or = searchConditions;
   }
 
   if (userId) {
