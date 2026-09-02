@@ -45,10 +45,10 @@ export default function AccountDetails({ user }) {
           
           <div style={{ fontSize: 13, color: "var(--color-text-muted)", lineHeight: 1.5, borderTop: "1px solid var(--border-color)", paddingTop: 12 }}>
             <p style={{ margin: 0, marginBottom: "8px" }}>
-              <strong>Reliability Status</strong> reflects your track record. Project owners only see your status if you are "Reliable" or "Developing" — negative statuses are kept private to give you a chance to recover.
+              <strong>Reliability Status</strong> shows your track record of collaborating. We only share positive or developing statuses with project owners. If you ever hit a rough patch, we keep those statuses private so you have space to improve and recover.
             </p>
             <p style={{ margin: 0 }}>
-              <strong>Confidence Level</strong> indicates how much history we have to back up this status. Join projects you're reasonably confident you can commit to, and communicate with your team if circumstances change.
+              <strong>Confidence Level</strong> just tells us how much history you have on the platform. To build a strong history, join projects you know you can commit to and always keep your team updated if things change.
             </p>
           </div>
         </div>
@@ -92,10 +92,6 @@ export default function AccountDetails({ user }) {
           </div>
 
           <div className="account__journey-stat">
-            <span className="account__journey-label">Achievements Unlocked</span>
-            <span className="account__journey-value">{user?.developerJourney?.achievementsUnlocked ?? 0}</span>
-          </div>
-          <div className="account__journey-stat">
             <span className="account__journey-label">Team Contributions</span>
             <span className="account__journey-value">{user?.developerJourney?.teamContributions ?? 0} tasks</span>
           </div>
@@ -104,7 +100,7 @@ export default function AccountDetails({ user }) {
 
       <div className="account__section">
         <div className="account__card-title" style={{ marginBottom: 16 }}>
-          Badges & Achievements
+          Badges
         </div>
         {user?.developerJourney?.gamifiedBadges?.length > 0 ? (
           <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>

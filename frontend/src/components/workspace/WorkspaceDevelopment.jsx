@@ -83,18 +83,18 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
     <div className="workspace-development" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
         <h2 style={{ fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-          Development <span style={{ fontSize: "10px", background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "2px 6px", borderRadius: "4px", fontWeight: "bold" }}>AI MENTOR</span>
+          Development
         </h2>
       </div>
 
-      {/* Top Section: AI Engineering Assessment */}
+      {/* Top Section: AI Feedback */}
       <div style={{ background: "rgba(10,132,255,0.05)", border: "1px solid rgba(10,132,255,0.2)", borderRadius: "8px", padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h3 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
-             AI Engineering Assessment
+             AI Feedback
           </h3>
           <Button onClick={handleGetAssessment} disabled={assessmentLoading}>
-            {assessmentLoading ? "Analyzing Metrics..." : (assessment ? "Refresh Assessment" : "Get Mentor Feedback")}
+            {assessmentLoading ? "Analyzing Metrics..." : (assessment ? "Refresh Assessment" : "Get AI Feedback")}
           </Button>
         </div>
 
@@ -107,14 +107,14 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
 
         {!assessmentLoading && !assessment && (
           <div style={{ padding: "16px 0", color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>
-            Click "Get Mentor Feedback" to analyze your team's execution evidence (completed tasks, open bugs, PR cycle time) and receive actionable engineering guidance.
+            Click "Get AI Feedback" to analyze your team's execution evidence (completed tasks, open bugs, PR cycle time) and receive actionable engineering guidance.
           </div>
         )}
 
         {!assessmentLoading && assessment && (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginTop: "8px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ fontWeight: "bold", fontSize: "14px", textTransform: "uppercase", padding: "4px 10px", borderRadius: "4px", background: assessment.status === 'Stable' ? 'rgba(50, 215, 75, 0.2)' : assessment.status === 'Needs Attention' ? 'rgba(255, 159, 10, 0.2)' : 'rgba(255, 69, 58, 0.2)', color: assessment.status === 'Stable' ? '#32d74b' : assessment.status === 'Needs Attention' ? '#ff9f0a' : '#ff453a' }}>
+              <span style={{ fontWeight: "bold", fontSize: "14px", textTransform: "uppercase", padding: "4px 10px", borderRadius: "4px", background: assessment.status === 'Healthy' ? 'rgba(50, 215, 75, 0.2)' : assessment.status === 'Needs Attention' ? 'rgba(255, 69, 58, 0.2)' : 'rgba(10, 132, 255, 0.2)', color: assessment.status === 'Healthy' ? '#32d74b' : assessment.status === 'Needs Attention' ? '#ff453a' : '#0a84ff' }}>
                 Execution Status: {assessment.status}
               </span>
               <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.9)", lineHeight: "1.5" }}>{assessment.message}</p>

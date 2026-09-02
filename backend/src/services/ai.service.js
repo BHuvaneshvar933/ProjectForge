@@ -664,24 +664,28 @@ export const generateEngineeringAssessment = async (projectData) => {
   const prompt = `
 You are an expert Senior Engineering Mentor. Your task is to review a software project's deterministic execution metrics and provide an evidence-based assessment.
 
+The backend has determined the status of this project to be: ${projectData.determinedStatus}
+Negative reasons identified by the backend (if any): ${projectData.negativeReasons?.join(", ") || "None"}
+
 IMPORTANT STRICT RULES:
-1. DO NOT claim to objectively determine if a student is "developing well". Instead, frame it as "evidence-based guidance".
-2. Every strength, weakness, and recommendation must be directly traceable to one or more supplied metrics. Do not recommend practices merely because they are generally considered good engineering practices (e.g. do not recommend adding automated tests unless you have test metrics). If the available data is insufficient to support an assessment, explicitly state that evidence is unavailable.
-3. DO NOT judge a metric as "high" or "low" (e.g. deployment frequency) unless you have a baseline. Simply state the metric.
-4. If pull request data is zero or missing, DO NOT assume there is a lack of code review. Instead, state: "No pull-request activity is currently recorded, so code-review activity cannot be assessed."
-5. The assessment MUST clearly reference the provided data (e.g., "Because you have 5 overdue tasks...").
-6. Be encouraging but practical. Do not invent metrics or data.
-7. Output ONLY a valid, parseable JSON object.
+1. You MUST distinguish between a metric being exactly 0 vs being unavailable.
+2. If data is unavailable, point out that the data is missing in "areasForImprovement" (e.g. "No task tracking data is available to evaluate progress"), but DO NOT treat it as a negative engineering failure. DO NOT use meta-terms like "evidence gap" or "tasks.available is false" in your final text. Just speak naturally to the student.
+3. If a metric is literally 0 (e.g. 0 open bugs, 0 critical vulnerabilities), treat this as positive or neutral evidence, not missing data!
+4. RECOMMENDATION SOURCING: ProjectForge ALREADY has built-in features for Tasks, Bugs, Releases, and Team Assignments. NEVER recommend external tools like Jira, Trello, Asana, or GitHub Issues. Instead, recommend using ProjectForge's own built-in task tracking.
+5. RECOMMENDATION QUANTITY & QUALITY: Do not force a fixed number of recommendations. Only provide a recommendation if there is an actual problem or an evidence gap to close. 0, 1, or 2 strong recommendations are better than generic filler.
+6. STUDENT-FRIENDLY TONE: You are advising students. Be simple, practical, and avoid enterprise/DevOps jargon (e.g. do not arbitrarily recommend Dependabot, Snyk, or enterprise code-governance).
+7. If the backend determined status is "Needs Attention", you must explain why using the negative reasons provided.
+8. Output ONLY a valid, parseable JSON object.
 
 Project Evidence:
 ${JSON.stringify(projectData, null, 2)}
 
 Output your assessment as a strict JSON object with this exact structure:
 {
-  "message": "A 2-3 sentence overall mentor evaluation linking the raw metrics to engineering health.",
-  "strengths": ["One or two specific positive observations backed by data."],
-  "areasForImprovement": ["One or two specific negative observations backed by data."],
-  "recommendedActions": ["1-3 actionable steps the team should take right now to improve, derived strictly from the evidence."]
+  "message": "A 2-3 sentence overall mentor evaluation linking the raw metrics to engineering health. Explain the determined status.",
+  "strengths": ["One or two specific positive observations backed by data. Zero bugs/vulnerabilities are strengths."],
+  "areasForImprovement": ["Actual negative observations (e.g. overdue tasks) AND point out missing tools. DO NOT use meta-programming terms like 'tasks.available is false' or 'evidence gap'."],
+  "recommendedActions": ["Actionable, student-friendly steps derived strictly from evidence. Recommend using ProjectForge for tasks/bugs. Leave empty if no action is needed. DO NOT use meta-language like 'close the evidence gap'."]
 }
 `;
 

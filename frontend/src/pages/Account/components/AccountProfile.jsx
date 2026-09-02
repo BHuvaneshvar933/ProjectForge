@@ -8,8 +8,6 @@ import EducationalTip from "../../../components/common/EducationalTip";
 
 import EducationEditor from "./AccountPortfolioEditors/EducationEditor";
 import ExperienceEditor from "./AccountPortfolioEditors/ExperienceEditor";
-import AchievementsEditor from "./AccountPortfolioEditors/AchievementsEditor";
-import AvailabilityEditor from "./AccountPortfolioEditors/AvailabilityEditor";
 import FeaturedProjectsEditor from "./AccountPortfolioEditors/FeaturedProjectsEditor";
 
 export default function AccountProfile({ form, setForm }) {
@@ -127,11 +125,9 @@ export default function AccountProfile({ form, setForm }) {
         <div className="account__muted">Used for matching and team planning.</div>
       </div>
 
-      <AvailabilityEditor form={form} setForm={setForm} />
       <EducationEditor form={form} setForm={setForm} />
       <ExperienceEditor form={form} setForm={setForm} />
       <FeaturedProjectsEditor form={form} setForm={setForm} />
-      <AchievementsEditor form={form} setForm={setForm} />
 
       <div className="account__section">
         <div className="account__card-title" style={{ marginBottom: 10 }}>

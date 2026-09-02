@@ -384,43 +384,80 @@ export const getEngineeringAssessment = async (req, res, next) => {
     const overdueTasks = openTasks.filter(t => t.dueDate && new Date(t.dueDate) < now);
     const openBugs = openTasks.filter(t => t.type === "bug");
     
-    let githubData = "Not connected";
-    let githubMetrics = null;
+    const isGithubConnected = project.githubIntegration && project.githubIntegration.isConnected;
     
-    if (project.githubIntegration && project.githubIntegration.isConnected) {
-       githubData = "Connected to repository: " + project.githubIntegration.repoName;
+    let githubData = { available: false, reason: "Not connected", metrics: null };
+    
+    if (isGithubConnected) {
        try {
-         githubMetrics = await fetchGitHubMetrics(
+         const metrics = await fetchGitHubMetrics(
            project.githubIntegration.repoName,
            project.githubIntegration.accessToken
          );
+         githubData = { available: true, repo: project.githubIntegration.repoName, metrics };
        } catch (err) {
          console.error("Failed to fetch GitHub metrics for assessment", err);
+         githubData = { available: false, reason: "Error fetching data from connected repository", metrics: null };
        }
     }
 
+    // Determine evidence availability
+    const hasTaskData = tasks.length > 0;
+    const hasGithubData = githubData.available;
+    
     const projectData = {
       title: project.title,
-      totalTasks: tasks.length,
-      completedTasks: completedTasks.length,
-      openBugs: openBugs.length,
-      overdueTasks: overdueTasks.length,
-      githubStatus: githubData,
-      githubMetrics: githubMetrics
+      tasks: {
+        available: hasTaskData,
+        totalTasks: tasks.length,
+        completedTasks: completedTasks.length,
+        openBugs: openBugs.length,
+        overdueTasks: overdueTasks.length,
+      },
+      github: githubData
     };
 
-    let systemStatus = "Stable";
-    const completionRate = tasks.length > 0 ? completedTasks.length / tasks.length : 0;
+    let systemStatus = "Healthy";
     
-    if (overdueTasks.length > 3 || openBugs.length > 3) {
-      systemStatus = "Critical";
-    } else if (overdueTasks.length >= 1 || openBugs.length >= 1 || completionRate <= 0.5) {
-      systemStatus = "Needs Attention";
-    } else {
-      systemStatus = "Stable";
+    // Check for negative evidence
+    let hasNegativeEvidence = false;
+    let negativeReasons = [];
+
+    if (hasTaskData) {
+        if (overdueTasks.length > 0) {
+            hasNegativeEvidence = true;
+            negativeReasons.push(`${overdueTasks.length} overdue task(s)`);
+        }
+        if (openBugs.length > 0) {
+            hasNegativeEvidence = true;
+            negativeReasons.push(`${openBugs.length} open bug(s)`);
+        }
     }
 
+    if (hasGithubData && githubData.metrics) {
+        if (githubData.metrics.criticalVulnerabilities > 0) {
+            hasNegativeEvidence = true;
+            negativeReasons.push(`${githubData.metrics.criticalVulnerabilities} critical vulnerability(ies)`);
+        }
+    }
+
+    if (hasNegativeEvidence) {
+        systemStatus = "Needs Attention";
+    } else if (!hasTaskData && !hasGithubData) {
+        systemStatus = "Insufficient Data";
+    } else if (!hasTaskData || !hasGithubData) {
+        systemStatus = "Limited Evidence";
+    } else {
+        systemStatus = "Healthy";
+    }
+
+    // Pass the calculated status to the AI so it can incorporate it into the explanation
+    projectData.determinedStatus = systemStatus;
+    projectData.negativeReasons = negativeReasons;
+
     const assessment = await generateAssessmentAI(projectData);
+    
+    // Ensure the AI doesn't override our status
     assessment.status = systemStatus;
 
     res.status(200).json({ success: true, data: { assessment } });

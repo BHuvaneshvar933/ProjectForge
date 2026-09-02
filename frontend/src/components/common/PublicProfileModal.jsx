@@ -89,7 +89,7 @@ export default function PublicProfileModal({ isOpen, onClose, userId, onInvite, 
                   <span style={{ fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-primary)' }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--color-primary)' }}></span>
                     Available
-                    {profile.structuredAvailability?.timeCommitment ? ` · ${profile.structuredAvailability.timeCommitment}` : profile.availabilityHoursPerWeek ? ` · ${profile.availabilityHoursPerWeek} hrs/week` : ''}
+                    {profile.availabilityHoursPerWeek ? ` · ${profile.availabilityHoursPerWeek} hrs/week` : ''}
                   </span>
                 </div>
               </div>
@@ -228,38 +228,7 @@ export default function PublicProfileModal({ isOpen, onClose, userId, onInvite, 
             )}
           </div>
 
-          {/* 7. Availability */}
-          {profile.structuredAvailability && Object.values(profile.structuredAvailability).some(Boolean) && (
-            <div>
-              <h3 style={{ fontSize: 16, marginBottom: 12 }}>Availability</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, background: 'var(--color-paper)', padding: 16, borderRadius: 8, border: '1px solid var(--border-color)' }}>
-                {profile.structuredAvailability.timeCommitment && (
-                  <div>
-                    <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Time commitment</div>
-                    <div style={{ fontSize: 14, fontWeight: 500 }}>{profile.structuredAvailability.timeCommitment}</div>
-                  </div>
-                )}
-                {profile.structuredAvailability.preferredSchedule && (
-                  <div>
-                    <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Preferred schedule</div>
-                    <div style={{ fontSize: 14, fontWeight: 500 }}>{profile.structuredAvailability.preferredSchedule}</div>
-                  </div>
-                )}
-                {profile.structuredAvailability.projectDuration && (
-                  <div>
-                    <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Project duration</div>
-                    <div style={{ fontSize: 14, fontWeight: 500 }}>{profile.structuredAvailability.projectDuration}</div>
-                  </div>
-                )}
-                {profile.structuredAvailability.canStart && (
-                  <div>
-                    <div style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>Can start</div>
-                    <div style={{ fontSize: 14, fontWeight: 500 }}>{profile.structuredAvailability.canStart}</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+          {/* Removed Detailed Availability */}
 
           {/* 8. ProjectForge Activity */}
           <div>
@@ -276,25 +245,7 @@ export default function PublicProfileModal({ isOpen, onClose, userId, onInvite, 
             </div>
           </div>
 
-          {/* 9. Achievements */}
-          <div>
-            <h3 style={{ fontSize: 16, marginBottom: 12 }}>Achievements</h3>
-            {profile.achievements?.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {profile.achievements.map((ach, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>🏆 {ach.title}</div>
-                    <div style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 2 }}>
-                      {ach.organization} {ach.date && `· ${ach.date}`}
-                    </div>
-                    {ach.description && <div style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 4 }}>{ach.description}</div>}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--color-text-muted)', margin: 0 }}>No achievements added yet.</p>
-            )}
-          </div>
+          {/* Removed Achievements */}
 
         </div>
       ) : null}
