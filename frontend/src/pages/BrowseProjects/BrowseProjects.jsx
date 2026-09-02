@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { browseProjects, getMyProjects, getJoinedProjects } from '../../api/projectApi';
+import { browseProjects } from '../../api/projectApi';
 import { getProjectRecommendations } from '../../api/recommendationApi';
 import { searchUsers } from '../../api/userApi';
 import { inviteUserToProject } from '../../api/applicationApi';
@@ -30,10 +30,6 @@ export default function BrowseProjects() {
   });
 
   const [tab, setTab] = useState('projects'); // projects | people
-  const [projectSubTab, setProjectSubTab] = useState('all'); // all | my | joined | completed
-  const [myProjectsList, setMyProjectsList] = useState([]);
-  const [joinedProjectsList, setJoinedProjectsList] = useState([]);
-  const [personalProjectsLoaded, setPersonalProjectsLoaded] = useState(false);
 
   // People search + invite
   const [ownedProjects, setOwnedProjects] = useState([]);
@@ -61,7 +57,6 @@ export default function BrowseProjects() {
   })();
 
   const fetchProjects = useCallback(async () => {
-    if (projectSubTab !== 'all') return;
     setLoading(true);
     try {
       const params = { ...filters, search: search || undefined };
@@ -89,31 +84,7 @@ export default function BrowseProjects() {
     } finally {
       setLoading(false);
     }
-  }, [filters, search, tokenPresent, projectSubTab]);
-
-  const fetchPersonalProjects = useCallback(async () => {
-    if (!tokenPresent || personalProjectsLoaded) return;
-    setLoading(true);
-    try {
-      const [myRes, joinedRes] = await Promise.all([
-        getMyProjects(),
-        getJoinedProjects()
-      ]);
-      setMyProjectsList(myRes?.data?.data?.projects ?? []);
-      setJoinedProjectsList(joinedRes?.data?.data?.projects ?? []);
-      setPersonalProjectsLoaded(true);
-    } catch (error) {
-      console.error('Failed to fetch personal projects:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [tokenPresent, personalProjectsLoaded]);
-
-  useEffect(() => {
-    if (tab === 'projects' && projectSubTab !== 'all') {
-      fetchPersonalProjects();
-    }
-  }, [tab, projectSubTab, fetchPersonalProjects]);
+  }, [filters, search, tokenPresent]);
 
   const selectedProject = useMemo(() => {
     return ownedProjects.find((p) => String(p?._id) === String(selectedProjectId)) || null;
@@ -238,44 +209,6 @@ export default function BrowseProjects() {
     };
   }, []);
 
-  const displayedProjects = useMemo(() => {
-    if (projectSubTab === 'all') return projects;
-
-    let sourceList = [];
-    if (projectSubTab === 'my') {
-      sourceList = myProjectsList;
-    } else if (projectSubTab === 'joined') {
-      sourceList = joinedProjectsList;
-    } else if (projectSubTab === 'completed') {
-      sourceList = [...myProjectsList, ...joinedProjectsList].filter(p => p.status === 'completed');
-      const seen = new Set();
-      sourceList = sourceList.filter(p => {
-        if (seen.has(p._id)) return false;
-        seen.add(p._id);
-        return true;
-      });
-    }
-
-    let filtered = sourceList;
-    
-    if (filters.projectType) {
-      filtered = filtered.filter(p => p.projectType === filters.projectType);
-    }
-    
-    if (search) {
-      const q = search.toLowerCase().trim();
-      filtered = filtered.filter(p => {
-        if (p.title?.toLowerCase().includes(q)) return true;
-        if (p.description?.toLowerCase().includes(q)) return true;
-        if (p.requiredSkills?.some(s => s.name?.toLowerCase().includes(q))) return true;
-        if (p.owner?.name?.toLowerCase().includes(q)) return true;
-        return false;
-      });
-    }
-
-    return filtered;
-  }, [projectSubTab, projects, myProjectsList, joinedProjectsList, filters.projectType, search]);
-
   const handleSearch = (e) => {
     e.preventDefault();
     setFilters({ ...filters, page: 1 });
@@ -334,42 +267,6 @@ export default function BrowseProjects() {
                   Search
                 </button>
               </form>
-
-              {tokenPresent && (
-                <>
-                  <h3 className="dashboard-sidebar__heading" style={{ marginTop: '24px' }}>Views</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <button
-                      type="button"
-                      className={`dashboard-sidebar__tab ${projectSubTab === 'all' ? 'is-active' : ''}`.trim()}
-                      onClick={() => setProjectSubTab('all')}
-                    >
-                      All Projects
-                    </button>
-                    <button
-                      type="button"
-                      className={`dashboard-sidebar__tab ${projectSubTab === 'my' ? 'is-active' : ''}`.trim()}
-                      onClick={() => setProjectSubTab('my')}
-                    >
-                      My Projects
-                    </button>
-                    <button
-                      type="button"
-                      className={`dashboard-sidebar__tab ${projectSubTab === 'joined' ? 'is-active' : ''}`.trim()}
-                      onClick={() => setProjectSubTab('joined')}
-                    >
-                      Joined
-                    </button>
-                    <button
-                      type="button"
-                      className={`dashboard-sidebar__tab ${projectSubTab === 'completed' ? 'is-active' : ''}`.trim()}
-                      onClick={() => setProjectSubTab('completed')}
-                    >
-                      Completed
-                    </button>
-                  </div>
-                </>
-              )}
 
               <h3 className="dashboard-sidebar__heading" style={{ marginTop: '24px' }}>Filters</h3>
               <select
@@ -453,11 +350,10 @@ export default function BrowseProjects() {
                 setFilters={setFilters}
                 loading={loading}
                 tokenPresent={tokenPresent}
-                recommendations={projectSubTab === 'all' ? recommendations : []}
-                projects={displayedProjects}
-                pagination={projectSubTab === 'all' ? pagination : { page: 1, total: displayedProjects.length, pages: 1 }}
+                recommendations={recommendations}
+                projects={projects}
+                pagination={pagination}
                 hideControls={true}
-                projectSubTab={projectSubTab}
                 searchQuery={search}
               />
             </>

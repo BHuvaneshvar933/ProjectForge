@@ -11,7 +11,6 @@ export default function BrowseProjectsTab({
   projects,
   pagination,
   hideControls,
-  projectSubTab,
   searchQuery
 }) {
   const validRecommendations = recommendations.filter(r => typeof r.matchScore === 'number' && Math.round(r.matchScore) > 0);
