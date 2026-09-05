@@ -62,7 +62,7 @@ export default defineConfig({
       }
     },
     {
-      command: 'npm run dev --prefix frontend',
+      command: 'npm run dev --prefix frontend -- --host 127.0.0.1 --port 5173',
       url: 'http://127.0.0.1:5173',
       reuseExistingServer: !process.env.CI,
     }
