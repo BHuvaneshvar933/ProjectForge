@@ -126,6 +126,7 @@ html[data-theme="dark"] .navbar__brand-text {
   position: relative;
   text-decoration: none;
   user-select: none;
+  white-space: nowrap;
 }
 
 .navbar__link:hover {
@@ -171,6 +172,7 @@ html[data-theme="dark"] .navbar__link.is-active {
   box-shadow: none !important;
   text-decoration: none;
   transform: none !important;
+  white-space: nowrap;
 }
 
 .navbar__cta-btn:hover {
@@ -222,6 +224,7 @@ html[data-theme="dark"] .navbar__cta-btn:hover {
   border: none;
   cursor: pointer;
   font-family: inherit;
+  white-space: nowrap;
 }
 
 

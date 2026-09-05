@@ -65,10 +65,10 @@ export default function TaskTableRow({
       padding: "4px 8px", 
       fontSize: "13px", 
       height: "auto", 
-      background: hovered ? "rgba(255,255,255,0.05)" : "transparent",
-      border: hovered ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent",
+      background: hovered ? "var(--color-border-subtle)" : "transparent",
+      border: hovered ? "1px solid var(--color-border-medium)" : "1px solid transparent",
       borderRadius: "4px",
-      color: "#fff",
+      color: "var(--color-text-dark)",
       cursor: "pointer",
       width: "100%",
       appearance: hovered ? "auto" : "none"
@@ -87,15 +87,15 @@ export default function TaskTableRow({
             href="#" 
             onClick={(e) => { e.preventDefault(); onClickRow(task); }} 
             style={{ 
-              color: "rgba(255,255,255,0.7)", 
+              color: "var(--color-text-muted)", 
               textDecoration: "none", 
               fontWeight: "500", 
               fontSize: "12px",
               letterSpacing: "0.02em",
               transition: "color 0.15s ease"
             }}
-            onMouseOver={(e) => e.target.style.color = "#ffffff"}
-            onMouseOut={(e) => e.target.style.color = "rgba(255,255,255,0.7)"}
+            onMouseOver={(e) => e.target.style.color = "var(--color-text-dark)"}
+            onMouseOut={(e) => e.target.style.color = "var(--color-text-muted)"}
           >
             {project?.key || "TASK"}-{task.taskNumber}
           </a>
@@ -104,7 +104,7 @@ export default function TaskTableRow({
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "8px", width: "100%" }}>
             {level > 0 && (
-              <span style={{ color: "rgba(255,255,255,0.3)", fontFamily: "monospace", fontSize: "14px", userSelect: "none" }}>
+              <span style={{ color: "var(--color-text-muted-light)", fontFamily: "monospace", fontSize: "14px", userSelect: "none" }}>
                 └─
               </span>
             )}
@@ -115,7 +115,7 @@ export default function TaskTableRow({
                 onChange={e => setTitleValue(e.target.value)}
                 onBlur={handleTitleSubmit}
                 onKeyDown={handleTitleKeyDown}
-                style={{ width: "100%", background: "rgba(255,255,255,0.1)", border: "1px solid #0a84ff", color: "#fff", padding: "2px 6px", borderRadius: "4px", outline: "none", fontSize: "14px" }}
+                style={{ width: "100%", background: "var(--color-border-medium)", border: "1px solid #0a84ff", color: "var(--color-text-dark)", padding: "2px 6px", borderRadius: "4px", outline: "none", fontSize: "14px" }}
               />
             ) : (
               <span 
@@ -163,12 +163,12 @@ export default function TaskTableRow({
           </select>
         );
       case "updatedAt":
-        return <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{new Date(task.updatedAt).toLocaleDateString()}</span>;
+        return <span style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>{new Date(task.updatedAt).toLocaleDateString()}</span>;
       case "dueDate":
-        return <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)" }}>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</span>;
+        return <span style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</span>;
       case "actions":
         return (
-          <button style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer" }}>
+          <button style={{ background: "transparent", border: "none", color: "var(--color-text-muted)", cursor: "pointer" }}>
             •••
           </button>
         );
@@ -185,14 +185,14 @@ export default function TaskTableRow({
       onMouseLeave={() => setHovered(false)}
       style={{ 
         display: "flex", 
-        borderBottom: "1px solid rgba(255,255,255,0.05)",
-        background: isSelected ? "rgba(10, 132, 255, 0.15)" : hovered ? "rgba(255,255,255,0.03)" : "transparent",
+        borderBottom: "1px solid var(--color-border-subtle)",
+        background: isSelected ? "rgba(10, 132, 255, 0.15)" : hovered ? "var(--color-border-subtle)" : "transparent",
         transition: "background 0.1s ease",
         height: "40px",
         alignItems: "center",
         marginLeft: `${level * 24}px`,
         width: `calc(100% - ${level * 24}px)`,
-        borderLeft: level > 0 ? "2px solid rgba(255,255,255,0.2)" : "none"
+        borderLeft: level > 0 ? "2px solid var(--color-border-strong)" : "none"
       }}
     >
       {/* Fixed first column: Expand & Checkbox */}
@@ -200,9 +200,9 @@ export default function TaskTableRow({
         {hasChildren ? (
           <button 
             onClick={onToggleExpand}
-            style={{ width: "20px", height: "20px", display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", borderRadius: "4px", padding: 0 }}
-            onMouseOver={e => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#fff"; }}
-            onMouseOut={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
+            style={{ width: "20px", height: "20px", display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "none", color: "var(--color-text-muted)", cursor: "pointer", borderRadius: "4px", padding: 0 }}
+            onMouseOver={e => { e.currentTarget.style.background = "var(--color-border-medium)"; e.currentTarget.style.color = "var(--color-text-dark)"; }}
+            onMouseOut={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--color-text-muted)"; }}
           >
             {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
           </button>
@@ -214,7 +214,7 @@ export default function TaskTableRow({
           type="checkbox" 
           checked={isSelected}
           onChange={(e) => onToggleSelection(task._id, e.nativeEvent)}
-          style={{ marginLeft: "4px", cursor: "pointer", accentColor: "#ffffff", width: "14px", height: "14px" }}
+          style={{ marginLeft: "4px", cursor: "pointer", accentColor: "var(--color-text-dark)", width: "14px", height: "14px" }}
         />
       </div>
 

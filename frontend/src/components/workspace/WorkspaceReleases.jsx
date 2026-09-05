@@ -165,7 +165,7 @@ export default function WorkspaceReleases({ projectId }) {
           <Input label="Release Date" type="date" value={form.releaseDate} onChange={e => setForm({...form, releaseDate: e.target.value})} />
           <div>
             <label className="input__label">Description</label>
-            <textarea className="workspace-modal__textarea" rows={3} value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
+            <textarea className="input__field" rows={3} value={form.description} onChange={e => setForm({...form, description: e.target.value})} />
           </div>
         </div>
       </Modal>

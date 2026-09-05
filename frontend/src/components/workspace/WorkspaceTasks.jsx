@@ -153,16 +153,16 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
             Refresh
           </Button>
         </div>
-        <div style={{ display: "flex", gap: "4px", background: "rgba(255,255,255,0.05)", padding: "4px", borderRadius: "8px" }}>
+        <div style={{ display: "flex", gap: "4px", background: "var(--color-border-subtle)", padding: "4px", borderRadius: "8px" }}>
           <button 
             onClick={() => setTaskView("board")}
-            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", cursor: "pointer", background: taskView === "board" ? "rgba(255,255,255,0.15)" : "transparent", color: taskView === "board" ? "#fff" : "rgba(255,255,255,0.5)" }}
+            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", cursor: "pointer", background: taskView === "board" ? "var(--color-border-medium)" : "transparent", color: taskView === "board" ? "var(--color-text-dark)" : "var(--color-text-muted)" }}
           >
             Board
           </button>
           <button 
             onClick={() => setTaskView("list")}
-            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", cursor: "pointer", background: taskView === "list" ? "rgba(255,255,255,0.15)" : "transparent", color: taskView === "list" ? "#fff" : "rgba(255,255,255,0.5)" }}
+            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", cursor: "pointer", background: taskView === "list" ? "var(--color-border-medium)" : "transparent", color: taskView === "list" ? "var(--color-text-dark)" : "var(--color-text-muted)" }}
           >
             List
           </button>
@@ -234,7 +234,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                        <div style={{ background: "rgba(94, 92, 230, 0.15)", color: "#5e5ce6", padding: "4px", borderRadius: "4px", display: "flex" }}><CheckSquare size={14} /></div>}
                     </div>
                     <div style={{ flex: 1, wordBreak: "break-word" }}>
-                      <span style={{ fontWeight: 600, color: "rgba(255,255,255,0.6)", marginRight: 6 }}>
+                      <span style={{ fontWeight: 600, color: "var(--color-text-muted)", marginRight: 6 }}>
                         {project?.key || "TASK"}-{t.taskNumber || "X"}
                       </span>
                       {t.title}
@@ -242,12 +242,12 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                   </div>
                   {t.attachmentUrl && (
                     <div style={{ marginTop: "4px" }}>
-                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "var(--color-text-muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}>
                         {t.attachmentName?.substring(0, 24) || "View Attachment"}
                       </a>
                     </div>
                   )}
-                  <div className="workspace-task__meta" style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginTop: "8px" }}>
+                  <div className="workspace-task__meta" style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "12px", color: "var(--color-text-muted)", marginTop: "8px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between" }}>
                       <span>prio: {t.priority}</span>
                       <span>
@@ -255,7 +255,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                       </span>
                     </div>
                     {(t.startedAt || t.dueDate) && (
-                      <div style={{ display: "flex", gap: "6px", alignItems: "center", background: "rgba(255,255,255,0.05)", padding: "4px 6px", borderRadius: "4px", width: "fit-content" }}>
+                      <div style={{ display: "flex", gap: "6px", alignItems: "center", background: "var(--color-border-subtle)", padding: "4px 6px", borderRadius: "4px", width: "fit-content" }}>
                         <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                         <span>
                           {t.startedAt ? new Date(t.startedAt).toLocaleDateString([], { month: "short", day: "numeric" }) : "TBD"} - {t.dueDate ? new Date(t.dueDate).toLocaleDateString([], { month: "short", day: "numeric" }) : "TBD"}

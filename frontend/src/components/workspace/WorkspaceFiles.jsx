@@ -86,8 +86,66 @@ export default function WorkspaceFiles({ projectId, isMember }) {
   };
 
   const filteredFiles = files.filter(f => 
-    f.filename?.toLowerCase().includes(search.toLowerCase())
+    (f.originalName || f.filename)?.toLowerCase().includes(search.toLowerCase())
   );
+
+  const images = filteredFiles.filter(f => f.mimetype?.startsWith("image/"));
+  const links = filteredFiles.filter(f => f.mimetype === "url" || f.mimetype === "link");
+  const documents = filteredFiles.filter(f => !f.mimetype?.startsWith("image/") && f.mimetype !== "url" && f.mimetype !== "link");
+
+  const renderFileGrid = (fileList, title) => {
+    if (!fileList.length) return null;
+    return (
+      <div style={{ marginBottom: "24px" }}>
+        <h4 style={{ margin: "0 0 16px 0", fontSize: "13px", color: "var(--color-text-dark)", textTransform: "uppercase", letterSpacing: "0.5px" }}>{title}</h4>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "16px" }}>
+          {fileList.map(file => (
+            <a 
+              key={file._id} 
+              href={file.url} 
+              target="_blank" 
+              rel="noreferrer"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                background: "var(--color-paper)",
+                border: "1px solid var(--border-color)",
+                borderRadius: "10px",
+                padding: "16px",
+                textDecoration: "none",
+                color: "inherit",
+                transition: "all 0.2s",
+                cursor: "pointer"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--color-text-dark)"}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border-color)"}
+            >
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100px", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "8px", marginBottom: "12px" }}>
+                {file.mimetype?.startsWith("image/") ? (
+                  <img src={file.url} alt={file.originalName || file.filename} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }} />
+                ) : (
+                  getFileIcon(file.mimetype)
+                )}
+              </div>
+              
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--color-text-dark)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={file.originalName || file.filename}>
+                  {file.originalName || file.filename}
+                </div>
+                
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
+                  <div style={{ fontSize: "11px", color: "var(--color-text-muted)", fontWeight: "500" }}>
+                    {file.size ? `${(file.size / 1024).toFixed(1)} KB` : (file.mimetype === "url" || file.mimetype === "link" ? "Link" : "Document")}
+                  </div>
+                  {getSourceBadge(file.source, file.taskKey)}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="workspace__card" style={{ display: "flex", flexDirection: "column", height: "70vh", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
@@ -133,54 +191,10 @@ export default function WorkspaceFiles({ projectId, isMember }) {
             <p style={{ fontSize: "14px" }}>Upload a file or share one in the chat to see it here.</p>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "16px" }}>
-            {filteredFiles.map(file => (
-              <a 
-                key={file._id} 
-                href={file.url} 
-                target="_blank" 
-                rel="noreferrer"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  background: "var(--color-paper)",
-                  border: "1px solid var(--border-color)",
-                  borderRadius: "10px",
-                  padding: "16px",
-                  textDecoration: "none",
-                  color: "inherit",
-                  transition: "all 0.2s",
-                  cursor: "pointer"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--color-text-dark)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border-color)";
-                }}
-              >
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100px", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "8px", marginBottom: "12px" }}>
-                  {file.mimetype?.startsWith("image/") ? (
-                    <img src={file.url} alt={file.filename} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "8px" }} />
-                  ) : (
-                    getFileIcon(file.mimetype)
-                  )}
-                </div>
-                
-                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                  <div style={{ fontWeight: "700", fontSize: "13px", color: "var(--color-text-dark)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={file.filename}>
-                    {file.filename}
-                  </div>
-                  
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "4px" }}>
-                    <div style={{ fontSize: "11px", color: "var(--color-text-muted)", fontWeight: "500" }}>
-                      {file.size ? `${(file.size / 1024).toFixed(1)} KB` : "Document"}
-                    </div>
-                    {getSourceBadge(file.source, file.taskKey)}
-                  </div>
-                </div>
-              </a>
-            ))}
+          <div>
+            {renderFileGrid(images, "Images")}
+            {renderFileGrid(documents, "Documents")}
+            {renderFileGrid(links, "Links")}
           </div>
         )}
       </div>

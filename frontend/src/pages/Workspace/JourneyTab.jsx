@@ -215,11 +215,11 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                   <p className="journey-card__desc">Your actual work and impact</p>
                 </div>
                 <div className="journey-card-actions">
-                  <Button variant="outline" size="small" onClick={handleSuggestContribution} disabled={aiLoading}>
+                  <Button variant="outline" size="sm" onClick={handleSuggestContribution} disabled={aiLoading}>
                     {aiLoading ? <Spinner size="sm" /> : "✨ Suggest from my activity"}
                   </Button>
                   {!showAddContribution && (
-                    <Button variant="primary" size="small" onClick={() => setShowAddContribution(true)}>
+                    <Button variant="primary" size="sm" onClick={() => setShowAddContribution(true)}>
                       + Add
                     </Button>
                   )}
@@ -238,7 +238,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                   <div className="ai-suggestion-actions">
                     <Button 
                       variant="primary" 
-                      size="small"
+                      size="sm"
                       onClick={() => {
                         setNewContribution({
                           contribution: aiSuggestion.summary,
@@ -250,7 +250,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                     >
                       Edit & Add
                     </Button>
-                    <Button variant="outline" size="small" onClick={() => setAiSuggestion(null)}>Dismiss</Button>
+                    <Button variant="outline" size="sm" onClick={() => setAiSuggestion(null)}>Dismiss</Button>
                   </div>
                 </div>
               )}
@@ -261,8 +261,8 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                   <input type="text" placeholder="Contribution (e.g., Designed auth architecture)" value={newContribution.contribution} onChange={e => setNewContribution({...newContribution, contribution: e.target.value})} required />
                   <input type="text" placeholder="Impact (e.g., Decreased login latency by 20%)" value={newContribution.impact} onChange={e => setNewContribution({...newContribution, impact: e.target.value})} />
                   <div className="form-box-actions">
-                    <Button type="button" variant="outline" size="small" onClick={() => setShowAddContribution(false)}>Cancel</Button>
-                    <Button type="submit" variant="primary" size="small" disabled={loading}>Save</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setShowAddContribution(false)}>Cancel</Button>
+                    <Button type="submit" variant="primary" size="sm" disabled={loading}>Save</Button>
                   </div>
                 </form>
               )}
@@ -293,7 +293,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                     <p className="journey-card__desc">What you solved</p>
                   </div>
                   {!showAddChallenge && (
-                    <Button variant="primary" size="small" onClick={() => setShowAddChallenge(true)}>
+                    <Button variant="primary" size="sm" onClick={() => setShowAddChallenge(true)}>
                       + Add
                     </Button>
                   )}
@@ -307,8 +307,8 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                     <textarea placeholder="Solution" value={newChallenge.result} onChange={e => setNewChallenge({...newChallenge, result: e.target.value})} rows="2" />
                     <textarea placeholder="What I Learned" value={newChallenge.learning} onChange={e => setNewChallenge({...newChallenge, learning: e.target.value})} rows="2" />
                     <div className="form-box-actions">
-                      <Button type="button" variant="outline" size="small" onClick={() => setShowAddChallenge(false)}>Cancel</Button>
-                      <Button type="submit" variant="primary" size="small" disabled={loading}>Save</Button>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setShowAddChallenge(false)}>Cancel</Button>
+                      <Button type="submit" variant="primary" size="sm" disabled={loading}>Save</Button>
                     </div>
                   </form>
                 )}
@@ -338,7 +338,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                     <p className="journey-card__desc">How you grew</p>
                   </div>
                   {!showAddSkill && (
-                    <Button variant="primary" size="small" onClick={() => setShowAddSkill(true)}>
+                    <Button variant="primary" size="sm" onClick={() => setShowAddSkill(true)}>
                       + Add
                     </Button>
                   )}
@@ -369,8 +369,8 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                     </div>
                     <input type="text" placeholder="Used for (e.g., Kanban UI)" value={newSkill.usedFor} onChange={e => setNewSkill({...newSkill, usedFor: e.target.value})} />
                     <div className="form-box-actions">
-                      <Button type="button" variant="outline" size="small" onClick={() => setShowAddSkill(false)}>Cancel</Button>
-                      <Button type="submit" variant="primary" size="small" disabled={loading}>Save</Button>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setShowAddSkill(false)}>Cancel</Button>
+                      <Button type="submit" variant="primary" size="sm" disabled={loading}>Save</Button>
                     </div>
                   </form>
                 )}
@@ -407,7 +407,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                   <p className="journey-card__desc">My personal engineering journal</p>
                 </div>
                 {!showAddLearning && (
-                  <Button variant="primary" size="small" onClick={() => setShowAddLearning(true)}>
+                  <Button variant="primary" size="sm" onClick={() => setShowAddLearning(true)}>
                     + Add
                   </Button>
                 )}
@@ -424,8 +424,8 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                   </select>
                   <textarea placeholder="e.g., Separating controllers from services made it easier to test..." value={newLearning.text} onChange={e => setNewLearning({...newLearning, text: e.target.value})} required rows="3" />
                   <div className="form-box-actions">
-                    <Button type="button" variant="outline" size="small" onClick={() => setShowAddLearning(false)}>Cancel</Button>
-                    <Button type="submit" variant="primary" size="small" disabled={loading}>Save</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setShowAddLearning(false)}>Cancel</Button>
+                    <Button type="submit" variant="primary" size="sm" disabled={loading}>Save</Button>
                   </div>
                 </form>
               )}
@@ -455,7 +455,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                   <p className="journey-card__desc">Link your specific PRs, commits, or demo timestamps</p>
                 </div>
                 {!showAddEvidence && (
-                  <Button variant="primary" size="small" onClick={() => setShowAddEvidence(true)}>
+                  <Button variant="primary" size="sm" onClick={() => setShowAddEvidence(true)}>
                     + Add
                   </Button>
                 )}
@@ -468,8 +468,8 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                   <input type="url" placeholder="URL" value={newEvidence.url} onChange={e => setNewEvidence({...newEvidence, url: e.target.value})} required />
                   <input type="text" placeholder="Description (optional)" value={newEvidence.description} onChange={e => setNewEvidence({...newEvidence, description: e.target.value})} />
                   <div className="form-box-actions">
-                    <Button type="button" variant="outline" size="small" onClick={() => setShowAddEvidence(false)}>Cancel</Button>
-                    <Button type="submit" variant="primary" size="small" disabled={loading}>Save</Button>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setShowAddEvidence(false)}>Cancel</Button>
+                    <Button type="submit" variant="primary" size="sm" disabled={loading}>Save</Button>
                   </div>
                 </form>
               )}

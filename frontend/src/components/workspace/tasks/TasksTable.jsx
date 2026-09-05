@@ -93,12 +93,12 @@ export default function TasksTable({
   });
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", margin: "0 16px" }}>
+    <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", border: "1px solid var(--color-border-medium)", borderRadius: "8px", margin: "0 16px" }}>
       {/* Table Header */}
-      <div style={{ display: "flex", background: "rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.1)", height: "40px", alignItems: "center" }}>
+      <div style={{ display: "flex", background: "var(--color-border-subtle)", borderBottom: "1px solid var(--color-border-medium)", height: "40px", alignItems: "center" }}>
         <div style={{ width: "40px", paddingLeft: "8px", flexShrink: 0 }}></div>
         {visibleColumns.map(column => (
-          <div key={column.id} style={{ width: column.width, minWidth: column.width, padding: "0 12px", fontSize: "12px", fontWeight: "600", color: "rgba(255,255,255,0.5)", textTransform: "uppercase" }}>
+          <div key={column.id} style={{ width: column.width, minWidth: column.width, padding: "0 12px", fontSize: "12px", fontWeight: "600", color: "var(--color-text-muted)", textTransform: "uppercase" }}>
             {column.label}
           </div>
         ))}
@@ -131,7 +131,7 @@ export default function TasksTable({
                     display: "flex",
                     alignItems: "center",
                     paddingLeft,
-                    borderBottom: "1px solid rgba(255,255,255,0.02)",
+                    borderBottom: "1px solid var(--color-border-subtle)",
                   }}
                 >
                   {inlineCreateParent === item.parentId ? (
@@ -147,10 +147,10 @@ export default function TasksTable({
                         value={inlineCreateType}
                         onChange={(e) => setInlineCreateType(e.target.value)}
                         style={{ 
-                          background: "rgba(255,255,255,0.1)", 
-                          border: "1px solid rgba(255,255,255,0.1)", 
+                          background: "var(--color-border-medium)", 
+                          border: "1px solid var(--color-border-medium)", 
                           borderRadius: "4px", 
-                          color: "#fff", 
+                          color: "var(--color-text-dark)", 
                           padding: "4px 8px",
                           outline: "none",
                           fontSize: "13px"
@@ -181,10 +181,10 @@ export default function TasksTable({
                         style={{ 
                           flex: 1, 
                           padding: "4px 12px", 
-                          background: "rgba(255,255,255,0.05)", 
-                          border: "1px solid rgba(255,255,255,0.2)", 
+                          background: "var(--color-border-subtle)", 
+                          border: "1px solid var(--color-border-strong)", 
                           borderRadius: "4px", 
-                          color: "#fff", 
+                          color: "var(--color-text-dark)", 
                           outline: "none", 
                           fontSize: "13px",
                           opacity: taskCreating ? 0.5 : 1
@@ -201,7 +201,7 @@ export default function TasksTable({
                       style={{ 
                         background: "transparent", 
                         border: "none", 
-                        color: "rgba(255,255,255,0.5)", 
+                        color: "var(--color-text-muted)", 
                         cursor: "pointer", 
                         fontSize: "12px", 
                         fontWeight: "500", 
@@ -212,8 +212,8 @@ export default function TasksTable({
                         gap: "4px",
                         transition: "all 0.15s ease"
                       }}
-                      onMouseOver={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#ffffff"; }}
-                      onMouseOut={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}
+                      onMouseOver={(e) => { e.currentTarget.style.background = "var(--color-border-subtle)"; e.currentTarget.style.color = "var(--color-text-dark)"; }}
+                      onMouseOut={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--color-text-muted)"; }}
                     >
                       <Plus size={14} /> Create child issue
                     </button>

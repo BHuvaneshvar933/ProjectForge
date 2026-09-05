@@ -4,6 +4,7 @@ import Badge from "../common/Badge";
 import Button from "../common/Button";
 import Spinner from "../common/Spinner";
 import { generateAIContent } from "../../api/aiApi";
+import { getProjectHealth } from "../../api/projectApi";
 import './WorkspaceOverview.css';
 
 export default function WorkspaceOverview({ project, tasks, team, isOwner, onRemoveMember }) {
@@ -163,14 +164,17 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               onClick={async () => {
                 setAiLoading(true);
                 try {
-                  const res = await generateAIContent("health-score", null, project._id);
+                  const res = await getProjectHealth(project._id);
+                  const result = res.data.data.result;
                   setLocalMetrics(prev => ({ 
                     ...prev, 
-                    aiHealthScore: res.data.data.result.health_score,
-                    aiHealthStatus: res.data.data.result.status,
-                    aiHealthComponents: res.data.data.result.components,
-                    aiHealthMainRisk: res.data.data.result.main_risk,
-                    aiHealthSuggestion: res.data.data.result.suggestion
+                    aiHealthScore: result.health_score,
+                    aiHealthStatus: result.status,
+                    aiHealthConfidence: result.confidence,
+                    aiHealthProvisional: result.isProvisional,
+                    aiHealthDimensions: result.dimensions,
+                    aiHealthMainRisk: result.main_risk,
+                    aiHealthSuggestion: result.suggestion
                   }));
                   toast.success("Health Score generated!");
                 } catch {
@@ -215,20 +219,48 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
           {localMetrics.aiHealthScore !== undefined && (
             <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: localMetrics.aiHealthScore === null ? "4px solid #8e8e93" : localMetrics.aiHealthScore < 50 ? "4px solid #ff453a" : localMetrics.aiHealthScore < 80 ? "4px solid #ff9f0a" : "4px solid #32d74b" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                <h3 style={{ fontSize: "16px", margin: 0 }}>AI Health Score</h3>
-                <Badge variant={localMetrics.aiHealthScore === null ? "default" : localMetrics.aiHealthScore < 50 ? "danger" : localMetrics.aiHealthScore < 80 ? "warning" : "success"}>
-                  {localMetrics.aiHealthScore === null ? "N/A" : `${localMetrics.aiHealthScore}/100`} - {localMetrics.aiHealthStatus}
-                </Badge>
+                <h3 style={{ fontSize: "16px", margin: 0 }}>Project Health Score</h3>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                  {localMetrics.aiHealthProvisional && (
+                    <Badge variant="warning">Provisional</Badge>
+                  )}
+                  {localMetrics.aiHealthConfidence && (
+                    <Badge variant={localMetrics.aiHealthConfidence === "high" ? "success" : localMetrics.aiHealthConfidence === "low" ? "danger" : "default"}>
+                      {localMetrics.aiHealthConfidence.charAt(0).toUpperCase() + localMetrics.aiHealthConfidence.slice(1)} Confidence
+                    </Badge>
+                  )}
+                  <Badge variant={localMetrics.aiHealthScore === null ? "default" : localMetrics.aiHealthScore < 50 ? "danger" : localMetrics.aiHealthScore < 80 ? "warning" : "success"}>
+                    {localMetrics.aiHealthScore === null ? "N/A" : `${localMetrics.aiHealthScore}/100`} - {localMetrics.aiHealthStatus}
+                  </Badge>
+                </div>
               </div>
               
-              {localMetrics.aiHealthComponents && localMetrics.aiHealthComponents.length > 0 && (
-                <div style={{ marginBottom: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
-                  {localMetrics.aiHealthComponents.map((c, i) => (
-                    <div key={i} style={{ fontSize: "14px" }}>
-                      <span style={{ color: c.impact < 0 ? "#ff453a" : c.impact > 0 ? "#32d74b" : "var(--color-text-muted)", fontWeight: "bold", marginRight: "8px" }}>
-                        {c.name} {c.impact > 0 ? `+${c.impact}` : c.impact}
-                      </span>
-                      <span style={{ color: "var(--color-text-muted)" }}>{c.reasoning || c.fact}</span>
+              {localMetrics.aiHealthDimensions && (
+                <div style={{ marginBottom: "20px", display: "grid", gridTemplateColumns: "1fr", gap: "8px" }}>
+                  {Object.entries(localMetrics.aiHealthDimensions).map(([key, dim]) => (
+                    <div key={key} style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      padding: "10px", 
+                      background: "var(--bg-page)", 
+                      border: "1px solid var(--border-color)", 
+                      borderRadius: "6px",
+                      justifyContent: "space-between"
+                    }}>
+                      <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--color-text-dark)", textTransform: "capitalize" }}>
+                        {key}
+                      </div>
+                      <div style={{ 
+                        padding: "4px 8px", 
+                        borderRadius: "4px", 
+                        background: (dim.score / dim.max) < 0.4 ? "rgba(255, 69, 58, 0.1)" : (dim.score / dim.max) > 0.8 ? "rgba(50, 215, 75, 0.1)" : "rgba(142, 142, 147, 0.1)",
+                        color: (dim.score / dim.max) < 0.4 ? "#ff453a" : (dim.score / dim.max) > 0.8 ? "#32d74b" : "#8e8e93",
+                        fontWeight: "600",
+                        fontSize: "13px",
+                        fontVariantNumeric: "tabular-nums"
+                      }}>
+                        {dim.score} / {dim.max}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -300,39 +332,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
         </div>
       )}
 
-      {/* Team Health Alerts */}
-      {(overview.teamHealth.problems.length > 0 || overview.teamHealth.risks.length > 0 || overview.teamHealth.awareness.length > 0) && (
-        <div className="workspace__card" style={{ padding: "20px", marginBottom: "24px" }}>
-          <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "16px" }}>🩺 Team Health</h3>
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {overview.teamHealth.problems.length > 0 && (
-              <div>
-                <h4 style={{ fontSize: "13px", color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>🔴 Problems</h4>
-                {overview.teamHealth.problems.map((prob, i) => (
-                  <div key={`prob-${i}`} style={{ fontSize: "14px", color: "var(--color-text-dark)", marginBottom: "4px" }}>• {prob}</div>
-                ))}
-              </div>
-            )}
-            {overview.teamHealth.risks.length > 0 && (
-              <div>
-                <h4 style={{ fontSize: "13px", color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>🟠 Risks</h4>
-                {overview.teamHealth.risks.map((risk, i) => (
-                  <div key={`risk-${i}`} style={{ fontSize: "14px", color: "var(--color-text-dark)", marginBottom: "4px" }}>• {risk}</div>
-                ))}
-              </div>
-            )}
-            {overview.teamHealth.awareness.length > 0 && (
-              <div>
-                <h4 style={{ fontSize: "13px", color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>🟡 Awareness</h4>
-                {overview.teamHealth.awareness.map((awar, i) => (
-                  <div key={`awar-${i}`} style={{ fontSize: "14px", color: "var(--color-text-dark)", marginBottom: "4px" }}>• {awar}</div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-      
+
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px", marginBottom: "24px" }}>
         <div className="workspace__card" style={{ padding: "20px", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px" }}>
           <div style={{ fontSize: "13px", fontWeight: "700", marginBottom: "10px", color: "var(--color-text-dark)", borderBottom: "1px solid var(--border-color)", paddingBottom: "6px", textTransform: "uppercase", letterSpacing: "0.05em" }}>To Do</div>

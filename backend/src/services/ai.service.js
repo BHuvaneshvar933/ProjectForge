@@ -316,191 +316,85 @@ Return only the required JSON structure.
   }
 };
 
-export const generateProjectHealthScore = async (projectId, projectData, tasks, team) => {
-  // Deterministic Math (Authoritative Backend Source)
-  const totalTasks = tasks.length;
-  const completedTasks = tasks.filter(t => t.status === 'done').length;
-  const completionRate = totalTasks > 0 ? (completedTasks / totalTasks) : 0;
-  
-  const now = new Date();
-  const overdueTasks = tasks.filter(t => t.dueDate && new Date(t.dueDate) < now && t.status !== 'done').length;
-  
-  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const staleTasks = tasks.filter(t => t.status !== 'done' && t.updatedAt && new Date(t.updatedAt) < sevenDaysAgo).length;
-  
-  const unassignedTasks = tasks.filter(t => t.status !== 'done' && !t.assignedTo).length;
-
-  let daysUntilDeadline = "No deadline provided";
-  if (projectData.endDate) {
-    const end = new Date(projectData.endDate);
-    const diffTime = end - now;
-    daysUntilDeadline = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  }
-
-  const workload = {};
-  team.forEach(m => { if (m?.userId) workload[m.userId._id || m.userId] = 0; });
-  tasks.forEach(t => {
-    if (t.status !== 'done' && t.assignedTo) {
-      const aId = t.assignedTo._id ? t.assignedTo._id.toString() : t.assignedTo.toString();
-      if (workload[aId] !== undefined) workload[aId]++;
-    }
-  });
-  
-  const activeMembersCounts = Object.values(workload).filter(c => c > 0);
-  const meanWorkload = activeMembersCounts.length > 0 ? activeMembersCounts.reduce((a, b) => a + b, 0) / activeMembersCounts.length : 0;
-  const maxWorkload = activeMembersCounts.length > 0 ? Math.max(...activeMembersCounts) : 0;
-  const isImbalanced = activeMembersCounts.length > 1 && maxWorkload > meanWorkload * 1.5 && maxWorkload - meanWorkload >= 2;
-
-  const activeMembersCount = team.filter(m => m.status === 'active').length;
-
-  let healthScore = 100;
-  const components = [];
-  let status = "On Track";
-
-  if (totalTasks === 0) {
-    components.push({ name: "Progress", impact: 0, fact: "No tasks defined" });
-    healthScore = null;
-    status = "N/A";
-  } else {
-    const progressImpact = completionRate === 1 ? 40 : Math.round(completionRate * 40);
-    components.push({ name: "Progress", impact: progressImpact, fact: `${Math.round(completionRate * 100)}% of defined tasks are complete` });
-
-    if (overdueTasks > 0) {
-      const impact = Math.max(-30, overdueTasks * -10);
-      healthScore += impact;
-      components.push({ name: "Schedule", impact, fact: `${overdueTasks} overdue task(s)` });
-    }
-
-    if (staleTasks > 0) {
-      const impact = Math.max(-15, staleTasks * -5);
-      healthScore += impact;
-      components.push({ name: "Velocity", impact, fact: `${staleTasks} stale task(s)` });
-    }
-
-    if (unassignedTasks > 0) {
-      const impact = Math.max(-15, unassignedTasks * -5);
-      healthScore += impact;
-      components.push({ name: "Planning", impact, fact: `${unassignedTasks} unassigned active task(s)` });
-    }
-
-    if (activeMembersCount === 1) {
-      healthScore -= 20;
-      components.push({ name: "Team Capacity", impact: -20, fact: "Only 1 active team member" });
-    }
-
-    if (isImbalanced) {
-      healthScore -= 15;
-      components.push({ name: "Workload", impact: -15, fact: "Severe workload imbalance detected" });
-    }
-
-    healthScore = Math.max(0, Math.min(100, healthScore));
-    if (healthScore < 40) status = "Critical Risk";
-    else if (healthScore < 60) status = "At Risk";
-    else if (healthScore < 80) status = "Moderate Risk";
+export const generateHealthExplanation = async (project, metrics) => {
+  if (metrics.status === "Insufficient Data") {
+    return {
+      main_risk: "Insufficient data to calculate a health score.",
+      suggestion: "Create tasks, assign team members, and set deadlines to begin tracking project health."
+    };
   }
 
   const prompt = `
-You are an expert Agile project manager performing a project health assessment.
+You are an expert Agile project manager analyzing a project's health metrics.
+The backend has already deterministically calculated the health score, status, and identified key factors and risks.
 
-You will receive VERIFIED quantitative project metrics calculated by the backend.
+AUTHORITATIVE METRICS (DO NOT RECALCULATE):
+Score: ${metrics.score}/100
+Status: ${metrics.status}
+Confidence: ${metrics.confidence}
+Provisional: ${metrics.isProvisional}
 
-IMPORTANT:
-The backend has already calculated the health_score and status. 
-These values are authoritative. You MUST return them exactly as provided.
-Do not recalculate, modify, round, reinterpret, or override health_score and status.
-Your responsibility is ONLY to generate evidence-based reasoning and one actionable suggestion based on the supplied metrics.
+DIMENSIONS:
+- Progress: ${metrics.dimensions.progress.score}/${metrics.dimensions.progress.max}
+- Schedule: ${metrics.dimensions.schedule.score}/${metrics.dimensions.schedule.max}
+- Activity: ${metrics.dimensions.activity.score}/${metrics.dimensions.activity.max}
+- Engagement: ${metrics.dimensions.engagement.score}/${metrics.dimensions.engagement.max}
 
-AVAILABLE METRICS:
-Total Team Members: ${activeMembersCount}
-Total Tasks: ${totalTasks}
-Completed Tasks: ${completedTasks}
-Overdue Tasks: ${overdueTasks}
-In-Progress/Not Done Tasks: ${totalTasks - completedTasks}
-Days Until Deadline: ${daysUntilDeadline}
+IDENTIFIED FACTORS:
+${metrics.factors.map(f => `- ${f}`).join('\n')}
 
-AUTHORITATIVE BACKEND CALCULATION (RETURN EXACTLY):
-health_score: ${healthScore}
-status: ${status}
+IDENTIFIED RISKS:
+${metrics.risks.map(r => `- ${r}`).join('\n')}
 
-STRICT RULES:
-1. Use ONLY the supplied metrics.
-2. NEVER invent missing metrics.
-3. NEVER assume team productivity, individual performance, task complexity, business impact, or project quality unless explicitly provided.
-4. Do not claim a project is healthy merely because it has many team members.
-5. Do not claim a project is unhealthy merely because it has many tasks.
-6. Consider completed tasks, overdue tasks, and deadline proximity when those values are provided.
-7. A high number of overdue tasks should generally indicate increased project risk.
-8. A high completion proportion should generally indicate stronger progress.
-9. If there are zero tasks, explain that there is insufficient task activity to confidently assess progress.
-10. Do not create fake trends because historical data is not provided.
-11. Do not recommend actions based on information that was not provided.
-12. The reasoning must explain WHY the score was selected using the supplied numbers.
-13. The suggestion must be directly actionable and must address the most significant risk visible in the data.
+YOUR TASK:
+Based on the provided metrics and risks, output exactly two things in JSON format:
+1. main_risk: A concise 1-sentence summary of the biggest risk to the project's success.
+2. suggestion: A concrete, actionable suggestion for the team to improve their health.
 
-OUTPUT:
-Return ONLY valid JSON in exactly this format:
+RULES:
+1. DO NOT invent metrics, tasks, or team members.
+2. Only use the provided factors and risks.
+3. If there are no risks, the main_risk should be something like "No major risks identified at this time."
 
+OUTPUT FORMAT (Valid JSON only):
 {
-  "health_score": ${healthScore},
-  "status": "${status}",
-  "reasoning": "string",
+  "main_risk": "string",
   "suggestion": "string"
 }
-
-REQUIREMENTS:
-- health_score must exactly match the authoritative backend calculation provided.
-- status must exactly match the authoritative backend calculation provided.
-- reasoning must reference the actual supplied metrics.
-- suggestion must contain exactly one actionable recommendation.
-- No Markdown fences.
-- No additional fields.
-- No text outside the JSON.
 `;
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
     model: "openai/gpt-oss-120b",
-    temperature: 0.1,
-    max_tokens: 600
+    temperature: 0.3,
+    max_tokens: 500,
   });
 
   try {
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
-    
-    let parsed;
+    let output;
     try {
-      parsed = JSON.parse(rawContent);
-    } catch (e) {
+      output = JSON.parse(rawContent);
+    } catch (parseError) {
       const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
       const jsonString = jsonMatch ? jsonMatch[0] : "{}";
-      parsed = JSON.parse(jsonString);
+      output = JSON.parse(jsonString);
     }
     
-    const result = {
-      health_score: healthScore, 
-      status: status, 
-      components: components, 
-      main_risk: typeof parsed.reasoning === 'string' ? parsed.reasoning : "Identified via metrics", 
-      suggestion: typeof parsed.suggestion === 'string' ? parsed.suggestion : "Review project metrics.",
+    return {
+      main_risk: output.main_risk || "Unable to determine main risk.",
+      suggestion: output.suggestion || "Focus on completing outstanding tasks."
     };
-    
-    await Project.findByIdAndUpdate(projectId, {
-      $set: {
-        "metrics.aiHealthScore": result.health_score,
-        "metrics.aiHealthStatus": result.status,
-        "metrics.aiHealthComponents": result.components,
-        "metrics.aiHealthMainRisk": result.main_risk,
-        "metrics.aiHealthSuggestion": result.suggestion,
-        "metrics.aiLastGeneratedAt": new Date()
-      }
-    });
-
-    return result;
-  } catch (e) {
-    console.error("AI Health Score Error: ", e);
-    throw new Error("Failed to generate health score: " + e.message);
+  } catch (error) {
+    console.error("AI Explanation Error:", error);
+    return {
+      main_risk: "Analysis failed.",
+      suggestion: "Please try again later."
+    };
   }
 };
+
+
 
 export const generateWeeklyProjectSummary = async (projectId, projectData, tasks, team) => {
   const now = new Date();

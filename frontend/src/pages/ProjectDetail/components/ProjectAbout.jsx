@@ -2,10 +2,12 @@ import { useState } from 'react';
 import Badge from '../../../components/common/Badge';
 import { displaySkillLabel } from '../../../utils/display';
 
-export default function ProjectAbout({ project }) {
+export default function ProjectAbout({ project, currentUser }) {
   const [expanded, setExpanded] = useState(false);
   
   const descriptionExpanded = expanded || project.description?.length < 300;
+  
+  const userSkills = currentUser?.skills || [];
 
   return (
     <>
@@ -70,9 +72,18 @@ export default function ProjectAbout({ project }) {
         <div className="project-detail__section">
           <h2 className="project-detail__section-title">Required Skills</h2>
           <div className="project-detail__skills">
-            {project.requiredSkills.map((skill, i) => (
-              <Badge key={i} variant="skill">{displaySkillLabel(skill)}</Badge>
-            ))}
+            {project.requiredSkills.map((skill, i) => {
+              const isMatched = userSkills.some(us => String(us) === String(skill._id) || String(us) === String(skill));
+              return (
+                <Badge 
+                  key={i} 
+                  variant="skill"
+                  style={isMatched ? { background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', borderColor: 'rgba(34, 197, 94, 0.2)' } : {}}
+                >
+                  {isMatched && '✓ '}{displaySkillLabel(skill)}
+                </Badge>
+              );
+            })}
           </div>
         </div>
       )}

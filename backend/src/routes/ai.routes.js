@@ -11,7 +11,7 @@ router.post("/generate", protect, async (req, res) => {
   try {
     const { type, projectData } = req.body;
 
-    if (!projectData && type !== "health-score" && type !== "weekly-summary" && type !== "contribution-suggestion") {
+    if (!projectData && type !== "weekly-summary" && type !== "contribution-suggestion") {
       return res.status(400).json({ success: false, message: "Project data is required" });
     }
 
@@ -23,7 +23,7 @@ router.post("/generate", protect, async (req, res) => {
       result = await aiService.generateInterviewStory(projectData);
     } else if (type === "career-assets") {
       result = await aiService.generateCareerAssets(projectData, req.body.projectId, req.user._id);
-    } else if (type === "health-score" || type === "weekly-summary" || type === "contribution-suggestion") {
+    } else if (type === "weekly-summary" || type === "contribution-suggestion") {
       if (!req.body.projectId) {
         return res.status(400).json({ success: false, message: "Project ID is required" });
       }
@@ -36,11 +36,7 @@ router.post("/generate", protect, async (req, res) => {
         result = await aiService.generateDeveloperContribution(req.user._id, tasks, project);
       } else {
         const team = await Team.find({ projectId: project._id, status: "active", isDeleted: false });
-        if (type === "health-score") {
-          result = await aiService.generateProjectHealthScore(project._id, project, tasks, team);
-        } else {
-          result = await aiService.generateWeeklyProjectSummary(project._id, project, tasks, team);
-        }
+        result = await aiService.generateWeeklyProjectSummary(project._id, project, tasks, team);
       }
     } else {
       return res.status(400).json({ success: false, message: "Invalid generation type" });

@@ -220,7 +220,20 @@ export const browseProjects = async (query) => {
   if (userId) {
     const teams = await Team.find({ userId, status: "active" });
     const projectIds = teams.map((t) => t.projectId);
-    filter._id = { $in: projectIds };
+    
+    // Also exclude projects where the user is the owner
+    const ownedProjects = await Project.find({ owner: userId }).select("_id").lean();
+    const ownedProjectIds = ownedProjects.map((p) => p._id);
+    
+    const allExcludedIds = [...projectIds, ...ownedProjectIds];
+    
+    if (allExcludedIds.length > 0) {
+      if (filter._id) {
+        filter._id.$nin = allExcludedIds;
+      } else {
+        filter._id = { $nin: allExcludedIds };
+      }
+    }
   }
 
   const skip = (page - 1) * limit;

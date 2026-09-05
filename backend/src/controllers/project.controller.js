@@ -1,5 +1,9 @@
 import * as projectService from "../services/project.service.js";
-
+import { calculateProjectHealth } from "../services/projectHealth.service.js";
+import { generateHealthExplanation, generateEngineeringAssessment as generateAssessmentAI } from "../services/ai.service.js";
+import Project from "../models/project.model.js";
+import Task from "../models/task.model.js";
+import Team from "../models/team.model.js";
 export const createProject = async (req, res, next) => {
   try {
     const project = await projectService.createProject(
@@ -367,9 +371,6 @@ export const addProjectFile = async (req, res, next) => {
   }
 };
 
-import { generateEngineeringAssessment as generateAssessmentAI } from "../services/ai.service.js";
-import Task from "../models/task.model.js";
-
 export const getEngineeringAssessment = async (req, res, next) => {
   try {
     const projectId = req.params.id;
@@ -466,3 +467,41 @@ export const getEngineeringAssessment = async (req, res, next) => {
   }
 };
 
+export const getProjectHealth = async (req, res, next) => {
+  try {
+    const projectId = req.params.id;
+    const project = await Project.findById(projectId);
+    if (!project) return res.status(404).json({ success: false, message: "Project not found" });
+
+    const tasks = await Task.find({ projectId, isDeleted: false });
+    const team = await Team.find({ projectId, status: "active", isDeleted: false });
+
+    // 1. Calculate deterministic metrics
+    const metrics = calculateProjectHealth(project, tasks, team);
+
+    // 2. Generate AI Explanation
+    let aiExplanation = { main_risk: "Unavailable", suggestion: "Unavailable" };
+    if (metrics.score !== null) {
+      aiExplanation = await generateHealthExplanation(project, metrics);
+    }
+
+    // 3. Combine and return
+    const result = {
+      health_score: metrics.score,
+      status: metrics.status,
+      confidence: metrics.confidence,
+      isProvisional: metrics.isProvisional,
+      dimensions: metrics.dimensions,
+      main_risk: aiExplanation.main_risk,
+      suggestion: aiExplanation.suggestion
+    };
+
+    res.status(200).json({
+      success: true,
+      message: "Health score generated",
+      data: { result },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

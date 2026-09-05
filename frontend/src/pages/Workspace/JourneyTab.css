@@ -46,7 +46,7 @@
 
 .journey-nav-btn.active {
   background: var(--color-text-dark);
-  color: #fff;
+  color: var(--bg-page);
 }
 
 .journey-tab__grid {

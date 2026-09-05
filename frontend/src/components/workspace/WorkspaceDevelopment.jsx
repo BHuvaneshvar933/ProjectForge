@@ -88,6 +88,7 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
       </div>
 
       {/* Top Section: AI Feedback */}
+      {false && (
       <div style={{ background: "rgba(10,132,255,0.05)", border: "1px solid rgba(10,132,255,0.2)", borderRadius: "8px", padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h3 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
@@ -99,14 +100,14 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
         </div>
 
         {assessmentLoading && (
-          <div style={{ padding: "24px", textAlign: "center", color: "rgba(255,255,255,0.5)" }}>
+          <div style={{ padding: "24px", textAlign: "center", color: "var(--color-text-muted)" }}>
             <Spinner />
             <p>Interpreting deterministic project data...</p>
           </div>
         )}
 
         {!assessmentLoading && !assessment && (
-          <div style={{ padding: "16px 0", color: "rgba(255,255,255,0.5)", fontSize: "14px" }}>
+          <div style={{ padding: "16px 0", color: "var(--color-text-muted)", fontSize: "14px" }}>
             Click "Get AI Feedback" to analyze your team's execution evidence (completed tasks, open bugs, PR cycle time) and receive actionable engineering guidance.
           </div>
         )}
@@ -117,38 +118,39 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
               <span style={{ fontWeight: "bold", fontSize: "14px", textTransform: "uppercase", padding: "4px 10px", borderRadius: "4px", background: assessment.status === 'Healthy' ? 'rgba(50, 215, 75, 0.2)' : assessment.status === 'Needs Attention' ? 'rgba(255, 69, 58, 0.2)' : 'rgba(10, 132, 255, 0.2)', color: assessment.status === 'Healthy' ? '#32d74b' : assessment.status === 'Needs Attention' ? '#ff453a' : '#0a84ff' }}>
                 Execution Status: {assessment.status}
               </span>
-              <p style={{ margin: 0, fontSize: "14px", color: "rgba(255,255,255,0.9)", lineHeight: "1.5" }}>{assessment.message}</p>
+              <p style={{ margin: 0, fontSize: "14px", color: "var(--color-text-dark)", lineHeight: "1.5" }}>{assessment.message}</p>
             </div>
             
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
               <div style={{ background: "rgba(0,0,0,0.2)", padding: "16px", borderRadius: "8px" }}>
                 <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#32d74b", textTransform: "uppercase", letterSpacing: "0.5px" }}>Strengths</h4>
-                <ul style={{ margin: 0, paddingLeft: "20px", color: "rgba(255,255,255,0.8)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                <ul style={{ margin: 0, paddingLeft: "20px", color: "var(--color-text-muted)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
                   {assessment.strengths?.map((s, i) => <li key={i}>{s}</li>)}
                 </ul>
               </div>
               <div style={{ background: "rgba(0,0,0,0.2)", padding: "16px", borderRadius: "8px" }}>
                 <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#ff9f0a", textTransform: "uppercase", letterSpacing: "0.5px" }}>Areas for Improvement</h4>
-                <ul style={{ margin: 0, paddingLeft: "20px", color: "rgba(255,255,255,0.8)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                <ul style={{ margin: 0, paddingLeft: "20px", color: "var(--color-text-muted)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
                   {assessment.areasForImprovement?.map((a, i) => <li key={i}>{a}</li>)}
                 </ul>
               </div>
             </div>
             
-            <div style={{ background: "rgba(255,255,255,0.03)", padding: "16px", borderRadius: "8px", borderLeft: "3px solid #0a84ff" }}>
+            <div style={{ background: "var(--color-border-subtle)", padding: "16px", borderRadius: "8px", borderLeft: "3px solid #0a84ff" }}>
               <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#0a84ff", textTransform: "uppercase", letterSpacing: "0.5px" }}>Actionable Recommendations</h4>
-              <ul style={{ margin: 0, paddingLeft: "20px", color: "rgba(255,255,255,0.9)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
+              <ul style={{ margin: 0, paddingLeft: "20px", color: "var(--color-text-muted)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
                 {assessment.recommendedActions?.map((r, i) => <li key={i}>{r}</li>)}
               </ul>
             </div>
-            <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", textAlign: "right" }}>
+            <div style={{ fontSize: "11px", color: "var(--color-text-muted)", textAlign: "right" }}>
               *Why did I get this? Review "The Evidence" below.
             </div>
           </div>
         )}
       </div>
+      )}
 
-      <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "16px 0 0 0", color: "rgba(255,255,255,0.7)" }}>The Evidence (Raw Metrics)</h3>
+      <h3 style={{ fontSize: "16px", fontWeight: "600", margin: "16px 0 0 0", color: "var(--color-text-muted)" }}>The Evidence (Raw Metrics)</h3>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {/* Top Row: 4 Large Cards */}

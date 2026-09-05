@@ -208,6 +208,7 @@ export default function ProjectDetail() {
           project={project}
           tokenPresent={tokenPresent}
           skillMatchScore={skillMatchScore}
+          currentUser={currentUser}
         />
 
         <ProjectTimeline project={project} />

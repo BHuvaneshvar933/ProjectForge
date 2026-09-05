@@ -10,7 +10,7 @@ export default function BulkActionBar({ selectedCount, onClear, onDelete, onUpda
       left: "50%",
       transform: "translateX(-50%)",
       background: "#2c2c2e",
-      border: "1px solid rgba(255,255,255,0.1)",
+      border: "1px solid var(--color-border-medium)",
       borderRadius: "12px",
       padding: "12px 24px",
       display: "flex",
@@ -20,13 +20,13 @@ export default function BulkActionBar({ selectedCount, onClear, onDelete, onUpda
       zIndex: 1000
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <span style={{ background: "#0a84ff", color: "#fff", padding: "2px 8px", borderRadius: "12px", fontSize: "14px", fontWeight: "600" }}>
+        <span style={{ background: "#0a84ff", color: "var(--color-text-dark)", padding: "2px 8px", borderRadius: "12px", fontSize: "14px", fontWeight: "600" }}>
           {selectedCount}
         </span>
-        <span style={{ color: "#fff", fontWeight: "500", fontSize: "14px" }}>issues selected</span>
+        <span style={{ color: "var(--color-text-dark)", fontWeight: "500", fontSize: "14px" }}>issues selected</span>
       </div>
 
-      <div style={{ width: "1px", height: "24px", background: "rgba(255,255,255,0.1)" }}></div>
+      <div style={{ width: "1px", height: "24px", background: "var(--color-border-medium)" }}></div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <select 
@@ -37,7 +37,7 @@ export default function BulkActionBar({ selectedCount, onClear, onDelete, onUpda
               e.target.value = "";
             }
           }}
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", padding: "6px 12px", color: "#fff", fontSize: "13px" }}
+          style={{ background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "6px", padding: "6px 12px", color: "var(--color-text-dark)", fontSize: "13px" }}
         >
           <option value="">Status...</option>
           <option value="todo">To Do</option>
@@ -53,7 +53,7 @@ export default function BulkActionBar({ selectedCount, onClear, onDelete, onUpda
               e.target.value = "";
             }
           }}
-          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "6px", padding: "6px 12px", color: "#fff", fontSize: "13px" }}
+          style={{ background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "6px", padding: "6px 12px", color: "var(--color-text-dark)", fontSize: "13px" }}
         >
           <option value="">Assignee...</option>
           <option value="unassigned">Unassigned</option>
@@ -74,11 +74,11 @@ export default function BulkActionBar({ selectedCount, onClear, onDelete, onUpda
         </button>
       </div>
 
-      <div style={{ width: "1px", height: "24px", background: "rgba(255,255,255,0.1)" }}></div>
+      <div style={{ width: "1px", height: "24px", background: "var(--color-border-medium)" }}></div>
 
       <button 
         onClick={onClear}
-        style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "20px" }}
+        style={{ background: "transparent", border: "none", color: "var(--color-text-muted)", cursor: "pointer", fontSize: "20px" }}
         title="Clear selection"
       >
         ×

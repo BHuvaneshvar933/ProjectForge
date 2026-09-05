@@ -218,7 +218,7 @@ export default function BrowseProjects() {
   return (
     <div className="browse-page">
       <PageHeader
-        title={tab === 'projects' ? 'Project Catalog & Index' : 'Talent & Developer Directory'}
+        title={tab === 'projects' ? 'Project Catalog' : 'Talent & Developer Directory'}
       />
 
       <div className="dashboard-layout">

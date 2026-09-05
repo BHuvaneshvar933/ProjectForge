@@ -24,8 +24,8 @@ export default function TasksContextMenu({ x, y, task, onClose, onDelete, onUpda
 
   if (!task) return null;
 
-  const btnStyle = { width: "100%", textAlign: "left", padding: "8px 16px", background: "transparent", border: "none", color: "#fff", cursor: "pointer", fontSize: "14px" };
-  const hoverStyle = (e) => e.target.style.background = "rgba(255,255,255,0.1)";
+  const btnStyle = { width: "100%", textAlign: "left", padding: "8px 16px", background: "transparent", border: "none", color: "var(--color-text-dark)", cursor: "pointer", fontSize: "14px" };
+  const hoverStyle = (e) => e.target.style.background = "var(--color-border-medium)";
   const outStyle = (e) => e.target.style.background = "transparent";
 
   return (
@@ -37,14 +37,14 @@ export default function TasksContextMenu({ x, y, task, onClose, onDelete, onUpda
         left: Math.min(x, window.innerWidth - 200), // prevent going off screen right
         width: "200px",
         background: "#2c2c2e",
-        border: "1px solid rgba(255,255,255,0.1)",
+        border: "1px solid var(--color-border-medium)",
         borderRadius: "8px",
         boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
         zIndex: 2000,
         padding: "8px 0"
       }}
     >
-      <div style={{ padding: "4px 16px", fontSize: "12px", color: "rgba(255,255,255,0.5)", fontWeight: "600", textTransform: "uppercase", marginBottom: "4px" }}>
+      <div style={{ padding: "4px 16px", fontSize: "12px", color: "var(--color-text-muted)", fontWeight: "600", textTransform: "uppercase", marginBottom: "4px" }}>
         Actions ({task.taskNumber})
       </div>
       
@@ -64,7 +64,7 @@ export default function TasksContextMenu({ x, y, task, onClose, onDelete, onUpda
         Unassign
       </button>
 
-      <div style={{ borderTop: "1px solid rgba(255,255,255,0.1)", margin: "8px 0" }}></div>
+      <div style={{ borderTop: "1px solid var(--color-border-medium)", margin: "8px 0" }}></div>
       
       <button 
         style={{ ...btnStyle, color: "#ff453a" }} 

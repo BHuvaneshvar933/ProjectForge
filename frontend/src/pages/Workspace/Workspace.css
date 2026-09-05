@@ -422,6 +422,11 @@ html[data-theme="dark"] .workspace-dev__connect-box button.btn--primary:hover {
   display: block;
 }
 
+.workspace-chat__message-wrapper:nth-child(-n+3) .workspace-chat__menu {
+  bottom: auto;
+  top: 100%;
+}
+
 .workspace-chat__menu-item {
   padding: 6px 12px;
   font-size: 12px;
@@ -674,8 +679,26 @@ html[data-theme="dark"] .workspace-chat__bubble.is-theirs {
 }
 
 html[data-theme="dark"] .workspace-chat__bubble.is-mine {
-  background: #2563eb !important;
-  color: #ffffff !important;
+  background: #70b5f9 !important;
+  color: #000000 !important;
+}
+
+html[data-theme="dark"] .workspace-chat__bubble.is-mine .workspace-chat__text {
+  color: #000000 !important;
+}
+
+html[data-theme="dark"] .workspace-chat__bubble.is-mine .workspace-chat__time {
+  color: rgba(0, 0, 0, 0.65) !important;
+}
+
+html[data-theme="dark"] .workspace-chat__bubble.is-mine .workspace-chat__attachment-link {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  color: var(--btn-primary-text) !important;
+}
+
+html[data-theme="dark"] .workspace-chat__bubble.is-mine .workspace-chat__attachment-link:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
 }
 
 html[data-theme="dark"] .workspace-chat__composer-box {
@@ -728,6 +751,8 @@ html[data-theme="dark"] .workspace-select {
   color: var(--color-text-dark);
   outline: none;
   font-size: 13px;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .workspace-select:focus {

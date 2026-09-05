@@ -23,19 +23,21 @@ import {
   removeTeamMember,
   getProjectFiles,
   addProjectFile,
-  getEngineeringAssessment
+  getEngineeringAssessment,
+  getProjectHealth
 } from "../controllers/project.controller.js";
-import { protect } from "../middleware/auth.middleware.js";
+import { protect, optionalProtect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
 router.post("/", protect, createProject);
-router.get("/", browseProjects);
+router.get("/", optionalProtect, browseProjects);
 router.get("/my", protect, getMyProjects);
 router.get("/joined", protect, getJoinedProjects);
 router.get("/recommendations", protect, getProjectRecommendations);
 router.get("/github-stats", getBasicRepoStats);
 router.get("/:id", getProject);
+router.get("/:id/health", protect, getProjectHealth);
 router.put("/:id", protect, updateProject);
 router.patch("/:id/close-recruitment", protect, closeRecruitment);
 router.put("/:id/archive-data", protect, updateArchiveData);
