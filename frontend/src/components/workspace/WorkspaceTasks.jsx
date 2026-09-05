@@ -228,7 +228,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                   {t.attachmentUrl && (
                     <div style={{ marginTop: "4px" }}>
                       <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "rgba(255,255,255,0.7)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                        📎 {t.attachmentName?.substring(0, 20) || "Attachment"}
+                        {t.attachmentName?.substring(0, 24) || "View Attachment"}
                       </a>
                     </div>
                   )}
@@ -323,11 +323,11 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                 value={taskForm.issueType}
                 onChange={(e) => onChangeTaskForm("issueType", e.target.value)}
               >
-                <option value="epic">🟣 Epic</option>
-                <option value="story">📗 Story</option>
-                <option value="task">📝 Task</option>
-                <option value="sub-task">🔲 Sub-task</option>
-                <option value="bug">🐛 Bug</option>
+                <option value="epic">Epic</option>
+                <option value="story">Story</option>
+                <option value="task">Task</option>
+                <option value="sub-task">Sub-task</option>
+                <option value="bug">Bug</option>
               </select>
             </div>
           </div>
@@ -424,7 +424,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
               alignItems: "center",
               gap: "6px"
             }}>
-              {taskUploading ? <Spinner size="sm" /> : "📎 Upload File"}
+              {taskUploading ? <Spinner size="sm" /> : "Upload File"}
               <input type="file" style={{ display: "none" }} onChange={handleFileUpload} disabled={taskUploading} />
             </label>
             {taskForm.attachmentName && (

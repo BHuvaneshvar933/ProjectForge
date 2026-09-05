@@ -44,7 +44,7 @@ export default function WorkspaceCalendar({ project, tasks, onTaskClick }) {
   return (
     <div className="workspace__calendar-layout" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {/* Calendar Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#ffffff", border: "1px solid var(--border-color)", padding: "18px 24px", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--bg-card)", border: "1px solid var(--border-color)", padding: "18px 24px", borderRadius: "12px", boxShadow: "0 2px 8px rgba(0,0,0,0.03)" }}>
         <h2 style={{ fontSize: "18px", fontWeight: "700", margin: 0, color: "var(--color-text-dark)" }}>
           {currentMonthDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
         </h2>
@@ -79,7 +79,7 @@ export default function WorkspaceCalendar({ project, tasks, onTaskClick }) {
           return (
             <div key={i} style={{ 
               minHeight: "100px", 
-              background: dayObj.isCurrentMonth ? "#ffffff" : "var(--color-paper)", 
+              background: dayObj.isCurrentMonth ? "var(--bg-card)" : "var(--color-paper)", 
               border: isToday ? "2px solid var(--color-text-dark)" : "1px solid var(--border-color)", 
               borderRadius: "8px", 
               padding: "8px",

@@ -58,16 +58,18 @@
   padding: 0 20px;
   height: 40px;
   border-radius: 6px;
-  background: var(--accent-vibrant);
-  color: #ffffff;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   font-size: 14px;
   font-weight: 500;
   transition: all 0.15s ease;
-  border: 1px solid transparent;
+  border: 1px solid var(--btn-primary-bg);
 }
 
 .browse-page__search-button:hover {
-  background: #3A3635;
+  background: var(--btn-primary-hover-bg);
+  color: var(--btn-primary-hover-text);
+  border-color: var(--btn-primary-hover-bg);
 }
 
 /* Dashboard Layout */
@@ -119,10 +121,10 @@
 .browse-sidebar__section,
 .dashboard-sidebar__section {
   padding: 20px;
-  background: #ffffff;
-  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color) !important;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
 }
 
 .browse-sidebar__heading,
@@ -160,14 +162,20 @@
 
 .browse-sidebar__tab:hover:not(:disabled),
 .dashboard-sidebar__tab:hover:not(:disabled) {
-  background: var(--color-paper);
-  color: var(--color-text-dark);
+  background: #EFECE6 !important;
+  color: var(--color-text-dark) !important;
+}
+
+html[data-theme="dark"] .browse-sidebar__tab:hover:not(:disabled),
+html[data-theme="dark"] .dashboard-sidebar__tab:hover:not(:disabled) {
+  background: #343440 !important;
+  color: #ffffff !important;
 }
 
 .browse-sidebar__tab.is-active,
 .dashboard-sidebar__tab.is-active {
-  background: var(--color-text-dark);
-  color: #ffffff;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   font-weight: 700;
 }
 
@@ -191,12 +199,12 @@
   padding: 0 16px;
   height: 40px;
   border-radius: 8px;
-  background: var(--color-text-dark);
-  color: #ffffff !important;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text) !important;
   font-size: 14px;
   font-weight: 600;
   transition: all 0.15s ease;
-  border: 1px solid var(--color-text-dark);
+  border: 1px solid var(--btn-primary-bg);
   width: 100%;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -204,16 +212,16 @@
 
 .browse-sidebar__btn:hover,
 .dashboard-sidebar__btn:hover {
-  background: #33333A;
-  border-color: #33333A;
-  color: #ffffff !important;
+  background: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-bg);
+  color: var(--btn-primary-text) !important;
 }
 
 .browse-sidebar__select,
 .dashboard-sidebar__select,
 .browse-page__select {
   width: 100%;
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 36px 10px 14px;
@@ -234,14 +242,14 @@
 .browse-sidebar__select:hover,
 .dashboard-sidebar__select:hover,
 .browse-page__select:hover {
-  border-color: rgba(18, 18, 20, 0.3);
+  border-color: var(--color-border-medium);
 }
 
 .browse-sidebar__select:focus,
 .dashboard-sidebar__select:focus,
 .browse-page__select:focus {
   border-color: var(--color-text-dark);
-  box-shadow: 0 0 0 2px rgba(18, 18, 20, 0.08);
+  box-shadow: 0 0 0 2px var(--color-border-subtle);
 }
 
 .browse-sidebar__note,
@@ -316,7 +324,72 @@
 .browse-people {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
+}
+
+.browse-people__controls-card,
+.browse-people__invite-card,
+.browse-people__project-hint {
+  padding: 24px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  border: none !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+html[data-theme="dark"] .browse-people__controls-card,
+html[data-theme="dark"] .browse-people__invite-card,
+html[data-theme="dark"] .browse-people__project-hint {
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.browse-people__select-group,
+.browse-people__search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.browse-people__select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--bg-page);
+  border: 1px solid var(--border-color);
+  color: var(--color-text-dark);
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+}
+
+.browse-people__label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.browse-people__note {
+  width: 100%;
+  border-radius: 8px;
+  padding: 12px 14px;
+  border: none !important;
+  background: var(--bg-page) !important;
+  color: var(--color-text-dark);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  outline: none;
+  font-size: 13px;
+  resize: vertical;
+}
+
+html[data-theme="dark"] .browse-people__note {
+  background: #141417 !important;
+  color: #e4e4e7 !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), inset 0 1px 3px rgba(0, 0, 0, 0.4) !important;
 }
 
 .browse-people__grid {
@@ -332,28 +405,149 @@
 }
 
 .browse-people__card {
-  border-radius: 8px;
-  padding: 18px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  background: var(--bg-card);
+  border: none !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   transition: all 0.15s ease;
 }
 
-.browse-people__card:hover {
-  background: var(--card-hover);
-  border-color: rgba(255, 255, 255, 0.15);
+html[data-theme="dark"] .browse-people__card {
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.browse-people__card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.browse-people__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50% !important;
+  background: var(--color-text-dark);
+  color: var(--color-paper);
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.browse-people__info {
+  flex: 1;
+  min-width: 0;
 }
 
 .browse-people__name {
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--text-sand);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-text-dark);
+  margin-bottom: 2px;
 }
 
-.browse-people__bio,
-.browse-people__meta {
+.browse-people__bio {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.browse-people__meta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.browse-people__skills-single-card {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px !important;
+  background: var(--bg-page) !important;
+  border: none !important;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  max-width: 100%;
+}
+
+html[data-theme="dark"] .browse-people__skills-single-card {
+  background: #141417 !important;
+  color: #e4e4e7 !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), inset 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+.browse-people__skill-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.browse-people__slash {
+  color: var(--color-text-muted);
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.browse-people__actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.browse-people__modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.browse-people__modal-bio {
+  color: var(--color-text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.browse-people__modal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px 16px;
+  color: var(--color-text-dark);
+  font-size: 13.5px;
+}
+
+.browse-people__modal-label {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.browse-people__modal-links {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.browse-people__modal-links a {
+  color: var(--color-text-dark);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: underline;
 }
 
 

@@ -1,8 +1,8 @@
-/* Edit Project page */
 .edit-project {
-	max-width: 840px;
-	margin: 0 auto;
-	padding: 40px 20px;
+	width: 100%;
+	max-width: calc(100vw - 420px);
+	margin: 0;
+	padding: 24px 0;
 	animation: fadeIn 0.4s ease;
 }
 
@@ -41,8 +41,11 @@
 	font-size: clamp(2rem, 4vw, 3rem);
 	font-weight: 800;
 	color: var(--color-text-dark);
-	margin: 0 0 6px;
-	display: inline-block;
+	margin: 0 0 10px;
+	padding-bottom: 10px;
+	border-bottom: 2px solid var(--color-text-dark);
+	display: block;
+	width: 100%;
 	letter-spacing: -0.03em;
 }
 
@@ -105,7 +108,7 @@
 }
 
 .edit-project__step-circle.is-current {
-	background: var(--color-paper);
+	background: #ffffff;
 	color: var(--color-text-dark);
 	border: 2px solid var(--color-text-dark);
 }
@@ -233,3 +236,50 @@
 		padding: 48px 40px;
 	}
 }
+
+html[data-theme="dark"] .edit-project__card {
+	background: #202028;
+	border-color: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .edit-project__step-circle.is-completed {
+	background: #ffffff;
+	color: #08080a;
+}
+
+html[data-theme="dark"] .edit-project__step-circle.is-current {
+	background: #202028;
+	color: #ffffff;
+	border: 2px solid #ffffff;
+}
+
+html[data-theme="dark"] .edit-project__step-circle.is-upcoming {
+	background: #18181c;
+	color: #a0a0b0;
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+html[data-theme="dark"] .edit-project__button--primary,
+html[data-theme="dark"] .edit-project__button--success {
+	background: #ffffff !important;
+	color: #08080a !important;
+	border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .edit-project__button--primary:hover,
+html[data-theme="dark"] .edit-project__button--success:hover {
+	background: #08080a !important;
+	color: #ffffff !important;
+	border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .edit-project__button--secondary {
+	color: #ffffff !important;
+	border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+html[data-theme="dark"] .edit-project__button--secondary:hover {
+	background: rgba(255, 255, 255, 0.1) !important;
+	border-color: rgba(255, 255, 255, 0.45) !important;
+}
+

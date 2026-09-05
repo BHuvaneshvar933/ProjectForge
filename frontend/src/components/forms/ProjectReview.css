@@ -45,7 +45,7 @@
 .project-review__card {
   border-radius: 10px;
   padding: 18px;
-  background: var(--color-paper);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;

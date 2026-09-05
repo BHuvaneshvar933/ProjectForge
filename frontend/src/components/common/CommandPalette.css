@@ -10,15 +10,15 @@
   top: 15vh;
   left: 50%;
   transform: translateX(-50%) !important;
-  background: #0a0a0c;
+  background: var(--raw-obsidian);
   width: 90%;
   max-width: 600px;
   border-radius: 2px;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-top: 2px solid #ffffff;
-  color: #f3f4f6;
+  border: 1px solid var(--color-border-subtle);
+  border-top: 2px solid var(--color-text-light);
+  color: var(--color-text-light);
   font-family: inherit;
   z-index: 10000;
 }
@@ -27,7 +27,7 @@
   display: flex;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .command-palette-search-icon {
@@ -36,7 +36,7 @@
   justify-content: center;
   width: 16px;
   height: 16px;
-  color: #ffffff;
+  color: var(--color-text-light);
   margin-right: 12px;
   flex-shrink: 0;
 }
@@ -46,12 +46,12 @@
   background: transparent;
   border: none;
   outline: none;
-  color: #f3f4f6;
+  color: var(--color-text-light);
   font-size: 13px;
 }
 
 .command-palette-input::placeholder {
-  color: #6b7280;
+  color: var(--color-text-muted-light);
 }
 
 .command-palette-list {
@@ -63,7 +63,7 @@
 .command-palette-empty {
   padding: 24px;
   text-align: center;
-  color: #9ca3af;
+  color: var(--color-text-muted-light);
   font-size: 13px;
 }
 
@@ -71,7 +71,7 @@
   padding: 8px 12px;
   font-size: 13px;
   font-weight: 400;
-  color: #6b7280;
+  color: var(--color-text-muted-light);
   text-transform: uppercase;
   letter-spacing: 0.10em;
 }
@@ -83,15 +83,15 @@
   border-radius: 2px;
   cursor: pointer;
   font-size: 13px;
-  color: #d1d5db;
+  color: var(--color-text-light);
   user-select: none;
   transition: background-color 0.15s ease;
 }
 
 .command-palette-item[data-selected='true'],
 .command-palette-item:hover {
-  background: #ffffff;
-  color: #000000;
+  background: var(--color-text-light);
+  color: var(--raw-obsidian);
 }
 
 .command-palette-item-icon {
@@ -101,11 +101,11 @@
   width: 14px;
   height: 14px;
   margin-right: 10px;
-  color: #9ca3af;
+  color: var(--color-text-muted-light);
 }
 
 .command-palette-item[data-selected='true'] .command-palette-item-icon {
-  color: #000000;
+  color: var(--raw-obsidian);
 }
 
 

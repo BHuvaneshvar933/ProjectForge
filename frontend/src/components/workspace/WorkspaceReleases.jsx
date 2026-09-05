@@ -62,7 +62,7 @@ export default function WorkspaceReleases({ projectId }) {
       </div>
 
       {releases.length === 0 ? (
-        <div style={{ padding: "60px 24px", textAlign: "center", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div className="workspace-releases__empty" style={{ padding: "60px 24px", textAlign: "center", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "12px", display: "flex", flexDirection: "column", alignItems: "center" }}>
           <h3 style={{ margin: "0 0 8px 0", fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)" }}>Track your releases</h3>
           <p style={{ color: "var(--color-text-muted)", margin: "0 0 24px 0", maxWidth: "440px", fontSize: "14px" }}>
             Releases help you track project milestones and software versions. Group tasks into releases to see progress and ensure you're ready to ship.
@@ -70,7 +70,7 @@ export default function WorkspaceReleases({ projectId }) {
           <Button onClick={() => setModalOpen(true)}>Create Release</Button>
         </div>
       ) : (
-        <div style={{ overflowX: "auto", background: "#ffffff", border: "1px solid var(--border-color)", borderRadius: "12px", padding: "8px" }}>
+        <div style={{ overflowX: "auto", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "12px", padding: "8px" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", color: "var(--color-text-dark)", fontSize: "14px", textAlign: "left" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid var(--border-color)" }}>

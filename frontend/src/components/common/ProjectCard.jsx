@@ -19,24 +19,11 @@ export default function ProjectCard({ project, type = "owned" }) {
 
   return (
     <div className="project-card">
-      {/* Header */}
+      {/* Header with Title and Border */}
       <div className="project-card__header">
         <h3 className="project-card__title">
           {title}
         </h3>
-        <div className="project-card__badges">
-          {projectType && (
-            <Badge variant={projectType}>
-              {projectType}
-            </Badge>
-          )}
-          <Badge variant={status}>
-            {status}
-          </Badge>
-          {typeof matchScore === "number" && type === "browse" && (
-            <Badge variant="recruiting">Match: {Math.round(matchScore)}%</Badge>
-          )}
-        </div>
       </div>
 
       {/* Description */}
@@ -64,21 +51,15 @@ export default function ProjectCard({ project, type = "owned" }) {
         </div>
       </div>
 
-      {/* Skills */}
-      {requiredSkills.length > 0 && (
-        <div className="project-card__skills">
-          <div className="project-card__skills-list">
-            {requiredSkills.slice(0, 3).map((skill, i) => (
-              <Badge key={i} variant="skill">{displaySkillLabel(skill)}</Badge>
-            ))}
-            {requiredSkills.length > 3 && (
-              <span className="project-card__skills-more">
-                +{requiredSkills.length - 3}
-              </span>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Status under Team line */}
+      <div className="project-card__status-row">
+        <Badge variant={status}>
+          {status}
+        </Badge>
+        {typeof matchScore === "number" && type === "browse" && (
+          <Badge variant="recruiting">Match: {Math.round(matchScore)}%</Badge>
+        )}
+      </div>
 
       {/* Footer */}
       <div className="project-card__footer">

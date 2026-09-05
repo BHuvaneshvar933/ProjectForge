@@ -6,6 +6,7 @@ import Button from "../../components/common/Button";
 import Modal from "../../components/common/Modal";
 import Spinner from "../../components/common/Spinner";
 import DashboardPagination from "../../components/common/DashboardPagination";
+import PageHeader from "../../components/common/PageHeader";
 import { displaySkillLabel } from "../../utils/display";
 import {
   acceptApplication,
@@ -108,24 +109,21 @@ export default function ProjectApplications() {
     return (
       <div className="dashboard-page" style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <Spinner size="lg" />
-        <p style={{ color: 'rgba(255, 255, 255, 0.82)', marginTop: 16 }}>Loading project applications...</p>
+        <p style={{ color: 'var(--color-text-dark)', marginTop: 16, fontWeight: 500 }}>Loading project applications...</p>
       </div>
     );
   }
 
   return (
     <div className="dashboard-page">
-      <div className="dashboard-header">
-        <div>
-          <h1 className="dashboard-title">Applications</h1>
-          <p className="dashboard-subtitle">
-            {project?.title ? `For: ${project.title}` : "Review applications for this project."}
-          </p>
-        </div>
-        <Link to={`/projects/${projectId}`}>
-          <Button variant="secondary" className="dashboard-header__btn">Back to Project</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title="Applications"
+        actions={
+          <Link to={`/projects/${projectId}`}>
+            <Button variant="secondary" className="dashboard-header__btn">Back to Project</Button>
+          </Link>
+        }
+      />
 
       <div className="dashboard-layout">
         <aside className="dashboard-sidebar">
@@ -162,28 +160,32 @@ export default function ProjectApplications() {
             const disabled = busyId === a._id;
             return (
               <div key={a._id} className="apps-card">
-                <div className="apps-card__top">
-                  <div>
-                    <div className="apps-card__title">{applicant?.name || "Applicant"}</div>
-                    <div className="apps-card__meta">
-                      <span className="apps-card__meta-item">{a?.applicationType === "invitation" ? "Invitation" : "Application"}</span>
-                      <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>
-                      <span className="apps-card__meta-item">Sent: {a?.createdAt ? new Date(a.createdAt).toLocaleString() : "-"}</span>
-                    </div>
+                {/* Topic Header with Border under it */}
+                <div className="apps-card__header">
+                  <div className="apps-card__title">{applicant?.name || "Applicant"}</div>
+                </div>
+
+                {/* Meta & Status Row */}
+                <div className="apps-card__meta-section">
+                  <div className="apps-card__meta">
+                    <span className="apps-card__meta-item">{a?.applicationType === "invitation" ? "Invitation" : "Application"}</span>
+                    <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>
+                    <span className="apps-card__meta-item">Sent: {a?.createdAt ? new Date(a.createdAt).toLocaleString() : "-"}</span>
                   </div>
-                  <div className="apps-card__badges">
-                    <Badge variant={statusVariant[a.status] || "default"}>{a.status}</Badge>
+                  <div className="apps-card__status-row">
+                    <Badge variant={a.status}>{a.status}</Badge>
                   </div>
                 </div>
 
                 {skills.length > 0 && (
-                  <div className="apps-card__skills">
-                    {skills.slice(0, 8).map((s) => (
-                      <Badge key={s?._id || s?.name} variant="skill">
-                        {displaySkillLabel(s)}
-                      </Badge>
+                  <div className="apps-card__skills-single-card">
+                    {skills.slice(0, 8).map((s, i) => (
+                      <span key={s?._id || s?.name || i} className="apps-card__skill-item">
+                        <span>{displaySkillLabel(s)}</span>
+                        {i < Math.min(skills.length, 8) - 1 && <span className="apps-card__slash">/</span>}
+                      </span>
                     ))}
-                    {skills.length > 8 && <span className="apps-card__skills-more">+{skills.length - 8}</span>}
+                    {skills.length > 8 && <span className="apps-card__skills-more">+ {skills.length - 8}</span>}
                   </div>
                 )}
 

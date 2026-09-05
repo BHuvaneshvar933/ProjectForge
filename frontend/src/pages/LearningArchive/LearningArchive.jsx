@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { browseProjects } from "../../api/projectApi";
+import PageHeader from "../../components/common/PageHeader";
 import "./LearningArchive.css";
 
 export default function LearningArchive() {
@@ -38,12 +39,7 @@ export default function LearningArchive() {
 
   return (
     <div className="learning-archive">
-      <div className="learning-archive__header">
-        <h1 className="learning-archive__title">Technical Publications & Archives</h1>
-        <p className="learning-archive__subtitle">
-          Explore completed projects to discover technical post-mortems, architectural decisions, and lessons learned from shipped software builds.
-        </p>
-      </div>
+      <PageHeader title="Technical Publications & Archives" />
 
       <div className="learning-archive__filters">
         <input

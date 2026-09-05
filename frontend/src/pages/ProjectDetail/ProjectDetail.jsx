@@ -222,30 +222,30 @@ export default function ProjectDetail() {
 
   return (
     <div className="project-detail">
-      <ProjectHeader
-        project={project}
-        matchPercent={matchPercent}
-        tokenPresent={tokenPresent}
-        isMember={isMember}
-        showPending={showPending}
-        teamFull={teamFull}
-        isRecruiting={isRecruiting}
-        canApply={canApply}
-        applyLoading={applyLoading}
-        setShowApplyModal={setShowApplyModal}
-        isOwner={isOwner}
-        goToApplications={() => navigate(`/projects/${id}/applications`)}
-      />
+      <div className="project-detail__card-container">
+        <ProjectHeader
+          project={project}
+          tokenPresent={tokenPresent}
+          isMember={isMember}
+          showPending={showPending}
+          teamFull={teamFull}
+          isRecruiting={isRecruiting}
+          canApply={canApply}
+          applyLoading={applyLoading}
+          setShowApplyModal={setShowApplyModal}
+          isOwner={isOwner}
+          goToApplications={() => navigate(`/projects/${id}/applications`)}
+        />
+        <ProjectAbout
+          project={project}
+          tokenPresent={tokenPresent}
+          skillMatchScore={skillMatchScore}
+        />
 
-      <ProjectAbout
-        project={project}
-        tokenPresent={tokenPresent}
-        skillMatchScore={skillMatchScore}
-      />
+        <ProjectTimeline project={project} />
 
-      <ProjectTimeline project={project} />
-
-      <ProjectTeam project={project} team={team} openRoles={openRoles} />
+        <ProjectTeam project={project} team={team} openRoles={openRoles} />
+      </div>
 
       <Modal
         isOpen={showApplyModal}

@@ -4,18 +4,15 @@ import Button from '../../components/common/Button';
 import Spinner from '../../components/common/Spinner';
 import API from '../../api/client';
 import { saveMyReflections } from '../../api/projectApi';
-
 import './CelebrationTab.css';
 
 export default function CelebrationTab({ project, team, myTeamRecord }) {
   const [loading, setLoading] = useState(false);
-  const [savingReflections, setSavingReflections] = useState(false);
-  
+  const [savingReflections, setSavingReflections] = useState(false);  
   // Local state for assets and reflections to avoid forcing a full refetch immediately
   const [assets, setAssets] = useState(myTeamRecord?.careerAssets || null);
   const [hasReflections, setHasReflections] = useState(!!myTeamRecord?.reflections?.biggestChallenge);
   const [activeAssetTab, setActiveAssetTab] = useState('resume'); 
-  
   const [answers, setAnswers] = useState({
     biggestChallenge: myTeamRecord?.reflections?.biggestChallenge || "",
     biggestAchievement: myTeamRecord?.reflections?.biggestAchievement || "",
@@ -215,7 +212,7 @@ export default function CelebrationTab({ project, team, myTeamRecord }) {
               {activeAssetTab === 'resume' && (
                 <div>
                   <h4>Resume Bullets</h4>
-                  <p className="assets-description">Add these to your resume to highlight your impact.</p>
+                  <p  className="assets-description">Add these to your resume to highlight your impact.</p>
                   <div className="educational-box">
                     <strong>Why this works:</strong> These bullets use the <em>XYZ Formula</em> (Accomplished X, as measured by Y, by doing Z). 
                     <br/><br/>

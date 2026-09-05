@@ -38,7 +38,7 @@
 
 .input__field {
   width: 100%;
-  background: var(--color-paper);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 14px;
@@ -54,13 +54,13 @@
 }
 
 .input__field:hover {
-  border-color: rgba(18, 18, 20, 0.3);
+  border-color: var(--color-border-medium);
 }
 
 .input__field:focus {
   border-color: var(--color-text-dark);
-  box-shadow: 0 0 0 2px rgba(18, 18, 20, 0.1);
-  background: #ffffff;
+  box-shadow: 0 0 0 2px var(--color-border-subtle);
+  background: var(--bg-card);
 }
 
 .input__field--with-icon {
@@ -68,19 +68,19 @@
 }
 
 .input__field--error {
-  border-color: rgba(220, 38, 38, 0.5);
+  border-color: var(--color-danger);
 }
 
 .input__field--error:focus {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+  border-color: var(--color-danger-hover);
+  box-shadow: 0 0 0 2px var(--color-danger-bg);
 }
 
 .input__error {
   margin-top: 4px;
   font-size: 13px;
   font-weight: 500;
-  color: #dc2626;
+  color: var(--color-danger);
 }
 
 

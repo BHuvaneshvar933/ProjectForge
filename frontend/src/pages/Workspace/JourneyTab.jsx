@@ -175,7 +175,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
           
           {/* Project Timeline Feed */}
           <div className="journey-card">
-            <h3>Project Timeline ⏱️</h3>
+            <h3>Project Timeline</h3>
             <p className="journey-card__desc">Automatic feed of project events.</p>
             
             {archiveData.timelineEvents?.length > 0 ? (
@@ -198,7 +198,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
 
           {/* Key Milestones */}
           <div className="journey-card">
-            <h3>Key Milestones 🏆</h3>
+            <h3>Key Milestones</h3>
             <p className="journey-card__desc">What major milestones did you hit?</p>
             
             <ul className="journey-list">
@@ -224,7 +224,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
 
           {/* Challenges & Solutions */}
           <div className="journey-card">
-            <h3>Challenges & Solutions 🚧</h3>
+            <h3>Challenges & Solutions</h3>
             <p className="journey-card__desc">What roadblocks did you overcome?</p>
 
             <div className="journey-challenges">
@@ -268,7 +268,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
           
           {/* Skills Gained */}
           <div className="journey-card">
-            <h3>Skills Gained 🧠</h3>
+            <h3>Skills Gained</h3>
             <p className="journey-card__desc">What technologies did you learn or use?</p>
 
             <div className="journey-skills">
@@ -292,7 +292,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
 
           {/* Biggest Takeaway */}
           <div className="journey-card">
-            <h3>Biggest Takeaway 💡</h3>
+            <h3>Biggest Takeaway</h3>
             <p className="journey-card__desc">If you did this project again, what would you do differently?</p>
 
             <div className="journey-form-block">
@@ -309,7 +309,7 @@ export default function JourneyTab({ project, isMember, onUpdate }) {
 
           {/* Final Deliverables */}
           <div className="journey-card">
-            <h3>Final Deliverables 🚀</h3>
+            <h3>Final Deliverables</h3>
             <p className="journey-card__desc">Link your final outputs so they show up in your portfolio.</p>
 
             <div className="journey-form-block">

@@ -5,6 +5,7 @@ import ProjectBasicInfo from '../../components/forms/ProjectBasicInfo';
 import ProjectRequirements from '../../components/forms/ProjectRequirements';
 import ProjectReview from '../../components/forms/ProjectReview';
 import Modal from '../../components/common/Modal';
+import PageHeader from '../../components/common/PageHeader';
 import { toast } from 'react-toastify';
 import './EditProject.css';
 
@@ -181,12 +182,7 @@ export default function EditProject() {
 
   return (
     <div className="edit-project">
-      <div className="edit-project__header">
-        <div>
-          <h1 className="edit-project__title">Edit Project</h1>
-          <p className="edit-project__subtitle">Update your project details</p>
-        </div>
-      </div>
+      <PageHeader title="Edit Project" />
       
       <div className="edit-project__stepper">
         <div className="edit-project__stepper-line" />

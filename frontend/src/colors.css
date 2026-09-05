@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap');
+
+/**
+ * ProjectForge Centralized Color System
+ * Single Source of Truth for all color tokens in the application.
+ */
+
+:root {
+  /* ==========================================
+   * RAW COLOR PALETTE TOKENS
+   * ========================================== */
+  --raw-paper: #FAF8F2; /* Very light off-white yellow page background ONLY */
+  --raw-ivory: #FAF8F2;
+  --raw-ivory-dark: #E2D4C4;
+  --raw-white: #FFFFFF; /* Elements, inputs, cards stay pure white */
+  
+  --raw-obsidian: #0E0E10;
+  --raw-obsidian-card: #27272E;
+  --raw-dark-surface: #121214;
+  --raw-dark-card: #27272E;
+  --raw-dark-hover: #343440;
+  --raw-dark-muted: #33333A;
+
+  --raw-text-dark: #0A0A0C;
+  --raw-text-muted: #2D2D35;
+  --raw-text-subtle: #3D3D45;
+  --raw-text-light: #F9F8F5;
+  --raw-text-light-muted: #A1A1AA;
+  --raw-text-light-subtle: #71717A;
+
+  /* Accent Colors */
+  --raw-accent-charcoal: #33302E;
+  --raw-indigo: #6366f1;
+  --raw-indigo-dark: #4f46e5;
+  --raw-blue: #3b82f6;
+  --raw-blue-dark: #2563eb;
+  
+  /* Status Colors */
+  --raw-green: #10b981;
+  --raw-green-dark: #059669;
+  --raw-green-light: #d1fae5;
+  --raw-amber: #f59e0b;
+  --raw-amber-dark: #d97706;
+  --raw-amber-light: #fef3c7;
+  --raw-red: #ef4444;
+  --raw-red-dark: #dc2626;
+  --raw-red-deep: #b91c1c;
+  --raw-red-light: #fee2e2;
+
+  /* ==========================================
+   * SEMANTIC DESIGN TOKENS (LIGHT MODE DEFAULT)
+   * ========================================== */
+  --color-paper: #F4F1EA; /* Deeper, richer off-white paper canvas */
+  --color-ivory: var(--raw-white);
+  --color-paper-card: var(--raw-white);
+  --color-obsidian: var(--raw-obsidian);
+  --color-obsidian-card: var(--raw-obsidian-card);
+
+  --bg-page: #F4F1EA; /* Deeper, richer off-white page background */
+  --bg-card: var(--raw-white); /* Pure white for ALL cards, elements, inputs */
+  --bg-card-hover: var(--raw-white);
+  --bg-card-secondary: var(--raw-white);
+
+  --color-text-dark: var(--raw-text-dark);
+  --color-text-light: var(--raw-text-light);
+  --color-text-muted: var(--raw-text-muted);
+  --color-text-subtle: var(--raw-text-subtle);
+  --color-text-muted-light: var(--raw-text-light-muted);
+
+  --text-main: var(--raw-text-dark);
+  --text-sub: var(--raw-text-muted);
+
+  --accent-ch1: var(--raw-accent-charcoal);
+  --accent-ch2: var(--raw-accent-charcoal);
+  --accent-ch3: var(--raw-accent-charcoal);
+  --accent-ch4: var(--raw-accent-charcoal);
+  --accent-ch5: var(--raw-accent-charcoal);
+
+  --accent-vibrant: var(--raw-text-dark);
+  --accent-soft: var(--raw-accent-charcoal);
+  --accent-primary: var(--raw-indigo);
+
+  --color-border-subtle: rgba(18, 18, 20, 0.22);
+  --color-border-medium: rgba(18, 18, 20, 0.35);
+  --color-border-strong: rgba(18, 18, 20, 0.55);
+  --border-color: var(--color-border-subtle);
+
+  /* Functional Status Tokens */
+  --color-success: var(--raw-green);
+  --color-success-dark: var(--raw-green-dark);
+  --color-success-bg: var(--raw-green-light);
+  
+  --color-warning: var(--raw-amber);
+  --color-warning-dark: var(--raw-amber-dark);
+  --color-warning-bg: var(--raw-amber-light);
+
+  --color-danger: var(--raw-red);
+  --color-danger-hover: var(--raw-red-dark);
+  --color-danger-bg: var(--raw-red);
+
+  --color-info: var(--raw-blue);
+  --color-info-dark: var(--raw-blue-dark);
+
+  /* Button Tokens */
+  --btn-primary-bg: #121214;
+  --btn-primary-text: #FFFFFF;
+  --btn-primary-hover-bg: #33333A;
+  --btn-primary-hover-text: #FFFFFF;
+  --btn-secondary-bg: #F0EDE6;
+  --btn-secondary-text: var(--raw-text-dark);
+
+  /* Component Specific Tokens */
+  --chat-bg: var(--raw-dark-surface);
+  --chat-text: var(--raw-white);
+  --chat-card-bg: var(--raw-dark-hover);
+  --chat-input-bg: var(--raw-white);
+  --chat-input-border: var(--raw-dark-surface);
+}
+
+/* ==========================================
+ * DARK MODE THEME OVERRIDES
+ * ========================================== */
+html[data-theme="dark"] {
+  --color-paper: #08080a;
+  --color-ivory: #202028;
+  --color-paper-card: #202028;
+  --color-obsidian: #08080a;
+  --color-obsidian-card: #202028;
+
+  --bg-page: #08080a;
+  --bg-card: #202028;
+  --bg-card-hover: #202028;
+  --bg-card-secondary: #202028;
+
+  --color-text-dark: #ffffff;
+  --color-text-light: #ffffff;
+  --color-text-muted: #d1d1db;
+  --color-text-subtle: #a0a0b0;
+  --color-text-muted-light: #d1d1db;
+
+  --text-main: #ffffff;
+  --text-sub: #d1d1db;
+
+  --border-color: rgba(255, 255, 255, 0.18);
+  --color-border-subtle: rgba(255, 255, 255, 0.18);
+  --color-border-medium: rgba(255, 255, 255, 0.3);
+  --color-border-strong: rgba(255, 255, 255, 0.5);
+
+  --accent-vibrant: #ffffff;
+  --accent-soft: #f4f4f5;
+
+  --btn-primary-bg: #ffffff;
+  --btn-primary-text: #0a0a0c;
+  --btn-primary-hover-bg: #e4e4e7;
+  --btn-primary-hover-text: #0a0a0c;
+  --btn-secondary-bg: #343440;
+  --btn-secondary-text: #ffffff;
+
+  --chat-bg: #27272e;
+  --chat-text: #ffffff;
+  --chat-card-bg: #343440;
+  --chat-input-bg: #343440;
+  --chat-input-border: rgba(255, 255, 255, 0.25);
+}

@@ -31,11 +31,11 @@ export default function BrowsePeopleTab({
   return (
     <div className="browse-people">
       {!hideControls && (
-        <div className="browse-people__controls">
-          <div className="browse-people__select">
-            <div className="browse-people__label">Invite for project</div>
+        <div className="browse-people__controls-card">
+          <div className="browse-people__select-group">
+            <label className="browse-people__label">Invite for project</label>
             <select
-              className="browse-page__select"
+              className="browse-people__select"
               value={selectedProjectId}
               onChange={(e) => setSelectedProjectId(e.target.value)}
             >
@@ -51,7 +51,7 @@ export default function BrowsePeopleTab({
             </select>
           </div>
 
-          <div className="browse-people__search">
+          <div className="browse-people__search-group">
             <Input
               value={peopleSearch}
               onChange={(e) => setPeopleSearch(e.target.value)}
@@ -66,12 +66,13 @@ export default function BrowsePeopleTab({
 
       {selectedProject && (
         <div className="browse-people__project-hint">
-          <div className="browse-people__label">Project skills</div>
-          <div className="browse-people__skills">
-            {(selectedProject.requiredSkills || []).slice(0, 10).map((s) => (
-              <Badge key={s?._id || s?.name || s} variant="skill">
-                {displaySkillLabel(s)}
-              </Badge>
+          <div className="browse-people__label">Project skills required</div>
+          <div className="browse-people__skills-single-card">
+            {(selectedProject.requiredSkills || []).slice(0, 10).map((s, i) => (
+              <span key={s?._id || s?.name || i} className="browse-people__skill-item">
+                <span>{displaySkillLabel(s)}</span>
+                {i < Math.min((selectedProject.requiredSkills || []).length, 10) - 1 && <span className="browse-people__slash">/</span>}
+              </span>
             ))}
           </div>
         </div>
@@ -79,43 +80,51 @@ export default function BrowsePeopleTab({
 
       {selectedProjectId ? (
         <>
-          <div className="browse-people__invite">
+          <div className="browse-people__invite-card">
             <Input
               label="Suggested Role"
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
               placeholder={selectedProject?.openRoles?.[0] || 'Example: Frontend Developer'}
             />
-            <div className="browse-people__label">Invite note</div>
-            <textarea
-              className="browse-people__note"
-              rows={3}
-              value={inviteMessage}
-              onChange={(e) => setInviteMessage(e.target.value)}
-              placeholder="Tell them what they would work on and why you're inviting them"
-            />
+            <div className="browse-people__field">
+              <label className="browse-people__label">Invite note</label>
+              <textarea
+                className="browse-people__note"
+                rows={3}
+                value={inviteMessage}
+                onChange={(e) => setInviteMessage(e.target.value)}
+                placeholder="Tell them what they would work on and why you're inviting them"
+              />
+            </div>
           </div>
 
           <div className="browse-people__grid">
             {people.map((u) => (
               <div key={u._id} className="browse-people__card">
-                <div className="browse-people__card-top">
-                  <div>
-                    <div className="browse-people__name">{u.name}</div>
-                    <div className="browse-people__bio">{u.bio || 'No bio'}</div>
+                <div className="browse-people__card-header">
+                  <div className="browse-people__avatar">
+                    {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
                   </div>
-                  <div className="browse-people__meta">{u.availabilityHoursPerWeek ?? 0} hrs/week</div>
+                  <div className="browse-people__info">
+                    <div className="browse-people__name">{u.name}</div>
+                    <div className="browse-people__bio">{u.bio || 'No bio provided'}</div>
+                  </div>
+                  <div className="browse-people__meta">{u.availabilityHoursPerWeek ?? 0} hrs/wk</div>
                 </div>
 
                 {Array.isArray(u.skills) && u.skills.length > 0 && (
-                  <div className="browse-people__skills">
-                    {u.skills.slice(0, 8).map((s) => (
-                      <Badge key={s?._id || s?.name} variant="skill">{displaySkillLabel(s)}</Badge>
+                  <div className="browse-people__skills-single-card">
+                    {u.skills.slice(0, 8).map((s, i) => (
+                      <span key={s?._id || s?.name || i} className="browse-people__skill-item">
+                        <span>{displaySkillLabel(s)}</span>
+                        {i < Math.min(u.skills.length, 8) - 1 && <span className="browse-people__slash">/</span>}
+                      </span>
                     ))}
                   </div>
                 )}
 
-                <div className="browse-people__actions" style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '16px' }}>
+                <div className="browse-people__actions">
                   <Button variant="outline" onClick={() => setProfileUser(u)}>
                     View Profile
                   </Button>
@@ -139,61 +148,55 @@ export default function BrowsePeopleTab({
             {!peopleLoading && people.length === 0 && (
               <div className="browse-page__empty" style={{ padding: 60, gridColumn: "1 / -1" }}>
                 <p className="browse-page__empty-title">No people found</p>
-                <p className="browse-page__empty-subtitle">Try a different search.</p>
+                <p className="browse-page__empty-subtitle">Try a different search query or filter.</p>
               </div>
             )}
           </div>
           {peoplePagination?.page < peoplePagination?.pages && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
               <Button onClick={loadMorePeople} loading={peopleLoading}>
-                Load More
+                Load More Developers
               </Button>
             </div>
           )}
         </>
       ) : (
         <div className="browse-page__empty" style={{ padding: 60 }}>
-          <div className="browse-page__empty-icon">
-            <svg className="browse-page__empty-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          </div>
           <p className="browse-page__empty-title">No project selected</p>
-          <p className="browse-page__empty-subtitle">Select a recruiting project you own to search and invite people.</p>
+          <p className="browse-page__empty-subtitle">Select a recruiting project you own to search and invite team members.</p>
         </div>
       )}
 
       <Modal
         isOpen={Boolean(profileUser)}
         onClose={() => setProfileUser(null)}
-        title={profileUser?.name ? `${profileUser.name}'s Profile` : "Applicant Profile"}
+        title={profileUser?.name ? `${profileUser.name}'s Profile` : "Developer Profile"}
       >
         {profileUser && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <p style={{ color: 'var(--color-zinc-400)', fontSize: '14px', lineHeight: '1.5' }}>
+          <div className="browse-people__modal-content">
+            <p className="browse-people__modal-bio">
               {profileUser.bio || "No bio provided."}
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', fontSize: '14px' }}>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Email:</strong> {profileUser.email || "-"}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Projects Completed:</strong> {profileUser?.stats?.projectsCompleted ?? 0}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
-
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Acceptance Rate:</strong> {profileUser?.stats?.acceptanceRate ? `${(profileUser.stats.acceptanceRate * 100).toFixed(0)}%` : "0%"}</div>
-              <div><strong style={{ color: 'var(--color-zinc-200)' }}>Member Since:</strong> {profileUser?.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "-"}</div>
+            <div className="browse-people__modal-grid">
+              <div><strong className="browse-people__modal-label">Email:</strong> {profileUser.email || "-"}</div>
+              <div><strong className="browse-people__modal-label">Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
+              <div><strong className="browse-people__modal-label">Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
+              <div><strong className="browse-people__modal-label">Projects Completed:</strong> {profileUser?.stats?.projectsCompleted ?? 0}</div>
+              <div><strong className="browse-people__modal-label">Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
+              <div><strong className="browse-people__modal-label">Acceptance Rate:</strong> {profileUser?.stats?.acceptanceRate ? `${(profileUser.stats.acceptanceRate * 100).toFixed(0)}%` : "0%"}</div>
+              <div><strong className="browse-people__modal-label">Member Since:</strong> {profileUser?.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "-"}</div>
             </div>
 
             {profileUser?.portfolioLinks && (Object.values(profileUser.portfolioLinks).some(link => link)) && (
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '8px' }}>
+              <div className="browse-people__modal-links">
                 {profileUser.portfolioLinks.github && (
-                  <a href={profileUser.portfolioLinks.github} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>GitHub</a>
+                  <a href={profileUser.portfolioLinks.github} target="_blank" rel="noopener noreferrer">GitHub</a>
                 )}
                 {profileUser.portfolioLinks.linkedin && (
-                  <a href={profileUser.portfolioLinks.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>LinkedIn</a>
+                  <a href={profileUser.portfolioLinks.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
                 )}
                 {profileUser.portfolioLinks.website && (
-                  <a href={profileUser.portfolioLinks.website} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--color-zinc-300)', textDecoration: 'underline' }}>Website</a>
+                  <a href={profileUser.portfolioLinks.website} target="_blank" rel="noopener noreferrer">Website</a>
                 )}
               </div>
             )}

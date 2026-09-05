@@ -53,7 +53,7 @@
 }
 
 .project-req__result:hover {
-  background: var(--color-paper);
+  background: #EFECE6;
   color: var(--color-text-dark);
 }
 
@@ -65,7 +65,7 @@
   width: 100%;
   height: 42px;
   box-sizing: border-box;
-  background: var(--color-paper);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 0 80px 0 14px;
@@ -161,3 +161,49 @@
 .project-req__roles .project-req__input {
   flex: 1;
 }
+
+html[data-theme="dark"] .project-req__results {
+  background: #202028;
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme="dark"] .project-req__result {
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme="dark"] .project-req__result:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .project-req__input {
+  background: #1c1c22;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+html[data-theme="dark"] .project-req__input:hover {
+  background: #24242e;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+html[data-theme="dark"] .project-req__input:focus {
+  background: #24242e;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+}
+
+html[data-theme="dark"] .project-req__add {
+  background: #ffffff;
+  color: #08080a;
+  border-color: #ffffff;
+}
+
+html[data-theme="dark"] .project-req__add:hover {
+  background: #08080a;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+

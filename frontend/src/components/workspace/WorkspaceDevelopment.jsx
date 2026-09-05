@@ -155,7 +155,7 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
 
       <div>
         {project?.githubIntegration?.isConnected ? (
-          <div style={{ padding: "40px 24px", textAlign: "center", background: "#ffffff", borderRadius: "12px", border: "1px solid var(--border-color)", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div className="workspace-dev__connect-box" style={{ padding: "40px 24px", textAlign: "center", background: "var(--bg-card)", borderRadius: "12px", border: "1px solid var(--border-color)", display: "flex", flexDirection: "column", alignItems: "center" }}>
             <h3 style={{ margin: "0 0 8px 0", fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)" }}>Connected to GitHub</h3>
             <p style={{ margin: 0, color: "var(--color-text-muted)", fontSize: "14px" }}>
               Repository: <a href={`https://github.com/${project.githubIntegration.repoName}`} target="_blank" rel="noreferrer" style={{ color: "var(--color-text-dark)", textDecoration: "underline", fontWeight: "600" }}>{project.githubIntegration.repoName}</a>
@@ -170,12 +170,12 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
             </div>
           </div>
         ) : (
-          <div style={{ padding: "60px 24px", textAlign: "center", background: "#ffffff", borderRadius: "12px", border: "1px solid var(--border-color)", display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <div className="workspace-dev__connect-box" style={{ padding: "60px 24px", textAlign: "center", background: "var(--bg-card)", borderRadius: "12px", border: "1px solid var(--border-color)", display: "flex", flexDirection: "column", alignItems: "center" }}>
             <h3 style={{ margin: "0 0 8px 0", fontSize: "18px", fontWeight: "700", color: "var(--color-text-dark)" }}>Connect your tools</h3>
             <p style={{ margin: 0, color: "var(--color-text-muted)", fontSize: "14px", maxWidth: "440px" }}>
               Connect your team's code repository (GitHub, GitLab, Bitbucket) to see pull requests, commits, branches, and deployments linked directly to your work items here.
             </p>
-            <Button style={{ marginTop: "24px" }} onClick={() => setGithubModalOpen(true)}>Connect GitHub</Button>
+            <Button variant="primary" className="btn-connect-github" style={{ marginTop: "48px" }} onClick={() => setGithubModalOpen(true)}>Connect GitHub</Button>
           </div>
         )}
       </div>
