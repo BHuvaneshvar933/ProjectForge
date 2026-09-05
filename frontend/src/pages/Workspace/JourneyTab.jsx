@@ -553,6 +553,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                 {loading ? "Saving..." : "Save Deliverables"}
               </Button>
             </form>
+          </div>
         </div>
       )}
     </div>

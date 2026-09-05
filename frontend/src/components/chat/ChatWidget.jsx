@@ -257,7 +257,6 @@ export default function ChatWidget() {
       </div>
 
       {/* Body */}
-<<<<<<< HEAD
       {isOpen && (
         <div className="chat-widget__body">
           {!activeChat ? (
