@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import Badge from '../../../components/common/Badge';
-import Modal from '../../../components/common/Modal';
+import PublicProfileModal from '../../../components/common/PublicProfileModal';
 import { displaySkillLabel } from '../../../utils/display';
 
 export default function BrowsePeopleTab({
@@ -167,42 +167,11 @@ export default function BrowsePeopleTab({
         </div>
       )}
 
-      <Modal
+      <PublicProfileModal
         isOpen={Boolean(profileUser)}
         onClose={() => setProfileUser(null)}
-        title={profileUser?.name ? `${profileUser.name}'s Profile` : "Developer Profile"}
-      >
-        {profileUser && (
-          <div className="browse-people__modal-content">
-            <p className="browse-people__modal-bio">
-              {profileUser.bio || "No bio provided."}
-            </p>
-            <div className="browse-people__modal-grid">
-              <div><strong className="browse-people__modal-label">Email:</strong> {profileUser.email || "-"}</div>
-              <div><strong className="browse-people__modal-label">Availability:</strong> {profileUser.availabilityHoursPerWeek ?? 0} hrs/week</div>
-              <div><strong className="browse-people__modal-label">Projects Active:</strong> {profileUser?.stats?.projectsActive ?? 0}</div>
-              <div><strong className="browse-people__modal-label">Projects Completed:</strong> {profileUser?.stats?.projectsCompleted ?? 0}</div>
-              <div><strong className="browse-people__modal-label">Tasks Completed:</strong> {profileUser?.stats?.tasksCompleted ?? 0}</div>
-              <div><strong className="browse-people__modal-label">Acceptance Rate:</strong> {profileUser?.stats?.acceptanceRate ? `${(profileUser.stats.acceptanceRate * 100).toFixed(0)}%` : "0%"}</div>
-              <div><strong className="browse-people__modal-label">Member Since:</strong> {profileUser?.createdAt ? new Date(profileUser.createdAt).toLocaleDateString() : "-"}</div>
-            </div>
-
-            {profileUser?.portfolioLinks && (Object.values(profileUser.portfolioLinks).some(link => link)) && (
-              <div className="browse-people__modal-links">
-                {profileUser.portfolioLinks.github && (
-                  <a href={profileUser.portfolioLinks.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-                )}
-                {profileUser.portfolioLinks.linkedin && (
-                  <a href={profileUser.portfolioLinks.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-                )}
-                {profileUser.portfolioLinks.website && (
-                  <a href={profileUser.portfolioLinks.website} target="_blank" rel="noopener noreferrer">Website</a>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
+        userId={profileUser?._id}
+      />
     </div>
   );
 }

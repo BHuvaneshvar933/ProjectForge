@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyNotifications, getMyUnreadCount, markNotificationRead, markAllNotificationsRead } from '../../api/notificationApi';
 import Spinner from './Spinner';
+import { getSocket } from '../../realtime/socketClient';
 import './NotificationBell.css';
 
 export default function NotificationBell() {
@@ -39,6 +40,21 @@ export default function NotificationBell() {
     // Poll for notifications every 60 seconds
     const interval = setInterval(fetchUnreadCount, 60000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+    
+    const handleNewNotification = (notification) => {
+      setUnreadCount((prev) => prev + 1);
+      setNotifications((prev) => [notification, ...prev].slice(0, 50));
+    };
+
+    socket.on("new-notification", handleNewNotification);
+    return () => {
+      socket.off("new-notification", handleNewNotification);
+    };
   }, []);
 
   useEffect(() => {

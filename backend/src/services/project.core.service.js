@@ -1,5 +1,6 @@
 import Project from "../models/project.model.js";
 import Team from "../models/team.model.js";
+import { calculateUserReliability } from "./reliability.service.js";
 
 export const normalizeProjectRole = (value) => {
   if (typeof value !== "string") return null;
@@ -115,8 +116,7 @@ export const getProjectById = async (projectId) => {
     isDeleted: false
   })
     .populate("owner", "name bio")
-    .populate("requiredSkills", "name")
-    .populate("archiveData.skillsGained", "name");
+    .populate("requiredSkills", "name");
 
   if (!project) {
     throw new Error("Project not found");
@@ -177,10 +177,44 @@ export const browseProjects = async (query) => {
   if (projectType) filter.projectType = projectType;
 
   if (search) {
-    filter.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } }
+    const searchRegex = { $regex: search, $options: "i" };
+    
+    const User = (await import("../models/user.model.js")).default;
+    const Skill = (await import("../models/skill.model.js")).default;
+    const Team = (await import("../models/team.model.js")).default;
+
+    const [matchingUsers, matchingSkills] = await Promise.all([
+      User.find({ name: searchRegex }).select("_id").lean(),
+      Skill.find({ name: searchRegex }).select("_id").lean()
+    ]);
+
+    const matchingUserIds = matchingUsers.map(u => u._id);
+    const matchingSkillIds = matchingSkills.map(s => s._id);
+
+    let matchingProjectIdsFromTeams = [];
+    if (matchingUserIds.length > 0) {
+      const matchingTeams = await Team.find({ userId: { $in: matchingUserIds }, status: "active" }).select("projectId").lean();
+      matchingProjectIdsFromTeams = matchingTeams.map(t => t.projectId);
+    }
+
+    const searchConditions = [
+      { title: searchRegex },
+      { description: searchRegex }
     ];
+
+    if (matchingSkillIds.length > 0) {
+      searchConditions.push({ requiredSkills: { $in: matchingSkillIds } });
+    }
+    
+    if (matchingUserIds.length > 0) {
+      searchConditions.push({ owner: { $in: matchingUserIds } });
+    }
+
+    if (matchingProjectIdsFromTeams.length > 0) {
+      searchConditions.push({ _id: { $in: matchingProjectIdsFromTeams } });
+    }
+
+    filter.$or = searchConditions;
   }
 
   if (userId) {
@@ -230,13 +264,31 @@ export const updateProject = async (projectId, userId, updateData) => {
     throw new Error("Project not found");
   }
 
+  if (updateData.__v !== undefined && project.__v !== updateData.__v) {
+    const err = new Error("This project was updated by another user.");
+    err.name = "VersionError";
+    throw err;
+  }
+
   if (project.owner.toString() !== userId.toString()) {
     throw new Error("Not authorized");
   }
 
+  const previousStatus = project.status;
+
   Object.assign(project, updateData);
 
   await project.save();
+
+  if (previousStatus !== "completed" && project.status === "completed") {
+    Team.find({ projectId: project._id }).distinct("userId").then(userIds => {
+      userIds.forEach(uId => {
+        calculateUserReliability(uId).catch(err => {
+          console.error(`Failed to calculate reliability for user ${uId} upon project completion:`, err);
+        });
+      });
+    }).catch(err => console.error("Error fetching team for reliability calculation:", err));
+  }
 
   return project;
 };
@@ -265,6 +317,12 @@ export const updateArchiveData = async (userId, projectId, data) => {
   const project = await Project.findOne({ _id: projectId, isDeleted: false });
   if (!project) throw new Error("Project not found");
 
+  if (data.__v !== undefined && project.__v !== data.__v) {
+    const err = new Error("This project was updated by another user.");
+    err.name = "VersionError";
+    throw err;
+  }
+
   const teamMember = await Team.findOne({
     projectId,
     userId,
@@ -277,39 +335,62 @@ export const updateArchiveData = async (userId, projectId, data) => {
   }
 
   if (!project.archiveData) {
-    project.archiveData = { timelineEvents: [], challenges: [], achievements: [], skillsGained: [], takeaway: "", deliverables: {} };
+    project.archiveData = { timelineEvents: [], deliverables: {} };
   }
 
   if (data.type === "timeline") {
     project.archiveData.timelineEvents.push(data.event);
-  } else if (data.type === "challenge") {
-    project.archiveData.challenges.push(data.challenge);
-  } else if (data.type === "delete_challenge") {
-    project.archiveData.challenges.splice(data.index, 1);
-  } else if (data.type === "achievement") {
-    if (data.achievement && data.achievement.trim()) {
-      project.archiveData.achievements.push(data.achievement.trim());
-    }
-  } else if (data.type === "delete_achievement") {
-    project.archiveData.achievements.splice(data.index, 1);
-  } else if (data.type === "takeaway") {
-    project.archiveData.takeaway = data.takeaway;
-  } else if (data.type === "skills") {
-    project.archiveData.skillsGained = data.skills;
   } else if (data.type === "deliverables") {
     project.archiveData.deliverables = {
       ...project.archiveData.deliverables,
       ...data.deliverables
     };
-  } else if (data.type === "completion_answers") {
-    project.archiveData.biggestChallenge = data.biggestChallenge;
-    project.archiveData.biggestAchievement = data.biggestAchievement;
-    project.archiveData.favoriteFeature = data.favoriteFeature;
-    project.archiveData.whatToImprove = data.whatToImprove;
   }
 
   await project.save();
   return project;
+};
+
+export const updatePersonalJourney = async (userId, projectId, data) => {
+  const teamMember = await Team.findOne({
+    projectId,
+    userId,
+    status: "active",
+    isDeleted: false,
+  });
+
+  if (!teamMember) {
+    throw new Error("Only active team members can update personal journey data");
+  }
+
+  if (!teamMember.journey) {
+    teamMember.journey = { contributions: [], challenges: [], skills: [], learnings: [], evidence: [] };
+  }
+
+  if (data.type === "add_contribution") {
+    teamMember.journey.contributions.push(data.contribution);
+  } else if (data.type === "delete_contribution") {
+    teamMember.journey.contributions.splice(data.index, 1);
+  } else if (data.type === "add_challenge") {
+    teamMember.journey.challenges.push(data.challenge);
+  } else if (data.type === "delete_challenge") {
+    teamMember.journey.challenges.splice(data.index, 1);
+  } else if (data.type === "add_skill") {
+    teamMember.journey.skills.push(data.skill);
+  } else if (data.type === "delete_skill") {
+    teamMember.journey.skills.splice(data.index, 1);
+  } else if (data.type === "add_learning") {
+    teamMember.journey.learnings.push(data.learning);
+  } else if (data.type === "delete_learning") {
+    teamMember.journey.learnings.splice(data.index, 1);
+  } else if (data.type === "add_evidence") {
+    teamMember.journey.evidence.push(data.evidence);
+  } else if (data.type === "delete_evidence") {
+    teamMember.journey.evidence.splice(data.index, 1);
+  }
+
+  await teamMember.save();
+  return teamMember.journey;
 };
 
 export const connectGitHub = async (userId, projectId, payload) => {
@@ -357,7 +438,22 @@ export const disconnectGitHub = async (userId, projectId) => {
 
 export const getProjectReleases = async (projectId) => {
   const Release = (await import("../models/release.model.js")).default;
-  return await Release.find({ projectId, isDeleted: false }).sort({ createdAt: -1 });
+  const Task = (await import("../models/task.model.js")).default;
+  
+  const releases = await Release.find({ projectId, isDeleted: false }).sort({ createdAt: -1 }).lean();
+  
+  // Compute progress for each release
+  for (const release of releases) {
+    const tasks = await Task.find({ releaseId: release._id, isDeleted: false });
+    if (tasks.length === 0) {
+      release.progress = 0;
+    } else {
+      const completed = tasks.filter(t => t.status === "done").length;
+      release.progress = Math.round((completed / tasks.length) * 100);
+    }
+  }
+  
+  return releases;
 };
 
 export const createProjectRelease = async (userId, projectId, payload) => {
@@ -380,5 +476,35 @@ export const createProjectRelease = async (userId, projectId, payload) => {
     description: payload.description || "",
   });
 
+  return release;
+};
+
+export const updateProjectRelease = async (userId, projectId, releaseId, payload) => {
+  const project = await Project.findById(projectId);
+  if (!project) throw new Error("Project not found");
+  
+  const member = await Team.findOne({ projectId, userId, status: "active", isDeleted: false });
+  if (!member && String(project.owner) !== String(userId)) {
+    throw new Error("Only team members can update releases");
+  }
+
+  const Release = (await import("../models/release.model.js")).default;
+  const release = await Release.findOne({ _id: releaseId, projectId, isDeleted: false });
+  if (!release) throw new Error("Release not found");
+
+  if (payload.__v !== undefined && release.__v !== payload.__v) {
+    const err = new Error("This release was updated by another user.");
+    err.name = "VersionError";
+    throw err;
+  }
+
+  const allowedFields = ["version", "status", "startDate", "releaseDate", "description"];
+  allowedFields.forEach((field) => {
+    if (payload[field] !== undefined) {
+      release[field] = payload[field];
+    }
+  });
+
+  await release.save();
   return release;
 };

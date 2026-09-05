@@ -61,7 +61,8 @@ export const updateTaskStatus = async (req, res) => {
     const task = await TaskService.updateTaskStatus(
       req.params.taskId,
       status,
-      req.user._id
+      req.user._id,
+      req.body.__v
     );
 
     res.status(200).json({

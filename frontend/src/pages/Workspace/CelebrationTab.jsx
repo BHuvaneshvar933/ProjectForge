@@ -111,7 +111,7 @@ export default function CelebrationTab({ project, team, myTeamRecord }) {
           <div className="reflection-form">
             <h3 style={{ marginBottom: "10px", color: "var(--color-text-dark)" }}>Reflect on your journey</h3>
             <p style={{ color: "var(--color-text-muted)", marginBottom: "20px" }}>
-              To generate your personalized AI career assets (resume bullets, LinkedIn posts), please answer these 4 quick questions. These will be permanently saved to your profile!
+              To generate your personalized AI career assets (resume bullets, LinkedIn posts), please answer these 4 quick questions. Your reflections will be saved with this project and can be used to generate your career assets later.
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "16px", textAlign: "left" }}>
@@ -120,7 +120,7 @@ export default function CelebrationTab({ project, team, myTeamRecord }) {
                   1. What was the biggest technical challenge you overcame?
                 </label>
                 <div style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "8px" }}>
-                  <strong>Pro Tip:</strong> Don't just say "it was hard." Mention a specific bug, architectural hurdle, or new technology you had to learn to fix it.
+                  <strong>Pro Tip:</strong> Tell us what went wrong, what made it difficult, and how you solved it.
                 </div>
                 <textarea 
                   value={answers.biggestChallenge}
@@ -178,7 +178,7 @@ export default function CelebrationTab({ project, team, myTeamRecord }) {
 
             <div style={{ marginTop: "20px" }}>
               <Button onClick={handleSaveReflections} disabled={!isFormValid() || savingReflections}>
-                {savingReflections ? "Saving..." : "Save Reflections & Continue"}
+                {savingReflections ? "Saving..." : "Save Reflections & Continue →"}
               </Button>
             </div>
           </div>

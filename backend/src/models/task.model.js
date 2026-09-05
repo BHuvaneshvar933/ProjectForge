@@ -44,6 +44,13 @@ const taskSchema = new mongoose.Schema(
       index: true,
     },
 
+    releaseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Release",
+      default: null,
+      index: true,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -103,7 +110,7 @@ const taskSchema = new mongoose.Schema(
       default: null,
     },
   },
-  { timestamps: true }
+  { timestamps: true, optimisticConcurrency: true }
 );
 
 taskSchema.index({ projectId: 1, status: 1 });

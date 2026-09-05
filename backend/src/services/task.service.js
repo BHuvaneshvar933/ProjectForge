@@ -82,6 +82,7 @@ export const createTask = async (projectId, payload, currentUser) => {
           taskNumber: nextTaskNumber,
           issueType: payload.issueType || "task",
           parentId: payload.parentId || null,
+          releaseId: payload.releaseId || null,
           attachmentUrl: payload.attachmentUrl || null,
           attachmentName: payload.attachmentName || null,
         },
@@ -171,6 +172,12 @@ export const assignTask = async (taskId, payload, currentUser) => {
     throw new Error("Task not found");
   }
 
+  if (payload.__v !== undefined && task.__v !== payload.__v) {
+    const err = new Error("This task was updated by another team member.");
+    err.name = "VersionError";
+    throw err;
+  }
+
   const project = await Project.findById(task.projectId);
 
   if (!project || project.isDeleted) {
@@ -215,7 +222,7 @@ export const assignTask = async (taskId, payload, currentUser) => {
   return task;
 };
 
-export async function updateTaskStatus(taskId, newStatus, userId) {
+export async function updateTaskStatus(taskId, newStatus, userId, clientVersion) {
   const validStatuses = ["todo", "in-progress", "done"];
 
   if (!validStatuses.includes(newStatus)) {
@@ -226,6 +233,12 @@ export async function updateTaskStatus(taskId, newStatus, userId) {
 
   if (!task || task.isDeleted) {
     throw new Error("Task not found");
+  }
+
+  if (clientVersion !== undefined && task.__v !== clientVersion) {
+    const err = new Error("This task was updated by another team member.");
+    err.name = "VersionError";
+    throw err;
   }
 
   const project = await Project.findById(task.projectId);
@@ -369,6 +382,12 @@ export const updateTask = async (taskId, updateData, userId) => {
     throw new Error("Task not found");
   }
 
+  if (updateData.__v !== undefined && task.__v !== updateData.__v) {
+    const err = new Error("This task was updated by another team member.");
+    err.name = "VersionError";
+    throw err;
+  }
+
   const project = await Project.findById(task.projectId);
 
   if (!project || project.isDeleted) {
@@ -398,6 +417,7 @@ export const updateTask = async (taskId, updateData, userId) => {
     "tags",
     "issueType",
     "parentId",
+    "releaseId",
     "attachmentUrl",
     "attachmentName",
   ];

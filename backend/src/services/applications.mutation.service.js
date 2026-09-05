@@ -5,8 +5,10 @@ import Team from "../models/team.model.js";
 import User from "../models/user.model.js";
 import * as notificationService from "./notification.service.js";
 import { calculateMatchScore, normalizeProjectRole, pickAssignedRole } from "./applications.helpers.js";
+import { getIO } from "../sockets/socket.js";
 
 export const applyToProject = async (userId, data) => {
+  const tStart = performance.now();
   const { projectId, message = "" } = data;
 
   // Validate User
@@ -37,6 +39,8 @@ export const applyToProject = async (userId, data) => {
   if (project.owner.toString() === userId.toString()) {
     throw new Error("Cannot apply to your own project");
   }
+  
+  const tValidation = performance.now();
 
   // Check active team membership
   const existingMember = await Team.findOne({
@@ -62,6 +66,8 @@ export const applyToProject = async (userId, data) => {
   }
 
   const matchScore = calculateMatchScore(user, project);
+  
+  const tAuthLookup = performance.now();
 
   let application;
   if (existingApplication) {
@@ -74,6 +80,10 @@ export const applyToProject = async (userId, data) => {
     existingApplication.reviewedAt = null;
     existingApplication.reviewedBy = null;
     await existingApplication.save();
+    
+    await Application.updateOne({ _id: existingApplication._id }, { createdAt: new Date() });
+    existingApplication.createdAt = new Date();
+    
     application = existingApplication;
   } else {
     // Create new Application
@@ -87,6 +97,8 @@ export const applyToProject = async (userId, data) => {
     });
   }
 
+  const tInsert = performance.now();
+
   // Update user stats
   user.stats.applicationsSent += 1;
   await user.save();
@@ -97,6 +109,18 @@ export const applyToProject = async (userId, data) => {
   message: `${user.name} applied to ${project.title}`,
   actionUrl: `/projects/${project._id}/applications`
 });
+
+  const tEnd = performance.now();
+  
+  if (process.env.BENCHMARK_MODE === "true") {
+    // Expose timings on the returned object just for benchmarking
+    application._benchmarkTimings = {
+      valAuth: tValidation - tStart,
+      lookup: tAuthLookup - tValidation,
+      insert: tInsert - tAuthLookup,
+      statsNotify: tEnd - tInsert
+    };
+  }
 
   return application;
 };
@@ -138,14 +162,13 @@ export const inviteUserToProject = async (ownerId, data) => {
     throw new Error("User is already a team member");
   }
 
-  const existingApplication = await Application.findOne({
+  let existingApplication = await Application.findOne({
     projectId,
     applicantId: userId,
-    status: "pending",
     isDeleted: false,
   });
-  if (existingApplication) {
-    throw new Error("There is already a pending application or invitation for this user");
+  if (existingApplication && ["pending", "accepted"].includes(existingApplication.status)) {
+    throw new Error("There is already an active or pending application for this user");
   }
 
   // Rate Limiting
@@ -161,16 +184,35 @@ export const inviteUserToProject = async (ownerId, data) => {
   }
 
   const matchScore = calculateMatchScore(user, project);
-  const application = await Application.create({
-    projectId,
-    applicantId: userId,
-    invitedBy: ownerId,
-    invitedRole: normalizeProjectRole(invitedRole),
-    message,
-    matchScore,
-    status: "pending",
-    applicationType: "invitation",
-  });
+  let application;
+  if (existingApplication) {
+    existingApplication.status = "pending";
+    existingApplication.applicationType = "invitation";
+    existingApplication.invitedBy = ownerId;
+    existingApplication.invitedRole = normalizeProjectRole(invitedRole);
+    existingApplication.message = message;
+    existingApplication.matchScore = matchScore;
+    existingApplication.reviewedAt = null;
+    existingApplication.reviewedBy = null;
+    existingApplication.rejectionReason = null;
+    await existingApplication.save();
+    
+    await Application.updateOne({ _id: existingApplication._id }, { createdAt: new Date() });
+    existingApplication.createdAt = new Date();
+    
+    application = existingApplication;
+  } else {
+    application = await Application.create({
+      projectId,
+      applicantId: userId,
+      invitedBy: ownerId,
+      invitedRole: normalizeProjectRole(invitedRole),
+      message,
+      matchScore,
+      status: "pending",
+      applicationType: "invitation",
+    });
+  }
 
   await notificationService.createNotification({
     userId: user._id,
@@ -381,6 +423,11 @@ export const respondToInvitation = async (userId, applicationId, data = {}) => {
         message: `A user declined your invitation to ${project.title}`,
         actionUrl: `/projects/${application.projectId}`,
       });
+      try {
+        getIO().to(`user-${project.owner}`).emit("application-updated", application);
+      } catch (e) {
+        console.error("Socket emit failed", e.message);
+      }
     }
     return application;
   }
@@ -473,6 +520,12 @@ export const respondToInvitation = async (userId, applicationId, data = {}) => {
       message: `${applicant.name} accepted your invitation to ${project.title}`,
       actionUrl: `/projects/${project._id}`,
     });
+
+    try {
+      getIO().to(`user-${project.owner}`).emit("application-updated", application);
+    } catch (e) {
+      console.error("Socket emit failed", e.message);
+    }
 
     return application;
   } catch (error) {

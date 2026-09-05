@@ -17,6 +17,7 @@ import MyApplications from "./pages/Applications/MyApplications";
 import ProjectApplications from "./pages/Applications/ProjectApplications";
 import Workspace from "./pages/Workspace/Workspace";
 import LearningArchive from "./pages/LearningArchive/LearningArchive";
+import Messages from "./pages/Messages/Messages";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatWidget from './components/chat/ChatWidget';
@@ -63,6 +64,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Account />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute>
+              <Messages />
             </ProtectedRoute>
           }
         />

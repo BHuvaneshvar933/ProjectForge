@@ -31,8 +31,14 @@ const formFingerprint = (form) => {
 
   return JSON.stringify({
     name: String(form?.name || ""),
+    headline: String(form?.headline || ""),
     bio: String(form?.bio || ""),
     availabilityHoursPerWeek: Number(form?.availabilityHoursPerWeek || 0),
+    structuredAvailability: form?.structuredAvailability || {},
+    education: form?.education || [],
+    experience: form?.experience || [],
+    achievements: form?.achievements || [],
+    featuredProjects: form?.featuredProjects || [],
     portfolioLinks: {
       github: links.github,
       linkedin: links.linkedin,
@@ -49,8 +55,19 @@ export default function Account() {
 
   const [form, setForm] = useState({
     name: "",
+    headline: "",
     bio: "",
     availabilityHoursPerWeek: 0,
+    structuredAvailability: {
+      timeCommitment: "",
+      preferredSchedule: "",
+      projectDuration: "",
+      canStart: ""
+    },
+    education: [],
+    experience: [],
+    achievements: [],
+    featuredProjects: [],
     portfolioLinks: { github: "", linkedin: "", website: "" },
     skills: [],
   });
@@ -70,8 +87,16 @@ export default function Account() {
 
       const nextForm = {
         name: me?.name || "",
+        headline: me?.headline || "",
         bio: me?.bio || "",
         availabilityHoursPerWeek: Number(me?.availabilityHoursPerWeek || 0),
+        structuredAvailability: me?.structuredAvailability || {
+          timeCommitment: "", preferredSchedule: "", projectDuration: "", canStart: ""
+        },
+        education: Array.isArray(me?.education) ? me.education : [],
+        experience: Array.isArray(me?.experience) ? me.experience : [],
+        achievements: Array.isArray(me?.achievements) ? me.achievements : [],
+        featuredProjects: Array.isArray(me?.featuredProjects) ? me.featuredProjects : [],
         portfolioLinks: normalizeLinks(me?.portfolioLinks),
         skills: Array.isArray(me?.skills) ? me.skills : [],
       };
@@ -119,8 +144,14 @@ export default function Account() {
 
       const payload = {
         name: form.name.trim(),
+        headline: form.headline || "",
         bio: form.bio || "",
         availabilityHoursPerWeek: Number(form.availabilityHoursPerWeek || 0),
+        structuredAvailability: form.structuredAvailability,
+        education: form.education,
+        experience: form.experience,
+        achievements: form.achievements,
+        featuredProjects: form.featuredProjects,
         portfolioLinks: normalizeLinks(form.portfolioLinks),
         skills: skillIds,
       };
@@ -131,8 +162,16 @@ export default function Account() {
       if (updated) {
         const nextForm = {
           name: updated?.name || "",
+          headline: updated?.headline || "",
           bio: updated?.bio || "",
           availabilityHoursPerWeek: Number(updated?.availabilityHoursPerWeek || 0),
+          structuredAvailability: updated?.structuredAvailability || {
+            timeCommitment: "", preferredSchedule: "", projectDuration: "", canStart: ""
+          },
+          education: Array.isArray(updated?.education) ? updated.education : [],
+          experience: Array.isArray(updated?.experience) ? updated.experience : [],
+          achievements: Array.isArray(updated?.achievements) ? updated.achievements : [],
+          featuredProjects: Array.isArray(updated?.featuredProjects) ? updated.featuredProjects : [],
           portfolioLinks: normalizeLinks(updated?.portfolioLinks),
           skills: Array.isArray(updated?.skills) ? updated.skills : [],
         };

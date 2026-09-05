@@ -341,7 +341,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
                     onClick={() => handleAIGenerate('resume')}
                     disabled={aiLoading}
                   >
-                    Generate Resume Bullet
+                    Generate Resume Bullet points
                   </button>
                   <button 
                     className="summary-btn ai-btn" 

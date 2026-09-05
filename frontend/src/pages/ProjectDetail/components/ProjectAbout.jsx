@@ -27,6 +27,44 @@ export default function ProjectAbout({ project }) {
         </div>
       </div>
 
+      {/* Section 3.5: Links & Deliverables */}
+      {(project.status === 'in-progress' || project.status === 'completed') && (project.githubIntegration?.isConnected || 
+        project.archiveData?.deliverables?.sourceCodeUrl || 
+        project.archiveData?.deliverables?.demoVideoUrl || 
+        project.archiveData?.deliverables?.reportUrl || 
+        project.archiveData?.deliverables?.slidesUrl) && (
+        <div className="project-detail__section">
+          <h2 className="project-detail__section-title">Links & Deliverables</h2>
+          <div className="project-detail__card" style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+            {project.githubIntegration?.isConnected && project.githubIntegration?.repoName && (
+              <a href={`https://github.com/${project.githubIntegration.repoName}`} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: 'var(--color-primary)', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '8px' }}>
+                GitHub Repository
+              </a>
+            )}
+            {project.archiveData?.deliverables?.sourceCodeUrl && !(project.githubIntegration?.isConnected && project.githubIntegration?.repoName) && (
+              <a href={project.archiveData.deliverables.sourceCodeUrl} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: 'var(--color-primary)', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '8px' }}>
+                Source Code
+              </a>
+            )}
+            {project.archiveData?.deliverables?.demoVideoUrl && (
+              <a href={project.archiveData.deliverables.demoVideoUrl} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: 'var(--color-primary)', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '8px' }}>
+                Live Demo / Video
+              </a>
+            )}
+            {project.archiveData?.deliverables?.reportUrl && (
+              <a href={project.archiveData.deliverables.reportUrl} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: 'var(--color-text-dark)', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                Project Report
+              </a>
+            )}
+            {project.archiveData?.deliverables?.slidesUrl && (
+              <a href={project.archiveData.deliverables.slidesUrl} target="_blank" rel="noreferrer" style={{ fontSize: 14, color: 'var(--color-text-dark)', textDecoration: 'none', background: 'rgba(255,255,255,0.05)', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                Presentation Slides
+              </a>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Section 4: Required Skills */}
       {project.requiredSkills?.length > 0 && (
         <div className="project-detail__section">

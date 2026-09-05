@@ -47,6 +47,11 @@ export default function Workspace() {
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
   const [removeMemberId, setRemoveMemberId] = useState(null);
+  const [removeReason, setRemoveReason] = useState("");
+  
+  const [leaveModalOpen, setLeaveModalOpen] = useState(false);
+  const [leaveReason, setLeaveReason] = useState("");
+  const [leaveNote, setLeaveNote] = useState("");
 
   const isOwner = useMemo(() => {
     if (!me?._id || !project?.owner?._id) return false;
@@ -198,12 +203,28 @@ export default function Workspace() {
   const handleRemoveMember = async () => {
     if (!removeMemberId) return;
     try {
-      await removeTeamMember(projectId, removeMemberId);
+      await removeTeamMember(projectId, removeMemberId, { removalReason: removeReason });
       toast.success("Member removed successfully");
       setRemoveMemberId(null);
+      setRemoveReason("");
       fetchBase();
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to remove member");
+    }
+  };
+
+  const handleLeaveProject = async () => {
+    if (!leaveReason) {
+      toast.error("Please select a reason for leaving");
+      return;
+    }
+    try {
+      await import("../../api/projectApi").then(api => api.leaveProject(projectId, { reason: leaveReason, note: leaveNote }));
+      toast.success("You have left the project");
+      setLeaveModalOpen(false);
+      navigate("/dashboard");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to leave project");
     }
   };
 
@@ -273,6 +294,7 @@ export default function Workspace() {
           <>
             {isOwner && !isCompleted && <Button onClick={() => setCompletionModalOpen(true)}>Complete Project</Button>}
             {isOwner && isCompleted && <Button onClick={() => setResumeModalOpen(true)}>Resume Project</Button>}
+            {isMember && !isOwner && !isCompleted && <Button variant="outline" onClick={() => setLeaveModalOpen(true)}>Leave Project</Button>}
             <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>Back</Button>
           </>
         }
@@ -302,7 +324,7 @@ export default function Workspace() {
       {tab === "journey" && (
         isCompleted 
           ? <WorkspaceSummary project={project} tasks={tasks} team={teamSorted} me={me} />
-          : <JourneyTab project={project} isMember={isMember} onUpdate={fetchBase} />
+          : <JourneyTab project={project} teamRecord={team.find(m => m.userId?._id === me?._id || m.userId === me?._id)} tasks={tasks} isMember={isMember} onUpdate={fetchBase} />
       )}
 
       {tab === "overview" && <WorkspaceOverview project={project} tasks={tasks} team={teamSorted} isOwner={isOwner} onRemoveMember={(id) => setRemoveMemberId(id)} />}
@@ -367,7 +389,7 @@ export default function Workspace() {
 
       <Modal 
         isOpen={!!removeMemberId} 
-        onClose={() => setRemoveMemberId(null)} 
+        onClose={() => { setRemoveMemberId(null); setRemoveReason(""); }} 
         title="Remove Team Member"
         onConfirm={handleRemoveMember}
         confirmText="Remove Member"
@@ -375,6 +397,55 @@ export default function Workspace() {
         <p style={{ color: "var(--color-text-dark)", marginBottom: "16px", fontSize: "14px" }}>
           Are you sure you want to remove this member? They will lose access to the active workspace but will retain credit on their profile.
         </p>
+        <p style={{ color: "var(--color-text-dark)", marginBottom: "8px", fontSize: "14px", fontWeight: "600" }}>Reason for removal</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
+          {[
+            { label: "Project Restructuring", value: "PROJECT_RESTRUCTURING" },
+            { label: "Role No Longer Needed", value: "ROLE_NO_LONGER_NEEDED" },
+            { label: "Student Inactive", value: "STUDENT_INACTIVE" },
+            { label: "Violated Expectations", value: "VIOLATED_EXPECTATIONS" },
+            { label: "Other", value: "OTHER" }
+          ].map(r => (
+            <label key={r.value} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "var(--color-text-dark)", cursor: "pointer" }}>
+              <input type="radio" name="removeReason" value={r.value} checked={removeReason === r.value} onChange={(e) => setRemoveReason(e.target.value)} />
+              {r.label}
+            </label>
+          ))}
+        </div>
+      </Modal>
+
+      <Modal 
+        isOpen={leaveModalOpen} 
+        onClose={() => { setLeaveModalOpen(false); setLeaveReason(""); setLeaveNote(""); }} 
+        title="Leave Project"
+        onConfirm={handleLeaveProject}
+        confirmText="Leave Project"
+      >
+        <p style={{ color: "var(--color-text-dark)", marginBottom: "16px", fontSize: "14px" }}>
+          Leaving a project may affect your participation history.
+        </p>
+        <p style={{ color: "var(--color-text-dark)", marginBottom: "8px", fontSize: "14px", fontWeight: "600" }}>Why are you leaving?</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
+          {[
+            { label: "Project became inactive", value: "PROJECT_INACTIVE" },
+            { label: "Schedule / academic commitments", value: "ACADEMIC_COMMITMENT" },
+            { label: "Project requirements changed", value: "REQUIREMENTS_CHANGED" },
+            { label: "Team circumstances", value: "TEAM_CIRCUMSTANCES" },
+            { label: "Other", value: "OTHER" }
+          ].map(r => (
+            <label key={r.value} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "var(--color-text-dark)", cursor: "pointer" }}>
+              <input type="radio" name="leaveReason" value={r.value} checked={leaveReason === r.value} onChange={(e) => setLeaveReason(e.target.value)} />
+              {r.label}
+            </label>
+          ))}
+        </div>
+        <p style={{ color: "var(--color-text-dark)", marginBottom: "8px", fontSize: "14px", fontWeight: "600" }}>Optional note</p>
+        <textarea 
+          value={leaveNote} 
+          onChange={(e) => setLeaveNote(e.target.value)} 
+          style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--border-color)", background: "rgba(255,255,255,0.05)", color: "var(--color-text-dark)", fontSize: "14px", minHeight: "80px", resize: "vertical" }}
+          placeholder="Any additional context..."
+        />
       </Modal>
     </div>
   );

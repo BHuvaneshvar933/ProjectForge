@@ -1,0 +1,66 @@
+{
+  "environment": {
+    "node": "v20.19.0",
+    "os": "Windows_NT",
+    "cpu": "Intel(R) Core(TM) i5-10200H CPU @ 2.40GHz",
+    "cores": 8,
+    "ram": "8354799616.00 MB"
+  },
+  "configuration": {
+    "mode": "stress-burst",
+    "msgPerUser": 10,
+    "ramp": [
+      10,
+      25,
+      50
+    ]
+  },
+  "stages": [
+    {
+      "users": 10,
+      "totalOperations": 100,
+      "success": 100,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 156.27,
+      "p50": 575.12,
+      "p95": 627.73,
+      "p99": 630.89,
+      "memory": {
+        "rss": 100773888,
+        "heapUsed": 40502448
+      },
+      "eventLoop": {
+        "p99": 42.303487
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 25,
+      "totalOperations": 250,
+      "success": 250,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 144.45,
+      "p50": 1559.08,
+      "p95": 1712.52,
+      "p99": 1721.35,
+      "memory": {
+        "rss": 115810304,
+        "heapUsed": 45340800
+      },
+      "eventLoop": {
+        "p99": 139.984895
+      },
+      "status": "saturated",
+      "reason": "Throughput plateaued while latency exploded"
+    }
+  ],
+  "summary": {
+    "highestSuccessfulStage": 10,
+    "peakObservedThroughput": 156.27414923962468,
+    "saturationStage": 25,
+    "failureStage": null
+  }
+}

@@ -10,7 +10,8 @@ export default function BrowseProjectsTab({
   recommendations,
   projects,
   pagination,
-  hideControls
+  hideControls,
+  searchQuery
 }) {
   const validRecommendations = recommendations.filter(r => typeof r.matchScore === 'number' && Math.round(r.matchScore) > 0);
   const recommendedIds = new Set(validRecommendations.map(r => r._id));
@@ -59,7 +60,9 @@ export default function BrowseProjectsTab({
           {otherProjects.length === 0 && validRecommendations.length === 0 ? (
             <div className="browse-page__empty">
               <p className="browse-page__empty-title">No projects found</p>
-              <p className="browse-page__empty-subtitle">Try adjusting your search or filters</p>
+              <p className="browse-page__empty-subtitle">
+                {searchQuery ? `No projects match '${searchQuery}'` : 'Try adjusting your search or filters'}
+              </p>
             </div>
           ) : (
             <>

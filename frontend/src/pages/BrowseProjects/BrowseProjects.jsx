@@ -1,11 +1,12 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { browseProjects, getMyProjects } from '../../api/projectApi';
+import { browseProjects } from '../../api/projectApi';
 import { getProjectRecommendations } from '../../api/recommendationApi';
 import { searchUsers } from '../../api/userApi';
 import { inviteUserToProject } from '../../api/applicationApi';
 import Input from '../../components/common/Input';
 import PageHeader from '../../components/common/PageHeader';
 import { toast } from 'react-toastify';
+import { getSocket } from '../../realtime/socketClient';
 
 import BrowsePeopleTab from './components/BrowsePeopleTab';
 import BrowseProjectsTab from './components/BrowseProjectsTab';
@@ -21,7 +22,7 @@ export default function BrowseProjects() {
     status: '',
     projectType: '',
     page: 1,
-    limit: 10
+    limit: 12
   });
   const [pagination, setPagination] = useState({
     page: 1,
@@ -185,6 +186,30 @@ export default function BrowseProjects() {
     searchPeople(1);
   }, [searchPeople, selectedProjectId, tab]);
 
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+    
+    const handleApplicationUpdated = (updatedApp) => {
+      // If an application gets rejected or withdrawn, allow inviting again
+      if (updatedApp.status === 'rejected' || updatedApp.status === 'withdrawn') {
+        setInvitedUserIds(prev => prev.filter(id => id !== updatedApp.applicantId));
+      } else if (updatedApp.status === 'pending' || updatedApp.status === 'accepted') {
+        setInvitedUserIds(prev => {
+          if (!prev.includes(updatedApp.applicantId)) {
+            return [...prev, updatedApp.applicantId];
+          }
+          return prev;
+        });
+      }
+    };
+
+    socket.on("application-updated", handleApplicationUpdated);
+    return () => {
+      socket.off("application-updated", handleApplicationUpdated);
+    };
+  }, []);
+
   const handleSearch = (e) => {
     e.preventDefault();
     setFilters({ ...filters, page: 1 });
@@ -228,7 +253,7 @@ export default function BrowseProjects() {
                   <Input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search projects..."
+                    placeholder="Search by project name, description, technology, or teammate..."
                     style={{ width: '100%', marginBottom: '8px' }}
                   />
                   <button type="submit" className="dashboard-sidebar__btn">
@@ -319,16 +344,19 @@ export default function BrowseProjects() {
               hideControls={true}
             />
           ) : (
-            <BrowseProjectsTab
-              filters={filters}
-              setFilters={setFilters}
-              loading={loading}
-              tokenPresent={tokenPresent}
-              recommendations={recommendations}
-              projects={projects}
-              pagination={pagination}
-              hideControls={true}
-            />
+            <>
+              <BrowseProjectsTab
+                filters={filters}
+                setFilters={setFilters}
+                loading={loading}
+                tokenPresent={tokenPresent}
+                recommendations={recommendations}
+                projects={projects}
+                pagination={pagination}
+                hideControls={true}
+                searchQuery={search}
+              />
+            </>
           )}
         </main>
       </div>

@@ -8,6 +8,7 @@ import Spinner from "../../components/common/Spinner";
 import DashboardPagination from "../../components/common/DashboardPagination";
 import PageHeader from "../../components/common/PageHeader";
 import { getMyApplications, respondToInvitation, withdrawApplication } from "../../api/applicationApi";
+import { getSocket } from "../../realtime/socketClient";
 import "./applications.css";
 
 export default function MyApplications() {
@@ -42,6 +43,22 @@ export default function MyApplications() {
     fetchMyApplications();
   }, [fetchMyApplications]);
 
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+    
+    const handleApplicationUpdated = (updatedApp) => {
+      setItems((prev) => 
+        prev.map(a => a._id === updatedApp._id ? { ...a, status: updatedApp.status } : a)
+      );
+    };
+
+    socket.on("application-updated", handleApplicationUpdated);
+    return () => {
+      socket.off("application-updated", handleApplicationUpdated);
+    };
+  }, []);
+
 
   const statusVariant = useMemo(() => {
     return {
@@ -58,8 +75,8 @@ export default function MyApplications() {
     try {
       await withdrawApplication(withdrawId);
       toast.success("Application withdrawn");
+      setItems(prev => prev.map(a => a._id === withdrawId ? { ...a, status: "withdrawn" } : a));
       setWithdrawId("");
-      await fetchMyApplications();
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to withdraw application");
     } finally {
@@ -73,7 +90,7 @@ export default function MyApplications() {
     try {
       await respondToInvitation(applicationId, action);
       toast.success(action === "accept" ? "Invitation accepted" : "Invitation declined");
-      await fetchMyApplications();
+      setItems(prev => prev.map(a => a._id === applicationId ? { ...a, status: action === "accept" ? "accepted" : "rejected" } : a));
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to respond to invitation");
     } finally {

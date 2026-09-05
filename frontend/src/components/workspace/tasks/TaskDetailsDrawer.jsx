@@ -2,7 +2,7 @@ import React from "react";
 import Input from "../../common/Input";
 import Button from "../../common/Button";
 
-export default function TaskDetailsDrawer({ task, project, teamSorted, onClose, onUpdate }) {
+export default function TaskDetailsDrawer({ task, project, teamSorted, releases = [], onClose, onUpdate, onDelete, hasConflict, onReloadLatest }) {
   if (!task) return null;
 
   return (
@@ -24,15 +24,32 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, onClose, 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <a href="#" style={{ color: "#0a84ff", textDecoration: "none", fontWeight: "600" }}>{project?.key}-{task.taskNumber}</a>
+          <a href="#" style={{ color: "#0a84ff", textDecoration: "none", fontWeight: "600" }}>{project?.key || "PROJ"}-{task.taskNumber}</a>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <button onClick={onClose} style={{ background: "rgba(255,255,255,0.06)", border: "none", color: "var(--text-sand)", cursor: "pointer", fontSize: "13px", padding: "4px 10px", borderRadius: "4px" }}>Close</button>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", position: "relative" }}>
+          <button 
+            onClick={() => {
+              if (window.confirm("Are you sure you want to delete this task?")) {
+                if (onDelete) onDelete(task._id);
+              }
+            }} 
+            style={{ background: "transparent", border: "1px solid rgba(255,69,58,0.3)", color: "#ff453a", cursor: "pointer", fontSize: "12px", padding: "4px 8px", borderRadius: "4px" }}
+          >
+            Delete Task
+          </button>
+          <button onClick={onClose} style={{ background: "transparent", border: "none", color: "rgba(255,255,255,0.5)", cursor: "pointer", fontSize: "20px" }}>×</button>
         </div>
       </div>
 
       {/* Body */}
       <div style={{ flex: 1, overflowY: "auto", padding: "24px" }}>
+        {hasConflict && (
+          <div style={{ background: "rgba(255, 69, 58, 0.15)", border: "1px solid #ff453a", color: "#ff453a", padding: "16px", borderRadius: "8px", marginBottom: "20px" }}>
+            <p style={{ fontWeight: 600, margin: "0 0 8px 0", fontSize: "14px" }}>⚠️ This task was updated by another team member.</p>
+            <p style={{ margin: "0 0 16px 0", fontSize: "13px", opacity: 0.9 }}>Your changes have <strong>not</strong> been saved. Your unsaved changes are still here.</p>
+            <Button variant="danger" onClick={onReloadLatest} style={{ fontSize: "12px", padding: "6px 12px" }}>Reload Latest</Button>
+          </div>
+        )}
         <h2 style={{ fontSize: "24px", fontWeight: "600", marginBottom: "24px" }}>{task.title}</h2>
         
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -76,6 +93,19 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, onClose, 
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
+              </select>
+            </div>
+            
+            <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px", fontWeight: "500" }}>Release</div>
+            <div>
+              <select 
+                className="workspace-select" 
+                value={task.releaseId || ""} 
+                onChange={(e) => onUpdate(task._id, { releaseId: e.target.value || null })}
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "4px", padding: "4px 8px", color: "#fff", fontSize: "13px" }}
+              >
+                <option value="">None</option>
+                {releases.map(r => <option key={r._id} value={r._id}>{r.version}</option>)}
               </select>
             </div>
             

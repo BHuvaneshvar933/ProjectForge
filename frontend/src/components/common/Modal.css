@@ -18,7 +18,10 @@
 .modal__card {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: var(--modal-max-width, 520px);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   padding: 28px;
   border-radius: 12px;
   background: var(--bg-card);
@@ -60,6 +63,8 @@
   color: var(--color-text-dark);
   line-height: 1.6;
   margin-bottom: 24px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .modal__actions {

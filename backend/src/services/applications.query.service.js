@@ -72,7 +72,7 @@ export const getProjectApplications = async (userId, projectId, query) => {
     .limit(Number(limit))
       .populate({
         path: "applicantId",
-        select: "name email bio skills stats availabilityHoursPerWeek portfolioLinks createdAt",
+        select: "name email bio skills stats availabilityHoursPerWeek portfolioLinks createdAt reliability",
         populate: {
           path: "skills",
           select: "name"
@@ -81,8 +81,27 @@ export const getProjectApplications = async (userId, projectId, query) => {
 
   const total = await Application.countDocuments(filter);
 
+  // Sanitize reliability
+  const sanitizedApplications = applications.map(app => {
+    const appObj = app.toObject();
+    if (appObj.applicantId && appObj.applicantId.reliability) {
+      if (appObj.applicantId.reliability.status === "RELIABLE") {
+        appObj.applicantId.reliability = {
+          status: "RELIABLE",
+          label: "Reliable Collaborator"
+        };
+      } else {
+        appObj.applicantId.reliability = {
+          status: "DEVELOPING",
+          label: "Reliability history developing"
+        };
+      }
+    }
+    return appObj;
+  });
+
   return {
-    applications,
+    applications: sanitizedApplications,
     pagination: {
       page: Number(page),
       limit: Number(limit),

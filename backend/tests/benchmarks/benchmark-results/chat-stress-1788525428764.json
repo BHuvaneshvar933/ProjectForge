@@ -1,0 +1,108 @@
+{
+  "environment": {
+    "node": "v20.19.0",
+    "os": "Windows_NT",
+    "cpu": "Intel(R) Core(TM) i5-10200H CPU @ 2.40GHz",
+    "cores": 8,
+    "ram": "8354799616.00 MB"
+  },
+  "configuration": {
+    "mode": "stress-burst",
+    "msgPerUser": 10,
+    "ramp": [
+      100,
+      500,
+      1000,
+      1500,
+      2000
+    ]
+  },
+  "stages": [
+    {
+      "users": 100,
+      "totalOperations": 1000,
+      "success": 1000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 261.38,
+      "p50": 3412.92,
+      "p95": 3769,
+      "p99": 3784.74,
+      "memory": {
+        "rss": 148627456,
+        "heapUsed": 69243048
+      },
+      "eventLoop": {
+        "p99": 102.957055
+      },
+      "status": "degraded",
+      "reason": "p95 >= 2s"
+    },
+    {
+      "users": 500,
+      "totalOperations": 5000,
+      "success": 5000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 394.32,
+      "p50": 11167.43,
+      "p95": 12450.9,
+      "p99": 12552.47,
+      "memory": {
+        "rss": 401752064,
+        "heapUsed": 141296696
+      },
+      "eventLoop": {
+        "p99": 127.860735
+      },
+      "status": "saturated",
+      "reason": "p95 >= 10s"
+    },
+    {
+      "users": 1000,
+      "totalOperations": 10000,
+      "success": 10000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 410.55,
+      "p50": 21190.51,
+      "p95": 23973.68,
+      "p99": 24186.24,
+      "memory": {
+        "rss": 653672448,
+        "heapUsed": 206684672
+      },
+      "eventLoop": {
+        "p99": 166.330367
+      },
+      "status": "saturated",
+      "reason": "p95 >= 10s"
+    },
+    {
+      "users": 1500,
+      "totalOperations": 15000,
+      "success": 15000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 401.65,
+      "p50": 31918.38,
+      "p95": 36555.74,
+      "p99": 37032.4,
+      "memory": {
+        "rss": 904396800,
+        "heapUsed": 769170656
+      },
+      "eventLoop": {
+        "p99": 150.994943
+      },
+      "status": "saturated",
+      "reason": "p95 >= 10s"
+    }
+  ],
+  "summary": {
+    "highestSuccessfulStage": null,
+    "peakObservedThroughput": 410.54637305413695,
+    "saturationStage": 1500,
+    "failureStage": null
+  }
+}

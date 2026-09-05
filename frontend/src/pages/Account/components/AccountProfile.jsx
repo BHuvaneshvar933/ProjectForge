@@ -6,6 +6,10 @@ import { searchSkills } from "../../../api/skillApi";
 import { displaySkillLabel } from "../../../utils/display";
 import EducationalTip from "../../../components/common/EducationalTip";
 
+import EducationEditor from "./AccountPortfolioEditors/EducationEditor";
+import ExperienceEditor from "./AccountPortfolioEditors/ExperienceEditor";
+import FeaturedProjectsEditor from "./AccountPortfolioEditors/FeaturedProjectsEditor";
+
 export default function AccountProfile({ form, setForm }) {
   const [skillInput, setSkillInput] = useState("");
   const [skillResults, setSkillResults] = useState([]);
@@ -85,6 +89,15 @@ export default function AccountProfile({ form, setForm }) {
       </div>
 
       <div className="account__section">
+        <Input
+          label="Headline (e.g. Computer Science Student · AI Enthusiast)"
+          value={form.headline || ""}
+          onChange={(e) => setForm((p) => ({ ...p, headline: e.target.value }))}
+          placeholder="Professional tagline"
+        />
+      </div>
+
+      <div className="account__section">
         <div className="input__label">Bio</div>
         <textarea
           className="account__skill-input"
@@ -111,6 +124,10 @@ export default function AccountProfile({ form, setForm }) {
         />
         <div className="account__muted">Used for matching and team planning.</div>
       </div>
+
+      <EducationEditor form={form} setForm={setForm} />
+      <ExperienceEditor form={form} setForm={setForm} />
+      <FeaturedProjectsEditor form={form} setForm={setForm} />
 
       <div className="account__section">
         <div className="account__card-title" style={{ marginBottom: 10 }}>

@@ -17,6 +17,7 @@ export default function EditProject() {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
+  const [conflictError, setConflictError] = useState(false);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -136,7 +137,11 @@ export default function EditProject() {
       toast.success('Project updated successfully!');
       navigate(`/projects/${id}`);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to update project');
+      if (error.response?.status === 409) {
+        setConflictError(true);
+      } else {
+        toast.error(error.response?.data?.message || 'Failed to update project');
+      }
     } finally {
       setLoading(false);
     }
@@ -183,6 +188,22 @@ export default function EditProject() {
   return (
     <div className="edit-project">
       <PageHeader title="Edit Project" />
+      
+      {conflictError && (
+        <div style={{ background: "rgba(255, 69, 58, 0.15)", border: "1px solid #ff453a", color: "#ff453a", padding: "16px", borderRadius: "8px", margin: "24px 40px 0" }}>
+          <p style={{ fontWeight: 600, margin: "0 0 8px 0", fontSize: "14px" }}>⚠️ This project was updated by another team member.</p>
+          <p style={{ margin: "0 0 16px 0", fontSize: "13px", opacity: 0.9 }}>Your changes have <strong>not</strong> been saved. Your unsaved changes are still here.</p>
+          <button 
+            onClick={() => {
+              setConflictError(false);
+              fetchProject();
+            }} 
+            style={{ background: "#ff453a", color: "#fff", border: "none", borderRadius: "4px", padding: "6px 12px", fontSize: "12px", cursor: "pointer", fontWeight: "600" }}
+          >
+            Reload Latest
+          </button>
+        </div>
+      )}
       
       <div className="edit-project__stepper">
         <div className="edit-project__stepper-line" />

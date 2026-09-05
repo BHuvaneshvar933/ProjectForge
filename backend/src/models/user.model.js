@@ -48,6 +48,11 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    headline: {
+      type: String,
+      default: "",
+    },
+
     skills: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Skill",
@@ -58,9 +63,62 @@ const userSchema = new mongoose.Schema(
       default: 0,
     },
 
+    structuredAvailability: {
+      timeCommitment: { type: String, default: "" },
+      preferredSchedule: { type: String, default: "" },
+      projectDuration: { type: String, default: "" },
+      canStart: { type: String, default: "" },
+    },
+
+    education: [{
+      degree: String,
+      program: String,
+      university: String,
+      startYear: String,
+      graduationYear: String,
+      currentYear: String,
+      cgpa: String,
+    }],
+
+    experience: [{
+      role: String,
+      organization: String,
+      startDate: String,
+      endDate: String,
+      description: String,
+    }],
+
+    achievements: [{
+      title: String,
+      organization: String,
+      date: String,
+      description: String,
+    }],
+
+    featuredProjects: [{
+      projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
+      order: { type: Number, default: 0 },
+    }],
+
     portfolioLinks: portfolioLinksSchema,
 
     stats: statsSchema,
+
+    reliability: {
+      status: {
+        type: String,
+        enum: ["RELIABLE", "CAUTION", "CONCERN", "INSUFFICIENT_DATA"],
+        default: "INSUFFICIENT_DATA"
+      },
+      confidence: {
+        type: String,
+        enum: ["INSUFFICIENT", "LOW", "MEDIUM", "HIGH"],
+        default: "INSUFFICIENT"
+      },
+      lastCalculatedAt: Date,
+      evidence: { type: mongoose.Schema.Types.Mixed, default: {} },
+      integritySignals: { type: [String], default: [] }
+    },
 
     isActive: {
       type: Boolean,
