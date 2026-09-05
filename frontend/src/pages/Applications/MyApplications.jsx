@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Badge from "../../components/common/Badge";
@@ -60,14 +60,6 @@ export default function MyApplications() {
   }, []);
 
 
-  const statusVariant = useMemo(() => {
-    return {
-      pending: "pending",
-      accepted: "accepted",
-      rejected: "rejected",
-      withdrawn: "withdrawn",
-    };
-  }, []);
 
   const onWithdraw = async () => {
     if (!withdrawId) return;

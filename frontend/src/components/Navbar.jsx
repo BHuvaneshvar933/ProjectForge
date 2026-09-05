@@ -13,7 +13,9 @@ export default function Navbar() {
     try {
       localStorage.setItem("theme", "light");
       document.documentElement.removeAttribute("data-theme");
-    } catch {}
+    } catch {
+      /* ignore storage access error */
+    }
     return "light";
   });
 
@@ -25,7 +27,9 @@ export default function Navbar() {
     }
     try {
       localStorage.setItem("theme", theme);
-    } catch {}
+    } catch {
+      /* ignore storage access error */
+    }
   }, [theme]);
 
   const toggleTheme = () => {

@@ -56,7 +56,9 @@ export default function Landing() {
         setIntroState('hidden');
         return;
       }
-    } catch {}
+    } catch {
+      /* ignore storage access error */
+    }
 
     const fullText = 'PROJECTFORGE';
     let index = 0;
@@ -81,7 +83,9 @@ export default function Landing() {
           setIntroState('fading');
           try {
             sessionStorage.setItem('pf_intro_played', 'true');
-          } catch {}
+          } catch {
+            /* ignore storage access error */
+          }
           setTimeout(() => {
             setIntroState('hidden');
           }, 400);

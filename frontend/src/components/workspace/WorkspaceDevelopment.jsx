@@ -21,7 +21,7 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
       const res = await getEngineeringAssessment(projectId);
       setAssessment(res.data?.data?.assessment);
       toast.success("Assessment generated!");
-    } catch (e) {
+    } catch {
       toast.error("Failed to generate assessment");
     } finally {
       setAssessmentLoading(false);

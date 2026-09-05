@@ -12,16 +12,34 @@ export default function PublicProfileModal({ isOpen, onClose, userId, onInvite, 
   const [error, setError] = useState("");
 
   useEffect(() => {
+    let ignore = false;
     if (isOpen && userId) {
-      setLoading(true);
-      setError("");
+      Promise.resolve().then(() => {
+        if (!ignore) {
+          setLoading(true);
+          setError("");
+        }
+      });
       getPublicUserProfile(userId)
-        .then(res => setProfile(res.data?.data?.user))
-        .catch(err => setError(err?.response?.data?.message || "Failed to load profile"))
-        .finally(() => setLoading(false));
+        .then(res => {
+          if (!ignore) setProfile(res.data?.data?.user);
+        })
+        .catch(err => {
+          if (!ignore) setError(err?.response?.data?.message || "Failed to load profile");
+        })
+        .finally(() => {
+          if (!ignore) setLoading(false);
+        });
     } else {
-      setProfile(null);
+      Promise.resolve().then(() => {
+        if (!ignore) {
+          setProfile(null);
+        }
+      });
     }
+    return () => {
+      ignore = true;
+    };
   }, [isOpen, userId]);
 
   if (!isOpen) return null;

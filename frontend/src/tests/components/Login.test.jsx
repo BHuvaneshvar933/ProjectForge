@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 import Login from '../../pages/Auth/login.jsx';
 
 // Mock GoogleLogin to avoid loading external scripts
@@ -23,16 +23,16 @@ describe('Login Component', () => {
   it('should render the login form', () => {
     renderWithProviders(<Login />);
     
-    expect(screen.getByRole('heading', { name: 'Login' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /sign in/i })).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/you@example\.com/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/enter your password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Login' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
   });
 
   it('should display validation errors if required fields are empty', async () => {
     renderWithProviders(<Login />);
     
-    const submitBtn = screen.getByRole('button', { name: 'Login' });
+    const submitBtn = screen.getByRole('button', { name: /sign in/i });
     fireEvent.click(submitBtn);
 
     // Let's just make sure the component handles clicks, no need to overcomplicate the HTML5 validation check!

@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { browseProjects } from '../../api/projectApi';
+import { browseProjects, getMyProjects } from '../../api/projectApi';
 import { getProjectRecommendations } from '../../api/recommendationApi';
 import { searchUsers } from '../../api/userApi';
 import { inviteUserToProject } from '../../api/applicationApi';

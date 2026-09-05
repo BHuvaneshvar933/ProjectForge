@@ -9,7 +9,6 @@ export default function ProjectCard({ project, type = "owned" }) {
     title,
     description,
     status,
-    projectType,
     currentTeamSize,
     teamSizeRequired,
     requiredSkills = [],
