@@ -40,6 +40,13 @@
   align-items: center;
 }
 
+.btn-account-reset:hover,
+html[data-theme="dark"] .btn-account-reset:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: #ef4444 !important;
+}
+
 .account__grid {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
@@ -48,10 +55,15 @@
 
 .account__card {
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  border: none !important;
   border-radius: 12px;
   padding: 28px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: none !important;
+  transition: background-color 0.15s ease;
+}
+
+.account__card:hover {
+  background: var(--bg-card);
 }
 
 .account__card-title {
@@ -61,6 +73,10 @@
   text-transform: uppercase;
   margin-bottom: 16px;
   color: var(--color-text-dark);
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 8px;
+  display: inline-block;
+  width: 100%;
 }
 
 .account__section {
@@ -89,7 +105,7 @@
 .account__skill-input {
   flex: 1;
   width: 100%;
-  background: var(--color-paper);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 10px 14px;
@@ -106,12 +122,12 @@
 
 .account__skill-input:focus {
   border-color: var(--color-text-dark);
-  background: #ffffff;
+  background: var(--bg-card);
 }
 
 .account__results {
   margin-top: 8px;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 6px;
@@ -133,7 +149,7 @@
 }
 
 .account__result:hover {
-  background: var(--color-paper);
+  background: #EFECE6;
   color: var(--color-text-dark);
 }
 
@@ -144,7 +160,7 @@
 }
 
 .account__kvi {
-  background: var(--color-paper);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 14px;
@@ -169,7 +185,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: var(--color-paper);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 20px;
@@ -197,7 +213,7 @@
 .account__journey-value {
   font-size: 15px;
   font-weight: 800;
-  color: #121214;
+  color: var(--color-text-dark);
   background: transparent;
   padding: 0;
   border-radius: 0;
@@ -208,5 +224,18 @@
     grid-template-columns: 1fr;
   }
 }
+
+html[data-theme="dark"] .account__result:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .account__kvi,
+html[data-theme="dark"] .account__journey-stats,
+html[data-theme="dark"] .account__results {
+  background: #1c1c22;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
 
 

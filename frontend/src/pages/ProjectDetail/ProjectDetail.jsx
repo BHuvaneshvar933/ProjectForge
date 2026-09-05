@@ -187,65 +187,33 @@ export default function ProjectDetail() {
     }
   };
 
-  const matchPercent = (() => {
-    try {
-      const userSkills = Array.isArray(currentUser?.skills) ? currentUser.skills : [];
-      const reqSkills = Array.isArray(project?.requiredSkills) ? project.requiredSkills : [];
-
-      const userNames = new Set(
-        userSkills
-          .map((s) => (typeof s === "string" ? s : s?.name))
-          .filter(Boolean)
-          .map((x) => String(x).toLowerCase())
-      );
-      const reqNames = new Set(
-        reqSkills
-          .map((s) => (typeof s === "string" ? s : s?.name))
-          .filter(Boolean)
-          .map((x) => String(x).toLowerCase())
-      );
-
-      if (userNames.size === 0 || reqNames.size === 0) return null;
-
-      let intersection = 0;
-      for (const s of userNames) {
-        if (reqNames.has(s)) intersection += 1;
-      }
-      const union = new Set([...userNames, ...reqNames]).size;
-      if (!union) return null;
-
-      return Math.round((intersection / union) * 100);
-    } catch {
-      return null;
-    }
-  })();
 
   return (
     <div className="project-detail">
-      <ProjectHeader
-        project={project}
-        matchPercent={matchPercent}
-        tokenPresent={tokenPresent}
-        isMember={isMember}
-        showPending={showPending}
-        teamFull={teamFull}
-        isRecruiting={isRecruiting}
-        canApply={canApply}
-        applyLoading={applyLoading}
-        setShowApplyModal={setShowApplyModal}
-        isOwner={isOwner}
-        goToApplications={() => navigate(`/projects/${id}/applications`)}
-      />
+      <div className="project-detail__card-container">
+        <ProjectHeader
+          project={project}
+          tokenPresent={tokenPresent}
+          isMember={isMember}
+          showPending={showPending}
+          teamFull={teamFull}
+          isRecruiting={isRecruiting}
+          canApply={canApply}
+          applyLoading={applyLoading}
+          setShowApplyModal={setShowApplyModal}
+          isOwner={isOwner}
+          goToApplications={() => navigate(`/projects/${id}/applications`)}
+        />
+        <ProjectAbout
+          project={project}
+          tokenPresent={tokenPresent}
+          skillMatchScore={skillMatchScore}
+        />
 
-      <ProjectAbout
-        project={project}
-        tokenPresent={tokenPresent}
-        skillMatchScore={skillMatchScore}
-      />
+        <ProjectTimeline project={project} />
 
-      <ProjectTimeline project={project} />
-
-      <ProjectTeam project={project} team={team} openRoles={openRoles} />
+        <ProjectTeam project={project} team={team} openRoles={openRoles} />
+      </div>
 
       <Modal
         isOpen={showApplyModal}

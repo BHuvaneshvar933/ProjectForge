@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import Badge from "../../components/common/Badge";
@@ -7,6 +7,7 @@ import Modal from "../../components/common/Modal";
 import PublicProfileModal from "../../components/common/PublicProfileModal";
 import Spinner from "../../components/common/Spinner";
 import DashboardPagination from "../../components/common/DashboardPagination";
+import PageHeader from "../../components/common/PageHeader";
 import { displaySkillLabel } from "../../utils/display";
 import {
   acceptApplication,
@@ -61,14 +62,6 @@ export default function ProjectApplications() {
     fetchAll();
   }, [fetchAll]);
 
-  const statusVariant = useMemo(() => {
-    return {
-      pending: "pending",
-      accepted: "accepted",
-      rejected: "rejected",
-      withdrawn: "withdrawn",
-    };
-  }, []);
 
 
   const onAccept = async () => {
@@ -109,17 +102,14 @@ export default function ProjectApplications() {
 
   return (
     <div className="dashboard-page">
-      <div className="dashboard-header">
-        <div>
-          <h1 className="dashboard-title">Applications</h1>
-          <p className="dashboard-subtitle">
-            {project?.title ? `For: ${project.title}` : "Review applications for this project."}
-          </p>
-        </div>
-        <Link to={`/projects/${projectId}`}>
-          <Button variant="secondary" className="dashboard-header__btn">Back to Project</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title="Applications"
+        actions={
+          <Link to={`/projects/${projectId}`}>
+            <Button variant="secondary" className="dashboard-header__btn">Back to Project</Button>
+          </Link>
+        }
+      />
 
       <div className="dashboard-layout">
         <aside className="dashboard-sidebar">
@@ -161,40 +151,44 @@ export default function ProjectApplications() {
             const disabled = busyId === a._id;
             return (
               <div key={a._id} className="apps-card">
-                <div className="apps-card__top">
-                  <div>
-                    <div className="apps-card__title" style={{ display: "flex", alignItems: "center" }}>
-                      {applicant?.name || "Applicant"}
-                      {applicant?.reliability?.status === "RELIABLE" && (
-                        <span style={{ fontSize: 12, padding: '2px 6px', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 600, backgroundColor: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', marginLeft: 8 }}>
-                          🟢 {applicant.reliability.label}
-                        </span>
-                      )}
-                      {applicant?.reliability?.status === "DEVELOPING" && (
-                        <span style={{ fontSize: 11, padding: '2px 6px', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 500, backgroundColor: 'transparent', color: 'var(--color-text-muted)', border: '1px solid var(--border-color)', marginLeft: 8 }}>
-                          {applicant.reliability.label}
-                        </span>
-                      )}
-                    </div>
-                    <div className="apps-card__meta">
-                      <span className="apps-card__meta-item">{a?.applicationType === "invitation" ? "Invitation" : "Application"}</span>
-                      <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>
-                      <span className="apps-card__meta-item">Sent: {a?.createdAt ? new Date(a.createdAt).toLocaleString() : "-"}</span>
-                    </div>
+                {/* Topic Header with Border under it */}
+                <div className="apps-card__header">
+                  <div className="apps-card__title" style={{ display: "flex", alignItems: "center" }}>
+                    {applicant?.name || "Applicant"}
+                    {applicant?.reliability?.status === "RELIABLE" && (
+                      <span style={{ fontSize: 12, padding: '2px 6px', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 600, backgroundColor: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', marginLeft: 8 }}>
+                        🟢 {applicant.reliability.label}
+                      </span>
+                    )}
+                    {applicant?.reliability?.status === "DEVELOPING" && (
+                      <span style={{ fontSize: 11, padding: '2px 6px', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 500, backgroundColor: 'transparent', color: 'var(--color-text-muted)', border: '1px solid var(--border-color)', marginLeft: 8 }}>
+                        {applicant.reliability.label}
+                      </span>
+                    )}
                   </div>
-                  <div className="apps-card__badges">
-                    <Badge variant={statusVariant[a.status] || "default"}>{a.status}</Badge>
+                </div>
+
+                {/* Meta & Status Row */}
+                <div className="apps-card__meta-section">
+                  <div className="apps-card__meta">
+                    <span className="apps-card__meta-item">{a?.applicationType === "invitation" ? "Invitation" : "Application"}</span>
+                    <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>
+                    <span className="apps-card__meta-item">Sent: {a?.createdAt ? new Date(a.createdAt).toLocaleString() : "-"}</span>
+                  </div>
+                  <div className="apps-card__status-row">
+                    <Badge variant={a.status}>{a.status}</Badge>
                   </div>
                 </div>
 
                 {skills.length > 0 && (
-                  <div className="apps-card__skills">
-                    {skills.slice(0, 8).map((s) => (
-                      <Badge key={s?._id || s?.name} variant="skill">
-                        {displaySkillLabel(s)}
-                      </Badge>
+                  <div className="apps-card__skills-single-card">
+                    {skills.slice(0, 8).map((s, i) => (
+                      <span key={s?._id || s?.name || i} className="apps-card__skill-item">
+                        <span>{displaySkillLabel(s)}</span>
+                        {i < Math.min(skills.length, 8) - 1 && <span className="apps-card__slash">/</span>}
+                      </span>
                     ))}
-                    {skills.length > 8 && <span className="apps-card__skills-more">+{skills.length - 8}</span>}
+                    {skills.length > 8 && <span className="apps-card__skills-more">+ {skills.length - 8}</span>}
                   </div>
                 )}
 

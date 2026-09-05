@@ -62,7 +62,7 @@
 }
 
 .journey-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 24px;
@@ -326,7 +326,7 @@
 }
 
 .journey-progress-dashboard {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 32px 24px;
@@ -412,7 +412,7 @@
 .journey-empty-state {
   padding: 32px;
   text-align: center;
-  background: #fcfcfc;
+  background: var(--bg-card);
   border: 1px dashed var(--border-color);
   border-radius: 8px;
   color: var(--color-text-muted);
@@ -484,4 +484,50 @@
   .journey-split-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* Dark Mode Overrides for Journey Tab */
+html[data-theme="dark"] .journey-card,
+html[data-theme="dark"] .journey-progress-dashboard {
+  background: #27272E !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #F9F8F5 !important;
+}
+
+html[data-theme="dark"] .journey-empty-state {
+  background: #202026 !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+html[data-theme="dark"] .journey-list li,
+html[data-theme="dark"] .journey-challenge-item {
+  background: #202026 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .journey-skill-chip {
+  background: #343440 !important;
+  border: none !important;
+  color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .journey-tab input,
+html[data-theme="dark"] .journey-tab textarea,
+html[data-theme="dark"] .journey-tab select {
+  background: #1c1c22 !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+html[data-theme="dark"] .journey-timeline__dot {
+  background: #FFFFFF !important;
+  border-color: #27272E !important;
+}
+
+html[data-theme="dark"] .journey-tab input:focus,
+html[data-theme="dark"] .journey-tab textarea:focus,
+html[data-theme="dark"] .journey-tab select:focus {
+  background: #24242e !important;
+  border-color: #ffffff !important;
 }

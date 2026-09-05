@@ -203,7 +203,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               }}
               disabled={aiLoading}
             >
-              {aiLoading ? <Spinner size="sm" /> : "📝 Refresh Weekly Summary"}
+              {aiLoading ? <Spinner size="sm" /> : "Refresh Weekly Summary"}
             </Button>
           </div>
         )}
@@ -241,7 +241,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               )}
 
               <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)" }}>
-                <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>💡 AI Suggestion</span>
+                <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>AI Suggestion</span>
                 <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthSuggestion}</span>
               </div>
             </div>
@@ -249,7 +249,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
           {localMetrics.aiWeeklySummary && (
             <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: "4px solid #bf5af2" }}>
-              <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "12px" }}>📝 AI Weekly Summary</h3>
+              <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "12px" }}>AI Weekly Summary</h3>
               {typeof localMetrics.aiWeeklySummary === 'object' ? (
                 <div>
                   <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "16px" }}>{localMetrics.aiWeeklySummary.headline}</h4>
@@ -460,9 +460,9 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
           <h3 className="overview-card-title">Team Members</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}>
             {team.length > 0 ? team.map((m, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "10px" }}>
+              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: "10px" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-                  <div style={{ width: "38px", height: "38px", borderRadius: "999px", background: "#ffffff", border: "1px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-dark)", fontWeight: "700", fontSize: "14px", flexShrink: 0 }}>
+                  <div style={{ width: "38px", height: "38px", borderRadius: "999px", background: "var(--btn-primary-bg)", border: "1px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--btn-primary-text)", fontWeight: "700", fontSize: "14px", flexShrink: 0 }}>
                     {m?.userId?.name?.[0] || 'U'}
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>

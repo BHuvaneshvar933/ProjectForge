@@ -2,8 +2,8 @@
   position: relative;
   padding: 28px;
   border-radius: 24px;
-  background: rgba(28, 28, 30, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   overflow: hidden;
 }
 
@@ -14,7 +14,7 @@
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.00),
-    rgba(255, 255, 255, 0.06),
+    var(--color-border-subtle),
     rgba(255, 255, 255, 0.00)
   );
   transform: translateX(-100%);
@@ -38,7 +38,7 @@
   height: 16px;
   width: 62%;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__badges {
@@ -50,7 +50,7 @@
   height: 18px;
   width: 54px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__lines {
@@ -63,7 +63,7 @@
 .project-card-skel__line {
   height: 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__line--short {
@@ -85,21 +85,21 @@
   height: 10px;
   width: 44px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__value {
   height: 10px;
   width: 56px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__progress {
   height: 6px;
   width: 100%;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__skills {
@@ -113,7 +113,7 @@
   height: 18px;
   width: 72px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__footer {
@@ -121,7 +121,7 @@
   justify-content: space-between;
   align-items: center;
   padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--border-color);
 }
 
 .project-card-skel__owner {
@@ -134,19 +134,19 @@
   width: 28px;
   height: 28px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__name {
   height: 12px;
   width: 96px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-border-subtle);
 }
 
 .project-card-skel__cta {
   height: 32px;
   width: 84px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--color-border-subtle);
 }

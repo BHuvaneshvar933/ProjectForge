@@ -1,10 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../../components/common/Button';
-import Badge from '../../../components/common/Badge';
 
 export default function ProjectHeader({
   project,
-  matchPercent,
   tokenPresent,
   isMember,
   showPending,
@@ -21,71 +19,87 @@ export default function ProjectHeader({
 
   return (
     <div className="project-detail__header">
-      <div>
+      {/* 1. Full Bleed Black Title Banner with Apply to Join inside Header at Right-Most */}
+      <div className="project-detail__title-banner">
         <h1 className="project-detail__title">{project.title}</h1>
-        <div className="project-detail__badges">
-          <Badge variant={project.projectType}>{project.projectType}</Badge>
-          <Badge variant={project.status}>{project.status}</Badge>
-          {typeof matchPercent === "number" && (
-            <Badge variant="recruiting">Match: {matchPercent}%</Badge>
+
+        <div className="project-detail__header-action">
+          {!tokenPresent && (
+            <Button className="btn-apply-header" disabled>
+              Sign in to apply
+            </Button>
           )}
-          <Badge variant="default">
-            Team: {project.currentTeamSize} / {project.teamSizeRequired}
-          </Badge>
+
+          {tokenPresent && showPending && (
+            <Button variant="secondary" disabled style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.3)' }}>
+              Application Pending
+            </Button>
+          )}
+
+          {tokenPresent && !isMember && !isOwner && !showPending && teamFull && (
+            <Button variant="secondary" disabled style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.3)' }}>
+              Team Full
+            </Button>
+          )}
+
+          {tokenPresent && !isMember && !isOwner && !showPending && !isRecruiting && (
+            <Button variant="secondary" disabled style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.3)' }}>
+              Not recruiting
+            </Button>
+          )}
+
+          {tokenPresent && canApply && (
+            <Button
+              className="btn-apply-header"
+              onClick={() => setShowApplyModal(true)}
+              loading={applyLoading}
+            >
+              Apply to Join
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="project-detail__actions">
-        {!tokenPresent && (
-          <Button variant="primary" disabled>
-            Sign in to apply
-          </Button>
-        )}
-
-        {tokenPresent && isMember && (
-          <Button variant="primary" onClick={() => navigate(`/workspace/${id}`)}>
-            Workspace
-          </Button>
-        )}
-
-        {tokenPresent && showPending && (
-          <Button variant="secondary" disabled>
-            Application Pending
-          </Button>
-        )}
-
-        {tokenPresent && !isMember && !isOwner && !showPending && teamFull && (
-          <Button variant="secondary" disabled>
-            Team Full
-          </Button>
-        )}
-
-        {tokenPresent && !isMember && !isOwner && !showPending && !isRecruiting && (
-          <Button variant="secondary" disabled>
-            Not recruiting
-          </Button>
-        )}
-
-        {tokenPresent && canApply && (
-          <Button
-            variant="primary"
-            onClick={() => setShowApplyModal(true)}
-            loading={applyLoading}
-          >
-            Apply to Join
-          </Button>
-        )}
-
-        {isOwner && (
-          <>
-            <Button variant="outline" onClick={goToApplications}>
-              View Applications
+      {/* 2. Action Buttons under Header (Workspace, View Applications, Edit Project) */}
+      {(isMember || isOwner) && (
+        <div className="project-detail__actions" style={{ display: 'flex', gap: '10px', alignItems: 'center', margin: '14px 0 16px' }}>
+          {tokenPresent && isMember && (
+            <Button variant="primary" onClick={() => navigate(`/workspace/${id}`)}>
+              Workspace
             </Button>
-            <Link to={`/projects/${id}/edit`}>
-              <Button variant="secondary">Edit Project</Button>
-            </Link>
-          </>
-        )}
+          )}
+
+          {isOwner && (
+            <>
+              <Button variant="outline" onClick={goToApplications}>
+                View Applications
+              </Button>
+              <Link to={`/projects/${id}/edit`}>
+                <Button variant="secondary">Edit Project</Button>
+              </Link>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* 3. Vertically Stacked Metadata Badges with status text colors */}
+      <div className="project-detail__badges">
+        <div className="project-detail__badge-item">
+          <span className="project-detail__badge-label">topic :</span>
+          <span className="project-detail__badge-value">{project.projectType || "General"}</span>
+        </div>
+        <div className="project-detail__badge-item">
+          <span className="project-detail__badge-label">status :</span>
+          <span className={`project-detail__status-text status-text--${project.status}`}>
+            {project.status}
+          </span>
+        </div>
+        <div className="project-detail__badge-item">
+          <span className="project-detail__badge-label">team :</span>
+          <span className="project-detail__badge-value">
+            {project.currentTeamSize} / {project.teamSizeRequired}
+          </span>
+        </div>
       </div>
     </div>
   );

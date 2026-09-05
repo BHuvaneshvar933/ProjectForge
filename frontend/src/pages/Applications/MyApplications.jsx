@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import Badge from "../../components/common/Badge";
@@ -6,6 +6,7 @@ import Button from "../../components/common/Button";
 import Modal from "../../components/common/Modal";
 import Spinner from "../../components/common/Spinner";
 import DashboardPagination from "../../components/common/DashboardPagination";
+import PageHeader from "../../components/common/PageHeader";
 import { getMyApplications, respondToInvitation, withdrawApplication } from "../../api/applicationApi";
 import { getSocket } from "../../realtime/socketClient";
 import "./applications.css";
@@ -59,14 +60,6 @@ export default function MyApplications() {
   }, []);
 
 
-  const statusVariant = useMemo(() => {
-    return {
-      pending: "pending",
-      accepted: "accepted",
-      rejected: "rejected",
-      withdrawn: "withdrawn",
-    };
-  }, []);
 
   const onWithdraw = async () => {
     if (!withdrawId) return;
@@ -103,22 +96,21 @@ export default function MyApplications() {
     return (
       <div className="dashboard-page" style={{ minHeight: '50vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <Spinner size="lg" />
-        <p style={{ color: 'rgba(255, 255, 255, 0.82)', marginTop: 16 }}>Loading applications...</p>
+        <p style={{ color: 'var(--color-text-dark)', marginTop: 16, fontWeight: 500 }}>Loading applications...</p>
       </div>
     );
   }
 
   return (
     <div className="dashboard-page">
-      <div className="dashboard-header">
-        <div>
-          <h1 className="dashboard-title">My Applications</h1>
-          <p className="dashboard-subtitle">Track your project applications and invitations</p>
-        </div>
-        <Link to="/projects">
-          <Button variant="secondary" className="dashboard-header__btn">Browse Projects</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title="My Applications"
+        actions={
+          <Link to="/projects">
+            <Button variant="secondary" className="dashboard-header__btn">Browse Projects</Button>
+          </Link>
+        }
+      />
 
       <div className="dashboard-layout">
         <aside className="dashboard-sidebar">
@@ -158,25 +150,24 @@ export default function MyApplications() {
             const isInvitation = a?.applicationType === "invitation";
             return (
               <div key={a._id} className="apps-card">
-                <div className="apps-card__top">
-                  <div>
-                    <div className="apps-card__title">
-                      <Link to={`/projects/${projectId}`}>{project?.title || "Project"}</Link>
-                    </div>
-                    <div className="apps-card__meta">
-                      <span className="apps-card__meta-item">Owner: {project?.owner?.name || "-"}</span>
-                      {isInvitation && (
-                        <span className="apps-card__meta-item">Invited by: {a?.invitedBy?.name || project?.owner?.name || "-"}</span>
-                      )}
-                      <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>
-                    </div>
+                {/* Topic Header with Border under it */}
+                <div className="apps-card__header">
+                  <div className="apps-card__title">
+                    <Link to={`/projects/${projectId}`}>{project?.title || "Project"}</Link>
                   </div>
-                  <div className="apps-card__badges">
-                    <Badge variant="default">{isInvitation ? "Invitation" : "Application"}</Badge>
-                    <Badge variant={statusVariant[a.status] || "default"}>{a.status}</Badge>
-                    {project?.status && (
-                      <Badge variant={project.status}>{project.status}</Badge>
+                </div>
+
+                {/* Owner & Match Meta */}
+                <div className="apps-card__meta-section">
+                  <div className="apps-card__meta">
+                    <span className="apps-card__meta-item">Owner: {project?.owner?.name || "-"}</span>
+                    {isInvitation && (
+                      <span className="apps-card__meta-item">Invited by: {a?.invitedBy?.name || project?.owner?.name || "-"}</span>
                     )}
+                    <span className="apps-card__meta-item">Match: {typeof a.matchScore === "number" ? `${a.matchScore}%` : "-"}</span>
+                  </div>
+                  <div className="apps-card__status-row">
+                    <Badge variant={a.status}>{a.status}</Badge>
                   </div>
                 </div>
 
@@ -252,7 +243,7 @@ export default function MyApplications() {
         onConfirm={onWithdraw}
         confirmText={withdrawLoading ? "Withdrawing..." : "Withdraw"}
       >
-        <p style={{ color: 'rgba(255, 255, 255, 0.82)', fontSize: 13, lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--color-text-muted)', fontSize: 13, lineHeight: 1.6 }}>
           This will withdraw your pending application. You can apply again later if the project is still recruiting.
         </p>
       </Modal>

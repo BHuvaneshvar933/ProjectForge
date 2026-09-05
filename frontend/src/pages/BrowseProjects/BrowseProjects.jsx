@@ -1,9 +1,10 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { browseProjects } from '../../api/projectApi';
+import { browseProjects, getMyProjects } from '../../api/projectApi';
 import { getProjectRecommendations } from '../../api/recommendationApi';
 import { searchUsers } from '../../api/userApi';
 import { inviteUserToProject } from '../../api/applicationApi';
 import Input from '../../components/common/Input';
+import PageHeader from '../../components/common/PageHeader';
 import { toast } from 'react-toastify';
 import { getSocket } from '../../realtime/socketClient';
 
@@ -216,18 +217,9 @@ export default function BrowseProjects() {
 
   return (
     <div className="browse-page">
-      <div className="browse-page__header">
-        <div>
-          <h1 className="browse-page__title">
-            {tab === 'projects' ? 'Project Catalog & Index' : 'Talent & Developer Directory'}
-          </h1>
-          <p className="browse-page__subtitle">
-            {tab === 'projects' 
-              ? 'Explore open builds, research initiatives, and skill-matched team opportunities.'
-              : 'Search skilled developers, engineers, and researchers to invite to your team.'}
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        title={tab === 'projects' ? 'Project Catalog & Index' : 'Talent & Developer Directory'}
+      />
 
       <div className="dashboard-layout">
         {/* Left Sidebar */}
@@ -254,68 +246,76 @@ export default function BrowseProjects() {
           </div>
 
           {tab === 'projects' && (
-            <div className="dashboard-sidebar__section">
-              <h3 className="dashboard-sidebar__heading">Search</h3>
-              <form onSubmit={handleSearch} className="browse-page__search" style={{ flexDirection: 'column' }}>
-                <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search by project name, description, technology, or teammate..."
-                  style={{ width: '100%', marginBottom: '8px' }}
-                />
-                <button type="submit" className="dashboard-sidebar__btn">
-                  Search
-                </button>
-              </form>
+            <>
+              <div className="dashboard-sidebar__section">
+                <h3 className="dashboard-sidebar__heading">Search</h3>
+                <form onSubmit={handleSearch} className="browse-page__search" style={{ flexDirection: 'column' }}>
+                  <Input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search by project name, description, technology, or teammate..."
+                    style={{ width: '100%', marginBottom: '8px' }}
+                  />
+                  <button type="submit" className="dashboard-sidebar__btn">
+                    Search
+                  </button>
+                </form>
+              </div>
 
-              <h3 className="dashboard-sidebar__heading" style={{ marginTop: '24px' }}>Filters</h3>
-              <select
-                value={filters.projectType}
-                onChange={(e) => setFilters({ ...filters, projectType: e.target.value, page: 1 })}
-                className="dashboard-sidebar__select"
-              >
-                <option value="">All Types</option>
-                <option value="web">Web</option>
-                <option value="mobile">Mobile</option>
-                <option value="ml">ML</option>
-                <option value="hackathon">Hackathon</option>
-              </select>
-            </div>
+              <div className="dashboard-sidebar__section">
+                <h3 className="dashboard-sidebar__heading">Filter By Type</h3>
+                <select
+                  value={filters.projectType}
+                  onChange={(e) => setFilters({ ...filters, projectType: e.target.value, page: 1 })}
+                  className="dashboard-sidebar__select"
+                >
+                  <option value="">All Types</option>
+                  <option value="web">Web</option>
+                  <option value="mobile">Mobile</option>
+                  <option value="ml">ML</option>
+                  <option value="hackathon">Hackathon</option>
+                </select>
+              </div>
+            </>
           )}
 
           {tab === 'people' && (
-            <div className="dashboard-sidebar__section">
-              <h3 className="dashboard-sidebar__heading">Search People</h3>
-              <form onSubmit={(e) => { e.preventDefault(); searchPeople(1); }} className="browse-page__search" style={{ flexDirection: 'column' }}>
-                <Input
-                  value={peopleSearch}
-                  onChange={(e) => setPeopleSearch(e.target.value)}
-                  placeholder="Search skills, bio..."
-                  style={{ width: '100%', marginBottom: '8px' }}
-                />
-                <button type="submit" className="dashboard-sidebar__btn">
-                  Search
-                </button>
-              </form>
+            <>
+              <div className="dashboard-sidebar__section">
+                <h3 className="dashboard-sidebar__heading">Search People</h3>
+                <form onSubmit={(e) => { e.preventDefault(); searchPeople(1); }} className="browse-page__search" style={{ flexDirection: 'column' }}>
+                  <Input
+                    value={peopleSearch}
+                    onChange={(e) => setPeopleSearch(e.target.value)}
+                    placeholder="Search skills, bio..."
+                    style={{ width: '100%', marginBottom: '8px' }}
+                  />
+                  <button type="submit" className="dashboard-sidebar__btn">
+                    Search
+                  </button>
+                </form>
+              </div>
 
-              <h3 className="dashboard-sidebar__heading" style={{ marginTop: '24px' }}>Invite to Project</h3>
-              {ownedProjects.length === 0 ? (
-                <div className="dashboard-sidebar__note">
-                  You need an active recruiting project to invite users.
-                </div>
-              ) : (
-                <select
-                  value={selectedProjectId}
-                  onChange={(e) => setSelectedProjectId(e.target.value)}
-                  className="dashboard-sidebar__select"
-                >
-                  <option value="" disabled>Select a project...</option>
-                  {ownedProjects.map(p => (
-                    <option key={p._id} value={p._id}>{p.title}</option>
-                  ))}
-                </select>
-              )}
-            </div>
+              <div className="dashboard-sidebar__section">
+                <h3 className="dashboard-sidebar__heading">Invite to Project</h3>
+                {ownedProjects.length === 0 ? (
+                  <div className="dashboard-sidebar__note">
+                    You need an active recruiting project to invite users.
+                  </div>
+                ) : (
+                  <select
+                    value={selectedProjectId}
+                    onChange={(e) => setSelectedProjectId(e.target.value)}
+                    className="dashboard-sidebar__select"
+                  >
+                    <option value="" disabled>Select a project...</option>
+                    {ownedProjects.map(p => (
+                      <option key={p._id} value={p._id}>{p.title}</option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            </>
           )}
         </aside>
 

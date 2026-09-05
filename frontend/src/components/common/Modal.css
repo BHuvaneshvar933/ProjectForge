@@ -24,7 +24,7 @@
   flex-direction: column;
   padding: 28px;
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 }
@@ -35,7 +35,7 @@
   right: 20px;
   padding: 4px 12px;
   border-radius: 999px;
-  background: var(--color-paper);
+  background: var(--bg-card);
   color: var(--color-text-dark);
   font-size: 12px;
   font-weight: 700;
@@ -45,8 +45,8 @@
 }
 
 .modal__close:hover {
-  background: var(--color-text-dark);
-  color: #ffffff;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
 }
 
 .modal__title {
@@ -95,15 +95,67 @@
 }
 
 .modal__button--primary {
-  background: var(--color-text-dark);
-  color: #ffffff;
-  border-color: var(--color-text-dark);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-bg);
 }
 
 .modal__button--primary:hover {
-  background: #33333A;
-  border-color: #33333A;
-  color: #ffffff;
+  background: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-bg);
+  color: var(--btn-primary-text);
 }
+
+html[data-theme="dark"] .modal__card {
+  background: #202028 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme="dark"] .modal__title {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme="dark"] .modal__content {
+  color: #d1d1db !important;
+}
+
+html[data-theme="dark"] .modal__close {
+  background: #202028 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+html[data-theme="dark"] .modal__close:hover {
+  background: #ffffff !important;
+  color: #08080a !important;
+  border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .modal__button--primary {
+  background: #ffffff !important;
+  color: #08080a !important;
+  border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .modal__button--primary:hover {
+  background: #08080a !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .modal__button--ghost {
+  background: transparent !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+html[data-theme="dark"] .modal__button--ghost:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
 
 

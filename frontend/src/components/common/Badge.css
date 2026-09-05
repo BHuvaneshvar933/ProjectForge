@@ -1,45 +1,105 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
   font-weight: 600;
-  border: 1px solid rgba(18, 18, 20, 0.12);
+  border: none !important;
   line-height: 1.2;
-  background: #F4F3EF;
-  color: #33333A;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
+  background: var(--bg-card-secondary);
+  color: var(--color-text-dark);
 }
 
-.badge--default,
-.badge--recruiting,
-.badge--in-progress,
-.badge--completed,
-.badge--archived,
-.badge--owner,
-.badge--member,
-.badge--skill,
-.badge--personal,
-.badge--startup,
-.badge--open-source,
-.badge--academic,
-.badge--web,
-.badge--mobile,
-.badge--ml,
-.badge--hackathon,
-.badge--pending,
+.badge--default {
+  background: var(--bg-card-secondary);
+  color: var(--color-text-dark);
+  border: none !important;
+}
+
+/* Status colors */
+.badge--recruiting {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.badge--in-progress {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.badge--completed {
+  background-color: #f97316 !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Application Status Colors */
 .badge--accepted,
-.badge--rejected,
+.badge--accepting {
+  background: #10b981 !important;
+  background-color: #10b981 !important; /* Green */
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.badge--rejected {
+  background: #ef4444 !important;
+  background-color: #ef4444 !important; /* Red */
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.badge--pending {
+  background: #f59e0b !important;
+  background-color: #f59e0b !important; /* Orange-Yellow / Amber */
+  color: #ffffff !important;
+  border: none !important;
+}
+
 .badge--withdrawn {
-  background: #F4F3EF;
-  color: #33333A;
-  border-color: rgba(18, 18, 20, 0.12);
+  background-color: #64748b !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.badge--archived {
+  background-color: #64748b !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+.badge--skill {
+  background: var(--bg-card-secondary);
+  color: var(--color-text-dark);
+  border: 1px solid var(--border-color) !important;
+  border-radius: 6px !important;
+  padding: 5px 10px !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  line-height: 1 !important;
 }
 
 .badge--skill:hover {
-  background: #E5E2DC;
-  border-color: rgba(18, 18, 20, 0.25);
+  background: var(--btn-secondary-bg);
+}
+
+.badge--owner,
+.badge--member {
+  background: var(--bg-card-secondary);
+  color: var(--color-text-dark);
+  border: 1px solid var(--border-color) !important;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-left: 6px;
 }
 
 .badge--clickable {
@@ -49,11 +109,71 @@
 .badge__remove {
   margin-left: 6px;
   color: var(--color-text-muted);
-  font-size: 14px;
-  line-height: 1;
+  font-size: 13px !important;
+  line-height: 1 !important;
+  height: 1em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle;
   transition: color 0.15s ease;
 }
 
 .badge__remove:hover {
-  color: #121214;
+  color: var(--color-text-dark);
+}
+
+html[data-theme="dark"] .badge--skill,
+html[data-theme="dark"] .badge--owner,
+html[data-theme="dark"] .badge--member {
+  background: #24242a !important;
+  color: #f4f4f5 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .badge__remove {
+  color: #a1a1aa !important;
+}
+
+html[data-theme="dark"] .badge__remove:hover {
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .badge--recruiting,
+html[data-theme="dark"] .badge--accepted,
+html[data-theme="dark"] .badge--accepting {
+  background: #059669 !important;
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .badge--rejected {
+  background: #b91c1c !important;
+  background-color: #b91c1c !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .badge--pending {
+  background: #d97706 !important;
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .badge--in-progress {
+  background: #1d4ed8 !important;
+  background-color: #1d4ed8 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .badge--completed {
+  background: #ea580c !important;
+  background-color: #ea580c !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .badge--withdrawn,
+html[data-theme="dark"] .badge--archived {
+  background: #475569 !important;
+  background-color: #475569 !important;
+  color: #ffffff !important;
 }

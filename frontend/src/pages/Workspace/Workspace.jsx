@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import Badge from "../../components/common/Badge";
 import Button from "../../components/common/Button";
 import Spinner from "../../components/common/Spinner";
+import PageHeader from "../../components/common/PageHeader";
 import Modal from "../../components/common/Modal";
 import { getProjectSummary } from "../../api/analyticsApi";
 import { getCurrentUser } from "../../api/authApi";
@@ -265,40 +266,39 @@ export default function Workspace() {
   if (!isMember && !isCompleted) {
     return (
       <div className="workspace">
-        <div className="workspace__header">
-          <div>
-            <h1 className="workspace__title">{project.title}</h1>
-            <p className="workspace__subtitle">You need to be an active team member to access this workspace.</p>
-          </div>
-          <div className="workspace__actions">
+        <PageHeader
+          title={project.title}
+          actions={
             <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>Back to Project</Button>
-          </div>
-        </div>
+          }
+        />
+        <p className="workspace__subtitle" style={{ marginTop: '20px' }}>
+          You need to be an active team member to access this workspace.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="workspace">
-      <div className="workspace__header">
-        <div>
-          <h1 className="workspace__title">{project.title}</h1>
-          <p className="workspace__subtitle">
-            {isCompleted ? "Project Archive & Knowledge Base" : "Team space for planning tasks, chatting in real-time, and tracking progress."}
-          </p>
-          <div className="workspace__badges">
+      <PageHeader
+        title={project.title}
+        badges={
+          <>
             <Badge variant={project.status}>{project.status}</Badge>
             <Badge variant="default">Members: {team.length}</Badge>
             {isMember && <Badge variant={isOwner ? "owner" : "member"}>{isOwner ? "owner" : "member"}</Badge>}
-          </div>
-        </div>
-        <div className="workspace__actions">
-          {isOwner && !isCompleted && <Button onClick={() => setCompletionModalOpen(true)}>Complete Project</Button>}
-          {isOwner && isCompleted && <Button onClick={() => setResumeModalOpen(true)}>Resume Project</Button>}
-          {isMember && !isOwner && !isCompleted && <Button variant="outline" onClick={() => setLeaveModalOpen(true)}>Leave Project</Button>}
-          <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>Back</Button>
-        </div>
-      </div>
+          </>
+        }
+        actions={
+          <>
+            {isOwner && !isCompleted && <Button onClick={() => setCompletionModalOpen(true)}>Complete Project</Button>}
+            {isOwner && isCompleted && <Button onClick={() => setResumeModalOpen(true)}>Resume Project</Button>}
+            {isMember && !isOwner && !isCompleted && <Button variant="outline" onClick={() => setLeaveModalOpen(true)}>Leave Project</Button>}
+            <Button variant="outline" onClick={() => navigate(`/projects/${projectId}`)}>Back</Button>
+          </>
+        }
+      />
 
       <div className="workspace__tabs">
         {activeTabs.map((t) => (

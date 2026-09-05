@@ -229,3 +229,36 @@
 .educational-box strong {
   color: var(--color-text-dark);
 }
+
+html[data-theme="dark"] .stat-box {
+  background: #202028;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .team-member-chip {
+  background: #24242a;
+  color: #f4f4f5;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+html[data-theme="dark"] .celebration-assets-section {
+  background: #202028;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .assets-card,
+html[data-theme="dark"] .educational-box {
+  background: #18181c;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="dark"] .assets-tabs button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .assets-tabs button.active {
+  background: #ffffff;
+  color: #08080a;
+}
+

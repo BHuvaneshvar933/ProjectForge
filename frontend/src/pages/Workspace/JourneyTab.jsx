@@ -24,6 +24,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
   const [newEvidence, setNewEvidence] = useState({ title: "", url: "", description: "" });
   
   // Skills
+  const [newSkill, setNewSkill] = useState({ skill: "", before: "Beginner", usedFor: "", after: "Intermediate" });
   const [availableSkills, setAvailableSkills] = useState([]);
   // Form Visibility States
   const [showAddContribution, setShowAddContribution] = useState(false);

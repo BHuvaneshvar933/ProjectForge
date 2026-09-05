@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { getConversations, getDirectMessages, sendDirectMessage } from "../../api/messageApi";
+import { getConversations, getDirectMessages } from "../../api/messageApi";
 import { getMyProfile } from "../../api/userApi";
 import { getSocket } from "../../realtime/socketClient";
 import Spinner from "../../components/common/Spinner";
@@ -59,6 +59,7 @@ export default function Messages() {
       }
     };
     if (user) loadConvs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, searchParams]); // Intentionally not including activeConvId to avoid loop
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function Messages() {
       searchParams.delete("conversation");
       setSearchParams(searchParams, { replace: true });
     }
-  }, [activeConvId]);
+  }, [activeConvId, searchParams, setSearchParams]);
 
   useEffect(() => {
     if (!user) return;

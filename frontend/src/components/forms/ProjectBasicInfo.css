@@ -20,7 +20,7 @@
 
 .project-basic__textarea {
   width: 100%;
-  background: var(--color-paper);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 14px 16px;
@@ -50,7 +50,7 @@
 
 .project-basic__select {
   width: 100%;
-  background: var(--color-paper);
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 12px 16px;
@@ -93,3 +93,29 @@
 .project-basic__select.is-error {
   border-color: #dc2626;
 }
+
+html[data-theme="dark"] .project-basic__textarea,
+html[data-theme="dark"] .project-basic__select {
+  background-color: #1c1c22;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+html[data-theme="dark"] .project-basic__textarea:hover,
+html[data-theme="dark"] .project-basic__select:hover {
+  background-color: #24242e;
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+html[data-theme="dark"] .project-basic__textarea:focus,
+html[data-theme="dark"] .project-basic__select:focus {
+  background-color: #24242e;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+}
+
+html[data-theme="dark"] .project-basic__select option {
+  background: #1c1c22;
+  color: #ffffff;
+}
+

@@ -9,7 +9,6 @@ export default function ProjectCard({ project, type = "owned" }) {
     title,
     description,
     status,
-    projectType,
     currentTeamSize,
     teamSizeRequired,
     requiredSkills = [],
@@ -22,21 +21,12 @@ export default function ProjectCard({ project, type = "owned" }) {
 
   return (
     <div className="project-card">
-      {/* Header */}
+      {/* Header with Title and Border */}
       <div className="project-card__header">
         <h3 className="project-card__title">
           {title}
         </h3>
-        <div className="project-card__badges">
-          {projectType && (
-            <Badge variant={projectType}>
-              {projectType}
-            </Badge>
-          )}
-          <Badge variant={status}>
-            {status}
-          </Badge>
-        </div>
+
       </div>
 
       {/* Description */}
@@ -62,6 +52,16 @@ export default function ProjectCard({ project, type = "owned" }) {
             }}
           />
         </div>
+      </div>
+
+      {/* Status under Team line */}
+      <div className="project-card__status-row">
+        <Badge variant={status}>
+          {status}
+        </Badge>
+        {typeof matchScore === "number" && type === "browse" && (
+          <Badge variant="recruiting">Match: {Math.round(matchScore)}%</Badge>
+        )}
       </div>
 
       {/* Skills or Match Breakdown */}

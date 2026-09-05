@@ -72,19 +72,19 @@
 
 .learning-archive__card {
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  border: none !important;
   border-radius: 12px;
   padding: 28px;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: background-color 0.15s ease;
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
+  box-shadow: none !important;
 }
 
 .learning-archive__card:hover {
-  border-color: rgba(18, 18, 20, 0.25);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  background: var(--bg-card-hover);
 }
 
 .learning-archive__card-header {
@@ -139,3 +139,21 @@
   font-size: 14px;
   grid-column: 1 / -1;
 }
+
+html[data-theme="dark"] .learning-archive__type {
+  background: #24242a;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+html[data-theme="dark"] .learning-archive__input,
+html[data-theme="dark"] .learning-archive__select {
+  background: #1c1c22;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .learning-archive__input:focus {
+  border-color: #ffffff;
+}
+

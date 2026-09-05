@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import NotificationBell from "./common/NotificationBell";
-import topNavbarIcon from "../assets/logo/top-navbar.jpg";
 import './Navbar.css';
 
 export default function Navbar() {
@@ -12,10 +11,12 @@ export default function Navbar() {
 
   const [theme, setTheme] = useState(() => {
     try {
-      return localStorage.getItem("theme") || "light";
+      localStorage.setItem("theme", "light");
+      document.documentElement.removeAttribute("data-theme");
     } catch {
-      return "light";
+      /* ignore storage access error */
     }
+    return "light";
   });
 
   useEffect(() => {
@@ -26,12 +27,15 @@ export default function Navbar() {
     }
     try {
       localStorage.setItem("theme", theme);
-    } catch {}
+    } catch {
+      /* ignore storage access error */
+    }
   }, [theme]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === "light" ? "dark" : "light");
   };
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -93,15 +97,6 @@ export default function Navbar() {
     return location.pathname.startsWith(path);
   };
 
-  const getChapterName = () => {
-    if (location.pathname === "/") return "01 DISCOVER";
-    if (location.pathname.startsWith("/projects/create")) return "02 ARCHITECT";
-    if (location.pathname.startsWith("/workspace")) return "03 COLLABORATE";
-    if (location.pathname.startsWith("/applications")) return "04 APPLICATIONS";
-    if (location.pathname.startsWith("/learning-archive")) return "05 ARCHIVE";
-    return "REPORT 2026";
-  };
-
   return (
     <nav className={`navbar ${isScrolled ? 'is-scrolled' : ''}`}>
       {/* Scroll progress bar */}
@@ -111,20 +106,21 @@ export default function Navbar() {
       />
 
       <div className="navbar__inner">
+        {/* LEFT: BRAND TEXT LINKING TO LANDING PAGE */}
         <div className="navbar__left">
           <Link to="/" className="navbar__brand">
             <span className="navbar__brand-text">PROJECTFORGE</span>
           </Link>
         </div>
 
-        <div className="navbar__links">
+        {/* RIGHT SIDE: ALL LINKS & CONTROLS */}
+        <div className="navbar__right">
           <Link
             to="/projects"
             className={`navbar__link ${isActive('/projects') ? 'is-active' : ''}`.trim()}
           >
             Directory
           </Link>
-
 
           <Link
             to="/my-projects"
@@ -152,7 +148,7 @@ export default function Navbar() {
           )}
 
           {isAuthed && (
-            <div className="navbar__link navbar__link--icon">
+            <div className="navbar__link navbar__link--icon" style={{ padding: 0 }}>
               <NotificationBell />
             </div>
           )}

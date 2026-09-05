@@ -5,6 +5,7 @@ import ProjectBasicInfo from '../../components/forms/ProjectBasicInfo';
 import ProjectRequirements from '../../components/forms/ProjectRequirements';
 import ProjectReview from '../../components/forms/ProjectReview';
 import Modal from '../../components/common/Modal';
+import PageHeader from '../../components/common/PageHeader';
 import { toast } from 'react-toastify';
 import './EditProject.css';
 
@@ -186,12 +187,7 @@ export default function EditProject() {
 
   return (
     <div className="edit-project">
-      <div className="edit-project__header">
-        <div>
-          <h1 className="edit-project__title">Edit Project</h1>
-          <p className="edit-project__subtitle">Update your project details</p>
-        </div>
-      </div>
+      <PageHeader title="Edit Project" />
       
       {conflictError && (
         <div style={{ background: "rgba(255, 69, 58, 0.15)", border: "1px solid #ff453a", color: "#ff453a", padding: "16px", borderRadius: "8px", margin: "24px 40px 0" }}>

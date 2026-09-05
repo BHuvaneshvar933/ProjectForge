@@ -1,79 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap');
-
+@import "./colors.css";
 @import "tailwindcss";
 
 :root {
-	/* Editorial Research Publication Theme Tokens */
-	--color-paper: #F9F8F5;              /* Light paper base background */
-	--color-ivory: #F2EFE9;              /* Soft ivory section background */
-	--color-paper-card: #FFFFFF;         /* Crisp white card background */
-	--color-obsidian: #0E0E10;           /* Deep editorial black section background */
-	--color-obsidian-card: #18181C;      /* Dark slate elevated container */
-
-	/* Main Text & Typography Tokens */
-	--color-text-dark: #121214;          /* High contrast main text */
-	--color-text-light: #F9F8F5;         /* Crisp white text for dark blocks */
-	--color-text-muted: #66666E;         /* Muted editorial caption text */
-	--color-text-muted-light: #A0A0AA;   /* Light muted text on dark blocks */
-
-	/* Chapter Color Accents */
-	--accent-ch1: #33302E;
-	--accent-ch2: #33302E;
-	--accent-ch3: #33302E;
-	--accent-ch4: #33302E;
-	--accent-ch5: #33302E;
-
-	/* Active Theme Variables (Light mode base by default) */
-	--bg-page: var(--color-paper);
-	--bg-card: var(--color-paper-card);
-	--bg-card-hover: #F2EFE9;
-	--text-main: var(--color-text-dark);
-	--text-sub: var(--color-text-muted);
-	--border-color: rgba(18, 18, 20, 0.12);
-	--accent-vibrant: #121214;
-	--accent-soft: #33302E;
-
 	/* Typography Families */
 	--font-sans: 'Google Sans', 'Inter', system-ui, -apple-system, sans-serif;
 	--font-serif: 'Cormorant Garamond', 'Newsreader', Georgia, serif;
 }
 
-html[data-theme="dark"] {
-	/* Dark Mode Theme Tokens */
-	--color-paper: #09090B;              /* Solid dark background */
-	--color-ivory: #121214;              /* Dark slate section background */
-	--color-paper-card: #18181B;         /* Dark card background */
-	--color-obsidian: #09090B;
-	--color-obsidian-card: #18181B;
-
-	/* Main Text & Typography Tokens */
-	--color-text-dark: #F9F8F5;          /* Off-white main text */
-	--color-text-light: #F9F8F5;
-	--color-text-muted: #A1A1AA;         /* Light muted caption text */
-	--color-text-muted-light: #71717A;
-
-	--bg-page: var(--color-paper);
-	--bg-card: var(--color-paper-card);
-	--bg-card-hover: #27272A;
-	--text-main: var(--color-text-dark);
-	--text-sub: var(--color-text-muted);
-	--border-color: rgba(255, 255, 255, 0.12);
-	--accent-vibrant: #F9F8F5;
-	--accent-soft: #E4E4E7;
-}
-
-html[data-theme="dark"] body {
-	background-color: #09090B !important;
-	color: #F9F8F5 !important;
+/* Universal Card & Box Title Underline Styles */
+.account__card-title,
+.workspace__card-title,
+.overview-card-title,
+.learning-archive__card-title,
+.dashboard-sidebar__heading,
+.browse-sidebar__heading {
+	border-bottom: 2px solid var(--border-color) !important;
+	padding-bottom: 8px !important;
+	margin-bottom: 16px !important;
+	display: block !important;
+	width: 100% !important;
 }
 
 /* Universal Dark Mode Container & Card Overrides */
-html[data-theme="dark"] .pub-chapter-block,
-html[data-theme="dark"] .pub-hero,
-html[data-theme="dark"] .pub-stories,
-html[data-theme="dark"] .pub-quote,
-html[data-theme="dark"] .pub-cta,
-html[data-theme="dark"] .pub-footer,
 html[data-theme="dark"] .summary-card,
 html[data-theme="dark"] .story-card,
 html[data-theme="dark"] .takeaway-card,
@@ -94,15 +42,24 @@ html[data-theme="dark"] .create-project-card,
 html[data-theme="dark"] .application-card,
 html[data-theme="dark"] .workspace-column,
 html[data-theme="dark"] .workspace-task,
-html[data-theme="dark"] .chat-widget,
 html[data-theme="dark"] .modal-container,
 html[data-theme="dark"] .task-details-drawer {
-	background-color: #18181B !important;
+	background-color: #202028 !important;
 	color: #F9F8F5 !important;
 	border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
-/* Page Base Overrides */
+/* Page Base Overrides & Chatbox Footer Clearances */
+.dashboard-page,
+.browse-page,
+.project-detail-page,
+.workspace-page,
+.account-page,
+.create-project-page,
+.applications-page {
+	padding-bottom: 75px !important;
+}
+
 html[data-theme="dark"] .landing-publication,
 html[data-theme="dark"] .browse-page,
 html[data-theme="dark"] .project-detail-page,
@@ -130,8 +87,7 @@ html[data-theme="dark"] .browse-page__title,
 html[data-theme="dark"] .project-card__title,
 html[data-theme="dark"] .overview-card-title,
 html[data-theme="dark"] .summary-section__title,
-html[data-theme="dark"] .modal-title,
-html[data-theme="dark"] .chat-widget__title {
+html[data-theme="dark"] .modal-title {
 	color: #F9F8F5 !important;
 }
 
@@ -145,13 +101,12 @@ html[data-theme="dark"] .pub-chapter-block__desc,
 html[data-theme="dark"] .pub-cta__desc,
 html[data-theme="dark"] .browse-page__subtitle,
 html[data-theme="dark"] .project-card__desc,
-html[data-theme="dark"] .workspace-task__meta,
-html[data-theme="dark"] .chat-widget__conv-last {
-	color: #A1A1AA;
+html[data-theme="dark"] .workspace-task__meta {
+	color: #D1D1DB;
 }
 
 html[data-theme="dark"] strong {
-	color: #F9F8F5 !important;
+	color: #FFFFFF !important;
 }
 
 /* Inputs, Textareas, Selects in Dark Mode */
@@ -162,22 +117,36 @@ html[data-theme="dark"] option,
 html[data-theme="dark"] .browse-sidebar__select,
 html[data-theme="dark"] .dashboard-sidebar__select,
 html[data-theme="dark"] .browse-page__select,
-html[data-theme="dark"] .workspace-select,
-html[data-theme="dark"] .chat-widget__composer input {
-	background-color: #27272A !important;
-	color: #F9F8F5 !important;
-	border-color: rgba(255, 255, 255, 0.15) !important;
+html[data-theme="dark"] .workspace-select {
+	background-color: #1C1C22 !important;
+	color: #FFFFFF !important;
+	border-color: rgba(255, 255, 255, 0.25) !important;
 }
 
 html[data-theme="dark"] input::placeholder,
 html[data-theme="dark"] textarea::placeholder {
-	color: #71717A !important;
+	color: #A0A0B0 !important;
+}
+
+select,
+.browse-sidebar__select,
+.dashboard-sidebar__select,
+.browse-page__select,
+.workspace-select {
+	background-color: #ffffff !important;
+	color: #121214 !important;
+	background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23121214' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+	background-repeat: no-repeat !important;
+	background-position: right 14px center !important;
 }
 
 html[data-theme="dark"] .browse-sidebar__select,
 html[data-theme="dark"] .dashboard-sidebar__select,
-html[data-theme="dark"] .browse-page__select {
-	background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23F9F8F5' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+html[data-theme="dark"] .browse-page__select,
+html[data-theme="dark"] .workspace-select {
+	background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23FFFFFF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
+	background-repeat: no-repeat !important;
+	background-position: right 14px center !important;
 }
 
 /* Badges, Chips, List Items in Dark Mode */
@@ -185,53 +154,77 @@ html[data-theme="dark"] .pub-chapter-block__topics-list li,
 html[data-theme="dark"] .summary-skill-chip,
 html[data-theme="dark"] .summary-achievements li,
 html[data-theme="dark"] .summary-leaderboard__item,
-html[data-theme="dark"] .summary-timeline__content,
-html[data-theme="dark"] .chat-widget__conv-item,
-html[data-theme="dark"] .chat-widget__header,
-html[data-theme="dark"] .chat-widget__body,
-html[data-theme="dark"] .chat-widget__conversations,
-html[data-theme="dark"] .chat-widget__messages,
-html[data-theme="dark"] .chat-widget__composer {
-	background-color: #18181B !important;
-	color: #F9F8F5 !important;
-	border-color: rgba(255, 255, 255, 0.12) !important;
+html[data-theme="dark"] .summary-timeline__content {
+	background-color: #1C1C22 !important;
+	color: #FFFFFF !important;
+	border: 1px solid rgba(255, 255, 255, 0.18) !important;
 }
 
-html[data-theme="dark"] .chat-widget__conv-item:hover {
-	background-color: #27272A !important;
+/* Universal Avatar Letter & Badge Styling in Dark Mode */
+html[data-theme="dark"] .project-card__owner-avatar,
+html[data-theme="dark"] .project-detail__owner-avatar,
+html[data-theme="dark"] .project-detail__team-avatar,
+html[data-theme="dark"] .workspace-member__avatar,
+html[data-theme="dark"] .workspace-chat__avatar,
+html[data-theme="dark"] .browse-people__avatar {
+	background-color: #FFFFFF !important;
+	color: #08080a !important;
+	border: none !important;
 }
 
-html[data-theme="dark"] .chat-widget__message.them .chat-widget__message-content {
-	background-color: #27272A !important;
-	color: #F9F8F5 !important;
-	border-color: rgba(255, 255, 255, 0.12) !important;
+html[data-theme="dark"] .project-card__owner-initial,
+html[data-theme="dark"] .project-detail__owner-initial,
+html[data-theme="dark"] .project-detail__team-initial,
+html[data-theme="dark"] .workspace-member__avatar span,
+html[data-theme="dark"] .workspace-chat__avatar {
+	color: #08080a !important;
 }
 
 /* Button Variants in Dark Mode */
 html[data-theme="dark"] .pub-btn--outline,
 html[data-theme="dark"] .btn-outline {
-	color: #F9F8F5 !important;
-	border-color: rgba(255, 255, 255, 0.2) !important;
+	color: #FFFFFF !important;
+	border-color: rgba(255, 255, 255, 0.25) !important;
 	background: transparent !important;
 }
 
 html[data-theme="dark"] .pub-btn--outline:hover,
 html[data-theme="dark"] .btn-outline:hover {
-	background-color: #27272A !important;
-	border-color: #F9F8F5 !important;
+	background-color: #2A2A34 !important;
+	border-color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .pub-btn--windows {
+	background-color: #FFFFFF !important;
+	color: #0A0A0C !important;
+	border-color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .pub-btn--windows:hover {
+	background-color: #FFFFFF !important;
+	color: #0A0A0C !important;
+	border-color: #FFFFFF !important;
+	opacity: 0.9;
 }
 
 html[data-theme="dark"] .navbar {
-	background: rgba(9, 9, 11, 0.92) !important;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+	background: rgba(8, 8, 10, 0.45) !important;
+	backdrop-filter: blur(24px) saturate(190%) !important;
+	-webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+	border-bottom: none !important;
+	box-shadow: none !important;
 }
 
 html[data-theme="dark"] .navbar.is-scrolled {
-	background: rgba(9, 9, 11, 0.98) !important;
+	background: rgba(8, 8, 10, 0.65) !important;
+	backdrop-filter: blur(24px) saturate(190%) !important;
+	-webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+	border-bottom: none !important;
+	box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5) !important;
 }
 
 html[data-theme="dark"] .navbar__brand-text {
-	color: #F9F8F5 !important;
+	color: #FFFFFF !important;
 }
 
 html[data-theme="dark"] .navbar__link {
@@ -239,13 +232,14 @@ html[data-theme="dark"] .navbar__link {
 }
 
 html[data-theme="dark"] .navbar__link:hover {
-	color: #F9F8F5 !important;
-	background: #27272A !important;
+	color: #FFFFFF !important;
+	background: rgba(255, 255, 255, 0.08) !important;
 }
 
 html[data-theme="dark"] .navbar__link.is-active {
-	background: #F9F8F5 !important;
-	color: #09090B !important;
+	background: #27272A !important;
+	color: #FFFFFF !important;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
 }
 
 html[data-theme="dark"] .navbar__cta-btn {
@@ -256,6 +250,18 @@ html[data-theme="dark"] .navbar__cta-btn {
 
 html[data-theme="dark"] .navbar__cta-btn:hover {
 	background: #E4E4E7 !important;
+	border-color: #E4E4E7 !important;
+}
+
+html[data-theme="dark"] .dashboard-header__btn {
+	background: #FFFFFF !important;
+	color: #000000 !important;
+	border-color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .dashboard-header__btn:hover {
+	background: #E4E4E7 !important;
+	color: #333333 !important;
 	border-color: #E4E4E7 !important;
 }
 
@@ -270,6 +276,17 @@ html[data-theme="dark"] .spinner {
 
 html {
 	scroll-behavior: smooth;
+	text-rendering: optimizeLegibility;
+}
+
+::selection {
+	background: #121214;
+	color: #ffffff;
+}
+
+html[data-theme="dark"] ::selection {
+	background: #ffffff;
+	color: #08080a;
 }
 
 body {
@@ -280,6 +297,7 @@ body {
 	color: var(--text-main);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
 	font-size: 15px;
 	line-height: 1.6;
 }
@@ -362,17 +380,34 @@ select option {
 }
 
 /* Minimalist sleek scrollbar */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(18, 18, 20, 0.25) transparent;
+}
+
+html[data-theme="dark"] * {
+	scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
 ::-webkit-scrollbar {
 	width: 6px;
 	height: 6px;
 	background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-	background: rgba(18, 18, 20, 0.2);
-	border-radius: 3px;
+	background: rgba(18, 18, 20, 0.22);
+	border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
 	background: rgba(18, 18, 20, 0.4);
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.22);
+	border-radius: 999px;
+}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.4);
 }
 
 /* Focus ring */
@@ -420,18 +455,18 @@ select option {
 	gap: 10px;
 	padding: 10px 22px;
 	border-radius: 999px;
-	background: var(--color-text-dark);
-	color: #ffffff;
+	background: var(--btn-primary-bg);
+	color: var(--btn-primary-text);
 	font-size: 14px;
 	font-weight: 600;
 	transition: all 0.2s ease;
-	border: 1px solid var(--color-text-dark);
+	border: 1px solid var(--btn-primary-bg);
 }
 
 .dashboard-header__btn:hover {
-	background: #33333A;
-	border-color: #33333A;
-	color: #ffffff;
+	background: var(--btn-primary-hover-bg);
+	border-color: var(--btn-primary-hover-bg);
+	color: var(--btn-primary-text);
 }
 
 .dashboard-layout {
@@ -503,8 +538,8 @@ select option {
 }
 
 .dashboard-sidebar__tab.is-active {
-	background: var(--color-text-dark);
-	color: #ffffff;
+	background: var(--btn-primary-bg);
+	color: var(--btn-primary-text);
 	font-weight: 700;
 }
 
@@ -559,9 +594,9 @@ select option {
 }
 
 .dashboard-pagination__nav-btn:hover {
-	background: var(--color-text-dark);
-	color: #ffffff;
-	border-color: var(--color-text-dark);
+	background: var(--btn-primary-bg);
+	color: var(--btn-primary-text);
+	border-color: var(--btn-primary-bg);
 }
 
 .dashboard-pagination__nav-btn.is-disabled {
@@ -600,7 +635,156 @@ select option {
 }
 
 .dashboard-pagination__page-btn.is-active {
-	background: var(--color-text-dark);
-	color: #ffffff;
+	background: var(--btn-primary-bg);
+	color: var(--btn-primary-text);
 }
 
+/* Universal Elevated Box Shadow and Border Removal for All Cards and Boxes Across All Pages */
+.project-card,
+.browse-people__card,
+.account__card,
+.apps-card,
+.project-detail__card-container,
+.edit-project__card,
+.create-project__card,
+.overview-card,
+.journey-card,
+.pub-chapter-block,
+.dashboard-sidebar__section,
+.modal__card,
+.chat-widget,
+.workspace-column,
+.task-card,
+.my-projects__card {
+	border: none !important;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+html[data-theme="dark"] .project-card,
+html[data-theme="dark"] .browse-people__card,
+html[data-theme="dark"] .account__card,
+html[data-theme="dark"] .apps-card,
+html[data-theme="dark"] .project-detail__card-container,
+html[data-theme="dark"] .edit-project__card,
+html[data-theme="dark"] .create-project__card,
+html[data-theme="dark"] .overview-card,
+html[data-theme="dark"] .journey-card,
+html[data-theme="dark"] .pub-chapter-block,
+html[data-theme="dark"] .dashboard-sidebar__section,
+html[data-theme="dark"] .modal__card,
+html[data-theme="dark"] .chat-widget,
+html[data-theme="dark"] .workspace-column,
+html[data-theme="dark"] .task-card,
+html[data-theme="dark"] .my-projects__card {
+	border: none !important;
+	box-shadow: 0 6px 26px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Tactile Active Button Feedback (Instant physical response) */
+button:active:not(:disabled),
+.btn:active:not(.btn--disabled),
+.pub-btn:active,
+.navbar__cta-btn:active,
+.dashboard-header__btn:active,
+.dashboard-pagination__nav-btn:active:not(.is-disabled),
+.dashboard-pagination__page-btn:active,
+.create-project__button:active:not(.is-disabled),
+.edit-project__button:active:not(.is-disabled) {
+	transform: scale(0.985);
+	transition: transform 0.08s ease;
+}
+
+/* Static Back Buttons (No hover background/color shifts) */
+.btn-back:hover,
+.back-btn:hover,
+.edit-project__back:hover,
+.nav-back:hover {
+	background: transparent !important;
+	color: var(--color-text-dark) !important;
+	box-shadow: none !important;
+}
+
+/* Universal Avatar Circle Styling: Black BG, White Initial Text in Light Mode */
+div[class*="avatar"],
+span[class*="avatar"],
+.project-detail__owner-avatar,
+.project-detail__team-avatar,
+.browse-people__avatar,
+.account__avatar,
+.apps-card__avatar,
+.user-avatar,
+.project-card__owner-avatar,
+.chat-widget__avatar,
+.workspace-member__avatar,
+.workspace-chat__avatar,
+.chat-widget__header-avatar-placeholder,
+.chat-widget__conv-avatar-placeholder {
+	background: #000000 !important;
+	background-color: #000000 !important;
+	color: #ffffff !important;
+	border: none !important;
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+div[class*="avatar"] span,
+div[class*="avatar"] p,
+.project-detail__owner-initial,
+.project-detail__team-initial,
+.project-card__owner-initial,
+.workspace-member__avatar span,
+.workspace-chat__avatar span,
+.workspace-chat__avatar,
+.browse-people__avatar,
+.project-card__owner-avatar {
+	color: #ffffff !important;
+}
+
+html[data-theme="dark"] div[class*="avatar"],
+html[data-theme="dark"] span[class*="avatar"],
+html[data-theme="dark"] .project-detail__owner-avatar,
+html[data-theme="dark"] .project-detail__team-avatar,
+html[data-theme="dark"] .browse-people__avatar,
+html[data-theme="dark"] .account__avatar,
+html[data-theme="dark"] .apps-card__avatar,
+html[data-theme="dark"] .user-avatar,
+html[data-theme="dark"] .project-card__owner-avatar,
+html[data-theme="dark"] .chat-widget__avatar,
+html[data-theme="dark"] .workspace-member__avatar,
+html[data-theme="dark"] .workspace-chat__avatar,
+html[data-theme="dark"] .chat-widget__header-avatar-placeholder,
+html[data-theme="dark"] .chat-widget__conv-avatar-placeholder {
+	background: #ffffff !important;
+	background-color: #ffffff !important;
+	color: #08080a !important;
+	border: none !important;
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+html[data-theme="dark"] div[class*="avatar"] span,
+html[data-theme="dark"] div[class*="avatar"] p,
+html[data-theme="dark"] .project-detail__owner-initial,
+html[data-theme="dark"] .project-detail__team-initial,
+html[data-theme="dark"] .project-card__owner-initial,
+html[data-theme="dark"] .workspace-member__avatar span,
+html[data-theme="dark"] .workspace-chat__avatar span,
+html[data-theme="dark"] .workspace-chat__avatar,
+html[data-theme="dark"] .browse-people__avatar,
+html[data-theme="dark"] .project-card__owner-avatar {
+	color: #08080a !important;
+}
+
+/* Strict High-Priority Dark Mode Button Overrides: Start Project, Windows Download, View Cards */
+html[data-theme="dark"] .navbar__cta-btn:hover,
+html[data-theme="dark"] .pub-btn--windows:hover,
+html[data-theme="dark"] .project-card__action:hover,
+html[data-theme="dark"] .project-card__action--ghost:hover,
+html[data-theme="dark"] .project-card__action--primary:hover,
+html[data-theme="dark"] a.project-card__action:hover {
+	background: #08080a !important;
+	background-color: #08080a !important;
+	color: #ffffff !important;
+	border: 1px solid #ffffff !important;
+	border-color: #ffffff !important;
+}

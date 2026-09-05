@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import imgBlack from '../../assets/extra/img-black.jpg';
-import imgWhite from '../../assets/extra/img-white.jpg';
+import imgBlack from '../../assets/faces/black.png';
+import imgWhite from '../../assets/faces/white.png';
+import footerLight from '../../assets/logo/footer/light.jpg';
+import footerDark from '../../assets/logo/footer/dark.jpg';
 import './Landing.css';
 
 const CHAPTERS = [
@@ -54,7 +56,9 @@ export default function Landing() {
         setIntroState('hidden');
         return;
       }
-    } catch {}
+    } catch {
+      /* ignore storage access error */
+    }
 
     const fullText = 'PROJECTFORGE';
     let index = 0;
@@ -79,7 +83,9 @@ export default function Landing() {
           setIntroState('fading');
           try {
             sessionStorage.setItem('pf_intro_played', 'true');
-          } catch {}
+          } catch {
+            /* ignore storage access error */
+          }
           setTimeout(() => {
             setIntroState('hidden');
           }, 400);
@@ -179,7 +185,7 @@ export default function Landing() {
                   <Link to="/projects" className="pub-btn pub-btn--primary">
                     Explore Projects
                   </Link>
-                  <Link to="/register" className="pub-btn pub-btn--outline">
+                  <Link to="/register" className="pub-btn pub-btn--secondary">
                     Get Started
                   </Link>
                   <button 
@@ -212,21 +218,20 @@ export default function Landing() {
         {CHAPTERS.map((ch) => (
           <article key={ch.num} className="pub-chapter-block">
             <div className="pub-chapter-block__inner">
-              <div className="pub-chapter-block__header">
-                <span className="pub-chapter-block__category">{ch.category}</span>
-              </div>
-
               <div className="pub-chapter-block__content">
                 <h2 className="pub-chapter-block__title">{ch.title}</h2>
                 <p className="pub-chapter-block__desc">{ch.desc}</p>
 
                 <div className="pub-chapter-block__topics">
                   <span className="pub-chapter-block__topics-label">TOPICS COVERED:</span>
-                  <ul className="pub-chapter-block__topics-list">
+                  <div className="pub-chapter-block__topics-single-card">
                     {ch.topics.map((t, i) => (
-                      <li key={i}>{t}</li>
+                      <span key={i} className="pub-chapter-block__topic-item">
+                        <span>{t}</span>
+                        {i < ch.topics.length - 1 && <span className="pub-chapter-block__slash">/</span>}
+                      </span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
 
                 <div className="pub-chapter-block__action">
@@ -274,12 +279,11 @@ export default function Landing() {
       <footer className="pub-footer">
         <div className="pub-footer__container">
           <div className="pub-footer__brand">
-            <strong>PROJECTFORGE</strong>
-          </div>
-          <div className="pub-footer__links">
-            <Link to="/projects">Directory</Link>
-            <Link to="/learning-archive">Archive</Link>
-            <Link to="/register">Join Platform</Link>
+            <img 
+              src={isDarkMode ? footerDark : footerLight} 
+              alt="ProjectForge" 
+              className="pub-footer__logo-img"
+            />
           </div>
         </div>
       </footer>

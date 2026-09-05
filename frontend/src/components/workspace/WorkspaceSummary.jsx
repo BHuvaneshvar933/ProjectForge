@@ -232,7 +232,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
               {archiveData.achievements?.length > 0 ? (
                 <ul className="summary-achievements">
                   {archiveData.achievements.map((ach, idx) => (
-                    <li key={idx}>🏆 {ach}</li>
+                    <li key={idx}>{ach}</li>
                   ))}
                 </ul>
               ) : (
@@ -284,7 +284,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
                           style={{ padding: '6px 12px', fontSize: '12px' }}
                           onClick={() => setEndorseState({ open: true, user: u, text: "" })}
                         >
-                          🏅 Endorse
+                          Endorse
                         </button>
                       )}
                     </div>
@@ -300,16 +300,16 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
               <h2 className="summary-section__title">Deliverables</h2>
               <div className="summary-deliverables">
                 {archiveData.deliverables?.sourceCodeUrl && (
-                  <a href={archiveData.deliverables.sourceCodeUrl} target="_blank" rel="noreferrer" className="summary-btn">🔗 Source Code</a>
+                  <a href={archiveData.deliverables.sourceCodeUrl} target="_blank" rel="noreferrer" className="summary-btn">Source Code</a>
                 )}
                 {archiveData.deliverables?.demoVideoUrl && (
-                  <a href={archiveData.deliverables.demoVideoUrl} target="_blank" rel="noreferrer" className="summary-btn">▶️ Demo Video</a>
+                  <a href={archiveData.deliverables.demoVideoUrl} target="_blank" rel="noreferrer" className="summary-btn">Demo Video</a>
                 )}
                 {archiveData.deliverables?.reportUrl && (
-                  <a href={archiveData.deliverables.reportUrl} target="_blank" rel="noreferrer" className="summary-btn">📄 Project Report</a>
+                  <a href={archiveData.deliverables.reportUrl} target="_blank" rel="noreferrer" className="summary-btn">Project Report</a>
                 )}
                 {archiveData.deliverables?.slidesUrl && (
-                  <a href={archiveData.deliverables.slidesUrl} target="_blank" rel="noreferrer" className="summary-btn">📊 Presentation</a>
+                  <a href={archiveData.deliverables.slidesUrl} target="_blank" rel="noreferrer" className="summary-btn">Presentation</a>
                 )}
                 {!archiveData.deliverables?.sourceCodeUrl && !archiveData.deliverables?.demoVideoUrl && !archiveData.deliverables?.reportUrl && !archiveData.deliverables?.slidesUrl && (
                   <div className="summary-empty">No deliverables attached.</div>
@@ -321,10 +321,10 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
                   <h3 className="github-stats-title">GitHub Repository</h3>
                   <p className="github-stats-desc">{githubStats.description}</p>
                   <div className="github-stats-metrics">
-                    <span className="github-metric">⭐ {githubStats.stars}</span>
-                    <span className="github-metric">🍴 {githubStats.forks}</span>
-                    <span className="github-metric">⚠️ {githubStats.openIssues} Issues</span>
-                    {githubStats.language && <span className="github-metric">💻 {githubStats.language}</span>}
+                    <span className="github-metric">Stars: {githubStats.stars}</span>
+                    <span className="github-metric">Forks: {githubStats.forks}</span>
+                    <span className="github-metric">Issues: {githubStats.openIssues}</span>
+                    {githubStats.language && <span className="github-metric">Language: {githubStats.language}</span>}
                   </div>
                 </div>
               )}
@@ -390,7 +390,7 @@ export default function WorkspaceSummary({ project, tasks, team, me }) {
         confirmText="Send Endorsement"
       >
         <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "16px", fontSize: "14px" }}>
-          💡 <strong>Pro Tip:</strong> Write a short, professional recommendation for your teammate. Mention a specific technical skill or soft skill they demonstrated. This will be permanently visible on their public profile!
+          <strong>Pro Tip:</strong> Write a short, professional recommendation for your teammate. Mention a specific technical skill or soft skill they demonstrated. This will be permanently visible on their public profile!
         </p>
         <textarea
           value={endorseState.text}

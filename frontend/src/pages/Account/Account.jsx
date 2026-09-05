@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import Button from "../../components/common/Button";
 import Spinner from "../../components/common/Spinner";
+import PageHeader from "../../components/common/PageHeader";
 import { getMyProfile, updateMyProfile } from "../../api/userApi";
 
 import AccountProfile from "./components/AccountProfile";
@@ -199,43 +200,39 @@ export default function Account() {
   if (!user) {
     return (
       <div className="account">
-        <div className="account__header">
-          <div>
-            <h1 className="account__title">Account</h1>
-          </div>
-          <div className="account__actions">
+        <PageHeader
+          title="Account"
+          actions={
             <Button variant="outline" onClick={fetchProfile}>Refresh</Button>
-          </div>
-        </div>
+          }
+        />
       </div>
     );
   }
 
   return (
     <div className="account">
-      <div className="account__header">
-        <div>
-          <h1 className="account__title">Account</h1>
-          <p className="account__subtitle">
-            Update your profile details used for applications and team workspaces.
-          </p>
-        </div>
-        <div className="account__actions">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              if (isDirty && !window.confirm("You have unsaved changes. Discard them?")) return;
-              fetchProfile();
-            }}
-            disabled={saving}
-          >
-            Reset
-          </Button>
-          <Button variant="primary" onClick={onSave} loading={saving}>
-            Save Changes
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title="Account"
+        actions={
+          <>
+            <Button
+              variant="ghost"
+              className="btn-account-reset"
+              onClick={() => {
+                if (isDirty && !window.confirm("You have unsaved changes. Discard them?")) return;
+                fetchProfile();
+              }}
+              disabled={saving}
+            >
+              Reset
+            </Button>
+            <Button variant="primary" onClick={onSave} loading={saving}>
+              Save Changes
+            </Button>
+          </>
+        }
+      />
 
       <div className="account__grid">
         <AccountProfile form={form} setForm={setForm} />

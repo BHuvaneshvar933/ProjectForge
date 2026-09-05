@@ -59,11 +59,6 @@ export default function BrowseProjectsTab({
 
           {otherProjects.length === 0 && validRecommendations.length === 0 ? (
             <div className="browse-page__empty">
-              <div className="browse-page__empty-icon">
-                <svg className="browse-page__empty-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
               <p className="browse-page__empty-title">No projects found</p>
               <p className="browse-page__empty-subtitle">
                 {searchQuery ? `No projects match '${searchQuery}'` : 'Try adjusting your search or filters'}

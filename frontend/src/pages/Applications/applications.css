@@ -18,33 +18,44 @@
   border-radius: 12px;
   padding: 24px;
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  border: none !important;
+  box-shadow: none !important;
   min-width: 0;
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.apps-card__top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+.apps-card__header {
+  padding-bottom: 12px;
   margin-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 
 .apps-card__title {
   font-size: 18px;
   font-weight: 700;
   color: var(--color-text-dark);
-  margin-bottom: 6px;
+  margin: 0;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
 
 .apps-card__title a {
   color: inherit;
+}
+
+.apps-card__meta-section {
+  margin-bottom: 16px;
+}
+
+.apps-card__status-row {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
 }
 
 .apps-card__meta {
@@ -67,11 +78,33 @@
   justify-content: flex-end;
 }
 
-.apps-card__skills {
-  display: flex;
+.apps-card__skills-single-card {
+  display: inline-flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: 12px 0 0;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 16px !important;
+  background: var(--bg-page) !important;
+  border: none !important;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  margin-top: 14px;
+  max-width: 100%;
+}
+
+.apps-card__skill-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.apps-card__slash {
+  color: var(--color-text-muted);
+  font-weight: 400;
+  opacity: 0.6;
 }
 
 .apps-card__skills-more {
@@ -83,10 +116,11 @@
 .apps-card__message,
 .apps-card__rejection {
   margin-top: 14px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   border-radius: 8px;
-  background: var(--color-paper);
-  border: 1px solid var(--border-color);
+  background: var(--bg-page) !important;
+  border: none !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
 }
 
 .apps-card__message-label {
@@ -96,6 +130,18 @@
   margin-bottom: 4px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+html[data-theme="dark"] .apps-card__skills-single-card,
+html[data-theme="dark"] .apps-card__message,
+html[data-theme="dark"] .apps-card__rejection {
+  background: #141417 !important;
+  color: #e4e4e7 !important;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), inset 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .apps-card__slash {
+  color: #71717a !important;
 }
 
 .apps-card__message-text {
@@ -175,18 +221,18 @@
 .apps-empty__action {
   padding: 10px 22px;
   border-radius: 999px;
-  background: var(--color-text-dark);
-  color: #ffffff;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   font-size: 13px;
   font-weight: 600;
   transition: all 0.15s ease;
-  border: 1px solid var(--color-text-dark);
+  border: 1px solid var(--btn-primary-bg);
 }
 
 .apps-empty__action:hover {
-  background: #33333A;
-  border-color: #33333A;
-  color: #ffffff;
+  background: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-bg);
+  color: var(--btn-primary-text);
 }
 
 .apps-profile {
@@ -212,5 +258,34 @@
   font-size: 12px;
   font-weight: 600;
 }
+
+html[data-theme="dark"] .apps-empty__action {
+  background: #ffffff !important;
+  color: #08080a !important;
+  border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .apps-empty__action:hover {
+  background: #08080a !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .apps-role-chip {
+  background: #24242a;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .apps-textarea {
+  background: #1c1c22;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .apps-textarea:focus {
+  border-color: #ffffff;
+}
+
 
 

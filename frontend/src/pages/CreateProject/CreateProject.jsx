@@ -4,6 +4,7 @@ import { createProject } from '../../api/projectApi';
 import ProjectBasicInfo from '../../components/forms/ProjectBasicInfo';
 import ProjectRequirements from '../../components/forms/ProjectRequirements';
 import ProjectReview from '../../components/forms/ProjectReview';
+import PageHeader from '../../components/common/PageHeader';
 import { toast } from 'react-toastify';
 import './CreateProject.css';
 
@@ -136,10 +137,7 @@ export default function CreateProject() {
 
   return (
     <div className="create-project">
-      <div className="create-project__header">
-        <h1 className="create-project__title">Create Project</h1>
-        <p className="create-project__subtitle">Fill in the details to start your journey</p>
-      </div>
+      <PageHeader title="Create Project" />
       
       <div className="create-project__stepper">
         <div className="create-project__stepper-line" />

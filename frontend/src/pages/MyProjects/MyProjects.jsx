@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getJoinedProjects, getMyProjects } from '../../api/projectApi';
 import ProjectCard from '../../components/common/ProjectCard';
 import DashboardPagination from '../../components/common/DashboardPagination';
+import PageHeader from '../../components/common/PageHeader';
 import { toast } from 'react-toastify';
 import './MyProjects.css';
 
@@ -111,22 +112,21 @@ export default function MyProjects() {
 
   return (
     <div className="dashboard-page">
-      <div className="dashboard-header">
-        <div>
-          <h1 className="dashboard-title">My Projects</h1>
-          <p className="dashboard-subtitle">Manage projects you own and contribute to</p>
-        </div>
-        {mode === 'owned' && (
-          <Link to="/projects/create">
-            <button className="dashboard-header__btn">
-              <svg style={{width: 16, height: 16}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              New Project
-            </button>
-          </Link>
-        )}
-      </div>
+      <PageHeader
+        title="My Projects"
+        actions={
+          mode === 'owned' && (
+            <Link to="/projects/create">
+              <button className="dashboard-header__btn">
+                <svg style={{width: 16, height: 16}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                New Project
+              </button>
+            </Link>
+          )
+        }
+      />
 
       <div className="dashboard-layout">
         <aside className="dashboard-sidebar">

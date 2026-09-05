@@ -10,8 +10,11 @@ export default function ProjectTeam({ project, team, openRoles }) {
           <div className="project-detail__owner-avatar">
             <span className="project-detail__owner-initial">{project.owner?.name?.[0] || 'U'}</span>
           </div>
-          <div>
-            <div className="project-detail__owner-name">{project.owner?.name || 'Unknown'}</div>
+          <div className="project-detail__owner-info">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span className="project-detail__owner-name">{project.owner?.name || 'Unknown'}</span>
+              <Badge variant="owner">owner</Badge>
+            </div>
             <div className="project-detail__owner-bio">{project.owner?.bio || 'No bio'}</div>
           </div>
         </div>
@@ -30,12 +33,12 @@ export default function ProjectTeam({ project, team, openRoles }) {
                   <div className="project-detail__team-avatar">
                     <span className="project-detail__team-initial">{member.name?.[0] || 'U'}</span>
                   </div>
-                  <div>
-                    <div className="project-detail__team-name">{member.name || 'Unknown'}</div>
-                    <div className="project-detail__team-role">{member.projectRole || 'Member'}</div>
+                  <div className="project-detail__team-meta">
+                    <span className="project-detail__team-name">{member.name || 'Unknown'}</span>
+                    <span className="project-detail__team-role">• {member.projectRole || 'Member'}</span>
+                    <Badge variant={member.role}>{member.role || 'member'}</Badge>
                   </div>
                 </div>
-                <Badge variant={member.role}>{member.role || 'member'}</Badge>
               </div>
             </div>
           ))}

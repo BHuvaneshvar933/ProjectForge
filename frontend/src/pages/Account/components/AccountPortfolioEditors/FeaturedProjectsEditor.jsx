@@ -23,7 +23,7 @@ export default function FeaturedProjectsEditor({ form, setForm }) {
         // Deduplicate
         const unique = Array.from(new Map(combined.map(p => [p._id, p])).values());
         setEligibleProjects(unique);
-      } catch (e) {
+      } catch {
         toast.error("Failed to load projects for featuring");
       } finally {
         setLoading(false);
