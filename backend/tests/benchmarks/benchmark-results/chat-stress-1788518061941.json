@@ -1,0 +1,107 @@
+{
+  "environment": {
+    "node": "v20.19.0",
+    "os": "Windows_NT",
+    "cpu": "Intel(R) Core(TM) i5-10200H CPU @ 2.40GHz",
+    "cores": 8,
+    "ram": "8354799616.00 MB"
+  },
+  "configuration": {
+    "mode": "stress-burst",
+    "msgPerUser": 10,
+    "ramp": [
+      10,
+      25,
+      50,
+      100
+    ]
+  },
+  "stages": [
+    {
+      "users": 10,
+      "totalOperations": 100,
+      "success": 100,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 201.48,
+      "p50": 447.53,
+      "p95": 486.46,
+      "p99": 490.84,
+      "memory": {
+        "rss": 102023168,
+        "heapUsed": 40118656
+      },
+      "eventLoop": {
+        "p99": 40.370175
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 25,
+      "totalOperations": 250,
+      "success": 250,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 245.9,
+      "p50": 890.57,
+      "p95": 1003.18,
+      "p99": 1009.38,
+      "memory": {
+        "rss": 115322880,
+        "heapUsed": 47703568
+      },
+      "eventLoop": {
+        "p99": 66.879487
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 50,
+      "totalOperations": 500,
+      "success": 500,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 294.17,
+      "p50": 1594.14,
+      "p95": 1684.71,
+      "p99": 1690.84,
+      "memory": {
+        "rss": 133201920,
+        "heapUsed": 51300664
+      },
+      "eventLoop": {
+        "p99": 92.012543
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 100,
+      "totalOperations": 1000,
+      "success": 1000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 368.72,
+      "p50": 2408.58,
+      "p95": 2678.68,
+      "p99": 2690.98,
+      "memory": {
+        "rss": 162394112,
+        "heapUsed": 76952016
+      },
+      "eventLoop": {
+        "p99": 107.479039
+      },
+      "status": "degraded",
+      "reason": "p95 >= 2s"
+    }
+  ],
+  "summary": {
+    "highestSuccessfulStage": 50,
+    "peakObservedThroughput": 368.7209042334469,
+    "saturationStage": null,
+    "failureStage": null
+  }
+}

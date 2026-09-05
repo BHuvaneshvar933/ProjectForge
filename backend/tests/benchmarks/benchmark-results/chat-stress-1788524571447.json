@@ -1,0 +1,153 @@
+{
+  "environment": {
+    "node": "v20.19.0",
+    "os": "Windows_NT",
+    "cpu": "Intel(R) Core(TM) i5-10200H CPU @ 2.40GHz",
+    "cores": 8,
+    "ram": "8354799616.00 MB"
+  },
+  "configuration": {
+    "mode": "stress-burst",
+    "msgPerUser": 10,
+    "ramp": [
+      10,
+      25,
+      50,
+      100,
+      500,
+      1000,
+      1500,
+      2000,
+      2500,
+      3000
+    ]
+  },
+  "stages": [
+    {
+      "users": 10,
+      "totalOperations": 100,
+      "success": 100,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 195.43,
+      "p50": 456.38,
+      "p95": 501.94,
+      "p99": 505.99,
+      "memory": {
+        "rss": 98570240,
+        "heapUsed": 39372368
+      },
+      "eventLoop": {
+        "p99": 47.677439
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 25,
+      "totalOperations": 250,
+      "success": 250,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 168.46,
+      "p50": 1281.96,
+      "p95": 1455.76,
+      "p99": 1471.02,
+      "memory": {
+        "rss": 109809664,
+        "heapUsed": 44600016
+      },
+      "eventLoop": {
+        "p99": 112.984063
+      },
+      "status": "saturated",
+      "reason": "Throughput plateaued while latency exploded"
+    },
+    {
+      "users": 50,
+      "totalOperations": 500,
+      "success": 500,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 272.37,
+      "p50": 1719.7,
+      "p95": 1809.66,
+      "p99": 1817.3,
+      "memory": {
+        "rss": 127655936,
+        "heapUsed": 50584856
+      },
+      "eventLoop": {
+        "p99": 148.897791
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 100,
+      "totalOperations": 1000,
+      "success": 1000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 332.97,
+      "p50": 2680.58,
+      "p95": 2972.05,
+      "p99": 2987.68,
+      "memory": {
+        "rss": 173293568,
+        "heapUsed": 52033008
+      },
+      "eventLoop": {
+        "p99": 225.181695
+      },
+      "status": "degraded",
+      "reason": "p95 >= 2s"
+    },
+    {
+      "users": 500,
+      "totalOperations": 5000,
+      "success": 5000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 442.13,
+      "p50": 9833.34,
+      "p95": 11118.51,
+      "p99": 11226.74,
+      "memory": {
+        "rss": 395071488,
+        "heapUsed": 303396472
+      },
+      "eventLoop": {
+        "p99": 146.538495
+      },
+      "status": "saturated",
+      "reason": "p95 >= 10s"
+    },
+    {
+      "users": 1000,
+      "totalOperations": 10000,
+      "success": 10000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 439.96,
+      "p50": 20437.71,
+      "p95": 22399.25,
+      "p99": 22578.53,
+      "memory": {
+        "rss": 695427072,
+        "heapUsed": 294236544
+      },
+      "eventLoop": {
+        "p99": 141.688831
+      },
+      "status": "saturated",
+      "reason": "p95 >= 10s"
+    }
+  ],
+  "summary": {
+    "highestSuccessfulStage": 50,
+    "peakObservedThroughput": 442.13119047554625,
+    "saturationStage": 1000,
+    "failureStage": null
+  }
+}

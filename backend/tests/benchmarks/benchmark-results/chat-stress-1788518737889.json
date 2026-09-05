@@ -1,0 +1,131 @@
+{
+  "environment": {
+    "node": "v20.19.0",
+    "os": "Windows_NT",
+    "cpu": "Intel(R) Core(TM) i5-10200H CPU @ 2.40GHz",
+    "cores": 8,
+    "ram": "8354799616.00 MB"
+  },
+  "configuration": {
+    "mode": "stress-burst",
+    "msgPerUser": 10,
+    "ramp": [
+      10,
+      25,
+      50,
+      100,
+      500,
+      1000,
+      10000,
+      50000
+    ]
+  },
+  "stages": [
+    {
+      "users": 10,
+      "totalOperations": 100,
+      "success": 100,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 214.06,
+      "p50": 423.34,
+      "p95": 458.71,
+      "p99": 462.37,
+      "memory": {
+        "rss": 101732352,
+        "heapUsed": 40281176
+      },
+      "eventLoop": {
+        "p99": 43.974655
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 25,
+      "totalOperations": 250,
+      "success": 250,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 257.65,
+      "p50": 841.79,
+      "p95": 956.63,
+      "p99": 962.29,
+      "memory": {
+        "rss": 114216960,
+        "heapUsed": 46124784
+      },
+      "eventLoop": {
+        "p99": 73.007103
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 50,
+      "totalOperations": 500,
+      "success": 500,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 298.5,
+      "p50": 1567.59,
+      "p95": 1655.84,
+      "p99": 1661.91,
+      "memory": {
+        "rss": 136933376,
+        "heapUsed": 41447400
+      },
+      "eventLoop": {
+        "p99": 92.143615
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 100,
+      "totalOperations": 1000,
+      "success": 1000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 404.99,
+      "p50": 2070.24,
+      "p95": 2432.48,
+      "p99": 2450.92,
+      "memory": {
+        "rss": 169017344,
+        "heapUsed": 96254552
+      },
+      "eventLoop": {
+        "p99": 113.246207
+      },
+      "status": "degraded",
+      "reason": "p95 >= 2s"
+    },
+    {
+      "users": 500,
+      "totalOperations": 5000,
+      "success": 5000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 471.54,
+      "p50": 9489.84,
+      "p95": 10423.74,
+      "p99": 10531.78,
+      "memory": {
+        "rss": 426561536,
+        "heapUsed": 67670888
+      },
+      "eventLoop": {
+        "p99": 91.553791
+      },
+      "status": "saturated",
+      "reason": "p95 >= 10s"
+    }
+  ],
+  "summary": {
+    "highestSuccessfulStage": 50,
+    "peakObservedThroughput": 471.5385507898274,
+    "saturationStage": 500,
+    "failureStage": null
+  }
+}

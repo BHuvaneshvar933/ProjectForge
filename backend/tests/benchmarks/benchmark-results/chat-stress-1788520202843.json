@@ -1,0 +1,108 @@
+{
+  "environment": {
+    "node": "v20.19.0",
+    "os": "Windows_NT",
+    "cpu": "Intel(R) Core(TM) i5-10200H CPU @ 2.40GHz",
+    "cores": 8,
+    "ram": "8354799616.00 MB"
+  },
+  "configuration": {
+    "mode": "stress-burst",
+    "msgPerUser": 10,
+    "ramp": [
+      10,
+      25,
+      50,
+      100,
+      500
+    ]
+  },
+  "stages": [
+    {
+      "users": 10,
+      "totalOperations": 100,
+      "success": 100,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 112.77,
+      "p50": 808.97,
+      "p95": 872.8,
+      "p99": 878.45,
+      "memory": {
+        "rss": 106766336,
+        "heapUsed": 39152568
+      },
+      "eventLoop": {
+        "p99": 62.357503
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 25,
+      "totalOperations": 250,
+      "success": 250,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 125.22,
+      "p50": 1826.84,
+      "p95": 1976.2,
+      "p99": 1980.54,
+      "memory": {
+        "rss": 122540032,
+        "heapUsed": 43351056
+      },
+      "eventLoop": {
+        "p99": 145.620991
+      },
+      "status": "healthy",
+      "reason": ""
+    },
+    {
+      "users": 50,
+      "totalOperations": 500,
+      "success": 500,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 178.55,
+      "p50": 2566.67,
+      "p95": 2762.66,
+      "p99": 2772.77,
+      "memory": {
+        "rss": 145633280,
+        "heapUsed": 53556976
+      },
+      "eventLoop": {
+        "p99": 164.364287
+      },
+      "status": "degraded",
+      "reason": "p95 >= 2s"
+    },
+    {
+      "users": 100,
+      "totalOperations": 1000,
+      "success": 1000,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 184.33,
+      "p50": 4998.76,
+      "p95": 5375.58,
+      "p99": 5396.21,
+      "memory": {
+        "rss": 191045632,
+        "heapUsed": 111974936
+      },
+      "eventLoop": {
+        "p99": 219.152383
+      },
+      "status": "saturated",
+      "reason": "Throughput plateaued while latency exploded"
+    }
+  ],
+  "summary": {
+    "highestSuccessfulStage": 25,
+    "peakObservedThroughput": 184.3292862793998,
+    "saturationStage": 100,
+    "failureStage": null
+  }
+}

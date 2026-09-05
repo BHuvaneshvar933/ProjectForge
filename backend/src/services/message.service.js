@@ -8,12 +8,14 @@ const ensureProjectMember = async ({ projectId, userId }) => {
     userId,
     status: "active",
     isDeleted: false,
-  }).select("_id");
+  }).select("_id").lean();
 
   return Boolean(membership);
 };
 
 export const createMessage = async ({ projectId, userId, content }) => {
+  const tStart = performance.now();
+
   if (!mongoose.Types.ObjectId.isValid(projectId)) {
     throw new Error("Invalid projectId");
   }
@@ -31,10 +33,14 @@ export const createMessage = async ({ projectId, userId, content }) => {
     throw new Error("Message too long");
   }
 
+  const tVal = performance.now();
+
   const ok = await ensureProjectMember({ projectId, userId });
   if (!ok) {
     throw new Error("Access denied");
   }
+
+  const tAuth = performance.now();
 
   const message = await Message.create({
     projectId,
@@ -43,7 +49,26 @@ export const createMessage = async ({ projectId, userId, content }) => {
     messageType: "text",
   });
 
+  const tInsert = performance.now();
+
   await message.populate("senderId", "name email avatar");
+
+  const tPopulate = performance.now();
+
+  if (process.env.PROFILE_CHAT === 'true') {
+    global.chatProfileStats = global.chatProfileStats || { count: 0, val: 0, auth: 0, insert: 0, populate: 0 };
+    global.chatProfileStats.count++;
+    global.chatProfileStats.val += (tVal - tStart);
+    global.chatProfileStats.auth += (tAuth - tVal);
+    global.chatProfileStats.insert += (tInsert - tAuth);
+    global.chatProfileStats.populate += (tPopulate - tInsert);
+    
+    // Log every 100 messages to avoid console bottleneck
+    if (global.chatProfileStats.count % 100 === 0) {
+       console.log(`[PROFILE ${global.chatProfileStats.count}] Avg (ms) -> Val: ${(global.chatProfileStats.val / global.chatProfileStats.count).toFixed(2)} | Auth: ${(global.chatProfileStats.auth / global.chatProfileStats.count).toFixed(2)} | Insert: ${(global.chatProfileStats.insert / global.chatProfileStats.count).toFixed(2)} | Populate: ${(global.chatProfileStats.populate / global.chatProfileStats.count).toFixed(2)}`);
+    }
+  }
+
   return message;
 };
 

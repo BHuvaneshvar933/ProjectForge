@@ -8,5 +8,6 @@ export default defineConfig({
       // But actually, the easiest way to load ALL variables is to set envPrefix to ['']
     },
     envPrefix: [''],
+    fileParallelism: false,
   },
 });

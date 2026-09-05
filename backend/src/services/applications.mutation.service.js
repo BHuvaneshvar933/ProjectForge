@@ -8,6 +8,7 @@ import { calculateMatchScore, normalizeProjectRole, pickAssignedRole } from "./a
 import { getIO } from "../sockets/socket.js";
 
 export const applyToProject = async (userId, data) => {
+  const tStart = performance.now();
   const { projectId, message = "" } = data;
 
   // Validate User
@@ -38,6 +39,8 @@ export const applyToProject = async (userId, data) => {
   if (project.owner.toString() === userId.toString()) {
     throw new Error("Cannot apply to your own project");
   }
+  
+  const tValidation = performance.now();
 
   // Check active team membership
   const existingMember = await Team.findOne({
@@ -63,6 +66,8 @@ export const applyToProject = async (userId, data) => {
   }
 
   const matchScore = calculateMatchScore(user, project);
+  
+  const tAuthLookup = performance.now();
 
   let application;
   if (existingApplication) {
@@ -92,6 +97,8 @@ export const applyToProject = async (userId, data) => {
     });
   }
 
+  const tInsert = performance.now();
+
   // Update user stats
   user.stats.applicationsSent += 1;
   await user.save();
@@ -102,6 +109,18 @@ export const applyToProject = async (userId, data) => {
   message: `${user.name} applied to ${project.title}`,
   actionUrl: `/projects/${project._id}/applications`
 });
+
+  const tEnd = performance.now();
+  
+  if (process.env.BENCHMARK_MODE === "true") {
+    // Expose timings on the returned object just for benchmarking
+    application._benchmarkTimings = {
+      valAuth: tValidation - tStart,
+      lookup: tAuthLookup - tValidation,
+      insert: tInsert - tAuthLookup,
+      statsNotify: tEnd - tInsert
+    };
+  }
 
   return application;
 };

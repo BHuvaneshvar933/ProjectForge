@@ -1,0 +1,50 @@
+{
+  "environment": {
+    "node": "v20.19.0",
+    "os": "Windows_NT",
+    "cpu": "Intel(R) Core(TM) i5-10200H CPU @ 2.40GHz",
+    "cores": 8,
+    "ram": "8354799616.00 MB"
+  },
+  "configuration": {
+    "mode": "stress-burst",
+    "msgPerUser": 10,
+    "ramp": [
+      10,
+      25,
+      50,
+      100,
+      500,
+      1000,
+      5000
+    ]
+  },
+  "stages": [
+    {
+      "users": 10,
+      "totalOperations": 100,
+      "success": 100,
+      "failed": 0,
+      "missing": 0,
+      "throughput": 157.75,
+      "p50": 579.94,
+      "p95": 621.58,
+      "p99": 626.37,
+      "memory": {
+        "rss": 104960000,
+        "heapUsed": 39598600
+      },
+      "eventLoop": {
+        "p99": 53.149695
+      },
+      "status": "healthy",
+      "reason": ""
+    }
+  ],
+  "summary": {
+    "highestSuccessfulStage": 10,
+    "peakObservedThroughput": 157.7476164335157,
+    "saturationStage": null,
+    "failureStage": null
+  }
+}
