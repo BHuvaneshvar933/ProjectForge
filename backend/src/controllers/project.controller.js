@@ -37,7 +37,11 @@ export const getProject = async (req, res, next) => {
 
 export const browseProjects = async (req, res, next) => {
   try {
-    const result = await projectService.browseProjects(req.query);
+    const query = { ...req.query };
+    if (req.user) {
+      query.userId = req.user._id;
+    }
+    const result = await projectService.browseProjects(query);
 
     res.status(200).json({
       success: true,
