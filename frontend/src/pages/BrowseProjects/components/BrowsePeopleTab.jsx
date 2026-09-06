@@ -82,13 +82,13 @@ export default function BrowsePeopleTab({
         <>
           <div className="browse-people__invite-card">
             <Input
-              label="Suggested Role"
+              label="Suggested Role *"
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value)}
-              placeholder={selectedProject?.openRoles?.[0] || 'Example: Frontend Developer'}
+              placeholder="e.g. Backend developer"
             />
             <div className="browse-people__field">
-              <label className="browse-people__label">Invite note</label>
+              <label className="browse-people__label">Invite note *</label>
               <textarea
                 className="browse-people__note"
                 rows={3}

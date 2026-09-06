@@ -5,10 +5,10 @@ import Project from "../models/project.model.js";
 import User from "../models/user.model.js";
 import Application from "../models/application.model.js";
 
-// Owner starts a conversation with an applicant
+// Owner or Applicant starts a conversation
 export const startConversation = async (req, res, next) => {
   try {
-    const ownerId = req.user._id;
+    const userId = req.user._id;
     const { applicationId } = req.body;
 
     if (!applicationId) {
@@ -23,14 +23,17 @@ export const startConversation = async (req, res, next) => {
     const projectId = application.projectId;
     const applicantId = application.applicantId;
 
-    // Verify the user is the owner of the project
+    // Verify the user is the owner of the project or the applicant
     const project = await Project.findById(projectId);
     if (!project) {
       return res.status(404).json({ success: false, message: "Project not found" });
     }
 
-    if (String(project.owner) !== String(ownerId)) {
-      return res.status(403).json({ success: false, message: "Only the project owner can initiate direct messages with applicants" });
+    const isOwner = String(project.owner) === String(userId);
+    const isApplicant = String(applicantId) === String(userId);
+
+    if (!isOwner && !isApplicant) {
+      return res.status(403).json({ success: false, message: "Only the project owner or the applicant can initiate direct messages" });
     }
 
     // Find or create conversation for this specific application
@@ -40,7 +43,7 @@ export const startConversation = async (req, res, next) => {
       conversation = await Conversation.create({
         applicationId,
         projectId,
-        ownerId,
+        ownerId: project.owner, // Always set ownerId to the project's owner
         applicantId
       });
     }

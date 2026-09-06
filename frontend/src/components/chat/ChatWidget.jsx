@@ -175,8 +175,8 @@ export default function ChatWidget() {
     const diffHours = diffMs / (1000 * 60 * 60);
 
     if (diffHours < 24 && date.getDate() === now.getDate()) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } else if (diffHours < 48) {
+      return "Today";
+    } else if (diffHours < 48 && date.getDate() === new Date(now.getTime() - 86400000).getDate()) {
       return "Yesterday";
     }
     return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
@@ -356,12 +356,13 @@ export default function ChatWidget() {
                     const senderStr = String(msg.senderId?._id || msg.senderId);
                     const myIdStr = String(user._id);
                     const isMe = senderStr === myIdStr;
-                    const showTime = idx === messages.length - 1 || 
-                      new Date(msg.createdAt) - new Date(messages[idx - 1]?.createdAt) > 5 * 60 * 1000;
                     
+                    const prevMsg = idx > 0 ? messages[idx - 1] : null;
+                    const isNewDay = !prevMsg || new Date(msg.createdAt).toLocaleDateString() !== new Date(prevMsg.createdAt).toLocaleDateString();
+
                     return (
                       <div key={msg._id || idx} className={`chat-widget__message-group ${isMe ? "me" : "them"}`}>
-                        {showTime && msg.createdAt && (
+                        {isNewDay && msg.createdAt && (
                           <div className="chat-widget__time-divider">
                             {formatTime(msg.createdAt)}
                           </div>

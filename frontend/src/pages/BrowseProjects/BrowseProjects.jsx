@@ -153,13 +153,21 @@ export default function BrowseProjects() {
   const sendInvite = async (userId) => {
     if (!selectedProjectId) return;
     if (!userId) return;
+    if (!inviteRole?.trim()) {
+      toast.error('Suggested Role is required');
+      return;
+    }
+    if (!inviteMessage?.trim()) {
+      toast.error('Invite note is required');
+      return;
+    }
     setInviteBusyId(userId);
     try {
       await inviteUserToProject({
         projectId: selectedProjectId,
         userId,
-        invitedRole: inviteRole || undefined,
-        message: inviteMessage || undefined,
+        invitedRole: inviteRole.trim(),
+        message: inviteMessage.trim(),
       });
       setInvitedUserIds(prev => [...prev, userId]);
       toast.success('Invitation sent');
@@ -190,6 +198,8 @@ export default function BrowseProjects() {
     const socket = getSocket();
     if (!socket) return;
     
+    socket.emit("join-user");
+
     const handleApplicationUpdated = (updatedApp) => {
       // If an application gets rejected or withdrawn, allow inviting again
       if (updatedApp.status === 'rejected' || updatedApp.status === 'withdrawn') {

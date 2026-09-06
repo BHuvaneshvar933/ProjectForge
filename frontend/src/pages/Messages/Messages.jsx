@@ -4,6 +4,7 @@ import { getConversations, getDirectMessages } from "../../api/messageApi";
 import { getMyProfile } from "../../api/userApi";
 import { getSocket } from "../../realtime/socketClient";
 import Spinner from "../../components/common/Spinner";
+import PageHeader from "../../components/common/PageHeader";
 import "./Messages.css";
 
 export default function Messages() {
@@ -198,8 +199,9 @@ export default function Messages() {
 
   if (!user) {
     return (
-      <div className="messages-layout">
-        <div style={{ margin: "auto" }}>
+      <div className="dashboard-page">
+        <PageHeader title="Messages" />
+        <div className="messages-layout" style={{ justifyContent: 'center', alignItems: 'center' }}>
           <Spinner size="lg" />
         </div>
       </div>
@@ -207,22 +209,25 @@ export default function Messages() {
   }
 
   return (
-    <div className="messages-layout">
-      {/* Sidebar */}
-      <aside className={`messages-sidebar ${activeConvId ? 'hide-on-mobile' : ''}`}>
+    <div className="dashboard-page">
+      <PageHeader title="Messages" />
+      <div className="messages-layout">
+        {/* Sidebar */}
+        <aside className={`messages-sidebar ${activeConvId ? 'hide-on-mobile' : ''}`}>
         <div className="messages-sidebar-header">
-          <h2>Messages</h2>
           
-          <div className="messages-tabs" style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+          <div className="dashboard-sidebar__tabs" style={{ display: 'flex', gap: '8px', marginBottom: '16px', padding: '0 24px' }}>
             <button 
-              className={`messages-tab-btn ${activeTab === 'owned' ? 'active' : ''}`}
+              className={`dashboard-sidebar__tab ${activeTab === 'owned' ? 'is-active' : ''}`}
               onClick={() => setActiveTab('owned')}
+              style={{ flex: 1 }}
             >
               Projects You Own
             </button>
             <button 
-              className={`messages-tab-btn ${activeTab === 'applied' ? 'active' : ''}`}
+              className={`dashboard-sidebar__tab ${activeTab === 'applied' ? 'is-active' : ''}`}
               onClick={() => setActiveTab('applied')}
+              style={{ flex: 1 }}
             >
               Projects Applied
             </button>
@@ -369,35 +374,41 @@ export default function Messages() {
           <>
             <div className="messages-header">
               <button className="messages-back-btn" onClick={() => setActiveConvId(null)}>
-                ← Back
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
               </button>
+              
+              <div className="messages-header-avatar">
+                {getOtherUser(activeConversation)?.avatar ? (
+                  <img src={getOtherUser(activeConversation).avatar} alt="avatar" />
+                ) : (
+                  <div className="messages-avatar-placeholder">
+                    {getOtherUser(activeConversation)?.name?.charAt(0).toUpperCase() || "?"}
+                  </div>
+                )}
+              </div>
+
               <div className="messages-header-info">
                 <h2>{getOtherUser(activeConversation)?.name}</h2>
-                <span>
-                  {isOwnerMode(activeConversation) ? "Applicant" : "Project Owner"}
-                  {" · "}
-                  {activeConversation.projectId?.title}
-                </span>
+                <span>{isOwnerMode(activeConversation) ? "Applicant" : "Project Owner"}</span>
               </div>
             </div>
 
-            <div className="messages-context-card">
+            <div className="messages-context-bar">
               <div className="context-info">
-                <h3>{activeConversation.projectId?.title}</h3>
-                <p>
-                  {isOwnerMode(activeConversation) 
-                    ? "Application submitted " 
-                    : "You applied to this project "}
+                <span className="context-project-title">{activeConversation.projectId?.title}</span>
+                <span className="context-dot">·</span>
+                <span className="context-date">
+                  {isOwnerMode(activeConversation) ? "Applied " : "Applied "}
                   {activeConversation.applicationId?.createdAt 
                     ? new Date(activeConversation.applicationId.createdAt).toLocaleDateString()
                     : ""}
-                </p>
+                </span>
               </div>
               <Link 
                 to={`/projects/${activeConversation.projectId?._id}${isOwnerMode(activeConversation) ? "/applications" : ""}`} 
                 className="context-link"
               >
-                {isOwnerMode(activeConversation) ? "View Application →" : "View Project →"}
+                {isOwnerMode(activeConversation) ? "View Application" : "View Project"}
               </Link>
             </div>
 
@@ -411,11 +422,15 @@ export default function Messages() {
                   return (
                     <div key={msg._id} className={`message-bubble-wrapper ${isMe ? 'me' : 'them'}`}>
                       <div className="message-bubble">
-                        {msg.text}
-                      </div>
-                      <div className="message-meta">
-                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        {isMe && msg.seen && " · Seen"}
+                        <div className="message-content">{msg.text}</div>
+                        <div className="message-meta">
+                          {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {isMe && msg.seen && (
+                            <span className="seen-indicator">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )
@@ -431,11 +446,14 @@ export default function Messages() {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
               />
-              <button type="submit" disabled={!inputText.trim()}>Send</button>
+              <button type="submit" disabled={!inputText.trim()} title="Send Message">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
             </form>
           </>
         )}
       </main>
+      </div>
     </div>
   );
 }

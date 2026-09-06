@@ -95,6 +95,7 @@
 .notification-dropdown__body {
   max-height: 380px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .notification-dropdown__empty {
@@ -154,6 +155,8 @@
 
 .notification-item__content {
   flex-grow: 1;
+  min-width: 0;
+  word-wrap: break-word;
 }
 
 .notification-item__title {

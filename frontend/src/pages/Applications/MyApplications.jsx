@@ -8,6 +8,7 @@ import Spinner from "../../components/common/Spinner";
 import DashboardPagination from "../../components/common/DashboardPagination";
 import PageHeader from "../../components/common/PageHeader";
 import { getMyApplications, respondToInvitation, withdrawApplication } from "../../api/applicationApi";
+import { startConversation } from "../../api/messageApi";
 import { getSocket } from "../../realtime/socketClient";
 import "./applications.css";
 
@@ -21,6 +22,7 @@ export default function MyApplications() {
   const [withdrawId, setWithdrawId] = useState("");
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [respondingId, setRespondingId] = useState("");
+  const [chatBusyId, setChatBusyId] = useState("");
 
   const fetchMyApplications = useCallback(async () => {
     setLoading(true);
@@ -59,8 +61,6 @@ export default function MyApplications() {
     };
   }, []);
 
-
-
   const onWithdraw = async () => {
     if (!withdrawId) return;
     setWithdrawLoading(true);
@@ -87,6 +87,28 @@ export default function MyApplications() {
       toast.error(e?.response?.data?.message || "Failed to respond to invitation");
     } finally {
       setRespondingId("");
+    }
+  };
+
+  const handleMessageOwner = async (applicationId, owner) => {
+    setChatBusyId(applicationId);
+    try {
+      const res = await startConversation({ applicationId });
+      const conversationId = res.data?.data?._id;
+      
+      const event = new CustomEvent("open-dm", { 
+        detail: { 
+          conversationId,
+          userId: owner._id, 
+          name: owner.name, 
+          avatar: owner.avatar 
+        } 
+      });
+      window.dispatchEvent(event);
+    } catch (e) {
+      toast.error(e?.response?.data?.message || "Failed to start conversation");
+    } finally {
+      setChatBusyId("");
     }
   };
 
@@ -198,6 +220,13 @@ export default function MyApplications() {
                   </Link>
                   {a?.status === "pending" && isInvitation && (
                     <>
+                      <Button
+                        variant="outline"
+                        loading={chatBusyId === a._id}
+                        onClick={() => handleMessageOwner(a._id, project?.owner)}
+                      >
+                        Chat with Owner
+                      </Button>
                       <Button
                         variant="primary"
                         loading={respondingId === a._id}

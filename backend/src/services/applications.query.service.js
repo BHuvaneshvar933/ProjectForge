@@ -24,7 +24,7 @@ export const getMyApplications = async (userId, query) => {
       select: "title status",
       populate: {
         path: "owner",
-        select: "name"
+        select: "name avatar"
       }
     })
     .populate("invitedBy", "name");
