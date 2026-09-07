@@ -500,6 +500,18 @@ export const getProjectHealth = async (req, res, next) => {
       suggestion: aiExplanation.suggestion
     };
 
+    // 4. Save to database
+    await Project.findByIdAndUpdate(projectId, {
+      $set: {
+        "metrics.aiHealthScore": metrics.score,
+        "metrics.aiHealthStatus": metrics.status,
+        "metrics.aiHealthComponents": Object.entries(metrics.dimensions).map(([key, val]) => ({ name: key, impact: val.score })),
+        "metrics.aiHealthMainRisk": aiExplanation.main_risk,
+        "metrics.aiHealthSuggestion": aiExplanation.suggestion,
+        "metrics.aiLastGeneratedAt": new Date()
+      }
+    });
+
     res.status(200).json({
       success: true,
       message: "Health score generated",

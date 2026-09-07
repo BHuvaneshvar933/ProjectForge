@@ -7,6 +7,17 @@ import { generateAIContent } from "../../api/aiApi";
 import { getProjectHealth } from "../../api/projectApi";
 import './WorkspaceOverview.css';
 
+const formatTimeAgo = (dateStr) => {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return "just now";
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+};
+
 export default function WorkspaceOverview({ project, tasks, team, isOwner, onRemoveMember }) {
   const [aiLoading, setAiLoading] = useState(false);
   
@@ -174,7 +185,8 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                     aiHealthProvisional: result.isProvisional,
                     aiHealthDimensions: result.dimensions,
                     aiHealthMainRisk: result.main_risk,
-                    aiHealthSuggestion: result.suggestion
+                    aiHealthSuggestion: result.suggestion,
+                    aiLastGeneratedAt: new Date().toISOString()
                   }));
                   toast.success("Health Score generated!");
                 } catch {
@@ -196,7 +208,8 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                   const res = await generateAIContent("weekly-summary", null, project._id);
                   setLocalMetrics(prev => ({ 
                     ...prev, 
-                    aiWeeklySummary: res.data.data.result 
+                    aiWeeklySummary: res.data.data.result,
+                    aiLastGeneratedAt: new Date().toISOString()
                   }));
                   toast.success("Weekly Summary generated!");
                 } catch {
@@ -218,8 +231,15 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
         <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
           {localMetrics.aiHealthScore !== undefined && (
             <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: localMetrics.aiHealthScore === null ? "4px solid #8e8e93" : localMetrics.aiHealthScore < 50 ? "4px solid #ff453a" : localMetrics.aiHealthScore < 80 ? "4px solid #ff9f0a" : "4px solid #32d74b" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                <h3 style={{ fontSize: "16px", margin: 0 }}>Project Health Score</h3>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <h3 style={{ fontSize: "16px", margin: 0 }}>Project Health Score</h3>
+                  {localMetrics.aiLastGeneratedAt && (
+                    <span style={{ fontSize: "12px", color: "var(--color-text-muted)", fontStyle: "italic" }}>
+                      Generated {formatTimeAgo(localMetrics.aiLastGeneratedAt)}
+                    </span>
+                  )}
+                </div>
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
                   {localMetrics.aiHealthProvisional && (
                     <Badge variant="warning">Provisional</Badge>
@@ -281,7 +301,16 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
           {localMetrics.aiWeeklySummary && (
             <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: "4px solid #bf5af2" }}>
-              <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "4px" }}>AI Weekly Summary</h3>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px", flexWrap: "wrap", gap: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                  <h3 style={{ fontSize: "16px", margin: 0 }}>AI Weekly Summary</h3>
+                  {localMetrics.aiLastGeneratedAt && (
+                    <span style={{ fontSize: "12px", color: "var(--color-text-muted)", fontStyle: "italic" }}>
+                      Generated {formatTimeAgo(localMetrics.aiLastGeneratedAt)}
+                    </span>
+                  )}
+                </div>
+              </div>
               <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "16px", fontStyle: "italic" }}>Reporting Period: Last 7 Days</p>
               {typeof localMetrics.aiWeeklySummary === 'object' ? (
                 <div>

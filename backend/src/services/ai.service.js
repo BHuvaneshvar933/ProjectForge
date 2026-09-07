@@ -355,6 +355,9 @@ RULES:
 1. DO NOT invent metrics, tasks, or team members.
 2. Only use the provided factors and risks.
 3. If there are no risks, the main_risk should be something like "No major risks identified at this time."
+4. Avoid unsupported AI conclusions. Do not infer low engagement, poor communication, or bad management simply because tasks are incomplete or overdue.
+5. AI Suggestions must match the evidence. Do not generate generic enterprise project-management advice (e.g. mandatory triage meetings, daily stand-ups, capacity planning) unless the data actually indicates such actions are necessary.
+6. Keep suggestions actionable but proportional to the size and evidence of the project. If it's a small project with few tasks, keep it simple (e.g., "Prioritize completing the overdue task").
 
 OUTPUT FORMAT (Valid JSON only):
 {
