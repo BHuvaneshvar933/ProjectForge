@@ -400,59 +400,74 @@ export const generateWeeklyProjectSummary = async (projectId, projectData, tasks
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
   
+  // Data Window: Only last 7 days
+  const newlyAdded = tasks.filter(t => t.createdAt && new Date(t.createdAt) > sevenDaysAgo);
   const completedThisWeek = tasks.filter(t => t.status === 'done' && t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo);
-  const createdThisWeek = tasks.filter(t => t.createdAt && new Date(t.createdAt) > sevenDaysAgo);
-  const overdueTasks = tasks.filter(t => t.dueDate && new Date(t.dueDate) < now && t.status !== 'done');
-  const staleTasks = tasks.filter(t => t.status !== 'done' && t.updatedAt && new Date(t.updatedAt) < sevenDaysAgo);
+  
+  // Updated this week, but not newly added and not completed (to show progress)
+  const updatedThisWeek = tasks.filter(t => 
+    t.status !== 'done' && 
+    t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo && 
+    !(t.createdAt && new Date(t.createdAt) > sevenDaysAgo)
+  );
+
+  // Unfinished carryover: Only tasks that were ACTIVE this week (created or updated) but remain incomplete.
+  // We explicitly DO NOT dump old inactive tasks here to avoid becoming a health report.
+  const unfinishedCarryover = tasks.filter(t => 
+    t.status !== 'done' && 
+    (
+      (t.createdAt && new Date(t.createdAt) > sevenDaysAgo) || 
+      (t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo)
+    )
+  );
 
   const formatTask = t => `- ${t.title}${t.description ? ` (${t.description.substring(0, 80)})` : ''}`;
 
   const prompt = `
-You are an expert technical project manager writing a concise weekly engineering progress summary.
+You are ProjectForge's AI Weekly Project Reporter.
+Your job is to summarize meaningful project activity from the previous 7 days.
 
-The backend has already filtered the project's tasks to include ONLY tasks that fall into the relevant categories for the seven-day reporting period.
-Your job is to summarize those verified tasks.
+CRITICAL RULE: You are NOT the project's health evaluator.
+Do not calculate or describe overall project health, execution status, risks, or overdue warnings.
+Focus ONLY on what changed, what was completed, what was newly added, what progressed, what remains unfinished, and what should be prioritized next week based on this week's activity.
 
 STRICT FACTUALITY RULES:
-1. Use ONLY the tasks provided in the input.
-2. NEVER invent completed work, started work, risks, or next actions.
-3. NEVER claim that a feature was deployed, tested, optimized, released, or used unless explicitly stated in the input.
-4. NEVER invent metrics or impact.
-5. NEVER assume why a task was important unless that context is provided.
-6. Do not mention tasks that are not present in the input.
-7. Do not claim that something happened "this week" based on your own date calculations; the backend has already determined the reporting period.
-8. Combine related tasks into meaningful themes when appropriate.
-9. Preserve important technical details from the task descriptions.
-10. If there is insufficient evidence for a category, return an empty array rather than fabricating information.
+1. Use ONLY the tasks provided in the input. Never invent completed work, started work, or progress.
+2. If there is insufficient activity, clearly state that there was little or no significant activity.
+3. Overdue tasks do not dominate the report. Treat them simply as newly added or unfinished carryover if they were active this week.
+4. Do not use generic AI language like "The project needs attention" or "Execution status is at risk." Use activity language: completed, added, updated, progressed, carried over.
+5. Next-week recommendations must be derived exclusively from the supplied weekly activity data. Do not provide generic project-management advice. Do not infer missing requirements, blockers, acceptance criteria, staffing needs, milestones, or planning problems. If the data only shows an incomplete task, recommend continuing or completing that task.
+6. When describing unfinished carryover tasks, simply state "Task [Name] remains incomplete" rather than describing it as "active and unfinished."
 
-VERIFIED BACKEND DATA:
+VERIFIED BACKEND DATA (Last 7 Days Only):
 Project Title: ${projectData.title}
 
-Completed Tasks (Past 7 Days):
-${completedThisWeek.length > 0 ? completedThisWeek.map(formatTask).join("\n") : "No tasks were recorded as completed during the reporting period."}
+Completed Tasks:
+${completedThisWeek.length > 0 ? completedThisWeek.map(formatTask).join("\n") : "No tasks were recorded as completed during this week."}
 
-Newly Created/Started Tasks (Past 7 Days):
-${createdThisWeek.length > 0 ? createdThisWeek.map(formatTask).join("\n") : "No new tasks were recorded during the reporting period."}
+Newly Added Work:
+${newlyAdded.length > 0 ? newlyAdded.map(formatTask).join("\n") : "No new tasks were added this week."}
 
-Overdue Tasks (Risks):
-${overdueTasks.length > 0 ? overdueTasks.map(formatTask).join("\n") : "No overdue tasks."}
+Progress & Updates (Active but not completed):
+${updatedThisWeek.length > 0 ? updatedThisWeek.map(formatTask).join("\n") : "No significant task updates this week."}
 
-Stale Tasks (Risks):
-${staleTasks.length > 0 ? staleTasks.map(formatTask).join("\n") : "No stale tasks."}
+Unfinished / Carryover Work:
+${unfinishedCarryover.length > 0 ? unfinishedCarryover.map(formatTask).join("\n") : "No active work is carrying over."}
 
 OUTPUT SCHEMA:
-Return ONLY valid JSON exactly matching this structure, which is required by the frontend API:
+Return ONLY valid JSON exactly matching this structure:
 {
-  "headline": "A short overview sentence of the week's progress.",
-  "completed": ["Insightful summary of completed work 1", "Insightful summary of completed work 2"],
-  "started": ["Insightful summary of newly started work 1"],
-  "risks": ["Describe verified risks (e.g. overdue/stale tasks) ONLY if provided in the data above"],
-  "next_actions": ["Actionable next steps based ONLY on provided data"]
+  "overview": "A short 1-2 sentence overview of the week's overall activity.",
+  "completed": ["Clear summary of completed work"],
+  "new_work": ["Summary of newly added tasks"],
+  "progress_changes": ["Summary of progress or changes made to existing work"],
+  "unfinished_carryover": ["Summary of what active work remains unfinished"],
+  "next_week": ["2-4 practical priorities based specifically on this week's activity"]
 }
 
 REQUIREMENTS:
-- If there are no items for a category, return an empty array [].
-- Do NOT invent or hallucinate tasks, risks, or next actions if none exist in the verified data.
+- If there is no activity for a category, return an array with a graceful empty state (e.g. ["No tasks completed."]).
+- Make it concise, factual, and easy for a student project team to understand.
 - No Markdown fences. No text outside the JSON.
 `;
 
@@ -477,12 +492,32 @@ REQUIREMENTS:
     
     if (!parsed || typeof parsed !== 'object') throw new Error("Invalid output format");
 
+    let nextWeek = Array.isArray(parsed.next_week) ? parsed.next_week : [];
+    
+    // Strict Sanitization: Remove hallucinated/generic recommendations
+    const forbiddenTerms = ["scope", "acceptance criteria", "blocker", "capacity", "milestone", "sprint", "allocate", "assign", "subtask", "planning", "requirement"];
+    const hasForbidden = str => forbiddenTerms.some(term => str.toLowerCase().includes(term));
+    
+    nextWeek = nextWeek.filter(rec => !hasForbidden(rec));
+    
+    // Fallback if all were removed or none provided
+    if (nextWeek.length === 0) {
+      const activeTasks = [...unfinishedCarryover, ...newlyAdded];
+      if (activeTasks.length > 0) {
+        nextWeek.push(`Continue work on task '${activeTasks[0].title}'.`);
+        nextWeek.push(`Make progress toward completing task '${activeTasks[0].title}'.`);
+      } else {
+        nextWeek.push("No specific actions recommended at this time.");
+      }
+    }
+
     const summaryData = {
-      headline: typeof parsed.headline === 'string' ? parsed.headline : "Weekly Progress Update",
+      overview: typeof parsed.overview === 'string' ? parsed.overview : "Weekly Progress Update",
       completed: Array.isArray(parsed.completed) ? parsed.completed : [],
-      started: Array.isArray(parsed.started) ? parsed.started : [],
-      risks: Array.isArray(parsed.risks) ? parsed.risks : [],
-      next_actions: Array.isArray(parsed.next_actions) ? parsed.next_actions : []
+      new_work: Array.isArray(parsed.new_work) ? parsed.new_work : [],
+      progress_changes: Array.isArray(parsed.progress_changes) ? parsed.progress_changes : [],
+      unfinished_carryover: Array.isArray(parsed.unfinished_carryover) ? parsed.unfinished_carryover : [],
+      next_week: nextWeek
     };
 
     await Project.findByIdAndUpdate(projectId, {

@@ -281,10 +281,11 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
           {localMetrics.aiWeeklySummary && (
             <div className="workspace__card" style={{ padding: "20px", flex: "1", borderLeft: "4px solid #bf5af2" }}>
-              <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "12px" }}>AI Weekly Summary</h3>
+              <h3 style={{ fontSize: "16px", margin: 0, marginBottom: "4px" }}>AI Weekly Summary</h3>
+              <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "16px", fontStyle: "italic" }}>Reporting Period: Last 7 Days</p>
               {typeof localMetrics.aiWeeklySummary === 'object' ? (
                 <div>
-                  <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "16px" }}>{localMetrics.aiWeeklySummary.headline}</h4>
+                  <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "16px", fontWeight: "normal", lineHeight: "1.5" }}>{localMetrics.aiWeeklySummary.overview}</h4>
                   
                   {localMetrics.aiWeeklySummary.completed?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
@@ -295,29 +296,38 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                     </div>
                   )}
 
-                  {localMetrics.aiWeeklySummary.started?.length > 0 && (
+                  {localMetrics.aiWeeklySummary.new_work?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Started</strong>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>New Work</strong>
                       <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                        {localMetrics.aiWeeklySummary.started.map((item, i) => <li key={i}>{item}</li>)}
+                        {localMetrics.aiWeeklySummary.new_work.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
                   )}
 
-                  {localMetrics.aiWeeklySummary.risks?.length > 0 && (
+                  {localMetrics.aiWeeklySummary.progress_changes?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Risks</strong>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Progress & Changes</strong>
                       <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                        {localMetrics.aiWeeklySummary.risks.map((item, i) => <li key={i}>{item}</li>)}
+                        {localMetrics.aiWeeklySummary.progress_changes.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
                   )}
 
-                  {localMetrics.aiWeeklySummary.next_actions?.length > 0 && (
+                  {localMetrics.aiWeeklySummary.unfinished_carryover?.length > 0 && (
                     <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Next Actions</strong>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Unfinished / Carryover</strong>
                       <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                        {localMetrics.aiWeeklySummary.next_actions.map((item, i) => <li key={i}>{item}</li>)}
+                        {localMetrics.aiWeeklySummary.unfinished_carryover.map((item, i) => <li key={i}>{item}</li>)}
+                      </ul>
+                    </div>
+                  )}
+
+                  {localMetrics.aiWeeklySummary.next_week?.length > 0 && (
+                    <div style={{ marginBottom: "12px" }}>
+                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Next Week</strong>
+                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
+                        {localMetrics.aiWeeklySummary.next_week.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
                   )}
