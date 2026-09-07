@@ -20,3 +20,6 @@ export const bulkUpdateTasks = (projectId, data) =>
 
 export const deleteTask = (taskId) =>
   API.delete(`/tasks/${taskId}`);
+
+export const addTaskComment = (taskId, text) =>
+  API.post(`/tasks/${taskId}/comments`, { text });

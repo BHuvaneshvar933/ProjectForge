@@ -152,7 +152,8 @@ export const getProjectTasks = async (projectId, query, currentUser) => {
     .skip(skip)
     .limit(limit)
     .populate("assignedTo", "name avatar")
-    .populate("createdBy", "name");
+    .populate("createdBy", "name")
+    .populate("comments.user", "name avatar");
 
   return {
     tasks,
@@ -475,3 +476,43 @@ export async function bulkUpdateTasks(projectId, userId, action, taskIds, payloa
 
   throw new Error("Invalid bulk action");
 }
+
+export const addComment = async (taskId, text, userId) => {
+  const task = await Task.findById(taskId);
+
+  if (!task || task.isDeleted) {
+    throw new Error("Task not found");
+  }
+
+  const project = await Project.findById(task.projectId);
+  if (!project || project.isDeleted) {
+    throw new Error("Project not found");
+  }
+
+  const isMember = await Team.findOne({
+    projectId: task.projectId,
+    userId,
+    status: "active",
+    isDeleted: false,
+  });
+
+  if (!isMember) {
+    throw new Error("Not authorized");
+  }
+
+  if (!text || !text.trim()) {
+    throw new Error("Comment text cannot be empty");
+  }
+
+  task.comments.push({
+    text: text.trim(),
+    user: userId,
+  });
+
+  await task.save();
+
+  // Populate the new comment to return it
+  await task.populate("comments.user", "name avatar");
+
+  return task.comments[task.comments.length - 1];
+};

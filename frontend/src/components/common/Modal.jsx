@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import './Modal.css';
 
-export default function Modal({ isOpen, onClose, title, children, onConfirm, confirmText = "Confirm", hideDefaultActions = false, maxWidth }) {
+export default function Modal({ isOpen, onClose, title, children, onConfirm, confirmText = "Confirm", hideDefaultActions = false, hideCloseButton = false, maxWidth }) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -17,9 +17,11 @@ export default function Modal({ isOpen, onClose, title, children, onConfirm, con
     <div className="modal">
       <div className="modal__backdrop" onClick={onClose} />
       <div className="modal__card" style={maxWidth ? { '--modal-max-width': maxWidth } : {}}>
-        <button onClick={onClose} className="modal__close" aria-label="Close modal">
-          Close
-        </button>
+        {!hideCloseButton && (
+          <button onClick={onClose} className="modal__close" aria-label="Close modal">
+            Close
+          </button>
+        )}
 
         {title && (
           <h3 className="modal__title">{title}</h3>

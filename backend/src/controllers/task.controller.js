@@ -148,3 +148,24 @@ export const bulkUpdateTasks = async (req, res) => {
     });
   }
 };
+
+export const addTaskComment = async (req, res, next) => {
+  try {
+    const { text } = req.body;
+    const { taskId } = req.params;
+    
+    const comment = await TaskService.addComment(taskId, text, req.user._id);
+
+    return res.status(201).json({
+      success: true,
+      message: "Comment added successfully",
+      data: { comment },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

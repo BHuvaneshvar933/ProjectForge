@@ -71,9 +71,7 @@ export default function TasksContextMenu({ x, y, task, onClose, onDelete, onUpda
         onMouseOver={e => e.target.style.background = "rgba(255,69,58,0.1)"} 
         onMouseOut={outStyle}
         onClick={() => {
-          if (confirm("Are you sure you want to delete this task?")) {
-            onDelete(task._id);
-          }
+          onDelete(task._id);
           onClose();
         }}
       >

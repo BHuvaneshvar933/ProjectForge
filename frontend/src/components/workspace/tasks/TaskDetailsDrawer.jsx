@@ -1,9 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Input from "../../common/Input";
 import Button from "../../common/Button";
+import Spinner from "../../common/Spinner";
+import { toast } from "react-toastify";
+import { addTaskComment } from "../../../api/taskApi";
 
 export default function TaskDetailsDrawer({ task, project, teamSorted, releases = [], onClose, onUpdate, onDelete, hasConflict, onReloadLatest }) {
+  const [commentText, setCommentText] = useState("");
+  const [commentPosting, setCommentPosting] = useState(false);
+  const [localComments, setLocalComments] = useState(task?.comments || []);
+
+  useEffect(() => {
+    setLocalComments(task?.comments || []);
+  }, [task?.comments]);
+
   if (!task) return null;
+
+  const handlePostComment = async () => {
+    if (!commentText.trim()) return;
+    setCommentPosting(true);
+    try {
+      const res = await addTaskComment(task._id, commentText);
+      setLocalComments((prev) => [...prev, res.data.data.comment]);
+      setCommentText("");
+    } catch (e) {
+      toast.error(e?.response?.data?.message || "Failed to post comment");
+    } finally {
+      setCommentPosting(false);
+    }
+  };
+
+  const formatTimeAgo = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    const now = new Date();
+    const diff = (now - d) / 1000;
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return d.toLocaleDateString();
+  };
 
   return (
     <div style={{
@@ -24,14 +60,11 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: "1px solid var(--color-border-medium)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <a href="#" style={{ color: "#0a84ff", textDecoration: "none", fontWeight: "600" }}>{project?.key || "PROJ"}-{task.taskNumber}</a>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", position: "relative" }}>
           <button 
             onClick={() => {
-              if (window.confirm("Are you sure you want to delete this task?")) {
-                if (onDelete) onDelete(task._id);
-              }
+              if (onDelete) onDelete(task._id);
             }} 
             style={{ background: "transparent", border: "1px solid rgba(255,69,58,0.3)", color: "#ff453a", cursor: "pointer", fontSize: "12px", padding: "4px 8px", borderRadius: "4px" }}
           >
@@ -61,7 +94,7 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
                 className="workspace-select" 
                 value={task.status} 
                 onChange={(e) => onUpdate(task._id, { status: e.target.value })}
-                style={{ background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "4px", padding: "4px 8px", color: "var(--color-text-dark)", fontSize: "13px", fontWeight: "600", textTransform: "uppercase" }}
+                style={{ width: "100%", maxWidth: "240px", background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "4px", padding: "6px 8px", color: "var(--color-text-dark)", fontSize: "13px", fontWeight: "600", textTransform: "uppercase" }}
               >
                 <option value="todo">To Do</option>
                 <option value="in-progress">In Progress</option>
@@ -75,7 +108,7 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
                 className="workspace-select" 
                 value={task.assignedTo?._id || task.assignedTo || ""} 
                 onChange={(e) => onUpdate(task._id, { assignedTo: e.target.value })}
-                style={{ background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "4px", padding: "4px 8px", color: "var(--color-text-dark)", fontSize: "13px" }}
+                style={{ width: "100%", maxWidth: "240px", background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "4px", padding: "6px 8px", color: "var(--color-text-dark)", fontSize: "13px" }}
               >
                 <option value="">Unassigned</option>
                 {teamSorted.map(m => <option key={m?.userId?._id} value={m?.userId?._id}>{m?.userId?.name}</option>)}
@@ -88,7 +121,7 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
                 className="workspace-select" 
                 value={task.priority} 
                 onChange={(e) => onUpdate(task._id, { priority: e.target.value })}
-                style={{ background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "4px", padding: "4px 8px", color: "var(--color-text-dark)", fontSize: "13px" }}
+                style={{ width: "100%", maxWidth: "240px", background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "4px", padding: "6px 8px", color: "var(--color-text-dark)", fontSize: "13px" }}
               >
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
@@ -102,7 +135,7 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
                 className="workspace-select" 
                 value={task.releaseId || ""} 
                 onChange={(e) => onUpdate(task._id, { releaseId: e.target.value || null })}
-                style={{ background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "4px", padding: "4px 8px", color: "var(--color-text-dark)", fontSize: "13px" }}
+                style={{ width: "100%", maxWidth: "240px", background: "var(--color-border-subtle)", border: "1px solid var(--color-border-medium)", borderRadius: "4px", padding: "6px 8px", color: "var(--color-text-dark)", fontSize: "13px" }}
               >
                 <option value="">None</option>
                 {releases.map(r => <option key={r._id} value={r._id}>{r.version}</option>)}
@@ -134,11 +167,55 @@ export default function TaskDetailsDrawer({ task, project, teamSorted, releases 
           
           <hr style={{ border: "none", borderTop: "1px solid var(--color-border-medium)", margin: "8px 0" }} />
           
-          {/* Activity / Comments Placeholder */}
+          {/* Activity / Comments */}
           <div>
-            <h3 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "12px" }}>Activity</h3>
-            <div style={{ color: "var(--color-text-muted)", fontSize: "14px", fontStyle: "italic", textAlign: "center", padding: "32px 0", background: "var(--color-border-subtle)", borderRadius: "8px" }}>
-              Comments and history coming soon...
+            <h3 style={{ fontSize: "16px", fontWeight: "600", marginBottom: "16px" }}>Comments</h3>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px", marginBottom: "20px" }}>
+              {localComments.length === 0 ? (
+                <div style={{ color: "var(--color-text-muted)", fontSize: "14px", fontStyle: "italic", padding: "16px 0" }}>
+                  No comments yet. Start the conversation.
+                </div>
+              ) : (
+                localComments.map((c, i) => (
+                  <div key={c._id || i} style={{ display: "flex", gap: "12px" }}>
+                    {c.user?.avatar ? (
+                      <img src={c.user.avatar} alt="avatar" style={{ width: "32px", height: "32px", borderRadius: "50%", objectFit: "cover" }} />
+                    ) : (
+                      <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--color-border-medium)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: "600", color: "var(--color-text-dark)" }}>
+                        {c.user?.name ? c.user.name[0].toUpperCase() : "?"}
+                      </div>
+                    )}
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
+                        <span style={{ fontWeight: "600", fontSize: "13px" }}>{c.user?.name || "Unknown"}</span>
+                        <span style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>{formatTimeAgo(c.createdAt)}</span>
+                      </div>
+                      <div style={{ fontSize: "14px", color: "var(--color-text-dark)", whiteSpace: "pre-wrap", lineHeight: "1.4" }}>
+                        {c.text}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", background: "var(--color-border-subtle)", padding: "16px", borderRadius: "8px" }}>
+              <textarea 
+                placeholder="Add a comment..."
+                value={commentText}
+                onChange={e => setCommentText(e.target.value)}
+                style={{ width: "100%", minHeight: "80px", background: "var(--bg-card)", border: "1px solid var(--color-border-medium)", borderRadius: "6px", padding: "12px", color: "var(--color-text-dark)", resize: "vertical", outline: "none", fontSize: "14px" }}
+              />
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button 
+                  variant="primary" 
+                  onClick={handlePostComment} 
+                  disabled={!commentText.trim() || commentPosting}
+                >
+                  {commentPosting ? <Spinner size="sm" /> : "Post"}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

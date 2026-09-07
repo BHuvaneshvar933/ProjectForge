@@ -6,10 +6,11 @@ import Modal from "../common/Modal";
 import Input from "../common/Input";
 import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
-import { createTask, updateTaskStatus, assignTask } from "../../api/taskApi";
+import { createTask, updateTaskStatus, assignTask, updateTask, deleteTask } from "../../api/taskApi";
 import { uploadFile } from "../../api/uploadApi";
 import { getProjectReleases } from "../../api/projectApi";
 import TasksListView from "./tasks/TasksListView";
+import TaskDetailsDrawer from "./tasks/TaskDetailsDrawer";
 
 export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, tasksLoading, onTaskChange, fetchTasks }) {
   const [taskView, setTaskView] = useState("board");
@@ -29,6 +30,35 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
     attachmentName: "",
   });
   const [taskUploading, setTaskUploading] = useState(false);
+
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleUpdateTaskDetails = async (taskId, updates) => {
+    try {
+      await updateTask(taskId, updates);
+      fetchTasks();
+    } catch (e) {
+      toast.error("Failed to update task");
+    }
+  };
+
+  const confirmDeleteTask = async () => {
+    if (!taskToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteTask(taskToDelete);
+      toast.success("Task deleted");
+      if (selectedTask?._id === taskToDelete) setSelectedTask(null);
+      fetchTasks();
+    } catch {
+      toast.error("Failed to delete task");
+    } finally {
+      setIsDeleting(false);
+      setTaskToDelete(null);
+    }
+  };
 
   const isCompleted = project?.status === "completed";
 
@@ -234,10 +264,14 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                        <div style={{ background: "rgba(94, 92, 230, 0.15)", color: "#5e5ce6", padding: "4px", borderRadius: "4px", display: "flex" }}><CheckSquare size={14} /></div>}
                     </div>
                     <div style={{ flex: 1, wordBreak: "break-word" }}>
-                      <span style={{ fontWeight: 600, color: "var(--color-text-muted)", marginRight: 6 }}>
-                        {project?.key || "TASK"}-{t.taskNumber || "X"}
+                      <span 
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedTask(t); }}
+                        style={{ cursor: "pointer", textDecoration: "none" }}
+                        onMouseOver={(e) => e.target.style.textDecoration = "underline"}
+                        onMouseOut={(e) => e.target.style.textDecoration = "none"}
+                      >
+                        {t.title}
                       </span>
-                      {t.title}
                     </div>
                   </div>
                   {t.attachmentUrl && (
@@ -307,14 +341,39 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
         title="Create Task"
         onConfirm={onCreateTask}
         confirmText={taskCreating ? "Creating..." : "Create"}
+        hideCloseButton={true}
       >
-        <div className="workspace-modal__form" style={{ display: "flex", flexDirection: "column", gap: "20px", maxHeight: "60vh", overflowY: "auto", paddingRight: "8px" }}>
+        <div className="workspace-modal__form" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div>
             <Input
               label="Title"
               value={taskForm.title}
               onChange={(e) => onChangeTaskForm("title", e.target.value)}
               placeholder="Example: Build chat UI"
+            />
+          </div>
+
+          <div>
+            <label className="input__label" style={{ marginBottom: "6px", display: "block", fontSize: "13px", fontWeight: "600", color: "var(--color-text-dark)" }}>Description</label>
+            <textarea
+              className="workspace-modal__textarea"
+              rows={3}
+              value={taskForm.description}
+              onChange={(e) => onChangeTaskForm("description", e.target.value)}
+              placeholder="What needs to be done?"
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                padding: "10px 12px",
+                borderRadius: "8px",
+                border: "1px solid var(--border-color, #e5e5ea)",
+                background: "var(--input-bg, #fff)",
+                color: "var(--color-text-dark, #1c1c1e)",
+                resize: "vertical",
+                minHeight: "80px",
+                fontFamily: "inherit",
+                fontSize: "14px"
+              }}
             />
           </div>
 
@@ -428,46 +487,64 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
               />
             </div>
           </div>
-        </div>
 
-        <div style={{ height: 10 }} />
-
-        <div>
-          <label className="input__label">Description</label>
-          <textarea
-            className="workspace-modal__textarea"
-            rows={4}
-            value={taskForm.description}
-            onChange={(e) => onChangeTaskForm("description", e.target.value)}
-            placeholder="What needs to be done?"
-          />
-        </div>
-
-        <div style={{ marginTop: "16px" }}>
-          <label className="input__label">Attachment (Optional)</label>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "4px" }}>
-            <label style={{ 
-              background: "rgba(255,255,255,0.1)", 
-              padding: "8px 16px", 
-              borderRadius: "6px", 
-              cursor: "pointer", 
-              fontSize: "14px",
-              color: "#fff",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px"
-            }}>
-              {taskUploading ? <Spinner size="sm" /> : "Upload File"}
-              <input type="file" style={{ display: "none" }} onChange={handleFileUpload} disabled={taskUploading} />
-            </label>
-            {taskForm.attachmentName && (
-              <span style={{ fontSize: "12px", color: "#32d74b" }}>
-                ✓ {taskForm.attachmentName}
-              </span>
-            )}
+          <div>
+            <label className="input__label" style={{ marginBottom: "6px", display: "block", fontSize: "13px", fontWeight: "600", color: "var(--color-text-dark)" }}>Attachment (Optional)</label>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "4px" }}>
+              <label style={{ 
+                background: "#000", 
+                padding: "8px 16px", 
+                borderRadius: "6px", 
+                cursor: "pointer", 
+                fontSize: "14px",
+                color: "#fff",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                fontWeight: "500",
+                border: "none"
+              }}>
+                {taskUploading ? <Spinner size="sm" /> : "Upload File"}
+                <input type="file" style={{ display: "none" }} onChange={handleFileUpload} disabled={taskUploading} />
+              </label>
+              {taskForm.attachmentName && (
+                <span style={{ fontSize: "12px", color: "#32d74b" }}>
+                  ✓ {taskForm.attachmentName}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </Modal>
+
+      {taskView === "board" && selectedTask && (
+        <TaskDetailsDrawer 
+          task={tasks.find(t => t._id === selectedTask._id) || selectedTask} 
+          project={project}
+          teamSorted={teamSorted}
+          releases={releases}
+          onClose={() => setSelectedTask(null)}
+          onUpdate={handleUpdateTaskDetails}
+          onDelete={(id) => setTaskToDelete(id)}
+          hasConflict={false}
+          onReloadLatest={() => fetchTasks()}
+        />
+      )}
+
+      {taskView === "board" && (
+        <Modal
+          isOpen={!!taskToDelete}
+          onClose={() => setTaskToDelete(null)}
+          title="Delete Task"
+          onConfirm={confirmDeleteTask}
+          confirmText={isDeleting ? "Deleting..." : "Delete"}
+          maxWidth="400px"
+        >
+          <p style={{ margin: 0, fontSize: "14px", color: "var(--color-text-muted)" }}>
+            Are you sure you want to delete this task? This action cannot be undone.
+          </p>
+        </Modal>
+      )}
     </div>
   );
 }

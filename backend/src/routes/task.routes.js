@@ -1,5 +1,5 @@
 import express from "express";
-import { createTask, getProjectTasks, assignTask, updateTaskStatus, deleteTask, updateTask, bulkUpdateTasks } from "../controllers/task.controller.js";
+import { createTask, getProjectTasks, assignTask, updateTaskStatus, deleteTask, updateTask, bulkUpdateTasks, addTaskComment } from "../controllers/task.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
@@ -38,6 +38,12 @@ router.put(
   "/tasks/:taskId",
   protect,
   updateTask
+);
+
+router.post(
+  "/tasks/:taskId/comments",
+  protect,
+  addTaskComment
 );
 
 export default router;

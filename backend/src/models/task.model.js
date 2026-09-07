@@ -105,6 +105,14 @@ const taskSchema = new mongoose.Schema(
       default: false,
     },
 
+    comments: [
+      {
+        text: { type: String, required: true, trim: true },
+        user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+        createdAt: { type: Date, default: Date.now },
+      }
+    ],
+
     deletedAt: {
       type: Date,
       default: null,

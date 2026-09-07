@@ -9,6 +9,7 @@ import { useTaskFilters } from "./hooks/useTaskFilters";
 import { useOptimisticTasks } from "./hooks/useOptimisticTasks";
 import { toast } from "react-toastify";
 import { createTask, bulkUpdateTasks, deleteTask } from "../../../api/taskApi";
+import Modal from "../../common/Modal";
 
 export default function TasksListView({ projectId, project, initialTasks, teamSorted, fetchTasks, releases }) {
   const [tasks, setTasks] = useState(initialTasks);
@@ -19,6 +20,9 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
   const [inlineCreateTitle, setInlineCreateTitle] = useState("");
   const [inlineCreateType, setInlineCreateType] = useState("story");
   const [taskCreating, setTaskCreating] = useState(false);
+
+  const [taskToDelete, setTaskToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Keep tasks synced if props change
   React.useEffect(() => {
@@ -89,15 +93,23 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
     }
   };
 
-  const handleDeleteTask = async (taskId) => {
-    if (!window.confirm("Are you sure you want to delete this task?")) return;
+  const handleDeleteTask = (taskId) => {
+    setTaskToDelete(taskId);
+  };
+
+  const confirmDeleteTask = async () => {
+    if (!taskToDelete) return;
+    setIsDeleting(true);
     try {
-      await deleteTask(taskId);
+      await deleteTask(taskToDelete);
       toast.success("Task deleted");
-      setSelectedTask(null);
+      if (selectedTask?._id === taskToDelete) setSelectedTask(null);
       fetchTasks();
     } catch {
       toast.error("Failed to delete task");
+    } finally {
+      setIsDeleting(false);
+      setTaskToDelete(null);
     }
   };
 
@@ -134,6 +146,7 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
         setInlineCreateType={setInlineCreateType}
         onInlineCreate={handleInlineCreate}
         taskCreating={taskCreating}
+        onDelete={handleDeleteTask}
       />
 
       <BulkActionBar 
@@ -161,6 +174,19 @@ export default function TasksListView({ projectId, project, initialTasks, teamSo
           }}
         />
       )}
+
+      <Modal
+        isOpen={!!taskToDelete}
+        onClose={() => setTaskToDelete(null)}
+        title="Delete Task"
+        onConfirm={confirmDeleteTask}
+        confirmText={isDeleting ? "Deleting..." : "Delete"}
+        maxWidth="400px"
+      >
+        <p style={{ margin: 0, fontSize: "14px", color: "var(--color-text-muted)" }}>
+          Are you sure you want to delete this task? This action cannot be undone.
+        </p>
+      </Modal>
     </div>
   );
 }

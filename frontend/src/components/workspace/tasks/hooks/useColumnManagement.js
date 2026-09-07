@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 
 const DEFAULT_COLUMNS = [
   { id: "type", label: "Type", width: 60, visible: true },
-  { id: "key", label: "Key", width: 100, visible: true },
   { id: "title", label: "Title", width: 400, visible: true },
   { id: "status", label: "Status", width: 140, visible: true },
   { id: "priority", label: "Priority", width: 120, visible: true },

@@ -1,7 +1,8 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Plus } from "lucide-react";
 import TaskTableRow from "./TaskTableRow";
+import TasksContextMenu from "./TasksContextMenu";
 
 export default function TasksTable({ 
   tasks, // these should be flat and pre-filtered
@@ -21,9 +22,11 @@ export default function TasksTable({
   inlineCreateType,
   setInlineCreateType,
   onInlineCreate,
-  taskCreating
+  taskCreating,
+  onDelete
 }) {
   const parentRef = useRef(null);
+  const [contextMenu, setContextMenu] = useState(null);
 
   // Flatten the hierarchy based on expansion state
   const visibleTasks = useMemo(() => {
@@ -248,12 +251,25 @@ export default function TasksTable({
                   isExpanded={isExpanded}
                   onToggleExpand={() => onToggleExpand(task._id)}
                   onClickRow={onClickRow}
+                  onOpenContextMenu={(x, y) => setContextMenu({ x, y, task })}
                 />
               </div>
             );
           })}
         </div>
       </div>
+
+      {contextMenu && (
+        <TasksContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          task={contextMenu.task}
+          onClose={() => setContextMenu(null)}
+          onDelete={onDelete}
+          onUpdateStatus={(id, status) => onOptimisticUpdate(id, { status })}
+          onAssign={(id, assign) => onOptimisticUpdate(id, { assignedTo: assign })}
+        />
+      )}
     </div>
   );
 }

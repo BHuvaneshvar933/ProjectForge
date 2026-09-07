@@ -13,7 +13,8 @@ export default function TaskTableRow({
   hasChildren,
   isExpanded,
   onToggleExpand,
-  onClickRow
+  onClickRow,
+  onOpenContextMenu
 }) {
   const [hovered, setHovered] = useState(false);
 
@@ -119,8 +120,11 @@ export default function TaskTableRow({
               />
             ) : (
               <span 
-                onDoubleClick={() => setIsEditingTitle(true)}
-                style={{ fontWeight: task.issueType === "epic" ? "600" : "500", cursor: "text", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                onClick={(e) => { e.preventDefault(); onClickRow(task); }}
+                onDoubleClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsEditingTitle(true); }}
+                style={{ fontWeight: task.issueType === "epic" ? "600" : "500", cursor: "pointer", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                onMouseOver={(e) => e.target.style.textDecoration = "underline"}
+                onMouseOut={(e) => e.target.style.textDecoration = "none"}
               >
                 {task.title}
               </span>
@@ -168,7 +172,14 @@ export default function TaskTableRow({
         return <span style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "-"}</span>;
       case "actions":
         return (
-          <button style={{ background: "transparent", border: "none", color: "var(--color-text-muted)", cursor: "pointer" }}>
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              const rect = e.currentTarget.getBoundingClientRect();
+              onOpenContextMenu(rect.left, rect.bottom);
+            }}
+            style={{ background: "transparent", border: "none", color: "var(--color-text-muted)", cursor: "pointer", padding: "4px" }}
+          >
             •••
           </button>
         );
