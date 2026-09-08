@@ -183,7 +183,12 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                     aiHealthStatus: result.status,
                     aiHealthConfidence: result.confidence,
                     aiHealthProvisional: result.isProvisional,
-                    aiHealthDimensions: result.dimensions,
+                    aiHealthComponents: result.components,
+                    aiHealthAssessment: result.assessment,
+                    aiHealthPrimaryConcern: result.primaryConcern,
+                    aiHealthPositiveSignal: result.positiveSignal,
+                    aiHealthRecommendedAction: result.recommendedAction,
+                    aiHealthCollaborationOpportunity: result.collaborationOpportunity,
                     aiHealthMainRisk: result.main_risk,
                     aiHealthSuggestion: result.suggestion,
                     aiLastGeneratedAt: new Date().toISOString()
@@ -255,47 +260,90 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                 </div>
               </div>
               
-              {localMetrics.aiHealthDimensions && (
+              {localMetrics.aiHealthAssessment && (
+                <div style={{ marginBottom: "20px", fontSize: "14px", lineHeight: "1.5", color: "var(--color-text-dark)" }}>
+                  <strong>AI Health Assessment</strong>
+                  <p style={{ margin: "4px 0 0 0" }}>{localMetrics.aiHealthAssessment}</p>
+                </div>
+              )}
+              
+              {localMetrics.aiHealthComponents && localMetrics.aiHealthComponents.length > 0 && (
                 <div style={{ marginBottom: "20px", display: "grid", gridTemplateColumns: "1fr", gap: "8px" }}>
-                  {Object.entries(localMetrics.aiHealthDimensions).map(([key, dim]) => (
-                    <div key={key} style={{ 
+                  {localMetrics.aiHealthComponents.map((comp, idx) => (
+                    <div key={idx} style={{ 
                       display: "flex", 
-                      alignItems: "center", 
+                      flexDirection: "column",
                       padding: "10px", 
                       background: "var(--bg-page)", 
                       border: "1px solid var(--border-color)", 
-                      borderRadius: "6px",
-                      justifyContent: "space-between"
+                      borderRadius: "6px"
                     }}>
-                      <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--color-text-dark)", textTransform: "capitalize" }}>
-                        {key}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: comp.interpretation ? "6px" : "0" }}>
+                        <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--color-text-dark)", textTransform: "capitalize" }}>
+                          {comp.name}
+                        </div>
+                        <div style={{ 
+                          padding: "4px 8px", 
+                          borderRadius: "4px", 
+                          background: "rgba(142, 142, 147, 0.1)",
+                          color: "var(--color-text-dark)",
+                          fontWeight: "600",
+                          fontSize: "13px",
+                          fontVariantNumeric: "tabular-nums"
+                        }}>
+                          {comp.impact}
+                        </div>
                       </div>
-                      <div style={{ 
-                        padding: "4px 8px", 
-                        borderRadius: "4px", 
-                        background: (dim.score / dim.max) < 0.4 ? "rgba(255, 69, 58, 0.1)" : (dim.score / dim.max) > 0.8 ? "rgba(50, 215, 75, 0.1)" : "rgba(142, 142, 147, 0.1)",
-                        color: (dim.score / dim.max) < 0.4 ? "#ff453a" : (dim.score / dim.max) > 0.8 ? "#32d74b" : "#8e8e93",
-                        fontWeight: "600",
-                        fontSize: "13px",
-                        fontVariantNumeric: "tabular-nums"
-                      }}>
-                        {dim.score} / {dim.max}
-                      </div>
+                      {comp.interpretation && (
+                        <div style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>
+                          {comp.interpretation}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
 
-              {localMetrics.aiHealthMainRisk && (
-                <div style={{ marginBottom: "12px", fontSize: "14px" }}>
-                  <strong style={{ color: "#ff9f0a" }}>Main Risk:</strong> <span style={{ color: "var(--color-text-dark)" }}>{localMetrics.aiHealthMainRisk}</span>
+              {localMetrics.aiHealthPrimaryConcern && (
+                <div style={{ marginBottom: "16px" }}>
+                  <strong style={{ fontSize: "14px", color: "#ff9f0a", display: "block", marginBottom: "4px" }}>Primary Concern: {localMetrics.aiHealthPrimaryConcern.title}</strong>
+                  <span style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthPrimaryConcern.description}</span>
                 </div>
               )}
 
-              <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)" }}>
-                <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>AI Suggestion</span>
-                <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthSuggestion}</span>
-              </div>
+              {localMetrics.aiHealthPositiveSignal && (
+                <div style={{ marginBottom: "16px" }}>
+                  <strong style={{ fontSize: "14px", color: "#32d74b", display: "block", marginBottom: "4px" }}>Positive Signal: {localMetrics.aiHealthPositiveSignal.title}</strong>
+                  <span style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthPositiveSignal.description}</span>
+                </div>
+              )}
+
+              {localMetrics.aiHealthRecommendedAction && (
+                <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)", marginBottom: "16px" }}>
+                  <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>Recommended Action</span>
+                  <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthRecommendedAction}</span>
+                </div>
+              )}
+
+              {localMetrics.aiHealthCollaborationOpportunity && (
+                <div style={{ padding: "12px", background: "rgba(191,90,242,0.1)", borderRadius: "6px", border: "1px solid rgba(191,90,242,0.2)", marginBottom: "16px" }}>
+                  <span style={{ fontSize: "13px", color: "#bf5af2", fontWeight: "600", display: "block", marginBottom: "4px" }}>Collaboration Opportunity</span>
+                  <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthCollaborationOpportunity}</span>
+                </div>
+              )}
+              
+              {/* Legacy fallback for older data */}
+              {!localMetrics.aiHealthPrimaryConcern && localMetrics.aiHealthMainRisk && (
+                 <div style={{ marginBottom: "12px", fontSize: "14px" }}>
+                   <strong style={{ color: "#ff9f0a" }}>Main Risk:</strong> <span style={{ color: "var(--color-text-dark)" }}>{localMetrics.aiHealthMainRisk}</span>
+                 </div>
+              )}
+              {!localMetrics.aiHealthRecommendedAction && localMetrics.aiHealthSuggestion && (
+                 <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)" }}>
+                   <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>AI Suggestion</span>
+                   <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthSuggestion}</span>
+                 </div>
+              )}
             </div>
           )}
 

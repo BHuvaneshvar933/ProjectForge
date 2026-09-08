@@ -8,9 +8,20 @@ const metricsSchema = new mongoose.Schema({
   completionPercentage: { type: Number, default: 0 },
   aiHealthScore: { type: Number },
   aiHealthStatus: { type: String },
-  aiHealthComponents: [{ name: String, impact: Number, reasoning: String }],
-  aiHealthMainRisk: { type: String },
-  aiHealthSuggestion: { type: String },
+  aiHealthComponents: [{ name: String, impact: Number, reasoning: String, interpretation: String }],
+  aiHealthMainRisk: { type: String }, // Legacy
+  aiHealthSuggestion: { type: String }, // Legacy
+  aiHealthAssessment: { type: String },
+  aiHealthPrimaryConcern: {
+    title: { type: String },
+    description: { type: String }
+  },
+  aiHealthPositiveSignal: {
+    title: { type: String },
+    description: { type: String }
+  },
+  aiHealthRecommendedAction: { type: String },
+  aiHealthCollaborationOpportunity: { type: String },
   aiWeeklySummary: {
     headline: String,
     completed: [String],

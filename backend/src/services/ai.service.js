@@ -316,23 +316,66 @@ Return only the required JSON structure.
   }
 };
 
-export const generateHealthExplanation = async (project, metrics) => {
+export const generateHealthExplanation = async (project, metrics, tasks, team) => {
   if (metrics.status === "Insufficient Data") {
     return {
+      assessment: "There is insufficient data to calculate a health score.",
+      primaryConcern: { title: "Insufficient Data", description: "The project does not have enough active tasks or team members to generate a health score." },
+      positiveSignal: null,
+      recommendedAction: "Create tasks, assign team members, and set deadlines to begin tracking project health.",
+      collaborationOpportunity: null,
+      dimensionInterpretations: {
+        progress: "No data available.",
+        schedule: "No data available.",
+        activity: "No data available.",
+        engagement: "No data available."
+      },
       main_risk: "Insufficient data to calculate a health score.",
       suggestion: "Create tasks, assign team members, and set deadlines to begin tracking project health."
     };
   }
 
+  // Calculate workload and prepare team info for prompt
+  const now = new Date();
+  const openTasks = tasks.filter(t => t.status !== "done");
+  const overdueTasksList = openTasks.filter(t => t.dueDate && new Date(t.dueDate) < now);
+  
+  const memberDetails = team.map(member => {
+    if (!member.userId) return null;
+    const activeTaskCount = openTasks.filter(t => {
+      const assignedId = typeof t.assignedTo === 'object' && t.assignedTo !== null 
+        ? t.assignedTo._id?.toString() 
+        : t.assignedTo?.toString();
+      return assignedId === member.userId._id.toString();
+    }).length;
+    
+    const skills = member.userId.skills ? member.userId.skills.map(s => s.name).join(", ") : "Unknown";
+    return `- ${member.userId.name}: ${activeTaskCount} active tasks, Skills: ${skills || "None recorded"}`;
+  }).filter(Boolean).join("\n");
+
+  const overdueDetails = overdueTasksList.map(t => {
+     const owner = typeof t.assignedTo === 'object' && t.assignedTo !== null ? t.assignedTo.name : "Unassigned";
+     return `- Task: "${t.title}" | Owner: ${owner}`;
+  }).join("\n");
+
   const prompt = `
-You are an expert Agile project manager analyzing a project's health metrics.
-The backend has already deterministically calculated the health score, status, and identified key factors and risks.
+You are ProjectForge's AI Project Health Analyst.
+Your job is to evaluate the current health of a student project using the supplied project metrics and evidence.
+
+CRITICAL RULES:
+1. Do not produce a weekly activity summary. (Do not answer "What happened this week?").
+2. Do not simply repeat individual task events (e.g., "Task X is overdue").
+3. Interpret the relationship between progress, schedule, activity, and engagement. Answer: "What does the current project state mean?"
+4. Identify broader project-health conditions such as delivery momentum, schedule pressure, inactivity, or healthy execution.
+5. Provide evidence-based recommendations.
+6. COLLABORATION OPPORTUNITY: Only recommend collaboration when actual workload AND relevant technical evidence (skills) support the recommendation. Do not recommend someone based on workload alone. Never invent skills, experience, workload, or availability. If there is insufficient evidence, return null for collaborationOpportunity. Do not automatically reassign tasks.
+7. Recommendations must be proportional to the available evidence and realistic for small student teams. Avoid enterprise jargon.
+8. Distinguish between Evidence ("1 task is overdue") and Interpretation ("The project is experiencing schedule pressure").
 
 AUTHORITATIVE METRICS (DO NOT RECALCULATE):
 Score: ${metrics.score}/100
 Status: ${metrics.status}
 Confidence: ${metrics.confidence}
-Provisional: ${metrics.isProvisional}
 
 DIMENSIONS:
 - Progress: ${metrics.dimensions.progress.score}/${metrics.dimensions.progress.max}
@@ -340,37 +383,46 @@ DIMENSIONS:
 - Activity: ${metrics.dimensions.activity.score}/${metrics.dimensions.activity.max}
 - Engagement: ${metrics.dimensions.engagement.score}/${metrics.dimensions.engagement.max}
 
-IDENTIFIED FACTORS:
+FACTORS & RISKS IDENTIFIED BY SYSTEM:
 ${metrics.factors.map(f => `- ${f}`).join('\n')}
+${metrics.risks.map(r => `- ${r}`).join('\n') || "- No specific risks identified"}
 
-IDENTIFIED RISKS:
-${metrics.risks.map(r => `- ${r}`).join('\n')}
+CURRENT PROJECT STATE (For Collaboration & Context):
+Overdue Tasks:
+${overdueDetails || "None"}
+
+Team Workload & Skills:
+${memberDetails || "No active members"}
 
 YOUR TASK:
-Based on the provided metrics and risks, output exactly two things in JSON format:
-1. main_risk: A concise 1-sentence summary of the biggest risk to the project's success.
-2. suggestion: A concrete, actionable suggestion for the team to improve their health.
+Output exactly the following JSON structure. All fields are required unless specified as nullable.
 
-RULES:
-1. DO NOT invent metrics, tasks, or team members.
-2. Only use the provided factors and risks.
-3. If there are no risks, the main_risk should be something like "No major risks identified at this time."
-4. Avoid unsupported AI conclusions. Do not infer low engagement, poor communication, or bad management simply because tasks are incomplete or overdue.
-5. AI Suggestions must match the evidence. Do not generate generic enterprise project-management advice (e.g. mandatory triage meetings, daily stand-ups, capacity planning) unless the data actually indicates such actions are necessary.
-6. Keep suggestions actionable but proportional to the size and evidence of the project. If it's a small project with few tasks, keep it simple (e.g., "Prioritize completing the overdue task").
-
-OUTPUT FORMAT (Valid JSON only):
 {
-  "main_risk": "string",
-  "suggestion": "string"
+  "assessment": "string (A higher-level explanation of the project's current condition. Describe the relationship between the health dimensions rather than merely listing tasks.)",
+  "primaryConcern": {
+    "title": "string (e.g. Delivery Momentum, Schedule Pressure)",
+    "description": "string (Why this is the primary concern)"
+  },
+  "positiveSignal": {
+    "title": "string (What is working well) | null",
+    "description": "string (Why this is a positive signal) | null"
+  },
+  "recommendedAction": "string (Concise action addressing the underlying condition)",
+  "collaborationOpportunity": "string | null (A specific suggestion for a team member to assist another, based on workload and skills. Null if no clear opportunity.)",
+  "dimensionInterpretations": {
+    "progress": "string (Short interpretation of progress score)",
+    "schedule": "string (Short interpretation of schedule score)",
+    "activity": "string (Short interpretation of activity score)",
+    "engagement": "string (Short interpretation of engagement score)"
+  }
 }
 `;
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
     model: "openai/gpt-oss-120b",
-    temperature: 0.3,
-    max_tokens: 500,
+    temperature: 0.2,
+    max_tokens: 1500,
   });
 
   try {
@@ -385,12 +437,24 @@ OUTPUT FORMAT (Valid JSON only):
     }
     
     return {
-      main_risk: output.main_risk || "Unable to determine main risk.",
-      suggestion: output.suggestion || "Focus on completing outstanding tasks."
+      assessment: output.assessment || "Analysis unavailable.",
+      primaryConcern: output.primaryConcern || null,
+      positiveSignal: output.positiveSignal || null,
+      recommendedAction: output.recommendedAction || "Keep monitoring project activity.",
+      collaborationOpportunity: output.collaborationOpportunity || null,
+      dimensionInterpretations: output.dimensionInterpretations || {},
+      main_risk: output.primaryConcern ? output.primaryConcern.description : "Unavailable",
+      suggestion: output.recommendedAction || "Unavailable"
     };
   } catch (error) {
     console.error("AI Explanation Error:", error);
     return {
+      assessment: "Analysis failed.",
+      primaryConcern: null,
+      positiveSignal: null,
+      recommendedAction: "Please try again later.",
+      collaborationOpportunity: null,
+      dimensionInterpretations: {},
       main_risk: "Analysis failed.",
       suggestion: "Please try again later."
     };

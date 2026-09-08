@@ -477,16 +477,31 @@ export const getProjectHealth = async (req, res, next) => {
     const project = await Project.findById(projectId);
     if (!project) return res.status(404).json({ success: false, message: "Project not found" });
 
-    const tasks = await Task.find({ projectId, isDeleted: false });
-    const team = await Team.find({ projectId, status: "active", isDeleted: false });
+    const tasks = await Task.find({ projectId, isDeleted: false }).populate('assignedTo', 'name');
+    
+    const team = await Team.find({ projectId, status: "active", isDeleted: false })
+      .populate({
+        path: 'userId',
+        select: 'name headline skills',
+        populate: { path: 'skills', select: 'name' }
+      });
 
     // 1. Calculate deterministic metrics
     const metrics = calculateProjectHealth(project, tasks, team);
 
     // 2. Generate AI Explanation
-    let aiExplanation = { main_risk: "Unavailable", suggestion: "Unavailable" };
+    let aiExplanation = { 
+      main_risk: "Unavailable", 
+      suggestion: "Unavailable",
+      assessment: "Unavailable",
+      primaryConcern: { title: "Unavailable", description: "Unavailable" },
+      positiveSignal: { title: "Unavailable", description: "Unavailable" },
+      recommendedAction: "Unavailable",
+      collaborationOpportunity: null
+    };
+
     if (metrics.score !== null) {
-      aiExplanation = await generateHealthExplanation(project, metrics);
+      aiExplanation = await generateHealthExplanation(project, metrics, tasks, team);
     }
 
     // 3. Combine and return
@@ -496,8 +511,35 @@ export const getProjectHealth = async (req, res, next) => {
       confidence: metrics.confidence,
       isProvisional: metrics.isProvisional,
       dimensions: metrics.dimensions,
-      main_risk: aiExplanation.main_risk,
-      suggestion: aiExplanation.suggestion
+      main_risk: aiExplanation.main_risk || (aiExplanation.primaryConcern ? aiExplanation.primaryConcern.description : "Unavailable"),
+      suggestion: aiExplanation.suggestion || aiExplanation.recommendedAction || "Unavailable",
+      assessment: aiExplanation.assessment,
+      primaryConcern: aiExplanation.primaryConcern,
+      positiveSignal: aiExplanation.positiveSignal,
+      recommendedAction: aiExplanation.recommendedAction,
+    // Map interpretations to components
+    const components = Object.entries(metrics.dimensions).map(([key, val]) => ({
+      name: key,
+      impact: val.score,
+      interpretation: aiExplanation.dimensionInterpretations?.[key] || ""
+    }));
+
+    // 3. Combine and return
+    const result = {
+      health_score: metrics.score,
+      status: metrics.status,
+      confidence: metrics.confidence,
+      isProvisional: metrics.isProvisional,
+      dimensions: metrics.dimensions,
+      components: components,
+      main_risk: aiExplanation.main_risk || (aiExplanation.primaryConcern ? aiExplanation.primaryConcern.description : "Unavailable"),
+      suggestion: aiExplanation.suggestion || aiExplanation.recommendedAction || "Unavailable",
+      assessment: aiExplanation.assessment,
+      primaryConcern: aiExplanation.primaryConcern,
+      positiveSignal: aiExplanation.positiveSignal,
+      recommendedAction: aiExplanation.recommendedAction,
+      collaborationOpportunity: aiExplanation.collaborationOpportunity,
+      dimensionInterpretations: aiExplanation.dimensionInterpretations
     };
 
     // 4. Save to database
@@ -505,9 +547,14 @@ export const getProjectHealth = async (req, res, next) => {
       $set: {
         "metrics.aiHealthScore": metrics.score,
         "metrics.aiHealthStatus": metrics.status,
-        "metrics.aiHealthComponents": Object.entries(metrics.dimensions).map(([key, val]) => ({ name: key, impact: val.score })),
-        "metrics.aiHealthMainRisk": aiExplanation.main_risk,
-        "metrics.aiHealthSuggestion": aiExplanation.suggestion,
+        "metrics.aiHealthComponents": components,
+        "metrics.aiHealthMainRisk": result.main_risk, // Legacy
+        "metrics.aiHealthSuggestion": result.suggestion, // Legacy
+        "metrics.aiHealthAssessment": aiExplanation.assessment,
+        "metrics.aiHealthPrimaryConcern": aiExplanation.primaryConcern,
+        "metrics.aiHealthPositiveSignal": aiExplanation.positiveSignal,
+        "metrics.aiHealthRecommendedAction": aiExplanation.recommendedAction,
+        "metrics.aiHealthCollaborationOpportunity": aiExplanation.collaborationOpportunity,
         "metrics.aiLastGeneratedAt": new Date()
       }
     });
