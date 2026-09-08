@@ -285,13 +285,13 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                         <div style={{ 
                           padding: "4px 8px", 
                           borderRadius: "4px", 
-                          background: "rgba(142, 142, 147, 0.1)",
-                          color: "var(--color-text-dark)",
+                          background: (comp.impact / comp.max) < 0.4 ? "rgba(255, 69, 58, 0.1)" : (comp.impact / comp.max) > 0.8 ? "rgba(50, 215, 75, 0.1)" : "rgba(142, 142, 147, 0.1)",
+                          color: (comp.impact / comp.max) < 0.4 ? "#ff453a" : (comp.impact / comp.max) > 0.8 ? "#32d74b" : "#8e8e93",
                           fontWeight: "600",
                           fontSize: "13px",
                           fontVariantNumeric: "tabular-nums"
                         }}>
-                          {comp.impact}
+                          {comp.impact} / {comp.max}
                         </div>
                       </div>
                       {comp.interpretation && (

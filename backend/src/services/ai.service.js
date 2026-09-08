@@ -423,6 +423,7 @@ Output exactly the following JSON structure. All fields are required unless spec
     model: "openai/gpt-oss-120b",
     temperature: 0.2,
     max_tokens: 1500,
+    response_format: { type: "json_object" }
   });
 
   try {

@@ -508,6 +508,7 @@ export const getProjectHealth = async (req, res, next) => {
     const components = Object.entries(metrics.dimensions).map(([key, val]) => ({
       name: key,
       impact: val.score,
+      max: val.max,
       interpretation: aiExplanation.dimensionInterpretations?.[key] || ""
     }));
 
