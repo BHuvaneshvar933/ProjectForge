@@ -68,7 +68,7 @@ Generate the bullets using only these facts.
         content: prompt,
       },
     ],
-    model: "llama-3.1-8b-instant",
+    model: "openai/gpt-oss-20b",
     temperature: 0.3,
     max_tokens: 500,
   });
@@ -146,7 +146,7 @@ Use only the information provided above.
         content: prompt,
       },
     ],
-    model: "llama-3.1-8b-instant",
+    model: "openai/gpt-oss-20b",
     temperature: 0.3,
     max_tokens: 1500,
   });
@@ -265,7 +265,7 @@ Return only the required JSON structure.
         content: prompt,
       },
     ],
-    model: "llama-3.1-8b-instant",
+    model: "openai/gpt-oss-20b",
     temperature: 0.1,
     max_tokens: 3000
   });
@@ -421,7 +421,7 @@ Output exactly the following JSON structure. All fields are required unless spec
   try {
     const chatCompletion = await getGroq().chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama-3.1-8b-instant",
+      model: "openai/gpt-oss-20b",
       temperature: 0.2,
       max_tokens: 1500,
       response_format: { type: "json_object" }
@@ -540,7 +540,7 @@ REQUIREMENTS:
   try {
     const chatCompletion = await getGroq().chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama-3.1-8b-instant",
+      model: "openai/gpt-oss-20b",
       temperature: 0.1,
       max_tokens: 600,
       response_format: { type: "json_object" }
@@ -614,7 +614,7 @@ Output your suggestion as a strict JSON object with this exact structure:
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "llama-3.1-8b-instant",
+    model: "openai/gpt-oss-20b",
     temperature: 0.2,
     max_tokens: 600,
   });
@@ -666,7 +666,7 @@ Output your assessment as a strict JSON object with this exact structure:
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "llama-3.1-8b-instant",
+    model: "openai/gpt-oss-20b",
     temperature: 0.2,
     max_tokens: 800,
   });
