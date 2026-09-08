@@ -398,6 +398,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                         {localMetrics.aiWeeklySummary.unfinished_carryover.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
+                  )}
                 </div>
               ) : (
                 <p style={{ fontSize: "14px", color: "var(--color-text-muted)", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
