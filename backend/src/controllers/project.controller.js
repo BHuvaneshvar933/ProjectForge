@@ -496,6 +496,10 @@ export const getProjectHealth = async (req, res, next) => {
       assessment: "Unavailable",
       primaryConcern: { title: "Unavailable", description: "Unavailable" },
       positiveSignal: { title: "Unavailable", description: "Unavailable" },
+      whatsGoingWell: [],
+      needsAttention: [],
+      recommendedActions: [],
+      workDistribution: null,
       recommendedAction: "Unavailable",
       collaborationOpportunity: null
     };
@@ -521,11 +525,14 @@ export const getProjectHealth = async (req, res, next) => {
       dimensions: metrics.dimensions,
       components: components,
       main_risk: aiExplanation.main_risk || (aiExplanation.primaryConcern ? aiExplanation.primaryConcern.description : "Unavailable"),
-      suggestion: aiExplanation.suggestion || aiExplanation.recommendedAction || "Unavailable",
+      suggestion: aiExplanation.suggestion || (aiExplanation.recommendedActions ? aiExplanation.recommendedActions[0] : "Unavailable"),
       assessment: aiExplanation.assessment,
       primaryConcern: aiExplanation.primaryConcern,
       positiveSignal: aiExplanation.positiveSignal,
-      recommendedAction: aiExplanation.recommendedAction,
+      whatsGoingWell: aiExplanation.whatsGoingWell,
+      needsAttention: aiExplanation.needsAttention,
+      recommendedActions: aiExplanation.recommendedActions,
+      workDistribution: aiExplanation.workDistribution,
       collaborationOpportunity: aiExplanation.collaborationOpportunity,
       dimensionInterpretations: aiExplanation.dimensionInterpretations
     };
@@ -541,7 +548,10 @@ export const getProjectHealth = async (req, res, next) => {
         "metrics.aiHealthAssessment": aiExplanation.assessment,
         "metrics.aiHealthPrimaryConcern": aiExplanation.primaryConcern,
         "metrics.aiHealthPositiveSignal": aiExplanation.positiveSignal,
-        "metrics.aiHealthRecommendedAction": aiExplanation.recommendedAction,
+        "metrics.aiHealthWhatsGoingWell": aiExplanation.whatsGoingWell,
+        "metrics.aiHealthNeedsAttention": aiExplanation.needsAttention,
+        "metrics.aiHealthRecommendedActions": aiExplanation.recommendedActions,
+        "metrics.aiHealthWorkDistribution": aiExplanation.workDistribution,
         "metrics.aiHealthCollaborationOpportunity": aiExplanation.collaborationOpportunity,
         "metrics.aiLastGeneratedAt": new Date()
       }

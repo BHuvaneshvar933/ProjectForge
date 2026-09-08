@@ -304,24 +304,67 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                 </div>
               )}
 
-              {localMetrics.aiHealthPrimaryConcern && (
+              {localMetrics.aiHealthWhatsGoingWell && localMetrics.aiHealthWhatsGoingWell.length > 0 && (
                 <div style={{ marginBottom: "16px" }}>
+                  <h4 style={{ fontSize: "14px", color: "#32d74b", margin: "0 0 8px 0" }}>What's Going Well</h4>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {localMetrics.aiHealthWhatsGoingWell.map((item, idx) => (
+                      <div key={idx} style={{ padding: "10px", background: "rgba(50, 215, 75, 0.05)", borderLeft: "3px solid #32d74b", borderRadius: "0 6px 6px 0" }}>
+                        <strong style={{ fontSize: "13px", color: "var(--color-text-dark)", display: "block" }}>{item.title}</strong>
+                        <span style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>{item.description}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {localMetrics.aiHealthNeedsAttention && localMetrics.aiHealthNeedsAttention.length > 0 && (
+                <div style={{ marginBottom: "16px" }}>
+                  <h4 style={{ fontSize: "14px", color: "#ff453a", margin: "0 0 8px 0" }}>Needs Attention</h4>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {localMetrics.aiHealthNeedsAttention.map((item, idx) => (
+                      <div key={idx} style={{ padding: "10px", background: "rgba(255, 69, 58, 0.05)", borderLeft: "3px solid #ff453a", borderRadius: "0 6px 6px 0" }}>
+                        <strong style={{ fontSize: "13px", color: "var(--color-text-dark)", display: "block" }}>{item.title}</strong>
+                        <span style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>{item.description}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {localMetrics.aiHealthPrimaryConcern && localMetrics.aiHealthPrimaryConcern.title && localMetrics.aiHealthPrimaryConcern.title !== "Unavailable" && (
+                <div style={{ marginBottom: "20px", padding: "12px", background: "rgba(255, 159, 10, 0.1)", borderRadius: "6px", border: "1px solid rgba(255, 159, 10, 0.3)" }}>
                   <strong style={{ fontSize: "14px", color: "#ff9f0a", display: "block", marginBottom: "4px" }}>Primary Concern: {localMetrics.aiHealthPrimaryConcern.title}</strong>
-                  <span style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthPrimaryConcern.description}</span>
+                  <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthPrimaryConcern.description}</span>
                 </div>
               )}
 
-              {localMetrics.aiHealthPositiveSignal && (
-                <div style={{ marginBottom: "16px" }}>
-                  <strong style={{ fontSize: "14px", color: "#32d74b", display: "block", marginBottom: "4px" }}>Positive Signal: {localMetrics.aiHealthPositiveSignal.title}</strong>
-                  <span style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthPositiveSignal.description}</span>
+              {localMetrics.aiHealthRecommendedActions && localMetrics.aiHealthRecommendedActions.length > 0 && localMetrics.aiHealthRecommendedActions[0] !== "Keep monitoring project activity." && localMetrics.aiHealthRecommendedActions[0] !== "Unavailable" && (
+                <div style={{ marginBottom: "20px" }}>
+                  <h4 style={{ fontSize: "14px", color: "#0a84ff", margin: "0 0 8px 0" }}>Recommended Actions</h4>
+                  <ol style={{ margin: 0, paddingLeft: "24px", fontSize: "13px", color: "var(--color-text-dark)" }}>
+                    {localMetrics.aiHealthRecommendedActions.map((action, idx) => (
+                      <li key={idx} style={{ marginBottom: "6px" }}>{action}</li>
+                    ))}
+                  </ol>
                 </div>
               )}
 
-              {localMetrics.aiHealthRecommendedAction && (
-                <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)", marginBottom: "16px" }}>
-                  <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>Recommended Action</span>
-                  <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthRecommendedAction}</span>
+              {localMetrics.aiHealthWorkDistribution && localMetrics.aiHealthWorkDistribution.summary && (
+                <div style={{ marginBottom: "20px", padding: "16px", background: "var(--bg-page)", border: "1px solid var(--border-color)", borderRadius: "8px" }}>
+                  <h4 style={{ fontSize: "14px", color: "var(--color-text-dark)", margin: "0 0 8px 0" }}>Recommended Work Distribution</h4>
+                  <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: "0 0 12px 0" }}>{localMetrics.aiHealthWorkDistribution.summary}</p>
+                  
+                  {localMetrics.aiHealthWorkDistribution.recommendations && localMetrics.aiHealthWorkDistribution.recommendations.length > 0 && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      {localMetrics.aiHealthWorkDistribution.recommendations.map((rec, idx) => (
+                        <div key={idx} style={{ padding: "10px", background: "rgba(10, 132, 255, 0.05)", borderRadius: "6px" }}>
+                          <strong style={{ fontSize: "13px", color: "var(--color-text-dark)", display: "block" }}>{rec.member} &rarr; {rec.task}</strong>
+                          <span style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>{rec.reason}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -333,12 +376,12 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               )}
               
               {/* Legacy fallback for older data */}
-              {!localMetrics.aiHealthPrimaryConcern && localMetrics.aiHealthMainRisk && (
+              {(!localMetrics.aiHealthPrimaryConcern || !localMetrics.aiHealthPrimaryConcern.title) && localMetrics.aiHealthMainRisk && (
                  <div style={{ marginBottom: "12px", fontSize: "14px" }}>
                    <strong style={{ color: "#ff9f0a" }}>Main Risk:</strong> <span style={{ color: "var(--color-text-dark)" }}>{localMetrics.aiHealthMainRisk}</span>
                  </div>
               )}
-              {!localMetrics.aiHealthRecommendedAction && localMetrics.aiHealthSuggestion && (
+              {(!localMetrics.aiHealthRecommendedActions || localMetrics.aiHealthRecommendedActions.length === 0) && localMetrics.aiHealthSuggestion && (
                  <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)" }}>
                    <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>AI Suggestion</span>
                    <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthSuggestion}</span>

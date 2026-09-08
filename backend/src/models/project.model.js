@@ -20,8 +20,30 @@ const metricsSchema = new mongoose.Schema({
     title: { type: String },
     description: { type: String }
   },
-  aiHealthRecommendedAction: { type: String },
+  aiHealthWhatsGoingWell: [{
+    title: { type: String },
+    description: { type: String }
+  }],
+  aiHealthNeedsAttention: [{
+    title: { type: String },
+    description: { type: String }
+  }],
+  aiHealthRecommendedActions: [{ type: String }],
+  aiHealthWorkDistribution: {
+    summary: { type: String },
+    recommendations: [{
+      member: { type: String },
+      task: { type: String },
+      reason: { type: String }
+    }]
+  },
   aiHealthCollaborationOpportunity: { type: String },
+  aiHealthDimensionInterpretations: {
+    progress: { type: String },
+    schedule: { type: String },
+    activity: { type: String },
+    teamDistribution: { type: String }
+  },
   aiWeeklySummary: {
     headline: String,
     completed: [String],

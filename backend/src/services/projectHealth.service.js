@@ -32,7 +32,7 @@ export const calculateProjectHealth = (project, tasks, team) => {
   let progressScore = 0;
   let scheduleScore = 0;
   let activityScore = 0;
-  let engagementScore = 0;
+  let teamDistributionScore = 0;
   
   let factors = [];
   let risks = [];
@@ -48,7 +48,7 @@ export const calculateProjectHealth = (project, tasks, team) => {
         progress: { score: 0, max: 35 },
         schedule: { score: 0, max: 30 },
         activity: { score: 0, max: 20 },
-        engagement: { score: 0, max: 15 }
+        teamDistribution: { score: 0, max: 15 }
       },
       factors: ["No tasks created yet"],
       risks: []
@@ -122,23 +122,56 @@ export const calculateProjectHealth = (project, tasks, team) => {
     risks.push("No recent activity in the last 14 days");
   }
 
-  // 4. TEAM ENGAGEMENT (15)
-  if (totalMembers === 0 || totalTasks < 3 || recentActivityCount === 0) {
-    engagementScore = 11; // Neutral baseline (~75%)
-    factors.push("Insufficient data to evaluate team engagement accurately");
+  // 4. TEAM DISTRIBUTION (15)
+  // Calculate workload concentration
+  if (totalTasks === 0 || totalMembers === 0) {
+    teamDistributionScore = 15; // Neutral-good if no workload to distribute
+    factors.push("No active workload to distribute");
   } else {
-    const participation = activeContributorsCount / totalMembers;
-    if (participation >= 0.8) engagementScore = 15;
-    else if (participation >= 0.5) engagementScore = 12;
-    else if (participation >= 0.3) engagementScore = 8;
-    else {
-      engagementScore = 4;
-      risks.push("Low team participation relative to active tasks");
+    // Check how many tasks each member is assigned
+    const memberWorkload = {};
+    activeMembers.forEach(m => {
+      memberWorkload[m.userId ? m.userId.toString() : m._id.toString()] = 0;
+    });
+    
+    let assignedTasksCount = 0;
+    tasks.filter(t => t.status !== 'done').forEach(t => {
+      if (t.assignedTo) {
+        const assignedId = typeof t.assignedTo === 'object' && t.assignedTo !== null 
+          ? (t.assignedTo._id ? t.assignedTo._id.toString() : t.assignedTo.toString())
+          : t.assignedTo.toString();
+        
+        if (memberWorkload[assignedId] !== undefined) {
+          memberWorkload[assignedId]++;
+          assignedTasksCount++;
+        }
+      }
+    });
+
+    if (assignedTasksCount === 0) {
+      teamDistributionScore = 5;
+      risks.push("Active tasks have no assigned owners");
+    } else {
+      const maxWorkload = Math.max(...Object.values(memberWorkload));
+      const concentrationRatio = maxWorkload / assignedTasksCount;
+
+      if (concentrationRatio <= 0.4 || (assignedTasksCount === 1)) {
+        teamDistributionScore = 15;
+        if (assignedTasksCount > 1) factors.push("Workload is well distributed across the team");
+      } else if (concentrationRatio <= 0.6) {
+        teamDistributionScore = 12;
+        factors.push("Workload is adequately distributed");
+      } else if (concentrationRatio <= 0.8) {
+        teamDistributionScore = 8;
+        risks.push("Workload is slightly concentrated on a single member");
+      } else {
+        teamDistributionScore = 5;
+        risks.push("Active workload is highly concentrated on a single member");
+      }
     }
-    factors.push(`${activeContributorsCount} of ${totalMembers} members contributed recently`);
   }
 
-  const totalScore = progressScore + scheduleScore + activityScore + engagementScore;
+  const totalScore = progressScore + scheduleScore + activityScore + teamDistributionScore;
   
   if (totalTasks >= 5 && tasksWithDeadlines >= 2 && !isProvisional) {
     confidence = "high";
@@ -163,7 +196,7 @@ export const calculateProjectHealth = (project, tasks, team) => {
       progress: { score: progressScore, max: 35 },
       schedule: { score: scheduleScore, max: 30 },
       activity: { score: activityScore, max: 20 },
-      engagement: { score: engagementScore, max: 15 }
+      teamDistribution: { score: teamDistributionScore, max: 15 }
     },
     factors,
     risks
