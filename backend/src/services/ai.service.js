@@ -397,51 +397,63 @@ Team Workload & Skills (Active Task Counts & Skills):
 ${memberDetails || "No active members"}
 
 YOUR TASK:
-Output exactly the following JSON structure. All fields are required unless specified as nullable. Do not include markdown formatting like \`\`\`json.
+Output EXACTLY the following JSON structure. Do NOT include markdown formatting, code blocks, or comments in your response. Output ONLY valid, parsable JSON.
 
 {
-  "assessment": "string (Synthesize relationships between data. What does the current project state actually mean?)",
+  "assessment": "",
   "whatsGoingWell": [
     {
-      "title": "string (e.g., Active Development, Clear Ownership)",
-      "description": "string (Why this is working well based on actual data)"
+      "title": "",
+      "description": ""
     }
   ],
   "needsAttention": [
     {
-      "title": "string (e.g., Workload Concentration, Low Completed Progress)",
-      "description": "string (Concrete problems supported by data)"
+      "title": "",
+      "description": ""
     }
   ],
   "primaryConcern": {
-    "title": "string (The underlying condition, e.g., Workload Imbalance)",
-    "description": "string (Why this matters and its impact)"
+    "title": "",
+    "description": ""
   },
   "positiveSignal": {
-    "title": "string (Legacy field, just copy the best 'whatsGoingWell' title)",
-    "description": "string (Legacy field, just copy the best 'whatsGoingWell' description)"
+    "title": "",
+    "description": ""
   },
   "recommendedActions": [
-    "string (Concrete next steps based on the actual project. What should the students actually do next?)"
+    ""
   ],
   "workDistribution": {
-    "summary": "string (Who currently has workload and who may have capacity)",
+    "summary": "",
     "recommendations": [
       {
-        "member": "string (The name of the member)",
-        "task": "string (The specific task title they could take)",
-        "reason": "string (Why they should take it, referencing capacity and skills)"
+        "member": "",
+        "task": "",
+        "reason": ""
       }
     ]
   },
-  "collaborationOpportunity": "string | null (A specific suggestion for a team member to assist another, based on workload and skills. Null if no clear opportunity.)",
+  "collaborationOpportunity": null,
   "dimensionInterpretations": {
-    "progress": "string",
-    "schedule": "string",
-    "activity": "string",
-    "teamDistribution": "string"
+    "progress": "",
+    "schedule": "",
+    "activity": "",
+    "teamDistribution": ""
   }
 }
+
+FIELD INSTRUCTIONS:
+- "assessment": Synthesize relationships between data. What does the current project state actually mean?
+- "whatsGoingWell": Array of things working well based on actual data.
+- "needsAttention": Array of concrete problems supported by data.
+- "primaryConcern": The underlying condition (e.g., Workload Imbalance) and why it matters.
+- "positiveSignal": Copy the best 'whatsGoingWell' title and description.
+- "recommendedActions": Concrete next steps. What should they actually do? Be specific about WHO and WHAT.
+- "workDistribution.summary": Who currently has workload and who may have capacity.
+- "workDistribution.recommendations": Specific task assignments matching skills and capacity.
+- "collaborationOpportunity": Specific suggestion for assistance based on skills. Return null if no clear opportunity.
+- "dimensionInterpretations": Short interpretation for each score dimension.
 `;
 
   try {
