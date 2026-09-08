@@ -418,15 +418,16 @@ Output exactly the following JSON structure. All fields are required unless spec
 }
 `;
 
-  const chatCompletion = await getGroq().chat.completions.create({
-    messages: [{ role: "user", content: prompt }],
-    model: "openai/gpt-oss-120b",
-    temperature: 0.2,
-    max_tokens: 1500,
-    response_format: { type: "json_object" }
-  });
-
   try {
+    const chatCompletion = await getGroq().chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "openai/gpt-oss-120b",
+      temperature: 0.2,
+      max_tokens: 1500,
+      response_format: { type: "json_object" },
+      timeout: 10000 // Add a 10s timeout so it doesn't hang forever
+    });
+
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
     let output;
     try {
