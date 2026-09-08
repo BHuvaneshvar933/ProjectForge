@@ -68,7 +68,7 @@ Generate the bullets using only these facts.
         content: prompt,
       },
     ],
-    model: "llama3-70b-8192",
+    model: "llama-3.3-70b-versatile",
     temperature: 0.3,
     max_tokens: 500,
   });
@@ -146,7 +146,7 @@ Use only the information provided above.
         content: prompt,
       },
     ],
-    model: "llama3-70b-8192",
+    model: "llama-3.3-70b-versatile",
     temperature: 0.3,
     max_tokens: 1500,
   });
@@ -265,14 +265,14 @@ Return only the required JSON structure.
         content: prompt,
       },
     ],
-    model: "llama3-70b-8192",
-    temperature: 0.1, 
+    model: "llama-3.3-70b-versatile",
+    temperature: 0.1,
     max_tokens: 3000
   });
 
   try {
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
-    
+
     // Fallback parsing strategy
     let assets;
     try {
@@ -282,10 +282,10 @@ Return only the required JSON structure.
       const jsonString = jsonMatch ? jsonMatch[0] : "{}";
       assets = JSON.parse(jsonString);
     }
-    
+
     // Strict Schema Validation
     if (!assets || typeof assets !== 'object') throw new Error("Invalid output format");
-    
+
     const validatedAssets = {
       resumeBullets: Array.isArray(assets.resumeBullets) ? assets.resumeBullets : [],
       portfolioDescription: typeof assets.portfolioDescription === 'string' ? assets.portfolioDescription : "",
@@ -301,14 +301,14 @@ Return only the required JSON structure.
         resultAndTakeaway: typeof assets.interviewAnswer?.resultAndTakeaway === 'string' ? assets.interviewAnswer.resultAndTakeaway : ""
       }
     };
-    
+
     if (projectId && userId) {
       await Team.findOneAndUpdate(
         { projectId, userId, status: "active", isDeleted: false },
         { $set: { careerAssets: validatedAssets } }
       );
     }
-    
+
     return validatedAssets;
   } catch (e) {
     console.error("AI Generation Error: ", e);
@@ -339,23 +339,23 @@ export const generateHealthExplanation = async (project, metrics, tasks, team) =
   const now = new Date();
   const openTasks = tasks.filter(t => t.status !== "done");
   const overdueTasksList = openTasks.filter(t => t.dueDate && new Date(t.dueDate) < now);
-  
+
   const memberDetails = team.map(member => {
     if (!member.userId) return null;
     const activeTaskCount = openTasks.filter(t => {
-      const assignedId = typeof t.assignedTo === 'object' && t.assignedTo !== null 
-        ? t.assignedTo._id?.toString() 
+      const assignedId = typeof t.assignedTo === 'object' && t.assignedTo !== null
+        ? t.assignedTo._id?.toString()
         : t.assignedTo?.toString();
       return assignedId === member.userId._id.toString();
     }).length;
-    
+
     const skills = member.userId.skills ? member.userId.skills.map(s => s.name).join(", ") : "Unknown";
     return `- ${member.userId.name}: ${activeTaskCount} active tasks, Skills: ${skills || "None recorded"}`;
   }).filter(Boolean).join("\n");
 
   const overdueDetails = overdueTasksList.map(t => {
-     const owner = typeof t.assignedTo === 'object' && t.assignedTo !== null ? t.assignedTo.name : "Unassigned";
-     return `- Task: "${t.title}" | Owner: ${owner}`;
+    const owner = typeof t.assignedTo === 'object' && t.assignedTo !== null ? t.assignedTo.name : "Unassigned";
+    return `- Task: "${t.title}" | Owner: ${owner}`;
   }).join("\n");
 
   const prompt = `
@@ -421,11 +421,10 @@ Output exactly the following JSON structure. All fields are required unless spec
   try {
     const chatCompletion = await getGroq().chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama3-70b-8192",
+      model: "llama-3.3-70b-versatile",
       temperature: 0.2,
       max_tokens: 1500,
-      response_format: { type: "json_object" },
-      timeout: 10000 // Add a 10s timeout so it doesn't hang forever
+      response_format: { type: "json_object" }
     });
 
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
@@ -437,7 +436,7 @@ Output exactly the following JSON structure. All fields are required unless spec
       const jsonString = jsonMatch ? jsonMatch[0] : "{}";
       output = JSON.parse(jsonString);
     }
-    
+
     return {
       assessment: output.assessment || "Analysis unavailable.",
       primaryConcern: output.primaryConcern || null,
@@ -468,24 +467,24 @@ Output exactly the following JSON structure. All fields are required unless spec
 export const generateWeeklyProjectSummary = async (projectId, projectData, tasks, team) => {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  
+
   // Data Window: Only last 7 days
   const newlyAdded = tasks.filter(t => t.createdAt && new Date(t.createdAt) > sevenDaysAgo);
   const completedThisWeek = tasks.filter(t => t.status === 'done' && t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo);
-  
+
   // Updated this week, but not newly added and not completed (to show progress)
-  const updatedThisWeek = tasks.filter(t => 
-    t.status !== 'done' && 
-    t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo && 
+  const updatedThisWeek = tasks.filter(t =>
+    t.status !== 'done' &&
+    t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo &&
     !(t.createdAt && new Date(t.createdAt) > sevenDaysAgo)
   );
 
   // Unfinished carryover: Only tasks that were ACTIVE this week (created or updated) but remain incomplete.
   // We explicitly DO NOT dump old inactive tasks here to avoid becoming a health report.
-  const unfinishedCarryover = tasks.filter(t => 
-    t.status !== 'done' && 
+  const unfinishedCarryover = tasks.filter(t =>
+    t.status !== 'done' &&
     (
-      (t.createdAt && new Date(t.createdAt) > sevenDaysAgo) || 
+      (t.createdAt && new Date(t.createdAt) > sevenDaysAgo) ||
       (t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo)
     )
   );
@@ -541,15 +540,14 @@ REQUIREMENTS:
   try {
     const chatCompletion = await getGroq().chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama3-70b-8192",
-      temperature: 0.1, 
+      model: "llama-3.3-70b-versatile",
+      temperature: 0.1,
       max_tokens: 600,
-      response_format: { type: "json_object" },
-      timeout: 10000
+      response_format: { type: "json_object" }
     });
 
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
-    
+
     let parsed;
     try {
       parsed = JSON.parse(rawContent);
@@ -558,7 +556,7 @@ REQUIREMENTS:
       const jsonString = jsonMatch ? jsonMatch[0] : "{}";
       parsed = JSON.parse(jsonString);
     }
-    
+
     if (!parsed || typeof parsed !== 'object') throw new Error("Invalid output format");
     const summaryData = {
       overview: typeof parsed.overview === 'string' ? parsed.overview : "Weekly Progress Update",
@@ -584,8 +582,8 @@ REQUIREMENTS:
 
 export const generateDeveloperContribution = async (userId, tasks, projectData) => {
   const myCompletedTasks = tasks.filter(t => {
-    const assignedId = typeof t.assignedTo === 'object' && t.assignedTo !== null 
-      ? t.assignedTo._id?.toString() 
+    const assignedId = typeof t.assignedTo === 'object' && t.assignedTo !== null
+      ? t.assignedTo._id?.toString()
       : t.assignedTo?.toString();
     return assignedId === userId.toString() && t.status === 'done';
   });
@@ -616,7 +614,7 @@ Output your suggestion as a strict JSON object with this exact structure:
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "llama3-70b-8192",
+    model: "llama-3.3-70b-versatile",
     temperature: 0.2,
     max_tokens: 600,
   });
@@ -668,7 +666,7 @@ Output your assessment as a strict JSON object with this exact structure:
 
   const chatCompletion = await getGroq().chat.completions.create({
     messages: [{ role: "user", content: prompt }],
-    model: "llama3-70b-8192",
+    model: "llama-3.3-70b-versatile",
     temperature: 0.2,
     max_tokens: 800,
   });
