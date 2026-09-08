@@ -504,19 +504,6 @@ export const getProjectHealth = async (req, res, next) => {
       aiExplanation = await generateHealthExplanation(project, metrics, tasks, team);
     }
 
-    // 3. Combine and return
-    const result = {
-      health_score: metrics.score,
-      status: metrics.status,
-      confidence: metrics.confidence,
-      isProvisional: metrics.isProvisional,
-      dimensions: metrics.dimensions,
-      main_risk: aiExplanation.main_risk || (aiExplanation.primaryConcern ? aiExplanation.primaryConcern.description : "Unavailable"),
-      suggestion: aiExplanation.suggestion || aiExplanation.recommendedAction || "Unavailable",
-      assessment: aiExplanation.assessment,
-      primaryConcern: aiExplanation.primaryConcern,
-      positiveSignal: aiExplanation.positiveSignal,
-      recommendedAction: aiExplanation.recommendedAction,
     // Map interpretations to components
     const components = Object.entries(metrics.dimensions).map(([key, val]) => ({
       name: key,
