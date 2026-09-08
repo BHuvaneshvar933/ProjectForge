@@ -464,8 +464,7 @@ FIELD INSTRUCTIONS:
       messages: [{ role: "user", content: prompt }],
       model: "openai/gpt-oss-20b",
       temperature: 0.2,
-      max_tokens: 1500,
-      response_format: { type: "json_object" }
+      max_tokens: 1500
     });
 
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
@@ -586,8 +585,7 @@ REQUIREMENTS:
       messages: [{ role: "user", content: prompt }],
       model: "openai/gpt-oss-20b",
       temperature: 0.1,
-      max_tokens: 600,
-      response_format: { type: "json_object" }
+      max_tokens: 600
     });
 
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
