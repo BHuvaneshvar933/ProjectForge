@@ -400,63 +400,45 @@ Team Workload & Skills (Active Task Counts & Skills):
 ${memberDetails || "No active members"}
 
 YOUR TASK:
-Output EXACTLY the following JSON structure. Do NOT include markdown formatting, code blocks, or comments in your response. Output ONLY valid, parsable JSON.
+Output ONLY a valid JSON object matching the following TypeScript interface. Do NOT include any markdown formatting, code blocks, or conversational text.
 
-{
-  "assessment": "",
-  "whatsGoingWell": [
-    {
-      "title": "",
-      "description": ""
-    }
-  ],
-  "needsAttention": [
-    {
-      "title": "",
-      "description": ""
-    }
-  ],
-  "primaryConcern": {
-    "title": "",
-    "description": ""
-  },
-  "positiveSignal": {
-    "title": "",
-    "description": ""
-  },
-  "recommendedActions": [
-    ""
-  ],
-  "workDistribution": {
-    "summary": "",
-    "recommendations": [
-      {
-        "member": "",
-        "task": "",
-        "reason": ""
-      }
-    ]
-  },
-  "collaborationOpportunity": null,
-  "dimensionInterpretations": {
-    "progress": "",
-    "schedule": "",
-    "activity": "",
-    "teamDistribution": ""
-  }
+interface AssessmentResult {
+  // Synthesize relationships between data. What does the current project state actually mean?
+  assessment: string;
+  
+  // Array of things working well based on actual data
+  whatsGoingWell: Array<{ title: string; description: string }>;
+  
+  // Array of concrete problems supported by data
+  needsAttention: Array<{ title: string; description: string }>;
+  
+  // The underlying condition (e.g., Workload Imbalance) and why it matters
+  primaryConcern: { title: string; description: string };
+  
+  // Copy the best 'whatsGoingWell' title and description
+  positiveSignal: { title: string; description: string };
+  
+  // Concrete next steps. What should they actually do? Be specific about WHO and WHAT.
+  recommendedActions: string[];
+  
+  workDistribution: {
+    // Who currently has workload and who may have capacity
+    summary: string;
+    // Specific task assignments matching skills and capacity
+    recommendations: Array<{ member: string; task: string; reason: string }>;
+  };
+  
+  // Specific suggestion for assistance based on skills. Return null if no clear opportunity.
+  collaborationOpportunity: string | null;
+  
+  // Short interpretation for each score dimension
+  dimensionInterpretations: {
+    progress: string;
+    schedule: string;
+    activity: string;
+    teamDistribution: string;
+  };
 }
-
-FIELD INSTRUCTIONS:
-- "assessment": Synthesize relationships between data. What does the current project state actually mean?
-- "whatsGoingWell": Array of things working well based on actual data.
-- "needsAttention": Array of concrete problems supported by data.
-- "primaryConcern": The underlying condition (e.g., Workload Imbalance) and why it matters.
-- "positiveSignal": Copy the best 'whatsGoingWell' title and description.
-- "recommendedActions": Concrete next steps. What should they actually do? Be specific about WHO and WHAT.
-- "workDistribution.summary": Who currently has workload and who may have capacity.
-- "workDistribution.recommendations": Specific task assignments matching skills and capacity.
-- "collaborationOpportunity": Specific suggestion for assistance based on skills. Return null if no clear opportunity.
-- "dimensionInterpretations": Short interpretation for each score dimension.
 `;
 
   try {
@@ -464,7 +446,8 @@ FIELD INSTRUCTIONS:
       messages: [{ role: "user", content: prompt }],
       model: "openai/gpt-oss-20b",
       temperature: 0.2,
-      max_tokens: 1500
+      max_tokens: 1500,
+      response_format: { type: "json_object" }
     });
 
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
@@ -474,7 +457,13 @@ FIELD INSTRUCTIONS:
     } catch (parseError) {
       const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
       const jsonString = jsonMatch ? jsonMatch[0] : "{}";
-      output = JSON.parse(jsonString);
+      try {
+        output = JSON.parse(jsonString);
+      } catch (regexParseError) {
+        console.error("AI Explanation Error: Failed to parse JSON even with regex fallback.", regexParseError);
+        console.error("RAW CONTENT WAS:", rawContent);
+        throw regexParseError; // throw to be caught by the outer catch
+      }
     }
 
     return {
@@ -585,7 +574,8 @@ REQUIREMENTS:
       messages: [{ role: "user", content: prompt }],
       model: "openai/gpt-oss-20b",
       temperature: 0.1,
-      max_tokens: 600
+      max_tokens: 600,
+      response_format: { type: "json_object" }
     });
 
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
@@ -596,7 +586,13 @@ REQUIREMENTS:
     } catch (e) {
       const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
       const jsonString = jsonMatch ? jsonMatch[0] : "{}";
-      parsed = JSON.parse(jsonString);
+      try {
+        parsed = JSON.parse(jsonString);
+      } catch (regexParseError) {
+        console.error("AI Weekly Summary Error: Failed to parse JSON.", regexParseError);
+        console.error("RAW CONTENT WAS:", rawContent);
+        throw regexParseError;
+      }
     }
 
     if (!parsed || typeof parsed !== 'object') throw new Error("Invalid output format");
