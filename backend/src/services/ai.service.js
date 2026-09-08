@@ -534,7 +534,7 @@ Commit Authors: ${[...new Set(githubActivity.commits.map(c => c.author))].join("
     ? releases.map(r => `- Version: ${r.version} | Released: ${r.releaseDate || r.updatedAt} | Desc: ${r.description || "N/A"}`).join('\n')
     : "No releases published this week.";
 
-  const prompt = \`
+  const prompt = `
 You are ProjectForge's AI Weekly Project Reporter.
 Your job is to summarize meaningful project activity from the previous 7 days.
 
@@ -547,21 +547,21 @@ CRITICAL RULES:
 6. PREFER FACTUAL STATEMENTS: Instead of "The team made good progress", say "18 commits were recorded and 2 PRs were merged".
 
 VERIFIED BACKEND DATA (Last 7 Days):
-Project Title: \${projectData.title}
+Project Title: ${projectData.title}
 
 Tasks:
 - Newly Added:
-\${newlyAdded.length > 0 ? newlyAdded.map(formatTask).join('\\n') : "None"}
+${newlyAdded.length > 0 ? newlyAdded.map(formatTask).join('\n') : "None"}
 - Completed:
-\${completedThisWeek.length > 0 ? completedThisWeek.map(formatTask).join('\\n') : "None"}
+${completedThisWeek.length > 0 ? completedThisWeek.map(formatTask).join('\n') : "None"}
 - Work in Progress (Updated or newly added but incomplete):
-\${unfinishedCarryover.length > 0 ? unfinishedCarryover.map(formatTask).join('\\n') : "None"}
+${unfinishedCarryover.length > 0 ? unfinishedCarryover.map(formatTask).join('\n') : "None"}
 
 GitHub Activity (Last 7 Days):
-\${githubText}
+${githubText}
 
 Releases (Last 7 Days):
-\${releasesText}
+${releasesText}
 
 YOUR TASK:
 Output ONLY a valid JSON object matching the following TypeScript interface. Do NOT include any markdown formatting, code blocks, or conversational text.
@@ -581,7 +581,7 @@ interface WeeklySummary {
   teamActivity: Array<{ member: string; summary: string }>; // Meaningful facts. Do not invent missing members.
   notableChanges: string[]; // Bullet points of main factual events
 }
-\`;
+`;
 
   try {
     const chatCompletion = await getGroq().chat.completions.create({
