@@ -404,105 +404,157 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               </div>
               <p style={{ fontSize: "12px", color: "var(--color-text-muted)", marginBottom: "16px", fontStyle: "italic" }}>Reporting Period: Last 7 Days</p>
               {typeof localMetrics.aiWeeklySummary === 'object' ? (
-                <div>
-                  <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "16px", fontWeight: "normal", lineHeight: "1.5" }}>{localMetrics.aiWeeklySummary.weekAtAGlance || localMetrics.aiWeeklySummary.overview}</h4>
+                <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                  
+                  {/* Week at a Glance */}
+                  <div style={{ padding: "16px", background: "rgba(191,90,242,0.05)", borderLeft: "4px solid #bf5af2", borderRadius: "0 8px 8px 0" }}>
+                    <p style={{ fontSize: "15px", color: "var(--color-text-dark)", margin: 0, fontWeight: "500", lineHeight: "1.6" }}>
+                      {localMetrics.aiWeeklySummary.weekAtAGlance || localMetrics.aiWeeklySummary.overview}
+                    </p>
+                  </div>
                   
                   {/* Tasks Section */}
                   {(localMetrics.aiWeeklySummary.tasks?.newWork?.length > 0 || localMetrics.aiWeeklySummary.tasks?.completed?.length > 0 || localMetrics.aiWeeklySummary.tasks?.inProgress?.length > 0) && (
-                    <div style={{ marginBottom: "20px" }}>
-                      <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "12px", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" }}>📋 Tasks</h4>
+                    <div style={{ background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "10px", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+                      <h4 style={{ fontSize: "16px", fontWeight: "700", color: "var(--color-text-dark)", margin: "0 0 16px 0", paddingBottom: "12px", borderBottom: "1px solid var(--border-color)" }}>Tasks</h4>
                       
-                      {localMetrics.aiWeeklySummary.tasks?.newWork?.length > 0 && (
-                        <div style={{ marginBottom: "10px" }}>
-                          <strong style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>New Work</strong>
-                          <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                            {localMetrics.aiWeeklySummary.tasks.newWork.map((item, i) => (
-                              <li key={i}><strong>{item.title}</strong>{item.description ? ` — ${item.description}` : ''} <span style={{fontSize: "12px", color: "#888"}}>· {item.assignee}</span></li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {localMetrics.aiWeeklySummary.tasks?.completed?.length > 0 && (
-                        <div style={{ marginBottom: "10px" }}>
-                          <strong style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>Completed</strong>
-                          <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                            {localMetrics.aiWeeklySummary.tasks.completed.map((item, i) => (
-                              <li key={i}><strong>{item.title}</strong> <span style={{fontSize: "12px", color: "#888"}}>· {item.assignee}</span></li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      
-                      {localMetrics.aiWeeklySummary.tasks?.inProgress?.length > 0 && (
-                        <div style={{ marginBottom: "10px" }}>
-                          <strong style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>Work in Progress</strong>
-                          <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                            {localMetrics.aiWeeklySummary.tasks.inProgress.map((item, i) => (
-                              <li key={i}><strong>{item.title}</strong> — {item.status} <span style={{fontSize: "12px", color: "#888"}}>· {item.assignee}</span></li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                      <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                        {localMetrics.aiWeeklySummary.tasks?.newWork?.length > 0 && (
+                          <div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#0a84ff" }}></div>
+                              <strong style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>New Work</strong>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                              {localMetrics.aiWeeklySummary.tasks.newWork.map((item, i) => (
+                                <div key={i} style={{ padding: "12px", background: "var(--bg-page)", borderRadius: "8px", border: "1px solid var(--border-color)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                  <div>
+                                    <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--color-text-dark)", marginBottom: "4px" }}>{item.title}</div>
+                                    {item.description && <div style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>{item.description}</div>}
+                                  </div>
+                                  {item.assignee && <Badge variant="default">{item.assignee}</Badge>}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {localMetrics.aiWeeklySummary.tasks?.completed?.length > 0 && (
+                          <div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#32d74b" }}></div>
+                              <strong style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>Completed</strong>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                              {localMetrics.aiWeeklySummary.tasks.completed.map((item, i) => (
+                                <div key={i} style={{ padding: "12px", background: "var(--bg-page)", borderRadius: "8px", border: "1px solid var(--border-color)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                  <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--color-text-dark)", textDecoration: "line-through", opacity: 0.7 }}>{item.title}</div>
+                                  {item.assignee && <Badge variant="success">{item.assignee}</Badge>}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {localMetrics.aiWeeklySummary.tasks?.inProgress?.length > 0 && (
+                          <div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#ff9f0a" }}></div>
+                              <strong style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>Work in Progress</strong>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                              {localMetrics.aiWeeklySummary.tasks.inProgress.map((item, i) => (
+                                <div key={i} style={{ padding: "12px", background: "var(--bg-page)", borderRadius: "8px", border: "1px solid var(--border-color)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                  <div>
+                                    <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--color-text-dark)", marginBottom: "4px" }}>{item.title}</div>
+                                    <div style={{ fontSize: "12px", color: "var(--color-text-muted)" }}>Status: {item.status}</div>
+                                  </div>
+                                  {item.assignee && <Badge variant="default">{item.assignee}</Badge>}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
                   {/* Development Activity */}
                   {localMetrics.aiWeeklySummary.developmentActivity && (localMetrics.aiWeeklySummary.developmentActivity.summary || localMetrics.aiWeeklySummary.developmentActivity.highlights?.length > 0) && (
-                    <div style={{ marginBottom: "20px" }}>
-                      <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "8px", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" }}>💻 Development Activity</h4>
+                    <div style={{ background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "10px", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+                      <h4 style={{ fontSize: "16px", fontWeight: "700", color: "var(--color-text-dark)", margin: "0 0 16px 0", paddingBottom: "12px", borderBottom: "1px solid var(--border-color)" }}>Development Activity</h4>
                       {localMetrics.aiWeeklySummary.developmentActivity.summary && (
-                        <p style={{ fontSize: "14px", color: "var(--color-text-dark)", marginBottom: "8px" }}>{localMetrics.aiWeeklySummary.developmentActivity.summary}</p>
+                        <p style={{ fontSize: "14px", color: "var(--color-text-dark)", marginBottom: "16px", lineHeight: "1.5" }}>{localMetrics.aiWeeklySummary.developmentActivity.summary}</p>
                       )}
                       {localMetrics.aiWeeklySummary.developmentActivity.highlights?.length > 0 && (
-                        <ul style={{ margin: 0, paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                          {localMetrics.aiWeeklySummary.developmentActivity.highlights.map((item, i) => <li key={i}>{item}</li>)}
-                        </ul>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                          {localMetrics.aiWeeklySummary.developmentActivity.highlights.map((item, i) => (
+                            <span key={i} style={{ padding: "6px 12px", background: "var(--bg-page)", border: "1px solid var(--border-color)", borderRadius: "100px", fontSize: "13px", color: "var(--color-text-muted)" }}>
+                              {item}
+                            </span>
+                          ))}
+                        </div>
                       )}
                     </div>
                   )}
 
                   {/* Releases */}
                   {localMetrics.aiWeeklySummary.releases && localMetrics.aiWeeklySummary.releases.length > 0 && (
-                    <div style={{ marginBottom: "20px" }}>
-                      <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "8px", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" }}>🚀 Releases</h4>
-                      {localMetrics.aiWeeklySummary.releases.map((release, i) => (
-                        <div key={i} style={{ marginBottom: "10px" }}>
-                          <strong style={{ fontSize: "14px", color: "var(--color-text-dark)", display: "block" }}>{release.name}</strong>
-                          <span style={{ fontSize: "13px", color: "#888", display: "block", marginBottom: "4px" }}>Released {release.date}</span>
-                          {release.summary && <span style={{ fontSize: "14px", color: "var(--color-text-muted)" }}>{release.summary}</span>}
-                        </div>
-                      ))}
+                    <div style={{ background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "10px", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+                      <h4 style={{ fontSize: "16px", fontWeight: "700", color: "var(--color-text-dark)", margin: "0 0 16px 0", paddingBottom: "12px", borderBottom: "1px solid var(--border-color)" }}>Releases</h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        {localMetrics.aiWeeklySummary.releases.map((release, i) => (
+                          <div key={i} style={{ padding: "16px", background: "var(--bg-page)", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                              <strong style={{ fontSize: "15px", color: "var(--color-text-dark)" }}>{release.name}</strong>
+                              <Badge variant="primary">{release.date}</Badge>
+                            </div>
+                            {release.summary && <div style={{ fontSize: "14px", color: "var(--color-text-muted)", lineHeight: "1.5" }}>{release.summary}</div>}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
 
                   {/* Team Activity */}
                   {localMetrics.aiWeeklySummary.teamActivity && localMetrics.aiWeeklySummary.teamActivity.length > 0 && (
-                    <div style={{ marginBottom: "20px" }}>
-                      <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "8px", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" }}>👥 Team Activity</h4>
-                      {localMetrics.aiWeeklySummary.teamActivity.map((member, i) => (
-                        <div key={i} style={{ marginBottom: "8px" }}>
-                          <strong style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>{member.member}</strong>
-                          <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "var(--color-text-muted)" }}>{member.summary}</p>
-                        </div>
-                      ))}
+                    <div style={{ background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "10px", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+                      <h4 style={{ fontSize: "16px", fontWeight: "700", color: "var(--color-text-dark)", margin: "0 0 16px 0", paddingBottom: "12px", borderBottom: "1px solid var(--border-color)" }}>Team Activity</h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        {localMetrics.aiWeeklySummary.teamActivity.map((member, i) => (
+                          <div key={i} style={{ padding: "12px 16px", background: "var(--bg-page)", borderRadius: "8px", border: "1px solid var(--border-color)", display: "flex", alignItems: "center", gap: "16px" }}>
+                            <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "var(--btn-primary-bg)", color: "var(--btn-primary-text)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", flexShrink: 0 }}>
+                              {member.member[0]}
+                            </div>
+                            <div>
+                              <strong style={{ fontSize: "14px", color: "var(--color-text-dark)", display: "block", marginBottom: "4px" }}>{member.member}</strong>
+                              <p style={{ margin: 0, fontSize: "13px", color: "var(--color-text-muted)", lineHeight: "1.4" }}>{member.summary}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
 
                   {/* Notable Changes */}
                   {localMetrics.aiWeeklySummary.notableChanges && localMetrics.aiWeeklySummary.notableChanges.length > 0 && (
-                    <div style={{ marginBottom: "12px" }}>
-                      <h4 style={{ fontSize: "15px", color: "var(--color-text-dark)", marginBottom: "8px", borderBottom: "1px solid var(--border-color)", paddingBottom: "4px" }}>📌 Notable Changes</h4>
-                      <ul style={{ margin: 0, paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                        {localMetrics.aiWeeklySummary.notableChanges.map((change, i) => <li key={i}>{change}</li>)}
-                      </ul>
+                    <div style={{ background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "10px", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+                      <h4 style={{ fontSize: "16px", fontWeight: "700", color: "var(--color-text-dark)", margin: "0 0 16px 0", paddingBottom: "12px", borderBottom: "1px solid var(--border-color)" }}>Notable Changes</h4>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                        {localMetrics.aiWeeklySummary.notableChanges.map((change, i) => (
+                          <div key={i} style={{ display: "flex", gap: "12px" }}>
+                            <div style={{ color: "#bf5af2", marginTop: "2px" }}>•</div>
+                            <span style={{ fontSize: "14px", color: "var(--color-text-dark)", lineHeight: "1.5" }}>{change}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                   
                   {/* Legacy layout for old records */}
                   {localMetrics.aiWeeklySummary.new_work?.length > 0 && (
-                    <div style={{ marginBottom: "12px", marginTop: "16px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>New Work (Legacy)</strong>
+                    <div style={{ background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "10px", padding: "20px", boxShadow: "0 2px 8px rgba(0,0,0,0.02)" }}>
+                      <h4 style={{ fontSize: "16px", fontWeight: "700", color: "var(--color-text-dark)", margin: "0 0 16px 0", paddingBottom: "12px", borderBottom: "1px solid var(--border-color)" }}>New Work (Legacy)</h4>
                       <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
                         {localMetrics.aiWeeklySummary.new_work.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
