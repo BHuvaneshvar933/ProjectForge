@@ -499,23 +499,13 @@ interface AssessmentResult {
 
 
 
-export const generateWeeklyProjectSummary = async (projectId, projectData, tasks, team) => {
+export const generateWeeklyProjectSummary = async (projectId, projectData, tasks, team, releases, githubActivity) => {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-  // Data Window: Only last 7 days
   const newlyAdded = tasks.filter(t => t.createdAt && new Date(t.createdAt) > sevenDaysAgo);
   const completedThisWeek = tasks.filter(t => t.status === 'done' && t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo);
-
-  // Updated this week, but not newly added and not completed (to show progress)
-  const updatedThisWeek = tasks.filter(t =>
-    t.status !== 'done' &&
-    t.updatedAt && new Date(t.updatedAt) > sevenDaysAgo &&
-    !(t.createdAt && new Date(t.createdAt) > sevenDaysAgo)
-  );
-
-  // Unfinished carryover: Only tasks that were ACTIVE this week (created or updated) but remain incomplete.
-  // We explicitly DO NOT dump old inactive tasks here to avoid becoming a health report.
+  
   const unfinishedCarryover = tasks.filter(t =>
     t.status !== 'done' &&
     (
@@ -524,60 +514,81 @@ export const generateWeeklyProjectSummary = async (projectId, projectData, tasks
     )
   );
 
-  const formatTask = t => `- ${t.title}${t.description ? ` (${t.description.substring(0, 80)})` : ''}`;
+  const formatTask = t => `- "${t.title}" | Status: ${t.status} | Owner: ${t.assignedTo?.name || "Unassigned"}`;
 
-  const prompt = `
+  let githubText = "No GitHub activity available for this period.";
+  if (githubActivity) {
+      githubText = `
+- Commits: ${githubActivity.commits.length}
+- Opened PRs: ${githubActivity.pullRequests.opened.length}
+- Merged PRs: ${githubActivity.pullRequests.merged.length}
+- Closed PRs: ${githubActivity.pullRequests.closed.length}
+- Opened Issues: ${githubActivity.issues.opened.length}
+- Closed Issues: ${githubActivity.issues.closed.length}
+
+Commit Authors: ${[...new Set(githubActivity.commits.map(c => c.author))].join(", ")}
+      `;
+  }
+
+  const releasesText = (releases && releases.length > 0) 
+    ? releases.map(r => `- Version: ${r.version} | Released: ${r.releaseDate || r.updatedAt} | Desc: ${r.description || "N/A"}`).join('\n')
+    : "No releases published this week.";
+
+  const prompt = \`
 You are ProjectForge's AI Weekly Project Reporter.
 Your job is to summarize meaningful project activity from the previous 7 days.
 
-CRITICAL RULE: You are NOT the project's health evaluator.
-Do not calculate or describe overall project health, execution status, risks, or overdue warnings.
-Focus ONLY on what changed, what was completed, what was newly added, what progressed, and what remains unfinished.
+CRITICAL RULES:
+1. ONLY summarize supplied data. Do not invent commits, PRs, releases, tasks, or member activity.
+2. DO NOT infer engagement, effort, or project risk from activity numbers.
+3. DO NOT recommend actions or generate future plans.
+4. DO NOT generate a health assessment (e.g. do NOT say "Alice is overloaded").
+5. DO NOT match or guess GitHub usernames against ProjectForge team members unless it is obvious. Simply report the GitHub contributors separately if unsure.
+6. PREFER FACTUAL STATEMENTS: Instead of "The team made good progress", say "18 commits were recorded and 2 PRs were merged".
 
-STRICT FACTUALITY RULES:
-1. Use ONLY the tasks provided in the input. Never invent completed work, started work, or progress.
-2. If there is insufficient activity, clearly state that there was little or no significant activity.
-3. Overdue tasks do not dominate the report. Treat them simply as newly added or unfinished carryover if they were active this week.
-4. Do not use generic AI language like "The project needs attention" or "Execution status is at risk." Use activity language: completed, added, updated, progressed, carried over.
-5. When describing unfinished carryover tasks, simply state "Task [Name] remains incomplete" rather than describing it as "active and unfinished."
+VERIFIED BACKEND DATA (Last 7 Days):
+Project Title: \${projectData.title}
 
-VERIFIED BACKEND DATA (Last 7 Days Only):
-Project Title: ${projectData.title}
+Tasks:
+- Newly Added:
+\${newlyAdded.length > 0 ? newlyAdded.map(formatTask).join('\\n') : "None"}
+- Completed:
+\${completedThisWeek.length > 0 ? completedThisWeek.map(formatTask).join('\\n') : "None"}
+- Work in Progress (Updated or newly added but incomplete):
+\${unfinishedCarryover.length > 0 ? unfinishedCarryover.map(formatTask).join('\\n') : "None"}
 
-Completed Tasks:
-${completedThisWeek.length > 0 ? completedThisWeek.map(formatTask).join("\n") : "No tasks were recorded as completed during this week."}
+GitHub Activity (Last 7 Days):
+\${githubText}
 
-Newly Added Work:
-${newlyAdded.length > 0 ? newlyAdded.map(formatTask).join("\n") : "No new tasks were added this week."}
+Releases (Last 7 Days):
+\${releasesText}
 
-Progress & Updates (Active but not completed):
-${updatedThisWeek.length > 0 ? updatedThisWeek.map(formatTask).join("\n") : "No significant task updates this week."}
+YOUR TASK:
+Output ONLY a valid JSON object matching the following TypeScript interface. Do NOT include any markdown formatting, code blocks, or conversational text.
 
-Unfinished / Carryover Work:
-${unfinishedCarryover.length > 0 ? unfinishedCarryover.map(formatTask).join("\n") : "No active work is carrying over."}
-
-OUTPUT SCHEMA:
-Return ONLY valid JSON exactly matching this structure:
-{
-  "overview": "A short 1-2 sentence overview of the week's overall activity.",
-  "completed": ["Clear summary of completed work"],
-  "new_work": ["Summary of newly added tasks"],
-  "progress_changes": ["Summary of progress or changes made to existing work"],
-  "unfinished_carryover": ["Summary of what active work remains unfinished"]
+interface WeeklySummary {
+  weekAtAGlance: string; // 1-2 sentence factual summary of the week's major events
+  tasks: {
+    newWork: Array<{ title: string; description: string; assignee: string }>;
+    completed: Array<{ title: string; assignee: string }>;
+    inProgress: Array<{ title: string; status: string; assignee: string }>;
+  };
+  developmentActivity: {
+    summary: string; // e.g. "18 commits and 3 pull requests were recorded this week."
+    highlights: string[]; // Specific facts like "[User] contributed 12 commits."
+  };
+  releases: Array<{ name: string; date: string; summary: string }>;
+  teamActivity: Array<{ member: string; summary: string }>; // Meaningful facts. Do not invent missing members.
+  notableChanges: string[]; // Bullet points of main factual events
 }
-
-REQUIREMENTS:
-- If there is no activity for a category, return an array with a graceful empty state (e.g. ["No tasks completed."]).
-- Make it concise, factual, and easy for a student project team to understand.
-- No Markdown fences. No text outside the JSON.
-`;
+\`;
 
   try {
     const chatCompletion = await getGroq().chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: "openai/gpt-oss-20b",
       temperature: 0.1,
-      max_tokens: 600,
+      max_tokens: 1500,
       response_format: { type: "json_object" }
     });
 
@@ -587,7 +598,7 @@ REQUIREMENTS:
     try {
       parsed = JSON.parse(rawContent);
     } catch (e) {
-      const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+      const jsonMatch = rawContent.match(/\\{[\\s\\S]*\\}/);
       const jsonString = jsonMatch ? jsonMatch[0] : "{}";
       try {
         parsed = JSON.parse(jsonString);
@@ -599,22 +610,15 @@ REQUIREMENTS:
     }
 
     if (!parsed || typeof parsed !== 'object') throw new Error("Invalid output format");
-    const summaryData = {
-      overview: typeof parsed.overview === 'string' ? parsed.overview : "Weekly Progress Update",
-      completed: Array.isArray(parsed.completed) ? parsed.completed : [],
-      new_work: Array.isArray(parsed.new_work) ? parsed.new_work : [],
-      progress_changes: Array.isArray(parsed.progress_changes) ? parsed.progress_changes : [],
-      unfinished_carryover: Array.isArray(parsed.unfinished_carryover) ? parsed.unfinished_carryover : []
-    };
 
     await Project.findByIdAndUpdate(projectId, {
       $set: {
-        "metrics.aiWeeklySummary": summaryData,
+        "metrics.aiWeeklySummary": parsed,
         "metrics.aiLastGeneratedAt": new Date()
       }
     });
 
-    return summaryData;
+    return parsed;
   } catch (e) {
     console.error("AI Weekly Summary Error: ", e);
     throw new Error("Failed to generate weekly summary: " + e.message);

@@ -4,6 +4,8 @@ import * as aiService from "../services/ai.service.js";
 import Project from "../models/project.model.js";
 import Task from "../models/task.model.js";
 import Team from "../models/team.model.js";
+import Release from "../models/release.model.js";
+import { getWeeklyGitHubActivity } from "../services/github.service.js";
 
 const router = express.Router();
 
@@ -30,13 +32,27 @@ router.post("/generate", protect, async (req, res) => {
       const project = await Project.findById(req.body.projectId);
       if (!project) return res.status(404).json({ success: false, message: "Project not found" });
 
-      const tasks = await Task.find({ projectId: project._id, isDeleted: false });
+      const tasks = await Task.find({ projectId: project._id, isDeleted: false }).populate("assignedTo", "name");
       
       if (type === "contribution-suggestion") {
         result = await aiService.generateDeveloperContribution(req.user._id, tasks, project);
       } else {
-        const team = await Team.find({ projectId: project._id, status: "active", isDeleted: false });
-        result = await aiService.generateWeeklyProjectSummary(project._id, project, tasks, team);
+        const team = await Team.find({ projectId: project._id, status: "active", isDeleted: false }).populate("userId", "name email");
+        
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const releases = await Release.find({
+            projectId: project._id,
+            isDeleted: false,
+            releaseDate: { $gte: sevenDaysAgo }
+        });
+
+        let githubActivity = null;
+        if (project.githubIntegration && project.githubIntegration.isConnected && project.githubIntegration.repoName) {
+            githubActivity = await getWeeklyGitHubActivity(project.githubIntegration.repoName, project.githubIntegration.accessToken);
+        }
+
+        result = await aiService.generateWeeklyProjectSummary(project._id, project, tasks, team, releases, githubActivity);
       }
     } else {
       return res.status(400).json({ success: false, message: "Invalid generation type" });

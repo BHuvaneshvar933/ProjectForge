@@ -109,3 +109,53 @@ export const getBasicRepoStats = async (repoUrl) => {
     return null;
   }
 };
+
+export const getWeeklyGitHubActivity = async (repoName, token) => {
+  if (!repoName) return null;
+
+  const headers = { Accept: "application/vnd.github.v3+json" };
+  if (token) headers.Authorization = `token ${token}`;
+  const baseUrl = `https://api.github.com/repos/${repoName}`;
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const sinceISO = sevenDaysAgo.toISOString();
+
+  try {
+    // 1. Fetch Commits
+    const commitsRes = await axios.get(`${baseUrl}/commits?since=${sinceISO}&per_page=100`, { headers }).catch(() => ({ data: [] }));
+    const commits = commitsRes.data.map(c => ({
+      message: c.commit.message.split('\n')[0],
+      author: c.commit.author.name || c.author?.login || "Unknown",
+      date: c.commit.author.date
+    }));
+
+    // 2. Fetch Pull Requests
+    const prsRes = await axios.get(`${baseUrl}/pulls?state=all&sort=updated&direction=desc&per_page=100`, { headers }).catch(() => ({ data: [] }));
+    const allPrs = prsRes.data.filter(pr => new Date(pr.updated_at) > sevenDaysAgo);
+    
+    const pullRequests = {
+      opened: allPrs.filter(pr => new Date(pr.created_at) > sevenDaysAgo).map(pr => ({ title: pr.title, number: pr.number, author: pr.user?.login })),
+      merged: allPrs.filter(pr => pr.merged_at && new Date(pr.merged_at) > sevenDaysAgo).map(pr => ({ title: pr.title, number: pr.number, author: pr.user?.login })),
+      closed: allPrs.filter(pr => pr.state === 'closed' && !pr.merged_at && new Date(pr.closed_at) > sevenDaysAgo).map(pr => ({ title: pr.title, number: pr.number }))
+    };
+
+    // 3. Fetch Issues (GitHub issues endpoint includes PRs, so we filter them out)
+    const issuesRes = await axios.get(`${baseUrl}/issues?state=all&since=${sinceISO}&per_page=100`, { headers }).catch(() => ({ data: [] }));
+    const actualIssues = issuesRes.data.filter(issue => !issue.pull_request);
+    
+    const issues = {
+      opened: actualIssues.filter(i => new Date(i.created_at) > sevenDaysAgo).map(i => ({ title: i.title, number: i.number })),
+      closed: actualIssues.filter(i => i.state === 'closed' && new Date(i.closed_at) > sevenDaysAgo).map(i => ({ title: i.title, number: i.number }))
+    };
+
+    return {
+      commits,
+      pullRequests,
+      issues
+    };
+  } catch (error) {
+    console.error("Failed to fetch weekly GitHub activity:", error.message);
+    return null;
+  }
+};

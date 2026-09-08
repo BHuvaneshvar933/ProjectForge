@@ -45,11 +45,37 @@ const metricsSchema = new mongoose.Schema({
     teamDistribution: { type: String }
   },
   aiWeeklySummary: {
-    headline: String,
-    completed: [String],
-    started: [String],
-    risks: [String],
-    next_actions: [String]
+    weekAtAGlance: { type: String },
+    tasks: {
+      newWork: [{
+        title: { type: String },
+        description: { type: String },
+        assignee: { type: String }
+      }],
+      completed: [{
+        title: { type: String },
+        assignee: { type: String }
+      }],
+      inProgress: [{
+        title: { type: String },
+        status: { type: String },
+        assignee: { type: String }
+      }]
+    },
+    developmentActivity: {
+      summary: { type: String },
+      highlights: [{ type: String }]
+    },
+    releases: [{
+      name: { type: String },
+      date: { type: String },
+      summary: { type: String }
+    }],
+    teamActivity: [{
+      member: { type: String },
+      summary: { type: String }
+    }],
+    notableChanges: [{ type: String }]
   },
   aiLastGeneratedAt: { type: Date },
 }, { _id: false });
