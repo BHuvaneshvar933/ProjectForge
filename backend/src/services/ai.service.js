@@ -366,16 +366,19 @@ Your job is to evaluate the current health of a student project using the suppli
 CRITICAL RULES:
 1. DIFFERENTIATE FROM WEEKLY SUMMARY: Do not answer "What happened this week?". Focus on: What is going well, what is wrong, why, and what should the team do.
 2. DO NOT INVENT: Never invent skills, availability, workload, experience, task requirements, progress, completed work, blockers, or deadlines.
-3. NO ASSUMPTIONS: Do not assume incomplete task = inactive member, overdue task = project failure, or no task completion = no activity. Do not claim a member is "free" unless actual workload data supports it (say "Alice currently has no active tasks").
+3. NO ASSUMPTIONS: Do not assume incomplete task = inactive member, overdue task = project failure, or no task completion = no activity. Do not claim a member is "free" unless actual workload data supports it (say "[Name] currently has no active tasks").
 4. BE SPECIFIC: Recommended actions must reference actual project data. Do NOT generate generic advice like "Improve communication", "Schedule a brief sync", or "Create a task ownership matrix".
 5. NO AUTOMATIC REASSIGNMENT: AI Health is advisory. Never automatically change task ownership. Use words like "Consider assigning", "Could assist", "If available".
 6. COLLABORATION OPPORTUNITY: Compare a person's workload/skills with actual task requirements. Only recommend collaboration when actual workload AND relevant technical evidence (skills) support it. If skill data is unavailable, explicitly state that skill information is insufficient.
 7. SEPARATE FACT FROM INTERPRETATION: Distinguish between Evidence ("1 task is overdue") and Interpretation ("The project is experiencing schedule pressure").
 8. TONE & PROGRESS: Do NOT be dramatic. Do NOT say "far behind", "far from meeting deliverable milestones", or "failing to deliver results". If there are 0 completed tasks, simply say "No tasks have been completed yet, so measurable project progress is currently limited."
-9. RECOMMENDATION INTELLIGENCE: If an overdue task already has an owner, do NOT recommend assigning a new owner. Instead, say: "Prioritize completing the overdue task and review whether the owner needs assistance." If a member already has a high workload (e.g. 2+ active tasks), explicitly advise against assigning them more work until their bottleneck is resolved.
-10. SKILL MATCHING: Do NOT say "Assign any new task that does not require X". Instead, explicitly reference their actual skills: "Assign a suitable [insert their skills] task if one exists." If their skills do not match a task, explicitly state that they should not take it.
+9. RECOMMENDATION INTELLIGENCE: If an overdue task already has an owner, do NOT recommend assigning a new owner. Instead, say: "Prioritize completing the overdue task and review whether the owner needs assistance." If a member already has a high workload (e.g. 2+ active tasks), explicitly advise AGAINST assigning them more work until their current workload is under control.
+10. SKILL MATCHING: Do NOT say "Assign any new task that does not require X". Instead, inspect if an EXISTING task matches their skills. If there isn't one, explicitly state: "No current task matches [Name]'s recorded skills, so there is no evidence-based reassignment to recommend."
 11. ACTIVITY IS NOT ENGAGEMENT: Do NOT use the word "engagement" to describe the activity score. High activity only means there have been recent updates. Simply say "Activity score is high, indicating recent project activity."
 12. AVOID INVENTING WORK: If a member has no active tasks but no suitable tasks exist for their skills, do NOT recommend inventing work just to balance the workload. Explicitly say to "leave them available rather than creating unnecessary work".
+13. WHATS GOING WELL: Do NOT list "a member has relevant skills" as something going well. "What's Going Well" must focus on project conditions like "Strong Recent Activity" or "Clear Task Ownership".
+14. WORK DISTRIBUTION SECTION: Do not just analyze. You MUST provide a specific recommendation (e.g., "Keep [Task] with [Name]. Do not assign additional work to [Name]. If an existing [Skills] task is available, assign it to [Name 2].")
+15. GENDER NEUTRALITY: Do NOT assume people's genders. Use they/them pronouns or simply refer to them by their names.
 
 AUTHORITATIVE METRICS (DO NOT RECALCULATE):
 Score: ${metrics.score}/100
