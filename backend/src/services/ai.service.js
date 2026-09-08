@@ -353,9 +353,10 @@ export const generateHealthExplanation = async (project, metrics, tasks, team) =
     return `- ${member.userId.name}: ${activeTaskCount} active tasks, Skills: ${skills || "None recorded"}`;
   }).filter(Boolean).join("\n");
 
-  const overdueDetails = overdueTasksList.map(t => {
+  const activeTasksList = openTasks.map(t => {
     const owner = typeof t.assignedTo === 'object' && t.assignedTo !== null ? t.assignedTo.name : "Unassigned";
-    return `- Task: "${t.title}" | Owner: ${owner}`;
+    const isOverdue = t.dueDate && new Date(t.dueDate) < now;
+    return `- "${t.title}" | Owner: ${owner} | Status: ${t.status}${isOverdue ? ' [OVERDUE]' : ''}`;
   }).join("\n");
 
   const prompt = `
@@ -370,6 +371,8 @@ CRITICAL RULES:
 5. NO AUTOMATIC REASSIGNMENT: AI Health is advisory. Never automatically change task ownership. Use words like "Consider assigning", "Could assist", "If available".
 6. COLLABORATION OPPORTUNITY: Compare a person's workload/skills with actual task requirements. Only recommend collaboration when actual workload AND relevant technical evidence (skills) support it. If skill data is unavailable, explicitly state that skill information is insufficient to recommend a specific technical task. Return null for collaborationOpportunity if no credible opportunity exists.
 7. SEPARATE FACT FROM INTERPRETATION: Distinguish between Evidence ("1 task is overdue") and Interpretation ("The project is experiencing schedule pressure"). Explain why a condition matters.
+8. TONE: Do not be dramatic. This is a small student project. Use calm, objective language (e.g., "measurable project progress is currently limited" instead of "far from meeting milestones" or "failing to deliver results").
+9. RECOMMENDATION INTELLIGENCE: Be highly specific about WHO should do WHAT. If a member has capacity but their skills do not match the task, explicitly state that. If a member already has a high workload (e.g., 2+ active tasks), explicitly advise against assigning them more work until their bottleneck is resolved.
 
 AUTHORITATIVE METRICS (DO NOT RECALCULATE):
 Score: ${metrics.score}/100
@@ -387,8 +390,8 @@ ${metrics.factors.map(f => `- ${f}`).join('\n')}
 ${metrics.risks.map(r => `- ${r}`).join('\n') || "- No specific risks identified"}
 
 CURRENT PROJECT STATE (For Collaboration & Context):
-Overdue Tasks:
-${overdueDetails || "None"}
+Active Tasks:
+${activeTasksList || "None"}
 
 Team Workload & Skills (Active Task Counts & Skills):
 ${memberDetails || "No active members"}
