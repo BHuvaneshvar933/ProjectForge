@@ -398,16 +398,6 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                         {localMetrics.aiWeeklySummary.unfinished_carryover.map((item, i) => <li key={i}>{item}</li>)}
                       </ul>
                     </div>
-                  )}
-
-                  {localMetrics.aiWeeklySummary.next_week?.length > 0 && (
-                    <div style={{ marginBottom: "12px" }}>
-                      <strong style={{ fontSize: "13px", textTransform: "uppercase", color: "var(--color-text-dark)" }}>Next Week</strong>
-                      <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px", fontSize: "14px", color: "var(--color-text-muted)" }}>
-                        {localMetrics.aiWeeklySummary.next_week.map((item, i) => <li key={i}>{item}</li>)}
-                      </ul>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <p style={{ fontSize: "14px", color: "var(--color-text-muted)", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>

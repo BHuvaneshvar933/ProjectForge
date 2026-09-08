@@ -498,15 +498,14 @@ Your job is to summarize meaningful project activity from the previous 7 days.
 
 CRITICAL RULE: You are NOT the project's health evaluator.
 Do not calculate or describe overall project health, execution status, risks, or overdue warnings.
-Focus ONLY on what changed, what was completed, what was newly added, what progressed, what remains unfinished, and what should be prioritized next week based on this week's activity.
+Focus ONLY on what changed, what was completed, what was newly added, what progressed, and what remains unfinished.
 
 STRICT FACTUALITY RULES:
 1. Use ONLY the tasks provided in the input. Never invent completed work, started work, or progress.
 2. If there is insufficient activity, clearly state that there was little or no significant activity.
 3. Overdue tasks do not dominate the report. Treat them simply as newly added or unfinished carryover if they were active this week.
 4. Do not use generic AI language like "The project needs attention" or "Execution status is at risk." Use activity language: completed, added, updated, progressed, carried over.
-5. Next-week recommendations must be derived exclusively from the supplied weekly activity data. Do not provide generic project-management advice. Do not infer missing requirements, blockers, acceptance criteria, staffing needs, milestones, or planning problems. If the data only shows an incomplete task, recommend continuing or completing that task.
-6. When describing unfinished carryover tasks, simply state "Task [Name] remains incomplete" rather than describing it as "active and unfinished."
+5. When describing unfinished carryover tasks, simply state "Task [Name] remains incomplete" rather than describing it as "active and unfinished."
 
 VERIFIED BACKEND DATA (Last 7 Days Only):
 Project Title: ${projectData.title}
@@ -530,8 +529,7 @@ Return ONLY valid JSON exactly matching this structure:
   "completed": ["Clear summary of completed work"],
   "new_work": ["Summary of newly added tasks"],
   "progress_changes": ["Summary of progress or changes made to existing work"],
-  "unfinished_carryover": ["Summary of what active work remains unfinished"],
-  "next_week": ["2-4 practical priorities based specifically on this week's activity"]
+  "unfinished_carryover": ["Summary of what active work remains unfinished"]
 }
 
 REQUIREMENTS:
@@ -540,14 +538,16 @@ REQUIREMENTS:
 - No Markdown fences. No text outside the JSON.
 `;
 
-  const chatCompletion = await getGroq().chat.completions.create({
-    messages: [{ role: "user", content: prompt }],
-    model: "llama3-70b-8192",
-    temperature: 0.1, 
-    max_tokens: 600,
-  });
-
   try {
+    const chatCompletion = await getGroq().chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "llama3-70b-8192",
+      temperature: 0.1, 
+      max_tokens: 600,
+      response_format: { type: "json_object" },
+      timeout: 10000
+    });
+
     let rawContent = chatCompletion.choices[0]?.message?.content || "{}";
     
     let parsed;
@@ -560,33 +560,12 @@ REQUIREMENTS:
     }
     
     if (!parsed || typeof parsed !== 'object') throw new Error("Invalid output format");
-
-    let nextWeek = Array.isArray(parsed.next_week) ? parsed.next_week : [];
-    
-    // Strict Sanitization: Remove hallucinated/generic recommendations
-    const forbiddenTerms = ["scope", "acceptance criteria", "blocker", "capacity", "milestone", "sprint", "allocate", "assign", "subtask", "planning", "requirement"];
-    const hasForbidden = str => forbiddenTerms.some(term => str.toLowerCase().includes(term));
-    
-    nextWeek = nextWeek.filter(rec => !hasForbidden(rec));
-    
-    // Fallback if all were removed or none provided
-    if (nextWeek.length === 0) {
-      const activeTasks = [...unfinishedCarryover, ...newlyAdded];
-      if (activeTasks.length > 0) {
-        nextWeek.push(`Continue work on task '${activeTasks[0].title}'.`);
-        nextWeek.push(`Make progress toward completing task '${activeTasks[0].title}'.`);
-      } else {
-        nextWeek.push("No specific actions recommended at this time.");
-      }
-    }
-
     const summaryData = {
       overview: typeof parsed.overview === 'string' ? parsed.overview : "Weekly Progress Update",
       completed: Array.isArray(parsed.completed) ? parsed.completed : [],
       new_work: Array.isArray(parsed.new_work) ? parsed.new_work : [],
       progress_changes: Array.isArray(parsed.progress_changes) ? parsed.progress_changes : [],
-      unfinished_carryover: Array.isArray(parsed.unfinished_carryover) ? parsed.unfinished_carryover : [],
-      next_week: nextWeek
+      unfinished_carryover: Array.isArray(parsed.unfinished_carryover) ? parsed.unfinished_carryover : []
     };
 
     await Project.findByIdAndUpdate(projectId, {
