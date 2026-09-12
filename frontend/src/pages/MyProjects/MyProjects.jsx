@@ -4,6 +4,7 @@ import { getJoinedProjects, getMyProjects } from '../../api/projectApi';
 import ProjectCard from '../../components/common/ProjectCard';
 import DashboardPagination from '../../components/common/DashboardPagination';
 import PageHeader from '../../components/common/PageHeader';
+import UpcomingEvents from '../../components/common/UpcomingEvents/UpcomingEvents';
 import { toast } from 'react-toastify';
 import './MyProjects.css';
 
@@ -168,9 +169,13 @@ export default function MyProjects() {
           </div>
         </aside>
 
-        <main className="dashboard-content">
-          <div className="my-projects__content">
+        <main className="dashboard-content" style={{ display: 'flex', gap: '24px' }}>
+          <div className="my-projects__content" style={{ flex: '1 1 65%' }}>
             {renderProjectList()}
+          </div>
+          
+          <div className="dashboard-right-sidebar" style={{ flex: '1 1 35%', maxWidth: '350px' }}>
+            <UpcomingEvents />
           </div>
         </main>
       </div>

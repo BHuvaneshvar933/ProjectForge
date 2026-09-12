@@ -5,8 +5,9 @@ import Spinner from "../../components/common/Spinner";
 import PageHeader from "../../components/common/PageHeader";
 import { getMyProfile, updateMyProfile } from "../../api/userApi";
 
-import AccountProfile from "./components/AccountProfile";
 import AccountDetails from "./components/AccountDetails";
+import AccountProfile from "./components/AccountProfile";
+import NotificationSettings from "./components/NotificationSettings/NotificationSettings";
 
 import "./Account.css";
 
@@ -237,6 +238,9 @@ export default function Account() {
       <div className="account__grid">
         <AccountProfile form={form} setForm={setForm} />
         <AccountDetails user={user} />
+      </div>
+      <div className="account__section" style={{ marginTop: '32px' }}>
+        <NotificationSettings />
       </div>
     </div>
   );

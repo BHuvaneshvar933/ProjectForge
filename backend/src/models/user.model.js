@@ -53,6 +53,20 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
 
+    notificationPreferences: {
+      taskDeadlines: {
+        threeDaysBefore: { type: Boolean, default: true },
+        oneDayBefore: { type: Boolean, default: true },
+        oneHourBefore: { type: Boolean, default: true },
+        overdue: { type: Boolean, default: true },
+      },
+      projectEvents: {
+        milestones: { type: Boolean, default: true },
+        meetings: { type: Boolean, default: true },
+        projectDeadlines: { type: Boolean, default: true },
+      },
+    },
+
     skills: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Skill",

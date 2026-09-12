@@ -131,6 +131,15 @@ export default function Navbar() {
 
           {isAuthed && (
             <Link
+              to="/calendar"
+              className={`navbar__link ${isActive('/calendar') ? 'is-active' : ''}`.trim()}
+            >
+              Calendar
+            </Link>
+          )}
+
+          {isAuthed && (
+            <Link
               to="/applications/sent"
               className={`navbar__link ${isActive('/applications/sent') ? 'is-active' : ''}`.trim()}
             >

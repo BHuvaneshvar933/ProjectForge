@@ -135,32 +135,68 @@ export default function NotificationBell() {
                 You have no notifications.
               </div>
             ) : (
-              notifications.map((n) => (
-                <div 
-                  key={n._id} 
-                  className={`notification-item ${n.isRead ? 'is-read' : 'is-unread'}`.trim()}
-                  onClick={() => handleNotificationClick(n)}
-                >
-                  <div className="notification-item__icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      {n.type?.includes('accepted') ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      ) : n.type?.includes('rejected') ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      )}
-                    </svg>
-                  </div>
-                  <div className="notification-item__content">
-                    <div className="notification-item__title">{n.title}</div>
-                    <div className="notification-item__message">{n.message}</div>
-                    <div className="notification-item__time">
-                      {new Date(n.createdAt).toLocaleDateString()} {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              (() => {
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+
+                const groups = {
+                  "Today": [],
+                  "Yesterday": [],
+                  "Older": []
+                };
+
+                notifications.forEach(n => {
+                  const d = new Date(n.createdAt);
+                  const dStart = new Date(d);
+                  dStart.setHours(0,0,0,0);
+                  
+                  if (dStart.getTime() === today.getTime()) {
+                    groups["Today"].push(n);
+                  } else if (dStart.getTime() === yesterday.getTime()) {
+                    groups["Yesterday"].push(n);
+                  } else {
+                    groups["Older"].push(n);
+                  }
+                });
+
+                return Object.entries(groups).map(([label, items]) => {
+                  if (items.length === 0) return null;
+                  return (
+                    <div key={label} className="notification-group">
+                      <div className="notification-group__label">{label}</div>
+                      {items.map((n) => (
+                        <div 
+                          key={n._id} 
+                          className={`notification-item ${n.isRead ? 'is-read' : 'is-unread'}`.trim()}
+                          onClick={() => handleNotificationClick(n)}
+                        >
+                          <div className="notification-item__icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              {n.type?.includes('accepted') ? (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              ) : n.type?.includes('rejected') ? (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              ) : (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              )}
+                            </svg>
+                          </div>
+                          <div className="notification-item__content">
+                            <div className="notification-item__title">{n.title}</div>
+                            <div className="notification-item__message">{n.message}</div>
+                            <div className="notification-item__time">
+                              {label === "Today" ? new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 
+                               `${new Date(n.createdAt).toLocaleDateString()} ${new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                </div>
-              ))
+                  );
+                });
+              })()
             )}
           </div>
         </div>

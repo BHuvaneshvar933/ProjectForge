@@ -1,0 +1,100 @@
+.upcoming-events-container {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.upcoming-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.upcoming-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.upcoming-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.upcoming-empty {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.upcoming-group {
+  margin-bottom: 24px;
+}
+
+.upcoming-group-title {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin: 0 0 12px 0;
+  letter-spacing: 0.05em;
+}
+
+.upcoming-event-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.upcoming-event-item:hover {
+  background-color: var(--surface-hover);
+  padding-left: 4px; /* subtle shift */
+}
+
+.upcoming-event-icon {
+  font-size: 1rem;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.upcoming-event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.upcoming-event-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.upcoming-event-meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.upcoming-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.view-calendar-link {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.view-calendar-link:hover {
+  color: var(--text-secondary);
+}

@@ -149,6 +149,7 @@ export const updateProfile = async (userId, updateData) => {
     "achievements",
     "featuredProjects",
     "portfolioLinks",
+    "notificationPreferences",
   ];
 
   allowedFields.forEach((field) => {

@@ -154,6 +154,11 @@ const projectSchema = new mongoose.Schema(
       index: true,
     },
 
+    projectDeadline: {
+      type: Date,
+      default: null,
+    },
+
     visibility: {
       type: String,
       enum: ["public", "private"],

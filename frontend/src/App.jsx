@@ -22,6 +22,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatWidget from './components/chat/ChatWidget';
 import CommandPalette from './components/common/CommandPalette';
+import CalendarPage from "./pages/CalendarPage/CalendarPage";
+
 function App() {
   return (
     <BrowserRouter>
@@ -56,6 +58,14 @@ function App() {
           element={
             <ProtectedRoute>
               <MyProjects />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/calendar"
+          element={
+            <ProtectedRoute>
+              <CalendarPage />
             </ProtectedRoute>
           }
         />
