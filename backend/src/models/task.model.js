@@ -90,6 +90,12 @@ const taskSchema = new mongoose.Schema(
       default: null,
     },
 
+    deadlineAlertsSent: {
+      type: [String],
+      enum: ["3_days", "1_day", "1_hour", "overdue"],
+      default: [],
+    },
+
     startedAt: {
       type: Date,
       default: null,

@@ -17,6 +17,8 @@ const notificationSchema = new mongoose.Schema(
         "application_rejected",
         "task_assigned",
         "deadline_approaching",
+        "task_deadline_upcoming",
+        "task_overdue",
 
         // Invitations
         "project_invitation",

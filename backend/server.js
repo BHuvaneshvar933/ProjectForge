@@ -107,7 +107,12 @@ io.use(async (socket, next) => {
   }
 });
 
+import { initDeadlineCron } from "./src/services/deadline.service.js";
+
 initializeSocket(io);
+
+// Initialize background jobs
+initDeadlineCron();
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
