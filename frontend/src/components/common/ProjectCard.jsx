@@ -13,131 +13,102 @@ export default function ProjectCard({ project, type = "owned" }) {
     teamSizeRequired,
     requiredSkills = [],
     matchScore,
-    commonCount,
-    projectSkillCount,
     commonSkills = [],
     owner
   } = project;
 
+  const targetTeamSize = teamSizeRequired ?? currentTeamSize ?? 0;
+  const openPositions = Math.max(0, (teamSizeRequired ?? 0) - (currentTeamSize ?? 0));
+  const isOwner = window?.localStorage?.getItem("userId") === (owner?._id || owner);
+
   return (
     <div className="project-card">
-      {/* Header with Title and Border */}
+      {/* Header Banner - Solid Color */}
       <div className="project-card__header">
-        <h3 className="project-card__title">
+        <h3 className="project-card__title" title={title}>
           {title}
         </h3>
-
       </div>
 
-      {/* Description */}
-      <p className="project-card__description">
-        {description}
-      </p>
-
-      {/* Team Size - Visual Progress */}
-      <div className="project-card__team">
-        <div className="project-card__team-row">
-          <span className="project-card__team-label">
-            Team
-          </span>
-          <span className="project-card__team-value">
-            {currentTeamSize}<span className="project-card__team-divider">/</span>{teamSizeRequired}
-          </span>
-        </div>
-        <div className="project-card__progress">
-          <div 
-            className={`project-card__progress-fill ${currentTeamSize >= teamSizeRequired ? 'is-full' : 'is-active'}`.trim()}
-            style={{ 
-              width: `${Math.min((currentTeamSize / teamSizeRequired) * 100, 100)}%`,
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Status under Team line */}
-      <div className="project-card__status-row">
-        <Badge variant={status}>
-          {status}
-        </Badge>
-        {typeof matchScore === "number" && type === "browse" && (
-          <Badge variant="recruiting">Match: {Math.round(matchScore)}%</Badge>
-        )}
-      </div>
-
-      {/* Skills or Match Breakdown */}
-      {requiredSkills.length > 0 && (
-        <div className="project-card__skills">
-          {typeof matchScore === "number" && type === "browse" ? (
-            <div className="project-card__match-breakdown" style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%', marginTop: '4px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>
-                  {projectSkillCount - commonCount === 1 ? '1 skill away from a full match' : 
-                   projectSkillCount - commonCount === 0 ? 'Full skill match!' : 
-                   `You have ${commonCount} of ${projectSkillCount} required skills`}
-                </span>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: matchScore >= 80 ? '#22c55e' : matchScore >= 50 ? '#eab308' : 'var(--text-secondary)' }}>
-                  {Math.round(matchScore)}% Match
+      {/* Card Body */}
+      <div className="project-card__body">
+        {/* Team Size, Positions Open & Match Score */}
+        <div className="project-card__stats-row">
+          <div className="project-card__stat-col">
+            <span className="project-card__stat-label">Team Size</span>
+            <span className="project-card__stat-value">{targetTeamSize}</span>
+          </div>
+          <div className="project-card__stat-divider" />
+          <div className="project-card__stat-col">
+            <span className="project-card__stat-label">Positions Open</span>
+            <span className="project-card__stat-value">{openPositions}</span>
+          </div>
+          {typeof matchScore === "number" && type === "browse" && (
+            <>
+              <div className="project-card__stat-divider" />
+              <div className="project-card__stat-col">
+                <span className="project-card__stat-label">Match</span>
+                <span className="project-card__stat-value">
+                  {Math.round(matchScore)}%
                 </span>
               </div>
-              <div className="project-card__skills-list" style={{ marginTop: '2px' }}>
-                {requiredSkills.slice(0, 3).map((skill, i) => {
-                  const isMatched = commonSkills?.some(cs => String(cs) === String(skill._id) || String(cs) === String(skill));
-                  return (
-                    <Badge 
-                      key={i} 
-                      variant="skill" 
-                      style={isMatched ? { background: 'rgba(34, 197, 94, 0.1)', color: '#22c55e', borderColor: 'rgba(34, 197, 94, 0.2)' } : {}}
-                    >
-                      {isMatched && '✓ '}{displaySkillLabel(skill)}
-                    </Badge>
-                  );
-                })}
-                {requiredSkills.length > 3 && (
-                  <span className="project-card__skills-more">
-                    +{requiredSkills.length - 3}
+            </>
+          )}
+        </div>
+
+        {/* Status Badge as how it was before */}
+        <div className="project-card__status-row">
+          <Badge variant={status}>
+            {status}
+          </Badge>
+        </div>
+
+        {/* Skills Required */}
+        {requiredSkills.length > 0 && (
+          <div className="project-card__skills-section">
+            <div className="project-card__skills-pill">
+              {requiredSkills.slice(0, 5).map((skill, i) => {
+                const isMatched = commonSkills?.some(cs => String(cs) === String(skill._id) || String(cs) === String(skill));
+                return (
+                  <span key={i} className={`project-card__skill-item ${isMatched ? 'is-matched' : ''}`}>
+                    <span className="project-card__skill-name">{displaySkillLabel(skill)}</span>
+                    {i < Math.min(requiredSkills.length, 5) - 1 && (
+                      <span className="project-card__skill-slash">/</span>
+                    )}
                   </span>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="project-card__skills-list">
-              {requiredSkills.slice(0, 3).map((skill, i) => (
-                <Badge key={i} variant="skill">{displaySkillLabel(skill)}</Badge>
-              ))}
-              {requiredSkills.length > 3 && (
+                );
+              })}
+              {requiredSkills.length > 5 && (
                 <span className="project-card__skills-more">
-                  +{requiredSkills.length - 3}
+                  +{requiredSkills.length - 5}
                 </span>
               )}
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
 
-      {/* Footer */}
-      <div className="project-card__footer">
-        <div className="project-card__owner">
-          <div className="project-card__owner-avatar">
-            <span className="project-card__owner-initial">
-              {owner?.name?.[0]?.toUpperCase() || 'U'}
+        {/* Footer */}
+        <div className="project-card__footer">
+          <div className="project-card__owner">
+            <div className="project-card__owner-avatar">
+              <span className="project-card__owner-initial">
+                {owner?.name?.[0]?.toUpperCase() || 'U'}
+              </span>
+            </div>
+            <span className="project-card__owner-name">
+              {owner?.name || 'Unknown'}
             </span>
           </div>
-          <span className="project-card__owner-name">
-            {owner?.name || 'Unknown'}
-          </span>
+
+          <Link to={`/projects/${_id}`} className="project-card__action-link">
+            <button className="project-card__action">
+              <span>{isOwner ? "Manage" : "View Details"}</span>
+              <svg className="project-card__action-arrow" viewBox="0 0 16 16" fill="none" stroke="currentColor">
+                <path d="M3.33334 8H12.6667M12.6667 8L8.00001 3.33333M12.6667 8L8.00001 12.6667" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </Link>
         </div>
-        
-        <Link to={`/projects/${_id}`}>
-          <button className={`project-card__action ${
-            (window?.localStorage?.getItem("userId") === (owner?._id || owner)) 
-              ? 'project-card__action--ghost' 
-              : 'project-card__action--primary'
-          }`.trim()}>
-            {(window?.localStorage?.getItem("userId") === (owner?._id || owner)) 
-              ? "Manage" 
-              : "View"}
-          </button>
-        </Link>
       </div>
     </div>
   );

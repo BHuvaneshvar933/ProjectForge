@@ -1,13 +1,16 @@
 import React, { useState, useMemo } from "react";
+import { Zap, Bookmark, CheckSquare, Bug, Target } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import Input from "../common/Input";
 import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
-import { createTask, updateTaskStatus, assignTask } from "../../api/taskApi";
+import { createTask, updateTaskStatus, assignTask, updateTask, deleteTask } from "../../api/taskApi";
 import { uploadFile } from "../../api/uploadApi";
+import { getProjectReleases } from "../../api/projectApi";
 import TasksListView from "./tasks/TasksListView";
+import TaskDetailsDrawer from "./tasks/TaskDetailsDrawer";
 
 export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, tasksLoading, onTaskChange, fetchTasks }) {
   const [taskView, setTaskView] = useState("board");
@@ -20,46 +23,57 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
     issueType: "task",
     parentId: "",
     assignedTo: "",
+    releaseId: "",
     startedAt: "",
     dueDate: "",
     attachmentUrl: "",
     attachmentName: "",
   });
   const [taskUploading, setTaskUploading] = useState(false);
-  const [draggedTaskId, setDraggedTaskId] = useState(null);
-  const [expandedEpics, setExpandedEpics] = useState({});
-  const [inlineCreateParent, setInlineCreateParent] = useState(null);
-  const [inlineCreateTitle, setInlineCreateTitle] = useState("");
 
-  const isCompleted = project?.status === "completed";
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [taskToDelete, setTaskToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleInlineCreate = async (parentId, defaultType) => {
-    if (!inlineCreateTitle.trim()) return;
-    setTaskCreating(true);
+  const handleUpdateTaskDetails = async (taskId, updates) => {
     try {
-      await createTask(projectId, {
-        title: inlineCreateTitle.trim(),
-        description: "",
-        priority: "medium",
-        issueType: defaultType,
-        parentId: parentId,
-      });
-      setInlineCreateTitle("");
-      setInlineCreateParent(null);
-      toast.success("Task created");
+      await updateTask(taskId, updates);
       fetchTasks();
     } catch (e) {
-      toast.error("Failed to create task");
-    } finally {
-      setTaskCreating(false);
+      toast.error("Failed to update task");
     }
   };
 
-  const toggleEpic = (epicId) => {
-    setExpandedEpics(prev => ({ ...prev, [epicId]: prev[epicId] === false }));
+  const confirmDeleteTask = async () => {
+    if (!taskToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteTask(taskToDelete);
+      toast.success("Task deleted");
+      if (selectedTask?._id === taskToDelete) setSelectedTask(null);
+      fetchTasks();
+    } catch {
+      toast.error("Failed to delete task");
+    } finally {
+      setIsDeleting(false);
+      setTaskToDelete(null);
+    }
   };
 
-  const tasksByStatus = useMemo(() => {
+  const isCompleted = project?.status === "completed";
+
+  const [releases, setReleases] = useState([]);
+  React.useEffect(() => {
+    const fetchReleases = async () => {
+      try {
+        const res = await getProjectReleases(projectId);
+        setReleases(res.data?.data?.releases || []);
+      } catch (e) {
+        console.error("Failed to fetch releases", e);
+      }
+    };
+    fetchReleases();
+  }, [projectId]);  const tasksByStatus = useMemo(() => {
     return {
       todo: tasks.filter((t) => t.status === "todo"),
       "in-progress": tasks.filter((t) => t.status === "in-progress"),
@@ -100,6 +114,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
         issueType: taskForm.issueType || "task",
         parentId: taskForm.parentId || null,
         assignedTo: taskForm.assignedTo || null,
+        releaseId: taskForm.releaseId || null,
         startedAt: taskForm.startedAt || null,
         dueDate: taskForm.dueDate || null,
         attachmentUrl: taskForm.attachmentUrl || null,
@@ -107,7 +122,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
       });
       toast.success("Task created");
       setTaskModalOpen(false);
-      setTaskForm({ title: "", description: "", priority: "medium", issueType: "task", parentId: "", assignedTo: "", startedAt: "", dueDate: "", attachmentUrl: "", attachmentName: "" });
+      setTaskForm({ title: "", description: "", priority: "medium", issueType: "task", parentId: "", assignedTo: "", releaseId: "", startedAt: "", dueDate: "", attachmentUrl: "", attachmentName: "" });
       if (onTaskChange) await onTaskChange();
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to create task");
@@ -118,7 +133,8 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
 
   const onUpdateStatus = async (taskId, status) => {
     try {
-      await updateTaskStatus(taskId, status);
+      const task = tasks.find(t => t._id === taskId);
+      await updateTaskStatus(taskId, status, task?.__v);
       if (onTaskChange) await onTaskChange();
     } catch (e) {
       toast.error(e?.response?.data?.message || "Failed to update status");
@@ -127,10 +143,11 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
 
   const onAssign = async (taskId, userId) => {
     try {
-      await assignTask(taskId, userId || null);
+      const task = tasks.find(t => t._id === taskId);
+      await assignTask(taskId, userId || null, task?.__v);
       if (onTaskChange) await onTaskChange();
-    } catch (e) {
-      toast.error(e?.response?.data?.message || "Failed to assign task");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to assign task");
     }
   };
 
@@ -146,7 +163,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
         onChangeTaskForm("attachmentName", res.data.data.filename);
         toast.success("File uploaded successfully");
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to upload file");
     } finally {
       setTaskUploading(false);
@@ -166,16 +183,16 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
             Refresh
           </Button>
         </div>
-        <div style={{ display: "flex", gap: "4px", background: "rgba(255,255,255,0.05)", padding: "4px", borderRadius: "8px" }}>
+        <div style={{ display: "flex", gap: "4px", background: "var(--color-border-subtle)", padding: "4px", borderRadius: "8px" }}>
           <button 
             onClick={() => setTaskView("board")}
-            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", cursor: "pointer", background: taskView === "board" ? "rgba(255,255,255,0.15)" : "transparent", color: taskView === "board" ? "#fff" : "rgba(255,255,255,0.5)" }}
+            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", cursor: "pointer", background: taskView === "board" ? "var(--color-border-medium)" : "transparent", color: taskView === "board" ? "var(--color-text-dark)" : "var(--color-text-muted)" }}
           >
             Board
           </button>
           <button 
             onClick={() => setTaskView("list")}
-            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", cursor: "pointer", background: taskView === "list" ? "rgba(255,255,255,0.15)" : "transparent", color: taskView === "list" ? "#fff" : "rgba(255,255,255,0.5)" }}
+            style={{ padding: "6px 12px", borderRadius: "6px", border: "none", cursor: "pointer", background: taskView === "list" ? "var(--color-border-medium)" : "transparent", color: taskView === "list" ? "var(--color-text-dark)" : "var(--color-text-muted)" }}
           >
             List
           </button>
@@ -194,6 +211,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
           initialTasks={tasks}
           teamSorted={teamSorted}
           fetchTasks={fetchTasks}
+          releases={releases}
         />
       ) : (
         <DragDropContext onDragEnd={(result) => {
@@ -219,7 +237,8 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                 >
                   <div className="workspace-column__title">
                     <div className="workspace-column__title-text">
-                      {col.label} ({tasksByStatus[col.key].length})
+                      <span className="workspace-column__title-label">{col.label}</span>
+                      <span className="workspace-column__title-count">{tasksByStatus[col.key].length}</span>
                     </div>
                   </div>
 
@@ -227,50 +246,38 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                     <Draggable key={t._id} draggableId={String(t._id)} index={index} isDragDisabled={isCompleted}>
                       {(provided, snapshot) => (
                         <div 
-                          className={`workspace-task ${snapshot.isDragging ? "is-dragging" : ""}`.trim()}
+                          className={`workspace-task ${snapshot.isDragging ? "is-dragging" : ""} status-${col.key}`.trim()}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          style={{
-                            ...provided.draggableProps.style,
-                            borderLeft: `4px solid ${t.issueType === "epic" ? "#bf5af2" : t.issueType === "story" ? "#32d74b" : t.issueType === "bug" ? "#ff453a" : "rgba(255,255,255,0.1)"}`
-                          }}
+                          style={provided.draggableProps.style}
                         >
-                  {t.parentId && (
-                    <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.5)", marginBottom: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
-                      <span style={{ background: "rgba(10,132,255,0.2)", color: "#0a84ff", padding: "2px 6px", borderRadius: "4px" }}>
-                        {project?.key}-{tasks.find(p => p._id === t.parentId)?.taskNumber || "Parent"}
-                      </span>
-                    </div>
-                  )}
                   <div className="workspace-task__title">
-                    {t.issueType === "epic" ? "🟣" : 
-                     t.issueType === "story" ? "📗" : 
-                     t.issueType === "sub-task" ? "🔲" : 
-                     t.issueType === "bug" ? "🐛" : 
-                     t.issueType === "feature" ? "✨" : "📝"}
-                    <span style={{ fontWeight: 800, color: "#0a84ff", marginLeft: 6, marginRight: 6 }}>
-                      {project?.key}-{t.taskNumber || "X"}
+                    <span 
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedTask(t); }}
+                      style={{ cursor: "pointer", display: "block" }}
+                    >
+                      {t.title}
                     </span>
-                    {t.title}
                   </div>
                   {t.attachmentUrl && (
-                    <div style={{ marginTop: "4px" }}>
-                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#32d74b", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                        📎 {t.attachmentName?.substring(0, 20) || "Attachment"}
+                    <div style={{ marginTop: "6px", marginBottom: "6px" }}>
+                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "var(--color-text-muted)", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+                        {t.attachmentName?.substring(0, 24) || "View Attachment"}
                       </a>
                     </div>
                   )}
-                  <div className="workspace-task__meta" style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "12px", color: "rgba(255,255,255,0.5)", marginTop: "8px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>prio: {t.priority}</span>
-                      <span>
-                        assignee: {t.assignedTo?.name?.split(" ")[0] || "Unassigned"}
+                  <div className="workspace-task__meta">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span className={`workspace-task__badge prio-${(t.priority || 'medium').toLowerCase()}`}>
+                        {t.priority || 'medium'}
+                      </span>
+                      <span className="workspace-task__assignee-pill">
+                        {t.assignedTo?.name?.split(" ")[0] || "Unassigned"}
                       </span>
                     </div>
                     {(t.startedAt || t.dueDate) && (
-                      <div style={{ display: "flex", gap: "6px", alignItems: "center", background: "rgba(255,255,255,0.05)", padding: "4px 6px", borderRadius: "4px", width: "fit-content" }}>
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                      <div className="workspace-task__date-pill">
                         <span>
                           {t.startedAt ? new Date(t.startedAt).toLocaleDateString([], { month: "short", day: "numeric" }) : "TBD"} - {t.dueDate ? new Date(t.dueDate).toLocaleDateString([], { month: "short", day: "numeric" }) : "TBD"}
                         </span>
@@ -284,9 +291,9 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                       value={t.status}
                       onChange={(e) => onUpdateStatus(t._id, e.target.value)}
                     >
-                      <option value="todo">todo</option>
-                      <option value="in-progress">in-progress</option>
-                      <option value="done">done</option>
+                      <option value="todo">To Do</option>
+                      <option value="in-progress">In Progress</option>
+                      <option value="done">Done</option>
                     </select>
 
                     <select
@@ -321,14 +328,39 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
         title="Create Task"
         onConfirm={onCreateTask}
         confirmText={taskCreating ? "Creating..." : "Create"}
+        hideCloseButton={true}
       >
-        <div className="workspace-modal__form" style={{ display: "flex", flexDirection: "column", gap: "20px", maxHeight: "60vh", overflowY: "auto", paddingRight: "8px" }}>
+        <div className="workspace-modal__form" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div>
             <Input
               label="Title"
               value={taskForm.title}
               onChange={(e) => onChangeTaskForm("title", e.target.value)}
               placeholder="Example: Build chat UI"
+            />
+          </div>
+
+          <div>
+            <label className="input__label" style={{ marginBottom: "6px", display: "block", fontSize: "13px", fontWeight: "600", color: "var(--color-text-dark)" }}>Description</label>
+            <textarea
+              className="workspace-modal__textarea"
+              rows={3}
+              value={taskForm.description}
+              onChange={(e) => onChangeTaskForm("description", e.target.value)}
+              placeholder="What needs to be done?"
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                padding: "10px 12px",
+                borderRadius: "8px",
+                border: "1px solid var(--border-color, #e5e5ea)",
+                background: "var(--input-bg, #fff)",
+                color: "var(--color-text-dark, #1c1c1e)",
+                resize: "vertical",
+                minHeight: "80px",
+                fontFamily: "inherit",
+                fontSize: "14px"
+              }}
             />
           </div>
 
@@ -352,11 +384,11 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                 value={taskForm.issueType}
                 onChange={(e) => onChangeTaskForm("issueType", e.target.value)}
               >
-                <option value="epic">🟣 Epic</option>
-                <option value="story">📗 Story</option>
-                <option value="task">📝 Task</option>
-                <option value="sub-task">🔲 Sub-task</option>
-                <option value="bug">🐛 Bug</option>
+                <option value="epic">Epic</option>
+                <option value="story">Story</option>
+                <option value="task">Task</option>
+                <option value="sub-task">Sub-task</option>
+                <option value="bug">Bug</option>
               </select>
             </div>
           </div>
@@ -377,6 +409,24 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                 ))}
               </select>
             </div>
+            <div>
+              <label className="input__label">Release (Optional)</label>
+              <select
+                className="input__field"
+                value={taskForm.releaseId}
+                onChange={(e) => onChangeTaskForm("releaseId", e.target.value)}
+              >
+                <option value="">None</option>
+                {releases.map(r => (
+                  <option key={r._id} value={r._id}>
+                    {r.version}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <div>
               <label className="input__label">Parent Issue (Optional)</label>
               <select
@@ -424,46 +474,64 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
               />
             </div>
           </div>
-        </div>
 
-        <div style={{ height: 10 }} />
-
-        <div>
-          <label className="input__label">Description</label>
-          <textarea
-            className="workspace-modal__textarea"
-            rows={4}
-            value={taskForm.description}
-            onChange={(e) => onChangeTaskForm("description", e.target.value)}
-            placeholder="What needs to be done?"
-          />
-        </div>
-
-        <div style={{ marginTop: "16px" }}>
-          <label className="input__label">Attachment (Optional)</label>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "4px" }}>
-            <label style={{ 
-              background: "rgba(255,255,255,0.1)", 
-              padding: "8px 16px", 
-              borderRadius: "6px", 
-              cursor: "pointer", 
-              fontSize: "14px",
-              color: "#fff",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px"
-            }}>
-              {taskUploading ? <Spinner size="sm" /> : "📎 Upload File"}
-              <input type="file" style={{ display: "none" }} onChange={handleFileUpload} disabled={taskUploading} />
-            </label>
-            {taskForm.attachmentName && (
-              <span style={{ fontSize: "12px", color: "#32d74b" }}>
-                ✓ {taskForm.attachmentName}
-              </span>
-            )}
+          <div>
+            <label className="input__label" style={{ marginBottom: "6px", display: "block", fontSize: "13px", fontWeight: "600", color: "var(--color-text-dark)" }}>Attachment (Optional)</label>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "4px" }}>
+              <label style={{ 
+                background: "#000", 
+                padding: "8px 16px", 
+                borderRadius: "6px", 
+                cursor: "pointer", 
+                fontSize: "14px",
+                color: "#fff",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                fontWeight: "500",
+                border: "none"
+              }}>
+                {taskUploading ? <Spinner size="sm" /> : "Upload File"}
+                <input type="file" style={{ display: "none" }} onChange={handleFileUpload} disabled={taskUploading} />
+              </label>
+              {taskForm.attachmentName && (
+                <span style={{ fontSize: "12px", color: "#32d74b" }}>
+                  {taskForm.attachmentName}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </Modal>
+
+      {taskView === "board" && selectedTask && (
+        <TaskDetailsDrawer 
+          task={tasks.find(t => t._id === selectedTask._id) || selectedTask} 
+          project={project}
+          teamSorted={teamSorted}
+          releases={releases}
+          onClose={() => setSelectedTask(null)}
+          onUpdate={handleUpdateTaskDetails}
+          onDelete={(id) => setTaskToDelete(id)}
+          hasConflict={false}
+          onReloadLatest={() => fetchTasks()}
+        />
+      )}
+
+      {taskView === "board" && (
+        <Modal
+          isOpen={!!taskToDelete}
+          onClose={() => setTaskToDelete(null)}
+          title="Delete Task"
+          onConfirm={confirmDeleteTask}
+          confirmText={isDeleting ? "Deleting..." : "Delete"}
+          maxWidth="400px"
+        >
+          <p style={{ margin: 0, fontSize: "14px", color: "var(--color-text-muted)" }}>
+            Are you sure you want to delete this task? This action cannot be undone.
+          </p>
+        </Modal>
+      )}
     </div>
   );
 }

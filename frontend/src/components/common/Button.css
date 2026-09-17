@@ -6,9 +6,13 @@
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
   cursor: pointer;
   white-space: nowrap;
+}
+
+.btn:hover {
+  transform: none !important;
 }
 
 .btn--sm {
@@ -31,39 +35,39 @@
 }
 
 .btn--primary {
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text) !important;
-  border: 1px solid var(--btn-primary-bg);
+  background: #121214;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .btn--primary:hover:not(.btn--disabled) {
-  background: var(--color-paper) !important;
-  color: var(--color-text-dark) !important;
-  border-color: var(--color-text-dark) !important;
+  background: #FFFFFF !important;
+  color: #121214 !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
 }
 
 .btn--secondary {
   background: #ffffff !important;
   color: var(--color-text-dark) !important;
-  border: 1px solid var(--border-color) !important;
+  border: 1px solid rgba(18, 18, 20, 0.15) !important;
 }
 
 .btn--secondary:hover:not(.btn--disabled) {
-  background: #ffffff !important;
+  background: #EFECE6 !important;
   color: var(--color-text-dark) !important;
-  border-color: rgba(18, 18, 20, 0.35) !important;
+  border-color: rgba(18, 18, 20, 0.25) !important;
 }
 
 .btn--outline {
   background: transparent;
   color: var(--color-text-dark);
-  border: 1px solid var(--border-color) !important;
+  border: 1px solid rgba(18, 18, 20, 0.15) !important;
 }
 
 .btn--outline:hover:not(.btn--disabled) {
-  background: var(--color-text-dark);
-  color: #ffffff;
-  border-color: var(--color-text-dark);
+  background: #EFECE6;
+  color: var(--color-text-dark);
+  border-color: rgba(18, 18, 20, 0.25);
 }
 
 .btn--danger {
@@ -81,13 +85,13 @@
 .btn--ghost {
   background: transparent;
   color: var(--color-text-dark);
-  border: 1px solid var(--border-color) !important;
+  border: 1px solid rgba(18, 18, 20, 0.15) !important;
 }
 
 .btn--ghost:hover:not(.btn--disabled) {
   background: #EFECE6;
   color: var(--color-text-dark);
-  border-color: var(--color-text-dark);
+  border-color: rgba(18, 18, 20, 0.25);
 }
 
 .btn--disabled {

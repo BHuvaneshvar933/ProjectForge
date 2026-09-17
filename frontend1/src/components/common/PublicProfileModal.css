@@ -1,0 +1,415 @@
+/* PublicProfileModal.css - Matching ProjectForge Design System */
+
+.profile-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: var(--color-text-dark);
+}
+
+.profile-modal__header {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.profile-modal__hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.profile-modal__avatar-wrap {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.profile-modal__avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-modal__avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #121214;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.profile-modal__identity {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-modal__name-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.profile-modal__name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--color-text-dark);
+}
+
+.profile-modal__reliability {
+  font-size: 11.5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+.profile-modal__reliability--reliable {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.profile-modal__reliability--standard {
+  background-color: var(--color-border-subtle, rgba(0, 0, 0, 0.05));
+  color: var(--color-text-muted);
+  border: 1px solid var(--border-color);
+}
+
+.profile-modal__headline {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.profile-modal__primary-ed {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.profile-modal__actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.profile-modal__btn-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-modal__links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.profile-modal__social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--color-text-dark);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.profile-modal__social-link:hover {
+  background: var(--color-paper);
+  border-color: var(--color-border-strong);
+}
+
+.profile-modal__divider {
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  margin: 4px 0 8px 0;
+  opacity: 0.7;
+}
+
+/* Fieldset Box with Top-Left Legend Border */
+.profile-modal__box {
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px 18px 18px;
+  margin: 0;
+  background: var(--bg-card);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.profile-modal__legend {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  padding: 0 8px;
+  margin-left: 10px;
+  float: none;
+  width: auto;
+  border-bottom: none !important;
+  background: transparent;
+}
+
+.profile-modal__box-body {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.profile-modal__bio {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+.profile-modal__empty {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.profile-modal__items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-modal__item-entry {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.profile-modal__item-entry:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.profile-modal__item-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.profile-modal__item-subtitle {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.profile-modal__item-meta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+.profile-modal__skills-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-modal__project-entry {
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.profile-modal__project-entry:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.profile-modal__project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.profile-modal__project-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.profile-modal__project-links {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.profile-modal__project-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-card);
+  transition: all 0.15s ease;
+}
+
+.profile-modal__project-btn:hover {
+  background: var(--color-paper);
+}
+
+.profile-modal__project-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 8px 0 10px;
+  line-height: 1.55;
+}
+
+.profile-modal__project-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.profile-modal__project-skill-tag {
+  font-size: 11px;
+  background: var(--color-border-subtle, rgba(0, 0, 0, 0.05));
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: var(--color-text-dark);
+  font-weight: 500;
+}
+
+.profile-modal__project-deliverables {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.profile-modal__deliverable-link {
+  font-size: 12px;
+  color: var(--color-text-dark);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.profile-modal__role-box {
+  margin-top: 10px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 10px;
+}
+
+.profile-modal__role-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 4px;
+}
+
+.profile-modal__role-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin-bottom: 6px;
+}
+
+.profile-modal__contributions {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.profile-modal__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.profile-modal__stat-col {
+  padding: 8px 12px;
+}
+
+.profile-modal__stat-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  line-height: 1;
+}
+
+.profile-modal__stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-top: 8px;
+}
+
+/* Dark Mode Theme Overrides */
+html[data-theme="dark"] .profile-modal__avatar-fallback {
+  background-color: #FFFFFF !important;
+  color: #0A0A0C !important;
+}
+
+html[data-theme="dark"] .profile-modal__box {
+  background: #18181f !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .profile-modal__legend {
+  color: #a1a1aa !important;
+}
+
+html[data-theme="dark"] .profile-modal__social-link,
+html[data-theme="dark"] .profile-modal__project-btn {
+  background: #1c1c22 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+html[data-theme="dark"] .profile-modal__social-link:hover,
+html[data-theme="dark"] .profile-modal__project-btn:hover {
+  background: #282832 !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+html[data-theme="dark"] .profile-modal__project-skill-tag {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #f4f4f5 !important;
+}
