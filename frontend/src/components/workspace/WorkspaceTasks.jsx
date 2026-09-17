@@ -39,7 +39,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
     try {
       await updateTask(taskId, updates);
       fetchTasks();
-    } catch (e) {
+    } catch {
       toast.error("Failed to update task");
     }
   };

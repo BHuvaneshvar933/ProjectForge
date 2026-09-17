@@ -20,7 +20,6 @@ const NotificationSettings = () => {
 
   const [prefs, setPrefs] = useState(defaultPrefs);
   const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -31,8 +30,6 @@ const NotificationSettings = () => {
         }
       } catch (err) {
         console.error('Failed to load user preferences', err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchUser();

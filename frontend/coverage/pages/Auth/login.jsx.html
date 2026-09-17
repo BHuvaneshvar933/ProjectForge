@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.98% </span>
+                <span class="strong">39.34% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>23/59</span>
+                <span class='fraction'>24/61</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">35.71% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>12/36</span>
+                <span class='fraction'>15/42</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.55% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/9</span>
+                <span class='fraction'>5/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.59% </span>
+                <span class="strong">38.98% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>22/57</span>
+                <span class='fraction'>23/59</span>
             </div>
         
             
@@ -308,7 +308,28 @@
 <a name='L243'></a><a href='#L243'>243</a>
 <a name='L244'></a><a href='#L244'>244</a>
 <a name='L245'></a><a href='#L245'>245</a>
-<a name='L246'></a><a href='#L246'>246</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -322,6 +343,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -497,6 +519,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -519,6 +560,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -567,6 +609,7 @@ export default function Login() {
         email: "",
         password: "",
     });
+    const [showPassword, setShowPassword] = useState(false);
 &nbsp;
     const [errors, setErrors] = useState({});
 &nbsp;
@@ -659,40 +702,35 @@ export default function Login() {
     return (
         &lt;div className="relative min-h-screen bg-black px-4 py-8 text-white sm:px-6 lg:px-8 flex flex-col items-center justify-center"&gt;
             &lt;div className="mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-6xl items-center justify-center"&gt;
-                &lt;div className="grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-zinc-800 bg-black shadow-2xl md:grid-cols-2"&gt;
-                    &lt;div className="hidden min-h-full flex-col items-center justify-center border-b border-zinc-800 bg-black p-8 text-white md:flex md:border-b-0 md:border-r md:p-10 lg:p-12"&gt;
-                        &lt;div className="flex flex-col items-center justify-center text-center w-full"&gt;
-                            &lt;img 
-                                src={logo} 
-                                alt="Logo" 
-                                className="w-80 max-w-full h-auto object-contain rounded-2xl shadow-none"
-                            /&gt;
-                        &lt;/div&gt;
+                &lt;div className="grid w-full max-w-5xl overflow-hidden rounded-2xl border border-zinc-800 bg-[#09090B] shadow-2xl md:grid-cols-2"&gt;
+                    &lt;div className="hidden min-h-full flex-col items-center justify-center border-b border-zinc-800 bg-black p-10 md:flex md:border-b-0 md:border-r md:p-12"&gt;
+                        &lt;img src={logo} alt="ProjectForge Logo" className="h-56 max-h-[260px] w-auto object-contain rounded-2xl shadow-2xl" /&gt;
                     &lt;/div&gt;
 &nbsp;
-                    &lt;div className="flex items-center justify-center p-5 sm:p-8 md:p-10 lg:p-12"&gt;
+                    &lt;div className="flex items-center justify-center p-6 sm:p-8 md:p-10 lg:p-12 bg-[#09090B]"&gt;
                         &lt;form onSubmit={handleSubmit} className="w-full max-w-md" noValidate&gt;
                             &lt;div className="mb-8 text-center md:hidden flex justify-center"&gt;
-                                &lt;img src={logo} alt="Logo" className="h-24 w-auto object-contain rounded-xl" /&gt;
+                                &lt;img src={logo} alt="Logo" className="h-28 w-auto object-contain rounded-xl" /&gt;
                             &lt;/div&gt;
 &nbsp;
                             &lt;div className="mb-8 text-center md:text-left"&gt;
-                                &lt;h2 className="text-4xl font-semibold tracking-tight text-white sm:text-5xl"&gt;
-                                    Login
+                                &lt;h2 className="text-3xl font-extrabold tracking-tight text-[#F9F8F5]" style={{ color: '#F9F8F5' }}&gt;
+                                    Sign In
                                 &lt;/h2&gt;
 &nbsp;
-                                &lt;p className="mt-3 text-base leading-6 text-zinc-300"&gt;
+                                &lt;p className="mt-2 text-sm text-[#F9F8F5]" style={{ color: '#F9F8F5' }}&gt;
                                     Enter your credentials to access your account.
                                 &lt;/p&gt;
                             &lt;/div&gt;
 &nbsp;
-                            &lt;div className="space-y-5"&gt;
+                            &lt;div className="space-y-4"&gt;
                                 &lt;div&gt;
                                     &lt;label
                                         htmlFor="email"
-                                        className="mb-2 block text-base font-medium text-zinc-200"
+                                        className="mb-1.5 block text-sm font-semibold text-[#F9F8F5]"
+                                        style={{ color: '#F9F8F5' }}
                                     &gt;
-                                        Email
+                                        Email Address
                                     &lt;/label&gt;
 &nbsp;
                                     &lt;input
@@ -702,84 +740,109 @@ export default function Login() {
                                         value={formData.email}
                                         onChange={handleChange}
                                         placeholder="you@example.com"
-                                        className={`w-full rounded-md border bg-black px-4 py-3.5 text-base text-white placeholder:text-zinc-400 outline-none transition duration-200 ${errors.email
+                                        className={`w-full rounded-lg border bg-zinc-900 px-4 py-3 text-sm text-[#F9F8F5] placeholder:text-zinc-500 outline-none transition duration-200 ${errors.email
                                                 ? "border-red-500 focus:border-red-500"
-                                                : "border-zinc-800 focus:border-[#ffffff] focus:ring-1 focus:ring-[#ffffff]"
+                                                : "border-zinc-800 focus:border-[#F9F8F5]"
                                             }`}
                                     /&gt;
 &nbsp;
                                     {errors.email &amp;&amp; (
-                                        &lt;p className="mt-2 text-sm text-red-400"&gt;{errors.email}&lt;/p&gt;
+                                        &lt;p className="mt-1.5 text-xs text-red-400"&gt;{errors.email}&lt;/p&gt;
                                     )}
                                 &lt;/div&gt;
 &nbsp;
                                 &lt;div&gt;
-                                    &lt;div className="mb-2 flex items-center justify-between gap-3"&gt;
+                                    &lt;div className="mb-1.5 flex items-center justify-between gap-3"&gt;
                                         &lt;label
                                             htmlFor="password"
-                                            className="block text-base font-medium text-zinc-200"
+                                            className="block text-sm font-semibold text-[#F9F8F5]"
+                                            style={{ color: '#F9F8F5' }}
                                         &gt;
                                             Password
                                         &lt;/label&gt;
 &nbsp;
                                         &lt;Link
                                             to="/forgot-password"
-                                            className="text-sm font-medium text-zinc-400 transition hover:text-white"
+                                            className="text-xs font-semibold text-[#F9F8F5] underline transition hover:text-zinc-300"
+                                            style={{ color: '#F9F8F5' }}
                                         &gt;
                                             Forgot password?
                                         &lt;/Link&gt;
                                     &lt;/div&gt;
 &nbsp;
-                                    &lt;input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        placeholder="Enter your password"
-                                        className={`w-full rounded-md border bg-black px-4 py-3.5 text-base text-white placeholder:text-zinc-400 outline-none transition duration-200 ${errors.password
-                                                ? "border-red-500 focus:border-red-500"
-                                                : "border-zinc-800 focus:border-[#ffffff] focus:ring-1 focus:ring-[#ffffff]"
-                                            }`}
-                                    /&gt;
+                                    &lt;div className="relative flex items-center"&gt;
+                                        &lt;input
+                                            id="password"
+                                            name="password"
+                                            type={showPassword ? <span class="branch-0 cbranch-no" title="branch not covered" >"text" : "</span>password"}
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            placeholder="Enter your password"
+                                            className={`w-full rounded-lg border bg-zinc-900 px-4 py-3 pr-11 text-sm text-[#F9F8F5] placeholder:text-zinc-500 outline-none transition duration-200 ${errors.password
+                                                    ? "border-red-500 focus:border-red-500"
+                                                    : "border-zinc-800 focus:border-[#F9F8F5]"
+                                                }`}
+                                        /&gt;
+                                        &lt;button
+                                            type="button"
+                                            onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etShowPassword(!showPassword)}</span>
+                                            className="absolute right-3 p-1 text-zinc-400 hover:text-white transition-colors focus:outline-none"
+                                            aria-label={showPassword ? <span class="branch-0 cbranch-no" title="branch not covered" >"Hide password" : "</span>Show password"}
+                                        &gt;
+                                            {showPassword ? (
+<span class="branch-0 cbranch-no" title="branch not covered" >                                                &lt;svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"&gt;</span>
+                                                    &lt;path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" /&gt;
+                                                    &lt;path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /&gt;
+                                                    &lt;path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" /&gt;
+                                                    &lt;line x1="2" y1="2" x2="22" y2="22" /&gt;
+                                                &lt;/svg&gt;
+                                            ) : (
+                                                &lt;svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"&gt;
+                                                    &lt;path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /&gt;
+                                                    &lt;circle cx="12" cy="12" r="3" /&gt;
+                                                &lt;/svg&gt;
+                                            )}
+                                        &lt;/button&gt;
+                                    &lt;/div&gt;
 &nbsp;
                                     {errors.password &amp;&amp; (
-                                        &lt;p className="mt-2 text-sm text-red-400"&gt;
+                                        &lt;p className="mt-1.5 text-xs text-red-400"&gt;
                                             {errors.password}
                                         &lt;/p&gt;
                                     )}
                                 &lt;/div&gt;
                             &lt;/div&gt;
 &nbsp;
-                            &lt;div className="mt-8 space-y-4"&gt;
+                            &lt;div className="mt-6 space-y-4"&gt;
                                 &lt;button
                                     type="submit"
-                                    className="w-full rounded-md bg-white border border-white px-4 py-3.5 text-base font-semibold text-black transition duration-200 hover:bg-black hover:text-white hover:border-white focus:outline-none focus:ring-2 focus:ring-white"
+                                    className="w-full rounded-lg bg-white border border-white px-4 py-3 text-sm font-semibold text-black transition duration-200 hover:bg-zinc-200"
                                 &gt;
-                                    Login
+                                    Sign In
                                 &lt;/button&gt;
 &nbsp;
-                                &lt;p className="text-center text-base text-zinc-300"&gt;
+                                &lt;p className="text-center text-sm text-[#F9F8F5]" style={{ color: '#F9F8F5' }}&gt;
                                     Need an account?{" "}
                                     &lt;button
                                         type="button"
                                         onClick={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >n</span>avigate("/register")}</span>
-                                        className="font-medium text-white hover:text-white"
+                                        className="font-bold text-[#F9F8F5] underline"
+                                        style={{ color: '#F9F8F5' }}
                                     &gt;
                                         Register
                                     &lt;/button&gt;
                                 &lt;/p&gt;
 &nbsp;
-                                &lt;div className="relative flex items-center justify-center text-base mt-6 mb-6"&gt;
-                                    &lt;span className="absolute bg-black px-3 text-zinc-400 font-medium"&gt;Or continue with&lt;/span&gt;
+                                &lt;div className="relative flex items-center justify-center text-xs mt-6 mb-4"&gt;
+                                    &lt;span className="absolute bg-[#09090B] px-3 text-[#F9F8F5] font-medium"&gt;Or continue with&lt;/span&gt;
                                     &lt;div className="w-full border-t border-zinc-800"&gt;&lt;/div&gt;
                                 &lt;/div&gt;
                                 &lt;div className="flex justify-center mt-4"&gt;
                                     &lt;GoogleLogin
                                         onSuccess={handleGoogleSuccess}
                                         onError={<span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >t</span>oast.error("Google login failed")}</span>
-                                        theme="filled_black"
                                         shape="rectangular"
+                                        theme="filled_black"
                                     /&gt;
                                 &lt;/div&gt;
                             &lt;/div&gt;
@@ -790,7 +853,7 @@ export default function Login() {
             &lt;/div&gt;
 &nbsp;
             &lt;footer className="absolute bottom-3 left-0 right-0 text-center pointer-events-none"&gt;
-                &lt;span className="font-['Jost'] text-sm font-medium tracking-[0.1em] text-zinc-300 uppercase"&gt;
+                &lt;span className="font-['Jost'] text-sm font-normal tracking-[0.02em] text-[#F9F8F5] uppercase" style={{ color: '#F9F8F5' }}&gt;
                     PROJECTFORGE
                 &lt;/span&gt;
             &lt;/footer&gt;
@@ -805,7 +868,7 @@ export default function Login() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-08-17T14:52:31.877Z
+                at 2026-09-17T15:57:37.003Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
