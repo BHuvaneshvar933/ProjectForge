@@ -14,6 +14,7 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
   const [disconnectLoading, setDisconnectLoading] = useState(false);
   const [assessment, setAssessment] = useState(null);
   const [assessmentLoading, setAssessmentLoading] = useState(false);
+  const showAIFeedback = false;
 
   const handleGetAssessment = async () => {
     setAssessmentLoading(true);
@@ -88,7 +89,7 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
       </div>
 
       {/* Top Section: AI Feedback */}
-      {false && (
+      {showAIFeedback && (
       <div style={{ background: "rgba(10,132,255,0.05)", border: "1px solid rgba(10,132,255,0.2)", borderRadius: "8px", padding: "24px", display: "flex", flexDirection: "column", gap: "16px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h3 style={{ margin: 0, fontSize: "16px", display: "flex", alignItems: "center", gap: "8px" }}>

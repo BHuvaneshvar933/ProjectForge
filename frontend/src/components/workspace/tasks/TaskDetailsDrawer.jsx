@@ -5,7 +5,7 @@ import Spinner from "../../common/Spinner";
 import { toast } from "react-toastify";
 import { addTaskComment } from "../../../api/taskApi";
 
-export default function TaskDetailsDrawer({ task, project, teamSorted, releases = [], onClose, onUpdate, onDelete, hasConflict, onReloadLatest }) {
+export default function TaskDetailsDrawer({ task, teamSorted, releases = [], onClose, onUpdate, onDelete, hasConflict, onReloadLatest }) {
   const [commentText, setCommentText] = useState("");
   const [commentPosting, setCommentPosting] = useState(false);
   const [localComments, setLocalComments] = useState(task?.comments || []);
