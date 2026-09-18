@@ -1,10 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../../components/common/Button';
-import Badge from '../../../components/common/Badge';
 
 export default function ProjectHeader({
   project,
-  matchPercent,
   tokenPresent,
   isMember,
   showPending,
@@ -14,82 +12,124 @@ export default function ProjectHeader({
   applyLoading,
   setShowApplyModal,
   isOwner,
-  goToApplications,
-  setShowArchiveModal,
+  openRoles = [],
 }) {
   const navigate = useNavigate();
   const { _id: id } = project;
 
   return (
     <div className="project-detail__header">
-      <div>
-        <h1 className="project-detail__title">{project.title}</h1>
-        <div className="project-detail__badges">
-          <Badge variant={project.projectType}>{project.projectType}</Badge>
-          <Badge variant={project.status}>{project.status}</Badge>
-          {typeof matchPercent === "number" && (
-            <Badge variant="recruiting">Match: {matchPercent}%</Badge>
+      {/* Title Banner with Apply Button */}
+      <div className="project-detail__title-banner">
+        <h2 className="project-detail__title">TITLE : {project.title}</h2>
+
+        <div className="project-detail__header-action">
+          {!tokenPresent && (
+            <Button className="btn-apply-header" disabled>
+              Sign in to apply
+            </Button>
           )}
-          <Badge variant="default">
-            Team: {project.currentTeamSize} / {project.teamSizeRequired}
-          </Badge>
+
+          {tokenPresent && showPending && (
+            <Button variant="secondary" disabled style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.3)' }}>
+              Application Pending
+            </Button>
+          )}
+
+          {tokenPresent && !isMember && !isOwner && !showPending && teamFull && (
+            <Button variant="secondary" disabled style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.3)' }}>
+              Team Full
+            </Button>
+          )}
+
+          {tokenPresent && !isMember && !isOwner && !showPending && !isRecruiting && (
+            <Button variant="secondary" disabled style={{ background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.3)' }}>
+              Not recruiting
+            </Button>
+          )}
+
+          {tokenPresent && canApply && (
+            <Button
+              className="btn-apply-header"
+              onClick={() => setShowApplyModal(true)}
+              loading={applyLoading}
+            >
+              Apply to Join
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="project-detail__actions">
-        {!tokenPresent && (
-          <Button variant="primary" disabled>
-            Sign in to apply
-          </Button>
-        )}
-
-        {tokenPresent && isMember && (
-          <Button variant="primary" onClick={() => navigate(`/workspace/${id}`)}>
-            Workspace
-          </Button>
-        )}
-
-        {tokenPresent && showPending && (
-          <Button variant="secondary" disabled>
-            Application Pending
-          </Button>
-        )}
-
-        {tokenPresent && !isMember && !isOwner && !showPending && teamFull && (
-          <Button variant="secondary" disabled>
-            Team Full
-          </Button>
-        )}
-
-        {tokenPresent && !isMember && !isOwner && !showPending && !isRecruiting && (
-          <Button variant="secondary" disabled>
-            Not recruiting
-          </Button>
-        )}
-
-        {tokenPresent && canApply && (
-          <Button
-            variant="primary"
-            onClick={() => setShowApplyModal(true)}
-            loading={applyLoading}
+      {/* Action Buttons - only available when user joined or is owner */}
+      {((tokenPresent && isMember) || isOwner) && (
+        <div className="project-detail__actions-list">
+          <button
+            type="button"
+            className="project-detail__action-btn"
+            onClick={() => navigate(`/workspace/${id}`)}
           >
-            Apply to Join
-          </Button>
-        )}
+            Workspace
+          </button>
+          {isOwner && (
+            <>
+              <button
+                type="button"
+                className="project-detail__action-btn"
+                onClick={() => navigate(`/projects/${id}/applications`)}
+              >
+                View Applications
+              </button>
+              <button
+                type="button"
+                className="project-detail__action-btn"
+                onClick={() => navigate(`/projects/${id}/edit`)}
+              >
+                Edit Project
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
-        {isOwner && (
-          <>
-            <Button variant="outline" onClick={goToApplications}>
-              View Applications
-            </Button>
-            <Link to={`/projects/${id}/edit`}>
-              <Button variant="secondary">Edit Project</Button>
-            </Link>
-            <Button variant="danger" onClick={() => setShowArchiveModal(true)}>
-              Archive
-            </Button>
-          </>
-        )}
+      {/* 2 Rows of Details */}
+      <div className="project-detail__details-container">
+        <div className="project-detail__details-row">
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Topic :</span>
+            <span className="project-detail__detail-value">{project.projectType || "General"}</span>
+          </div>
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Status :</span>
+            <span className="project-detail__detail-value">{project.status}</span>
+          </div>
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Team :</span>
+            <span className="project-detail__detail-value">
+              {project.currentTeamSize} / {project.teamSizeRequired}
+            </span>
+          </div>
+        </div>
+
+        <div className="project-detail__details-row">
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Owner :</span>
+            <span className="project-detail__detail-value">{project.owner?.name || "Unknown"}</span>
+          </div>
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Open Roles :</span>
+            <span className="project-detail__detail-value">
+              {openRoles.length > 0 ? openRoles.join(", ") : "All filled"}
+            </span>
+          </div>
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Timeline :</span>
+            <span className="project-detail__detail-value">
+              {project.timeline?.startDate 
+                ? `${new Date(project.timeline.startDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}`
+                : "Flexible"}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

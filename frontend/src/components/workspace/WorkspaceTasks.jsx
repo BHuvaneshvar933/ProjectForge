@@ -237,7 +237,8 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                 >
                   <div className="workspace-column__title">
                     <div className="workspace-column__title-text">
-                      {col.label} ({tasksByStatus[col.key].length})
+                      <span className="workspace-column__title-label">{col.label}</span>
+                      <span className="workspace-column__title-count">{tasksByStatus[col.key].length}</span>
                     </div>
                   </div>
 
@@ -245,52 +246,38 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                     <Draggable key={t._id} draggableId={String(t._id)} index={index} isDragDisabled={isCompleted}>
                       {(provided, snapshot) => (
                         <div 
-                          className={`workspace-task ${snapshot.isDragging ? "is-dragging" : ""}`.trim()}
+                          className={`workspace-task ${snapshot.isDragging ? "is-dragging" : ""} status-${col.key}`.trim()}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
-                          style={{
-                            ...provided.draggableProps.style,
-                            borderLeft: "4px solid rgba(255, 255, 255, 0.2)"
-                          }}
+                          style={provided.draggableProps.style}
                         >
-                  <div className="workspace-task__title" style={{ display: "flex", alignItems: "flex-start", gap: "6px" }}>
-                    <div style={{ display: "flex", flexShrink: 0, marginTop: "2px" }}>
-                      {t.issueType === "epic" ? <div style={{ background: "rgba(191, 90, 242, 0.15)", color: "#bf5af2", padding: "4px", borderRadius: "4px", display: "flex" }}><Zap size={14} /></div> : 
-                       t.issueType === "story" ? <div style={{ background: "rgba(50, 215, 75, 0.15)", color: "#32d74b", padding: "4px", borderRadius: "4px", display: "flex" }}><Bookmark size={14} /></div> : 
-                       t.issueType === "sub-task" ? <div style={{ background: "rgba(94, 92, 230, 0.15)", color: "#5e5ce6", padding: "4px", borderRadius: "4px", display: "flex" }}><CheckSquare size={14} /></div> : 
-                       t.issueType === "bug" ? <div style={{ background: "rgba(255, 69, 58, 0.15)", color: "#ff453a", padding: "4px", borderRadius: "4px", display: "flex" }}><Bug size={14} /></div> : 
-                       t.issueType === "feature" ? <div style={{ background: "rgba(10, 132, 255, 0.15)", color: "#0a84ff", padding: "4px", borderRadius: "4px", display: "flex" }}><Target size={14} /></div> : 
-                       <div style={{ background: "rgba(94, 92, 230, 0.15)", color: "#5e5ce6", padding: "4px", borderRadius: "4px", display: "flex" }}><CheckSquare size={14} /></div>}
-                    </div>
-                    <div style={{ flex: 1, wordBreak: "break-word" }}>
-                      <span 
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedTask(t); }}
-                        style={{ cursor: "pointer", textDecoration: "none" }}
-                        onMouseOver={(e) => e.target.style.textDecoration = "underline"}
-                        onMouseOut={(e) => e.target.style.textDecoration = "none"}
-                      >
-                        {t.title}
-                      </span>
-                    </div>
+                  <div className="workspace-task__title">
+                    <span 
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setSelectedTask(t); }}
+                      style={{ cursor: "pointer", display: "block" }}
+                    >
+                      {t.title}
+                    </span>
                   </div>
                   {t.attachmentUrl && (
-                    <div style={{ marginTop: "4px" }}>
-                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "var(--color-text-muted)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                    <div style={{ marginTop: "6px", marginBottom: "6px" }}>
+                      <a href={t.attachmentUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "var(--color-text-muted)", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
                         {t.attachmentName?.substring(0, 24) || "View Attachment"}
                       </a>
                     </div>
                   )}
-                  <div className="workspace-task__meta" style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "12px", color: "var(--color-text-muted)", marginTop: "8px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                      <span>prio: {t.priority}</span>
-                      <span>
-                        assignee: {t.assignedTo?.name?.split(" ")[0] || "Unassigned"}
+                  <div className="workspace-task__meta">
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span className={`workspace-task__badge prio-${(t.priority || 'medium').toLowerCase()}`}>
+                        {t.priority || 'medium'}
+                      </span>
+                      <span className="workspace-task__assignee-pill">
+                        {t.assignedTo?.name?.split(" ")[0] || "Unassigned"}
                       </span>
                     </div>
                     {(t.startedAt || t.dueDate) && (
-                      <div style={{ display: "flex", gap: "6px", alignItems: "center", background: "var(--color-border-subtle)", padding: "4px 6px", borderRadius: "4px", width: "fit-content" }}>
-                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                      <div className="workspace-task__date-pill">
                         <span>
                           {t.startedAt ? new Date(t.startedAt).toLocaleDateString([], { month: "short", day: "numeric" }) : "TBD"} - {t.dueDate ? new Date(t.dueDate).toLocaleDateString([], { month: "short", day: "numeric" }) : "TBD"}
                         </span>
@@ -304,9 +291,9 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
                       value={t.status}
                       onChange={(e) => onUpdateStatus(t._id, e.target.value)}
                     >
-                      <option value="todo">todo</option>
-                      <option value="in-progress">in-progress</option>
-                      <option value="done">done</option>
+                      <option value="todo">To Do</option>
+                      <option value="in-progress">In Progress</option>
+                      <option value="done">Done</option>
                     </select>
 
                     <select
@@ -509,7 +496,7 @@ export default function WorkspaceTasks({ projectId, project, tasks, teamSorted, 
               </label>
               {taskForm.attachmentName && (
                 <span style={{ fontSize: "12px", color: "#32d74b" }}>
-                  ✓ {taskForm.attachmentName}
+                  {taskForm.attachmentName}
                 </span>
               )}
             </div>

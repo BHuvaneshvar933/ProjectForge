@@ -1,10 +1,15 @@
 @import "./colors.css";
 @import "tailwindcss";
 
+@theme {
+	--font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+	--font-serif: 'Cormorant Garamond', Georgia, serif;
+}
+
 :root {
 	/* Typography Families */
-	--font-sans: 'Google Sans', 'Inter', system-ui, -apple-system, sans-serif;
-	--font-serif: 'Cormorant Garamond', 'Newsreader', Georgia, serif;
+	--font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+	--font-serif: 'Cormorant Garamond', Georgia, serif;
 }
 
 /* Universal Card & Box Title Underline Styles */
@@ -133,19 +138,24 @@ select,
 .dashboard-sidebar__select,
 .browse-page__select,
 .workspace-select {
+	-webkit-appearance: none !important;
+	-moz-appearance: none !important;
+	appearance: none !important;
 	background-color: #ffffff !important;
 	color: #121214 !important;
 	background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23121214' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
 	background-repeat: no-repeat !important;
 	background-position: right 14px center !important;
-	appearance: none !important;
-	-webkit-appearance: none !important;
 }
 
+html[data-theme="dark"] select,
 html[data-theme="dark"] .browse-sidebar__select,
 html[data-theme="dark"] .dashboard-sidebar__select,
 html[data-theme="dark"] .browse-page__select,
 html[data-theme="dark"] .workspace-select {
+	-webkit-appearance: none !important;
+	-moz-appearance: none !important;
+	appearance: none !important;
 	background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23FFFFFF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
 	background-repeat: no-repeat !important;
 	background-position: right 14px center !important;
@@ -272,8 +282,19 @@ html[data-theme="dark"] .spinner {
 	border-top-color: #F9F8F5;
 }
 
-* {
+*, *::before, *::after {
 	box-sizing: border-box;
+	font-family: var(--font-sans);
+	font-weight: 400 !important;
+}
+
+html, body, #root, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, a, div, label, li, table, th, td, b, strong {
+	font-family: var(--font-sans) !important;
+	font-weight: 400 !important;
+}
+
+.font-serif, [class*="font-serif"] {
+	font-family: var(--font-serif) !important;
 }
 
 html {
@@ -316,7 +337,7 @@ a:hover {
 
 h1, h2, h3, h4, h5, h6 {
 	font-family: var(--font-sans);
-	font-weight: 700;
+	font-weight: 400 !important;
 	margin: 0 0 12px 0;
 	letter-spacing: -0.02em;
 	color: var(--text-main);
@@ -331,7 +352,7 @@ h1, h2, h3, h4, h5, h6 {
 .display-hero {
 	font-family: var(--font-sans);
 	font-size: clamp(2.5rem, 6vw, 5.5rem);
-	font-weight: 800;
+	font-weight: 400 !important;
 	line-height: 1.05;
 	letter-spacing: -0.035em;
 	color: var(--text-main);
@@ -340,7 +361,7 @@ h1, h2, h3, h4, h5, h6 {
 .display-chapter {
 	font-family: var(--font-sans);
 	font-size: clamp(2rem, 4.5vw, 4rem);
-	font-weight: 800;
+	font-weight: 400 !important;
 	line-height: 1.1;
 	letter-spacing: -0.03em;
 }
@@ -348,7 +369,7 @@ h1, h2, h3, h4, h5, h6 {
 .display-stat {
 	font-family: var(--font-sans);
 	font-size: clamp(2.8rem, 6.5vw, 6rem);
-	font-weight: 800;
+	font-weight: 400 !important;
 	line-height: 1;
 	letter-spacing: -0.04em;
 }
@@ -356,7 +377,7 @@ h1, h2, h3, h4, h5, h6 {
 .eyebrow {
 	font-family: var(--font-sans);
 	font-size: 11px;
-	font-weight: 700;
+	font-weight: 400 !important;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
 	color: var(--text-sub);
@@ -437,7 +458,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 
 .dashboard-title {
 	font-size: clamp(2.2rem, 4.5vw, 3.5rem);
-	font-weight: 800;
+	font-weight: 400 !important;
 	line-height: 1.1;
 	letter-spacing: -0.035em;
 	color: var(--text-main);
@@ -448,7 +469,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 .dashboard-subtitle {
 	color: var(--text-sub);
 	font-size: 16px;
-	font-weight: 500;
+	font-weight: 400 !important;
 }
 
 .dashboard-header__btn {
@@ -460,7 +481,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	background: var(--btn-primary-bg);
 	color: var(--btn-primary-text);
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 400 !important;
 	transition: all 0.2s ease;
 	border: 1px solid var(--btn-primary-bg);
 }
@@ -509,7 +530,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 
 .dashboard-sidebar__heading {
 	font-size: 12px;
-	font-weight: 700;
+	font-weight: 400 !important;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
 	color: var(--text-sub);
@@ -525,24 +546,34 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 .dashboard-sidebar__tab {
 	padding: 12px 16px;
 	border-radius: 8px;
-	background: transparent;
-	color: var(--text-sub);
-	font-weight: 600;
+	background: #EFECE6;
+	color: var(--color-text-dark);
+	font-weight: 400 !important;
 	font-size: 14px;
 	text-align: left;
 	transition: all 0.15s ease;
-	border: 1px solid transparent;
+	border: 1px solid rgba(18, 18, 20, 0.08);
+	cursor: pointer;
 }
 
-.dashboard-sidebar__tab:hover:not(:disabled) {
-	background: var(--bg-card-hover);
-	color: var(--text-main);
+.dashboard-sidebar__tab:not(.is-active):hover:not(:disabled) {
+	background: #121214 !important;
+	color: #ffffff !important;
+	border-color: #121214 !important;
 }
 
 .dashboard-sidebar__tab.is-active {
-	background: var(--btn-primary-bg);
-	color: var(--btn-primary-text);
-	font-weight: 700;
+	background: #121214 !important;
+	color: #ffffff !important;
+	border-color: #121214 !important;
+	font-weight: 400 !important;
+	cursor: default;
+}
+
+.dashboard-sidebar__tab.is-active:hover {
+	background: #121214 !important;
+	color: #ffffff !important;
+	border-color: #121214 !important;
 }
 
 .dashboard-sidebar__tab:disabled {
@@ -563,7 +594,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	border: 1px solid var(--border-color);
 	color: var(--text-main);
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 400 !important;
 	outline: none;
 	cursor: pointer;
 }
@@ -591,7 +622,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	border: 1px solid var(--border-color);
 	color: var(--text-main);
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 400 !important;
 	transition: all 0.15s ease;
 }
 
@@ -608,7 +639,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 
 .dashboard-pagination__nav-text {
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 400 !important;
 }
 
 .dashboard-pagination__pages {
@@ -622,7 +653,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	height: 40px;
 	border-radius: 50%;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 400 !important;
 	color: var(--text-sub);
 	background: transparent;
 	display: inline-flex;
@@ -680,6 +711,25 @@ html[data-theme="dark"] .task-card,
 html[data-theme="dark"] .my-projects__card {
 	border: none !important;
 	box-shadow: 0 6px 26px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Universal: Remove any X and Y translation on hovering on any button in the website */
+button:hover,
+.btn:hover,
+.button:hover,
+[role="button"]:hover,
+a.btn:hover,
+.pub-btn:hover,
+.navbar__cta-btn:hover,
+.dashboard-header__btn:hover,
+.dashboard-pagination__nav-btn:hover,
+.dashboard-pagination__page-btn:hover,
+.create-project__button:hover,
+.edit-project__button:hover,
+.project-card__action:hover,
+.project-card__action:hover *,
+.workspace-chat__send:hover {
+	transform: none !important;
 }
 
 /* Tactile Active Button Feedback (Instant physical response) */

@@ -1,205 +1,322 @@
 .project-card {
   position: relative;
-  padding: 20px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  background: rgba(8, 8, 10, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-top: 2px solid #ffffff;
-  box-shadow: none;
-  transition: all 0.2s ease;
+  border-radius: 20px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .project-card:hover {
-  border-top-color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
+  transform: none !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
 }
 
+/* Header Banner - Solid Plain Color */
 .project-card__header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 16px;
+  padding: 18px 24px;
+  background: #ded7cc;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .project-card__title {
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #ffffff;
+  font-size: 22px;
+  font-weight: 800;
+  color: #111111;
   margin: 0;
-}
-
-.project-card__badges {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 6px;
-  flex-shrink: 0;
-  max-width: 50%;
-}
-
-.project-card__description {
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 13px;
-  line-height: 1.5;
-  margin-bottom: 16px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
   overflow: hidden;
-  min-height: calc(1.5em * 3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.project-card__team {
-  margin-bottom: 16px;
+/* Card Body */
+.project-card__body {
+  padding: 20px 24px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
 }
 
-.project-card__team-row {
+/* Stats Row (Team Size, Positions Open, Match) */
+.project-card__stats-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.project-card__team-label {
-  font-size: 13px;
-  font-weight: 400;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.project-card__team-value {
-  font-size: 13px;
-  font-weight: 500;
-  color: #ffffff;
-}
-
-.project-card__team-divider {
-  color: rgba(255, 255, 255, 0.88);
-  margin: 0 2px;
-}
-
-.project-card__progress {
-  width: 100%;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 0px;
-  overflow: hidden;
-}
-
-.project-card__progress-fill {
-  height: 100%;
-  border-radius: 0px;
-  transition: width 0.3s ease;
-}
-
-.project-card__progress-fill.is-active,
-.project-card__progress-fill.is-full {
-  background: #ffffff;
-}
-
-.project-card__skills {
-  margin-bottom: 16px;
-}
-
-.project-card__skills-list {
-  display: flex;
+  gap: 22px;
   flex-wrap: wrap;
-  gap: 4px;
 }
 
-.project-card__skills-more {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 6px;
-  border-radius: 2px;
-  font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.72);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.project-card__footer {
+.project-card__stat-col {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  margin-top: auto;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.project-card__owner {
+.project-card__stat-divider {
+  width: 1px;
+  height: 38px;
+  background: #e2e8f0;
+}
+
+.project-card__stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+.project-card__stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* Status Badge */
+.project-card__status-row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.project-card__owner-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  background: #ffffff;
+.project-card__status-row .badge {
+  background: #EFECE6 !important;
+  background-color: #EFECE6 !important;
+  color: #121214 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+html[data-theme="dark"] .project-card__status-row .badge {
+  background: #2A2925 !important;
+  background-color: #2A2925 !important;
+  color: #F9F8F5 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Skills Required - Flexible Pill */
+.project-card__skills-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.project-card__skills-pill {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  background: #f1ede6;
+  border-radius: 999px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.project-card__skill-item {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
+}
+
+.project-card__skill-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.project-card__skill-item.is-matched .project-card__skill-name {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.project-card__skill-slash {
+  color: #94a3b8;
+  font-weight: 400;
+  font-size: 12.5px;
+  margin: 0 1px;
+}
+
+.project-card__skills-more {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  margin-left: 2px;
+}
+
+/* Description */
+.project-card__description {
+  font-size: 13.5px;
+  color: #475569;
+  line-height: 1.55;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Footer */
+.project-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.project-card__owner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.project-card__owner-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0f172a;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  font-size: 13.5px;
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .project-card__owner-initial {
-  color: #000000;
-  font-size: 13px;
-  font-weight: 600;
+  color: #ffffff;
+  font-weight: 700;
 }
 
 .project-card__owner-name {
-  font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.88);
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.project-card__action-link {
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
 .project-card__action {
-  padding: 6px 14px;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #ffffff;
   font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 1px solid transparent;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-.project-card__action--ghost {
-  background: transparent;
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
+.project-card__action:hover {
+  background: #1e293b;
+  transform: none !important;
 }
 
-.project-card__action--ghost:hover {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+.project-card__action-arrow {
+  width: 14px;
+  height: 14px;
+  transition: none;
 }
 
-.project-card__action--primary {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.25);
+.project-card__action:hover .project-card__action-arrow {
+  transform: none !important;
 }
 
-.project-card__action--primary:hover {
-  background: #000000;
-  color: #ffffff;
-  border-color: #ffffff;
+/* Dark Mode Overrides */
+html[data-theme="dark"] .project-card {
+  background: #18181f !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
 
+html[data-theme="dark"] .project-card__header {
+  background: #25242b !important;
+  border-bottom-color: rgba(255, 255, 255, 0.08) !important;
+}
 
+html[data-theme="dark"] .project-card__title {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .project-card__stat-label {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .project-card__stat-value {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .project-card__stat-divider {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="dark"] .project-card__skills-pill {
+  background: #23232b !important;
+}
+
+html[data-theme="dark"] .project-card__skill-name {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"] .project-card__skill-slash {
+  color: #64748b !important;
+}
+
+html[data-theme="dark"] .project-card__description {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .project-card__owner-avatar {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="dark"] .project-card__owner-initial {
+  color: #0f172a !important;
+}
+
+html[data-theme="dark"] .project-card__owner-name {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .project-card__action {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="dark"] .project-card__action:hover {
+  background: #ffffff !important;
+}

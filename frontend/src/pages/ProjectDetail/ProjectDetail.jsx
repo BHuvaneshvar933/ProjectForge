@@ -10,8 +10,8 @@ import { toast } from 'react-toastify';
 
 import ProjectHeader from './components/ProjectHeader';
 import ProjectAbout from './components/ProjectAbout';
+import ProjectSkills from './components/ProjectSkills';
 import ProjectTimeline from './components/ProjectTimeline';
-import ProjectTeam from './components/ProjectTeam';
 import EducationalTip from '../../components/common/EducationalTip';
 
 import './ProjectDetail.css';
@@ -188,32 +188,81 @@ export default function ProjectDetail() {
   };
 
 
+  const hasActions = (tokenPresent && isMember) || isOwner;
+
   return (
     <div className="project-detail">
-      <div className="project-detail__card-container">
-        <ProjectHeader
-          project={project}
-          tokenPresent={tokenPresent}
-          isMember={isMember}
-          showPending={showPending}
-          teamFull={teamFull}
-          isRecruiting={isRecruiting}
-          canApply={canApply}
-          applyLoading={applyLoading}
-          setShowApplyModal={setShowApplyModal}
-          isOwner={isOwner}
-          goToApplications={() => navigate(`/projects/${id}/applications`)}
-        />
-        <ProjectAbout
-          project={project}
-          tokenPresent={tokenPresent}
-          skillMatchScore={skillMatchScore}
-          currentUser={currentUser}
-        />
+      <div className="project-detail__layout">
+        <div className="project-detail__main">
+          <div className="project-detail__card-container">
+            <ProjectHeader
+              project={project}
+              tokenPresent={tokenPresent}
+              isMember={isMember}
+              showPending={showPending}
+              teamFull={teamFull}
+              isRecruiting={isRecruiting}
+              canApply={canApply}
+              applyLoading={applyLoading}
+              setShowApplyModal={setShowApplyModal}
+              isOwner={isOwner}
+              openRoles={openRoles}
+            />
 
-        <ProjectTimeline project={project} />
+            <div className="project-detail__details-column">
+              {/* 1: About */}
+              <ProjectAbout project={project} />
 
-        <ProjectTeam project={project} team={team} openRoles={openRoles} />
+              {/* 2: Required Skills */}
+              <ProjectSkills project={project} currentUser={currentUser} />
+
+              {/* 3: Timeline */}
+              <ProjectTimeline project={project} />
+
+              {/* 4: Open Roles */}
+              {openRoles && openRoles.length > 0 && (
+                <div className="project-detail__section">
+                  <h2 className="project-detail__section-title">Open Roles</h2>
+                  <div className="project-detail__skills-bar">
+                    {openRoles.map((role, i) => (
+                      <span key={i} className="project-detail__skill-item-wrap">
+                        <span className="project-detail__skill-text">{role}</span>
+                        {i < openRoles.length - 1 && (
+                          <span className="project-detail__skill-slash">/</span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <aside className="project-detail__sidebar">
+          {/* Small guide card on the right, outside of the main project card */}
+          <div className="project-detail__info-sidebar-card">
+            <h3 className="project-detail__sidebar-card-title">How to Apply</h3>
+            <div className="project-detail__guide-box">
+              <div className="project-detail__guide-item">
+                <span className="project-detail__guide-heading">How to apply:</span>
+                <p className="project-detail__guide-desc">Submit your application with a concise note highlighting your technical background and what you can build.</p>
+              </div>
+              <div className="project-detail__guide-item">
+                <span className="project-detail__guide-heading">Where to apply:</span>
+                <p className="project-detail__guide-desc">Use the Apply to Join button in the header of this project card.</p>
+              </div>
+              <div className="project-detail__guide-item">
+                <span className="project-detail__guide-heading">Why to apply:</span>
+                <p className="project-detail__guide-desc">Collaborate with motivated teammates, gain real project delivery experience, and strengthen your portfolio.</p>
+              </div>
+              <div className="project-detail__guide-item">
+                <span className="project-detail__guide-heading">Which to apply:</span>
+                <p className="project-detail__guide-desc">Focus on projects with open roles that align directly with your current stack and learning goals.</p>
+              </div>
+            </div>
+          </div>
+        </aside>
       </div>
 
       <Modal
