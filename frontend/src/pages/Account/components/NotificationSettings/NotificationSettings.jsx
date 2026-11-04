@@ -63,36 +63,46 @@ const NotificationSettings = () => {
     }
   };
 
-  const renderToggle = (label, category, field) => (
-    <div className="notification-setting-item">
-      <span>{label}</span>
-      <button 
-        className={`toggle-btn ${prefs[category]?.[field] ? 'active' : ''}`}
-        onClick={() => handleToggle(category, field)}
-        disabled={saving}
-      >
-        {prefs[category]?.[field] ? 'ON' : 'OFF'}
-      </button>
-    </div>
-  );
+  const renderToggle = (label, category, field) => {
+    const isActive = Boolean(prefs[category]?.[field]);
+    return (
+      <div className="notification-setting-item">
+        <span className="notification-setting-label">{label}</span>
+        <button 
+          type="button"
+          className={`toggle-btn ${isActive ? 'active' : ''}`}
+          onClick={() => handleToggle(category, field)}
+          disabled={saving}
+          aria-pressed={isActive}
+        >
+          <span className="toggle-indicator" />
+          <span className="toggle-text">{isActive ? 'ON' : 'OFF'}</span>
+        </button>
+      </div>
+    );
+  };
 
   return (
     <div className="notification-settings-container">
       <h2 className="notification-settings-title">Notification Settings</h2>
       
       <div className="notification-settings-section">
-        <h3>TASK DEADLINES</h3>
-        {renderToggle('3 days before', 'taskDeadlines', 'threeDaysBefore')}
-        {renderToggle('1 day before', 'taskDeadlines', 'oneDayBefore')}
-        {renderToggle('1 hour before', 'taskDeadlines', 'oneHourBefore')}
-        {renderToggle('When task becomes overdue', 'taskDeadlines', 'overdue')}
+        <h3 className="notification-settings-section-title">TASK DEADLINES</h3>
+        <div className="notification-settings-list">
+          {renderToggle('3 days before', 'taskDeadlines', 'threeDaysBefore')}
+          {renderToggle('1 day before', 'taskDeadlines', 'oneDayBefore')}
+          {renderToggle('1 hour before', 'taskDeadlines', 'oneHourBefore')}
+          {renderToggle('When task becomes overdue', 'taskDeadlines', 'overdue')}
+        </div>
       </div>
 
       <div className="notification-settings-section">
-        <h3>PROJECT EVENTS</h3>
-        {renderToggle('Project milestones', 'projectEvents', 'milestones')}
-        {renderToggle('Project deadlines', 'projectEvents', 'projectDeadlines')}
-        {renderToggle('Project meetings', 'projectEvents', 'meetings')}
+        <h3 className="notification-settings-section-title">PROJECT EVENTS</h3>
+        <div className="notification-settings-list">
+          {renderToggle('Project milestones', 'projectEvents', 'milestones')}
+          {renderToggle('Project deadlines', 'projectEvents', 'projectDeadlines')}
+          {renderToggle('Project meetings', 'projectEvents', 'meetings')}
+        </div>
       </div>
     </div>
   );

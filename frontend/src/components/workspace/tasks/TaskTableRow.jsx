@@ -31,7 +31,7 @@ export default function TaskTableRow({
       case "bug": 
         return <div style={{ background: "rgba(255, 69, 58, 0.15)", color: "#ff453a", padding: "4px", borderRadius: "4px", display: "flex" }}><Bug size={14} /></div>;
       case "feature": 
-        return <div style={{ background: "rgba(10, 132, 255, 0.15)", color: "#0a84ff", padding: "4px", borderRadius: "4px", display: "flex" }}><Target size={14} /></div>;
+        return <div style={{ background: "rgba(128, 128, 128, 0.15)", color: "var(--color-text-dark)", padding: "4px", borderRadius: "4px", display: "flex" }}><Target size={14} /></div>;
       case "sub-task": 
       default: 
         return <div style={{ background: "rgba(94, 92, 230, 0.15)", color: "#5e5ce6", padding: "4px", borderRadius: "4px", display: "flex" }}><CheckSquare size={14} /></div>;
@@ -116,7 +116,7 @@ export default function TaskTableRow({
                 onChange={e => setTitleValue(e.target.value)}
                 onBlur={handleTitleSubmit}
                 onKeyDown={handleTitleKeyDown}
-                style={{ width: "100%", background: "var(--color-border-medium)", border: "1px solid #0a84ff", color: "var(--color-text-dark)", padding: "2px 6px", borderRadius: "4px", outline: "none", fontSize: "14px" }}
+                style={{ width: "100%", background: "var(--color-border-medium)", border: "1px solid var(--color-text-dark)", color: "var(--color-text-dark)", padding: "2px 6px", borderRadius: "4px", outline: "none", fontSize: "14px" }}
               />
             ) : (
               <span 

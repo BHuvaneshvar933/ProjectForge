@@ -108,10 +108,18 @@ html[data-theme="dark"] .my-projects__empty-action {
 	border-color: #ffffff !important;
 }
 
+html[data-theme="dark"] .my-projects__empty-action * {
+	color: #08080a !important;
+}
+
 html[data-theme="dark"] .my-projects__empty-action:hover {
 	background: #08080a !important;
 	color: #ffffff !important;
 	border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .my-projects__empty-action:hover * {
+	color: #ffffff !important;
 }
 
 html[data-theme="dark"] .my-projects__empty-icon {

@@ -118,47 +118,47 @@
 }
 
 /* ==========================================
- * DARK MODE THEME OVERRIDES
+ * DARK MODE THEME OVERRIDES (PURE MONOCHROME)
  * ========================================== */
 html[data-theme="dark"] {
-  --color-paper: #08080a;
-  --color-ivory: #202028;
-  --color-paper-card: #202028;
-  --color-obsidian: #08080a;
-  --color-obsidian-card: #202028;
+  --color-paper: #000000;
+  --color-ivory: #121212;
+  --color-paper-card: #121212;
+  --color-obsidian: #000000;
+  --color-obsidian-card: #121212;
 
-  --bg-page: #08080a;
-  --bg-card: #202028;
-  --bg-card-hover: #202028;
-  --bg-card-secondary: #202028;
+  --bg-page: #000000;
+  --bg-card: #121212;
+  --bg-card-hover: #1c1c1c;
+  --bg-card-secondary: #181818;
 
   --color-text-dark: #ffffff;
   --color-text-light: #ffffff;
-  --color-text-muted: #d1d1db;
-  --color-text-subtle: #a0a0b0;
-  --color-text-muted-light: #d1d1db;
+  --color-text-muted: #a3a3a3;
+  --color-text-subtle: #737373;
+  --color-text-muted-light: #d4d4d4;
 
   --text-main: #ffffff;
-  --text-sub: #d1d1db;
+  --text-sub: #a3a3a3;
 
-  --border-color: rgba(255, 255, 255, 0.18);
-  --color-border-subtle: rgba(255, 255, 255, 0.18);
-  --color-border-medium: rgba(255, 255, 255, 0.3);
-  --color-border-strong: rgba(255, 255, 255, 0.5);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --color-border-subtle: rgba(255, 255, 255, 0.12);
+  --color-border-medium: rgba(255, 255, 255, 0.22);
+  --color-border-strong: rgba(255, 255, 255, 0.45);
 
   --accent-vibrant: #ffffff;
-  --accent-soft: #f4f4f5;
+  --accent-soft: #e5e5e5;
 
   --btn-primary-bg: #ffffff;
-  --btn-primary-text: #0a0a0c;
-  --btn-primary-hover-bg: #e4e4e7;
-  --btn-primary-hover-text: #0a0a0c;
-  --btn-secondary-bg: #343440;
+  --btn-primary-text: #000000;
+  --btn-primary-hover-bg: #e5e5e5;
+  --btn-primary-hover-text: #000000;
+  --btn-secondary-bg: #1c1c1c;
   --btn-secondary-text: #ffffff;
 
-  --chat-bg: #27272e;
+  --chat-bg: #111111;
   --chat-text: #ffffff;
-  --chat-card-bg: #343440;
-  --chat-input-bg: #343440;
-  --chat-input-border: rgba(255, 255, 255, 0.25);
+  --chat-card-bg: #181818;
+  --chat-input-bg: #141414;
+  --chat-input-border: rgba(255, 255, 255, 0.18);
 }

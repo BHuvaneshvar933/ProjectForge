@@ -116,7 +116,7 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
         {!assessmentLoading && assessment && (
           <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginTop: "8px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span style={{ fontWeight: "bold", fontSize: "14px", textTransform: "uppercase", padding: "4px 10px", borderRadius: "4px", background: assessment.status === 'Healthy' ? 'rgba(50, 215, 75, 0.2)' : assessment.status === 'Needs Attention' ? 'rgba(255, 69, 58, 0.2)' : 'rgba(10, 132, 255, 0.2)', color: assessment.status === 'Healthy' ? '#32d74b' : assessment.status === 'Needs Attention' ? '#ff453a' : '#0a84ff' }}>
+              <span style={{ fontWeight: "bold", fontSize: "14px", textTransform: "uppercase", padding: "4px 10px", borderRadius: "4px", background: assessment.status === 'Healthy' ? 'rgba(50, 215, 75, 0.2)' : assessment.status === 'Needs Attention' ? 'rgba(255, 69, 58, 0.2)' : 'rgba(128, 128, 128, 0.2)', color: assessment.status === 'Healthy' ? '#32d74b' : assessment.status === 'Needs Attention' ? '#ff453a' : 'var(--color-text-dark)' }}>
                 Execution Status: {assessment.status}
               </span>
               <p style={{ margin: 0, fontSize: "14px", color: "var(--color-text-dark)", lineHeight: "1.5" }}>{assessment.message}</p>
@@ -137,8 +137,8 @@ export default function WorkspaceDevelopment({ projectId, project, devMetrics, g
               </div>
             </div>
             
-            <div style={{ background: "var(--color-border-subtle)", padding: "16px", borderRadius: "8px", borderLeft: "3px solid #0a84ff" }}>
-              <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "#0a84ff", textTransform: "uppercase", letterSpacing: "0.5px" }}>Actionable Recommendations</h4>
+            <div style={{ background: "var(--color-border-subtle)", padding: "16px", borderRadius: "8px", borderLeft: "3px solid var(--color-text-dark)" }}>
+              <h4 style={{ margin: "0 0 12px 0", fontSize: "13px", color: "var(--color-text-dark)", textTransform: "uppercase", letterSpacing: "0.5px" }}>Actionable Recommendations</h4>
               <ul style={{ margin: 0, paddingLeft: "20px", color: "var(--color-text-muted)", fontSize: "13px", display: "flex", flexDirection: "column", gap: "8px" }}>
                 {assessment.recommendedActions?.map((r, i) => <li key={i}>{r}</li>)}
               </ul>

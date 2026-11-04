@@ -1,62 +1,140 @@
 .notification-settings-container {
-  padding: 24px;
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  max-width: 600px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  width: 100%;
 }
 
 .notification-settings-title {
   margin-top: 0;
   margin-bottom: 24px;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  border-bottom: 2px solid var(--border-color) !important;
+  padding-bottom: 8px;
 }
 
 .notification-settings-section {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
-.notification-settings-section h3 {
-  font-size: 0.85rem;
+.notification-settings-section:last-child {
+  margin-bottom: 0;
+}
+
+.notification-settings-section h3,
+.notification-settings-section-title {
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-tertiary);
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+.notification-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .notification-setting-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  color: var(--text-primary);
-  font-size: 0.95rem;
+  padding: 14px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--color-paper);
+  transition: all 0.2s ease;
+}
+
+.notification-setting-item:hover {
+  border-color: var(--color-text-subtle);
+}
+
+.notification-setting-label {
+  color: var(--color-text-dark);
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .toggle-btn {
-  background-color: var(--surface-hover);
-  color: var(--text-secondary);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 4px 12px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--bg-card);
+  color: var(--color-text-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  min-width: 68px;
+  justify-content: center;
+}
+
+.toggle-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-text-subtle);
   transition: all 0.2s ease;
-  min-width: 60px;
+}
+
+.toggle-btn:hover:not(:disabled) {
+  border-color: var(--color-text-dark);
 }
 
 .toggle-btn.active {
-  background-color: var(--text-primary);
-  color: var(--bg-primary);
-  border-color: var(--text-primary);
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-bg);
+}
+
+.toggle-btn.active .toggle-indicator {
+  background-color: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
 }
 
 .toggle-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Dark mode overrides */
+html[data-theme="dark"] .notification-settings-container {
+  background-color: #121212 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme="dark"] .notification-setting-item {
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"] .notification-setting-item:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+html[data-theme="dark"] .toggle-btn {
+  background-color: #1c1c1c;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #a3a3a3;
+}
+
+html[data-theme="dark"] .toggle-btn.active {
+  background-color: #ffffff !important;
+  color: #08080a !important;
+  border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .toggle-btn.active .toggle-indicator {
+  background-color: #059669;
 }

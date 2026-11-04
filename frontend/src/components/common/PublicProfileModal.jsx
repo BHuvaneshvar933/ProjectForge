@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { ExternalLink, Globe } from 'lucide-react';
 import Modal from "./Modal";
 import Button from "./Button";
 import Badge from "./Badge";
 import Spinner from "./Spinner";
 import { getPublicUserProfile } from "../../api/userApi";
 import { displaySkillLabel } from "../../utils/display";
+import "./PublicProfileModal.css";
+
+const GitHubColoredIcon = ({ size = 15 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+  </svg>
+);
+
+const LinkedInColoredIcon = ({ size = 15 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="#0A66C2">
+    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+  </svg>
+);
 
 export default function PublicProfileModal({ isOpen, onClose, userId, onInvite, onMessage }) {
   const [profile, setProfile] = useState(null);
@@ -58,212 +72,236 @@ export default function PublicProfileModal({ isOpen, onClose, userId, onInvite, 
       isOpen={isOpen}
       onClose={onClose}
       title="Student Portfolio"
-      maxWidth="700px"
+      maxWidth="720px"
       hideDefaultActions={true}
     >
       {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}><Spinner /></div>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}><Spinner /></div>
       ) : error ? (
-        <p style={{ color: 'var(--color-danger)' }}>{error}</p>
+        <p style={{ color: 'var(--color-danger, #ef4444)', padding: '16px 0' }}>{error}</p>
       ) : profile ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', color: 'var(--color-text-dark)' }}>
+        <div className="profile-modal">
           
           {/* 1. Header */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <div style={{ width: 80, height: 80, borderRadius: '50%', backgroundColor: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 32, fontWeight: 700 }}>
-                {profile.avatar ? <img src={profile.avatar} alt="avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : profile.name.charAt(0).toUpperCase()}
+          <div className="profile-modal__header">
+            <div className="profile-modal__hero">
+              <div className="profile-modal__avatar-wrap">
+                {profile.avatar ? (
+                  <img src={profile.avatar} alt="avatar" className="profile-modal__avatar-img" />
+                ) : (
+                  <div className="profile-modal__avatar-fallback">
+                    {profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                )}
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <h2 style={{ margin: 0, fontSize: 24 }}>{profile.name}</h2>
+              <div className="profile-modal__identity">
+                <div className="profile-modal__name-row">
+                  <h2 className="profile-modal__name">{profile.name}</h2>
                   {profile.reliability && (
-                    <span style={{ 
-                      fontSize: 12, 
-                      padding: '4px 8px', 
-                      borderRadius: 12, 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: 4,
-                      fontWeight: 600,
-                      backgroundColor: profile.reliability.status === "RELIABLE" ? 'rgba(46, 204, 113, 0.15)' : 'transparent',
-                      color: profile.reliability.status === "RELIABLE" ? '#2ecc71' : 'var(--color-text-muted)',
-                      border: profile.reliability.status === "RELIABLE" ? 'none' : '1px solid var(--border-color)'
-                    }}>
-                      {profile.reliability.status === "RELIABLE" && "🟢"} {profile.reliability.label}
+                    <span className={`profile-modal__reliability ${profile.reliability.status === "RELIABLE" ? 'profile-modal__reliability--reliable' : 'profile-modal__reliability--standard'}`}>
+                      {profile.reliability.label}
                     </span>
                   )}
                 </div>
-                {profile.headline && <div style={{ fontSize: 15, color: 'var(--color-text-muted)', marginTop: 4 }}>{profile.headline}</div>}
+                {profile.headline && <div className="profile-modal__headline">{profile.headline}</div>}
                 
                 {primaryEd && (
-                  <div style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 8 }}>
-                    {primaryEd.degree} {primaryEd.program && `in ${primaryEd.program}`} <br />
-                    {primaryEd.university}
+                  <div className="profile-modal__primary-ed">
+                    {primaryEd.degree} {primaryEd.program && `in ${primaryEd.program}`} · {primaryEd.university}
                   </div>
                 )}
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
-                  <span style={{ fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, color: 'var(--color-primary)' }}>
-                    <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--color-primary)' }}></span>
-                    Available
-                    {profile.availabilityHoursPerWeek ? ` · ${profile.availabilityHoursPerWeek} hrs/week` : ''}
-                  </span>
+              </div>
+            </div>
+
+            <div className="profile-modal__actions-bar">
+              <div className="profile-modal__btn-group">
+                {onInvite && <Button variant="primary" onClick={onInvite}>Invite to Project</Button>}
+                {onMessage && <Button variant="outline" onClick={onMessage}>Message</Button>}
+              </div>
+              
+              <div className="profile-modal__links">
+                {profile.portfolioLinks?.github && (
+                  <a href={profile.portfolioLinks.github} target="_blank" rel="noreferrer" className="profile-modal__social-link" style={{ color: "var(--color-text-dark)" }}>
+                    <GitHubColoredIcon size={15} />
+                    <span>GitHub</span>
+                  </a>
+                )}
+                {profile.portfolioLinks?.linkedin && (
+                  <a href={profile.portfolioLinks.linkedin} target="_blank" rel="noreferrer" className="profile-modal__social-link" style={{ color: "#0A66C2" }}>
+                    <LinkedInColoredIcon size={15} />
+                    <span style={{ color: "var(--color-text-dark)" }}>LinkedIn</span>
+                  </a>
+                )}
+                {profile.portfolioLinks?.website && (
+                  <a href={profile.portfolioLinks.website} target="_blank" rel="noreferrer" className="profile-modal__social-link">
+                    <Globe size={14} color="#2563eb" />
+                    <span>Portfolio</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <hr className="profile-modal__divider" />
+
+          {/* 2. About Me Box */}
+          <fieldset className="profile-modal__box">
+            <legend className="profile-modal__legend">About</legend>
+            <div className="profile-modal__box-body">
+              {profile.bio ? (
+                <p className="profile-modal__bio">{profile.bio}</p>
+              ) : (
+                <p className="profile-modal__empty">No introduction added yet.</p>
+              )}
+            </div>
+          </fieldset>
+
+          {/* 3. Education Box */}
+          <fieldset className="profile-modal__box">
+            <legend className="profile-modal__legend">Education</legend>
+            <div className="profile-modal__box-body">
+              {profile.education?.length > 0 ? (
+                <div className="profile-modal__items-list">
+                  {profile.education.map((ed, i) => (
+                    <div key={i} className="profile-modal__item-entry">
+                      <div className="profile-modal__item-title">{ed.degree} {ed.program && `in ${ed.program}`}</div>
+                      <div className="profile-modal__item-subtitle">{ed.university}</div>
+                      <div className="profile-modal__item-meta">
+                        {ed.startYear} – {ed.graduationYear || 'Present'} {ed.currentYear && `· ${ed.currentYear}`} {ed.cgpa && `· CGPA: ${ed.cgpa}`}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="profile-modal__empty">No education added yet.</p>
+              )}
+            </div>
+          </fieldset>
+
+          {/* 4. Skills Box */}
+          <fieldset className="profile-modal__box">
+            <legend className="profile-modal__legend">Skills</legend>
+            <div className="profile-modal__box-body">
+              {profile.skills?.length > 0 ? (
+                <div className="profile-modal__skills-wrap">
+                  {profile.skills.map((s) => (
+                    <Badge key={s?._id || s?.name} variant="skill">{displaySkillLabel(s)}</Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="profile-modal__empty">No skills added yet.</p>
+              )}
+            </div>
+          </fieldset>
+
+          {/* 5. Featured Projects Box */}
+          <fieldset className="profile-modal__box">
+            <legend className="profile-modal__legend">Featured Projects</legend>
+            <div className="profile-modal__box-body">
+              {profile.featuredProjects?.length > 0 ? (
+                <div className="profile-modal__items-list">
+                  {profile.featuredProjects.map((fp, i) => (
+                    <div key={i} className="profile-modal__project-entry">
+                      <div className="profile-modal__project-header">
+                        <div className="profile-modal__project-title">{fp.project?.title}</div>
+                        <div className="profile-modal__project-links">
+                          {fp.project?.githubUrl && (
+                            <a href={fp.project.githubUrl} target="_blank" rel="noreferrer" className="profile-modal__project-btn">
+                              <GitHubColoredIcon size={13} />
+                              <span>GitHub</span>
+                            </a>
+                          )}
+                          {fp.project?.liveUrl && (
+                            <a href={fp.project.liveUrl} target="_blank" rel="noreferrer" className="profile-modal__project-btn">
+                              <Globe size={13} color="#2563eb" />
+                              <span>Live Demo</span>
+                            </a>
+                          )}
+                          <a href={`/projects/${fp.project?._id}`} target="_blank" rel="noreferrer" className="profile-modal__project-btn">
+                            <span>View Project</span>
+                            <ExternalLink size={11} />
+                          </a>
+                        </div>
+                      </div>
+                      <p className="profile-modal__project-desc">
+                        {fp.project?.description}
+                      </p>
+                      {fp.project?.skills?.length > 0 && (
+                        <div className="profile-modal__project-skills">
+                          {fp.project.skills.slice(0, 5).map(s => (
+                            <span key={s._id} className="profile-modal__project-skill-tag">{s.name}</span>
+                          ))}
+                        </div>
+                      )}
+                      {fp.project?.deliverables && (fp.project.deliverables.reportUrl || fp.project.deliverables.slidesUrl) && (
+                        <div className="profile-modal__project-deliverables">
+                          {fp.project.deliverables.reportUrl && <a href={fp.project.deliverables.reportUrl} target="_blank" rel="noreferrer" className="profile-modal__deliverable-link">Project Report</a>}
+                          {fp.project.deliverables.slidesUrl && <a href={fp.project.deliverables.slidesUrl} target="_blank" rel="noreferrer" className="profile-modal__deliverable-link">Presentation Slides</a>}
+                        </div>
+                      )}
+                      {(fp.teamRole || fp.contributions?.length > 0) && (
+                        <div className="profile-modal__role-box">
+                          <div className="profile-modal__role-label">My Role</div>
+                          {fp.teamRole && <div className="profile-modal__role-value">{fp.teamRole}</div>}
+                          {fp.contributions?.length > 0 && (
+                            <ul className="profile-modal__contributions">
+                              {fp.contributions.slice(0, 3).map((c, idx) => (
+                                <li key={idx}>{c.contribution}</li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="profile-modal__empty">No featured projects yet.</p>
+              )}
+            </div>
+          </fieldset>
+
+          {/* 6. Experience Box */}
+          <fieldset className="profile-modal__box">
+            <legend className="profile-modal__legend">Experience</legend>
+            <div className="profile-modal__box-body">
+              {profile.experience?.length > 0 ? (
+                <div className="profile-modal__items-list">
+                  {profile.experience.map((exp, i) => (
+                    <div key={i} className="profile-modal__item-entry">
+                      <div className="profile-modal__item-title">{exp.role}</div>
+                      <div className="profile-modal__item-subtitle">{exp.organization}</div>
+                      <div className="profile-modal__item-meta">{exp.startDate} – {exp.endDate || 'Present'}</div>
+                      {exp.description && (
+                        <p className="profile-modal__bio" style={{ marginTop: '8px', whiteSpace: 'pre-line', fontSize: '13px', color: 'var(--color-text-muted)' }}>
+                          {exp.description}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="profile-modal__empty">No experience added yet.</p>
+              )}
+            </div>
+          </fieldset>
+
+          {/* 7. ProjectForge Activity Box */}
+          <fieldset className="profile-modal__box">
+            <legend className="profile-modal__legend">ProjectForge Activity</legend>
+            <div className="profile-modal__box-body">
+              <div className="profile-modal__stats">
+                <div className="profile-modal__stat-col">
+                  <div className="profile-modal__stat-value">{profile.stats?.projectsCompleted || 0}</div>
+                  <div className="profile-modal__stat-label">Projects Completed</div>
+                </div>
+                <div className="profile-modal__stat-col">
+                  <div className="profile-modal__stat-value">{profile.stats?.tasksCompleted || 0}</div>
+                  <div className="profile-modal__stat-label">Tasks Completed</div>
                 </div>
               </div>
             </div>
-
-            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              {onInvite && <Button variant="primary" onClick={onInvite}>Invite to Project</Button>}
-              {onMessage && <Button variant="outline" onClick={onMessage}>Message</Button>}
-              
-              <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', gap: 12, alignItems: 'center' }}>
-                {profile.portfolioLinks?.github && <a href={profile.portfolioLinks.github} target="_blank" rel="noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>GitHub</a>}
-                {profile.portfolioLinks?.linkedin && <a href={profile.portfolioLinks.linkedin} target="_blank" rel="noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>LinkedIn</a>}
-                {profile.portfolioLinks?.website && <a href={profile.portfolioLinks.website} target="_blank" rel="noreferrer" style={{ color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>Portfolio</a>}
-              </div>
-            </div>
-          </div>
-
-          <hr style={{ borderColor: 'var(--border-color)', opacity: 0.5, margin: 0 }} />
-
-          {/* 2. About Me */}
-          <div>
-            <h3 style={{ fontSize: 16, marginBottom: 8 }}>About Me</h3>
-            {profile.bio ? (
-              <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--color-text-muted)', margin: 0 }}>{profile.bio}</p>
-            ) : (
-              <p style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--color-text-muted)', margin: 0 }}>No introduction added yet.</p>
-            )}
-          </div>
-
-          {/* 3. Education */}
-          <div>
-            <h3 style={{ fontSize: 16, marginBottom: 12 }}>Education</h3>
-            {profile.education?.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {profile.education.map((ed, i) => (
-                  <div key={i}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{ed.degree} {ed.program && `in ${ed.program}`}</div>
-                    <div style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>{ed.university}</div>
-                    <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 4 }}>
-                      {ed.startYear} – {ed.graduationYear || 'Present'} {ed.currentYear && `· ${ed.currentYear}`} {ed.cgpa && `· CGPA: ${ed.cgpa}`}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--color-text-muted)', margin: 0 }}>No education added yet.</p>
-            )}
-          </div>
-
-          {/* 4. Skills */}
-          <div>
-            <h3 style={{ fontSize: 16, marginBottom: 12 }}>Skills</h3>
-            {profile.skills?.length > 0 ? (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {profile.skills.map((s) => (
-                  <Badge key={s?._id || s?.name} variant="skill">{displaySkillLabel(s)}</Badge>
-                ))}
-              </div>
-            ) : (
-              <p style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--color-text-muted)', margin: 0 }}>No skills added yet.</p>
-            )}
-          </div>
-
-          {/* 5. Featured Projects */}
-          <div>
-            <h3 style={{ fontSize: 16, marginBottom: 12 }}>Featured Projects</h3>
-            {profile.featuredProjects?.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {profile.featuredProjects.map((fp, i) => (
-                  <div key={i} style={{ padding: 16, borderRadius: 8, border: '1px solid var(--border-color)', background: 'var(--color-paper)' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div style={{ fontWeight: 600, fontSize: 15 }}>{fp.project?.title}</div>
-                      <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                        {fp.project?.githubUrl && <a href={fp.project.githubUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--color-primary)', textDecoration: 'none' }}>GitHub →</a>}
-                        {fp.project?.liveUrl && <a href={fp.project.liveUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--color-primary)', textDecoration: 'none' }}>Live Demo →</a>}
-                        <a href={`/projects/${fp.project?._id}`} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--color-primary)', textDecoration: 'none', padding: '4px 10px', border: '1px solid var(--border-color)', borderRadius: 12, background: 'var(--color-background)' }}>View Project</a>
-                      </div>
-                    </div>
-                    <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 8, marginBottom: 12, lineHeight: 1.5 }}>
-                      {fp.project?.description}
-                    </p>
-                    {fp.project?.skills?.length > 0 && (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
-                        {fp.project.skills.slice(0, 5).map(s => (
-                          <span key={s._id} style={{ fontSize: 11, background: 'rgba(255,255,255,0.05)', padding: '2px 6px', borderRadius: 4, color: 'var(--color-text-muted)' }}>{s.name}</span>
-                        ))}
-                      </div>
-                    )}
-                    {fp.project?.deliverables && (fp.project.deliverables.reportUrl || fp.project.deliverables.slidesUrl) && (
-                      <div style={{ display: 'flex', gap: 12, marginBottom: 12 }}>
-                        {fp.project.deliverables.reportUrl && <a href={fp.project.deliverables.reportUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--color-text-muted)', textDecoration: 'underline' }}>Project Report</a>}
-                        {fp.project.deliverables.slidesUrl && <a href={fp.project.deliverables.slidesUrl} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--color-text-muted)', textDecoration: 'underline' }}>Presentation Slides</a>}
-                      </div>
-                    )}
-                    {(fp.teamRole || fp.contributions?.length > 0) && (
-                      <div style={{ marginTop: 12, borderTop: '1px solid var(--border-color)', paddingTop: 12 }}>
-                        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-dark)', marginBottom: 4 }}>My Role</div>
-                        {fp.teamRole && <div style={{ fontSize: 13, color: 'var(--color-text-muted)', marginBottom: 4 }}>{fp.teamRole}</div>}
-                        {fp.contributions?.length > 0 && (
-                          <ul style={{ margin: 0, paddingLeft: 16, fontSize: 13, color: 'var(--color-text-muted)' }}>
-                            {fp.contributions.slice(0, 3).map((c, idx) => (
-                              <li key={idx}>{c.contribution}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--color-text-muted)', margin: 0 }}>No featured projects yet.</p>
-            )}
-          </div>
-
-          {/* 6. Experience */}
-          <div>
-            <h3 style={{ fontSize: 16, marginBottom: 12 }}>Experience</h3>
-            {profile.experience?.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {profile.experience.map((exp, i) => (
-                  <div key={i}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{exp.role}</div>
-                    <div style={{ fontSize: 13, color: 'var(--color-text-dark)' }}>{exp.organization}</div>
-                    <div style={{ fontSize: 12, color: 'var(--color-text-muted)', marginTop: 2 }}>{exp.startDate} – {exp.endDate || 'Present'}</div>
-                    {exp.description && (
-                      <p style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 8, whiteSpace: 'pre-line', margin: '8px 0 0 0', lineHeight: 1.5 }}>
-                        {exp.description}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p style={{ fontSize: 14, fontStyle: 'italic', color: 'var(--color-text-muted)', margin: 0 }}>No experience added yet.</p>
-            )}
-          </div>
-
-          {/* Removed Detailed Availability */}
-
-          {/* 8. ProjectForge Activity */}
-          <div>
-            <h3 style={{ fontSize: 16, marginBottom: 12 }}>ProjectForge Activity</h3>
-            <div style={{ display: 'flex', gap: 24 }}>
-              <div>
-                <div style={{ fontSize: 24, fontWeight: 700 }}>{profile.stats?.projectsCompleted || 0}</div>
-                <div style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>Projects Completed</div>
-              </div>
-              <div>
-                <div style={{ fontSize: 24, fontWeight: 700 }}>{profile.stats?.tasksCompleted || 0}</div>
-                <div style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>Tasks Completed</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Removed Achievements */}
+          </fieldset>
 
         </div>
       ) : null}

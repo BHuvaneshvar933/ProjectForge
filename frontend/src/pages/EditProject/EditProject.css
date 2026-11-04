@@ -38,15 +38,17 @@
 }
 
 .edit-project__title {
-	font-size: clamp(2rem, 4vw, 3rem);
-	font-weight: 800;
+	font-size: clamp(1.4rem, 2.4vw, 1.95rem) !important;
+	font-weight: 400 !important;
+	text-transform: uppercase !important;
+	line-height: 1.2;
+	letter-spacing: 0.05em !important;
 	color: var(--color-text-dark);
 	margin: 0 0 10px;
 	padding-bottom: 10px;
-	border-bottom: 2px solid var(--color-text-dark);
+	border-bottom: 1.5px solid var(--color-text-dark);
 	display: block;
 	width: 100%;
-	letter-spacing: -0.03em;
 }
 
 .edit-project__subtitle {
@@ -238,24 +240,28 @@
 }
 
 html[data-theme="dark"] .edit-project__card {
-	background: #202028;
+	background: #121212;
 	border-color: rgba(255, 255, 255, 0.12);
 }
 
 html[data-theme="dark"] .edit-project__step-circle.is-completed {
-	background: #ffffff;
-	color: #08080a;
+	background: #ffffff !important;
+	color: #08080a !important;
+}
+
+html[data-theme="dark"] .edit-project__step-circle.is-completed * {
+	color: #08080a !important;
 }
 
 html[data-theme="dark"] .edit-project__step-circle.is-current {
-	background: #202028;
+	background: #121212;
 	color: #ffffff;
 	border: 2px solid #ffffff;
 }
 
 html[data-theme="dark"] .edit-project__step-circle.is-upcoming {
-	background: #18181c;
-	color: #a0a0b0;
+	background: #161616;
+	color: #a3a3a3;
 	border-color: rgba(255, 255, 255, 0.18);
 }
 
@@ -266,11 +272,21 @@ html[data-theme="dark"] .edit-project__button--success {
 	border-color: #ffffff !important;
 }
 
+html[data-theme="dark"] .edit-project__button--primary *,
+html[data-theme="dark"] .edit-project__button--success * {
+	color: #08080a !important;
+}
+
 html[data-theme="dark"] .edit-project__button--primary:hover,
 html[data-theme="dark"] .edit-project__button--success:hover {
 	background: #08080a !important;
 	color: #ffffff !important;
 	border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .edit-project__button--primary:hover *,
+html[data-theme="dark"] .edit-project__button--success:hover * {
+	color: #ffffff !important;
 }
 
 html[data-theme="dark"] .edit-project__button--secondary {

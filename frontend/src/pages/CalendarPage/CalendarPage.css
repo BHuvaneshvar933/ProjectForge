@@ -1,10 +1,12 @@
 .calendar-page {
+  width: 95vw;
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 20px 0 60px !important;
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .calendar-page-content {
   flex: 1;
-  padding-top: 24px;
 }

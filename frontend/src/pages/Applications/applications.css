@@ -265,10 +265,18 @@ html[data-theme="dark"] .apps-empty__action {
   border-color: #ffffff !important;
 }
 
+html[data-theme="dark"] .apps-empty__action * {
+  color: #08080a !important;
+}
+
 html[data-theme="dark"] .apps-empty__action:hover {
   background: #08080a !important;
   color: #ffffff !important;
   border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .apps-empty__action:hover * {
+  color: #ffffff !important;
 }
 
 html[data-theme="dark"] .apps-role-chip {

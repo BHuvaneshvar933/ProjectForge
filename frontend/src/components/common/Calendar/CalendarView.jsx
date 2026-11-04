@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/client';
 import './CalendarView.css';
@@ -21,7 +21,7 @@ const CalendarView = ({ projectId = null }) => {
   
   const navigate = useNavigate();
 
-  const fetchEvents = useCallback(async () => {
+  const fetchEvents = React.useCallback(async () => {
     try {
       setLoading(true);
       const endpoint = projectId ? `/calendar/events?projectId=${projectId}` : '/calendar/events';
@@ -97,7 +97,8 @@ const CalendarView = ({ projectId = null }) => {
           <div className="day-events">
             {dayEvents.map((evt, idx) => {
               let icon = '';
-              if (evt.type === 'task') icon = '🔴';
+              const isTask = evt.type === 'task';
+              if (isTask) icon = '•';
               else if (evt.type === 'meeting') icon = '🔵';
               else if (evt.type === 'milestone') icon = '🟢';
               else if (evt.type === 'project_deadline') icon = '🚀';
@@ -105,10 +106,10 @@ const CalendarView = ({ projectId = null }) => {
               return (
                 <div 
                   key={evt.id + idx} 
-                  className="calendar-event-item"
+                  className={`calendar-event-item ${isTask ? 'calendar-event-item--task' : ''}`}
                   onClick={() => setSelectedEvent(evt)}
                 >
-                  <span className="event-icon">{icon}</span>
+                  <span className={`event-icon ${isTask ? 'event-icon--bullet' : ''}`}>{icon}</span>
                   <span className="event-title">{evt.title}</span>
                 </div>
               );
@@ -180,39 +181,56 @@ const CalendarView = ({ projectId = null }) => {
       {selectedEvent && (
         <div className="event-modal-overlay" onClick={() => setSelectedEvent(null)}>
           <div className="event-modal" onClick={e => e.stopPropagation()}>
-            <button className="close-btn" onClick={() => setSelectedEvent(null)}>&times;</button>
-            <h3 style={{textTransform: 'uppercase'}}>{selectedEvent.title}</h3>
+            <button className="close-btn" onClick={() => setSelectedEvent(null)} aria-label="Close modal">&times;</button>
             
-            <div className="event-meta">
-               {selectedEvent.type === 'task' && <p>🔴 Task</p>}
-               {selectedEvent.type === 'meeting' && <p>🔵 Meeting</p>}
-               {selectedEvent.type === 'milestone' && <p>🟢 Milestone</p>}
-               {selectedEvent.type === 'project_deadline' && <p>🚀 Project Deadline</p>}
-               
-               <p>{selectedEvent.projectName}</p>
-               
-               {selectedEvent.type === 'task' && <p>Assigned to you</p>}
-               
-               <div style={{marginTop: '16px'}}>
-                 <strong>Date</strong>
-                 <p>{new Date(selectedEvent.date || selectedEvent.startDate).toLocaleString()}</p>
-               </div>
-               
-               {selectedEvent.status && (
-                 <div style={{marginTop: '16px'}}>
-                   <strong>Status</strong>
-                   <p>{selectedEvent.status}</p>
-                 </div>
-               )}
+            <div className="event-modal__header">
+              <span className={`event-modal__badge event-modal__badge--${selectedEvent.type}`}>
+                {selectedEvent.type === 'task' && '• Task'}
+                {selectedEvent.type === 'meeting' && '🔵 Meeting'}
+                {selectedEvent.type === 'milestone' && '🟢 Milestone'}
+                {selectedEvent.type === 'project_deadline' && '🚀 Project Deadline'}
+              </span>
+              {selectedEvent.type === 'task' && (
+                <span className="event-modal__tag">Assigned to you</span>
+              )}
             </div>
 
-            <div className="event-actions" style={{marginTop: '24px'}}>
+            <h3 className="event-modal__title">{selectedEvent.title}</h3>
+            {selectedEvent.projectName && (
+              <p className="event-modal__project">{selectedEvent.projectName}</p>
+            )}
+            
+            <div className="event-modal__grid">
+              <div className="event-modal__field">
+                <span className="event-modal__field-label">Date</span>
+                <span className="event-modal__field-value">
+                  {new Date(selectedEvent.date || selectedEvent.startDate).toLocaleString()}
+                </span>
+              </div>
+              
+              {selectedEvent.status && (
+                <div className="event-modal__field">
+                  <span className="event-modal__field-label">Status</span>
+                  <span className="event-modal__status-pill">
+                    {selectedEvent.status}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="event-modal__actions">
               {selectedEvent.type === 'task' || selectedEvent.linkedTask ? (
-                <button className="btn btn-primary" onClick={() => navigate(`/workspace/${selectedEvent.projectId}?task=${selectedEvent.linkedTask || selectedEvent.id}`)}>
+                <button 
+                  className="event-modal__btn" 
+                  onClick={() => navigate(`/workspace/${selectedEvent.projectId}?task=${selectedEvent.linkedTask || selectedEvent.id}`)}
+                >
                   Open Task &rarr;
                 </button>
               ) : (
-                <button className="btn btn-primary" onClick={() => navigate(`/workspace/${selectedEvent.projectId}`)}>
+                <button 
+                  className="event-modal__btn" 
+                  onClick={() => navigate(`/workspace/${selectedEvent.projectId}`)}
+                >
                   Open Project &rarr;
                 </button>
               )}

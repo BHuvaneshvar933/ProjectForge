@@ -5,16 +5,16 @@
   background: rgba(244, 241, 234, 0.45) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: none !important;
+  border-bottom: 1px solid var(--border-color) !important;
   box-shadow: none !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html[data-theme="dark"] .navbar {
-  background: rgba(8, 8, 10, 0.45) !important;
+  background: rgba(0, 0, 0, 0.75) !important;
   backdrop-filter: blur(24px) saturate(190%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
-  border-bottom: none !important;
+  border-bottom: 1px solid var(--border-color) !important;
   box-shadow: none !important;
 }
 
@@ -22,15 +22,16 @@ html[data-theme="dark"] .navbar {
   background: rgba(244, 241, 234, 0.65) !important;
   backdrop-filter: blur(22px) saturate(180%);
   -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border-bottom: 1px solid transparent !important;
   box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.05) !important;
 }
 
 html[data-theme="dark"] .navbar.is-scrolled {
-  background: rgba(8, 8, 10, 0.65) !important;
+  background: rgba(0, 0, 0, 0.92) !important;
   backdrop-filter: blur(24px) saturate(190%) !important;
   -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
   border-bottom: none !important;
-  box-shadow: 0 6px 28px -4px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 6px 28px -4px rgba(0, 0, 0, 0.8) !important;
 }
 
 .navbar__progress {
@@ -38,14 +39,14 @@ html[data-theme="dark"] .navbar.is-scrolled {
   top: 0;
   left: 0;
   height: 2.5px;
-  background: linear-gradient(90deg, #111113 0%, #4f46e5 50%, #06b6d4 100%);
+  background: linear-gradient(90deg, #111113 0%, #444444 100%);
   transition: width 0.1s linear;
   z-index: 101;
   opacity: 0.9;
 }
 
 html[data-theme="dark"] .navbar__progress {
-  background: linear-gradient(90deg, #ffffff 0%, #818cf8 50%, #38bdf8 100%);
+  background: linear-gradient(90deg, #ffffff 0%, #a3a3a3 100%);
 }
 
 .navbar__inner {
@@ -56,7 +57,7 @@ html[data-theme="dark"] .navbar__progress {
   justify-content: space-between;
   align-items: center;
   padding: 0;
-  height: 68px;
+  height: 58px;
   position: relative;
 }
 
@@ -86,7 +87,7 @@ html[data-theme="dark"] .navbar__progress {
 
 .navbar__brand-text {
   font-family: 'Google Sans', 'Inter', system-ui, sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.04em;
   color: var(--color-text-dark);
@@ -103,7 +104,7 @@ html[data-theme="dark"] .navbar__brand-text {
 }
 
 .navbar__brand-logo {
-  height: 32px;
+  height: 28px;
   width: auto;
   object-fit: contain;
   display: block;

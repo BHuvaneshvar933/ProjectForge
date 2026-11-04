@@ -55,7 +55,7 @@ export default function TasksToolbar({
         {filterCount > 0 && (
           <button 
             onClick={clearFilters}
-            style={{ background: "transparent", border: "none", color: "#0a84ff", cursor: "pointer", fontSize: "13px", fontWeight: "500" }}
+            style={{ background: "transparent", border: "none", color: "var(--color-text-dark)", textDecoration: "underline", cursor: "pointer", fontSize: "13px", fontWeight: "500" }}
           >
             Clear filters
           </button>
@@ -71,7 +71,7 @@ export default function TasksToolbar({
         </button>
         
         {showColumnsMenu && (
-          <div style={{ position: "absolute", top: "100%", right: "0", marginTop: "4px", background: "#1c1c1e", border: "1px solid var(--color-border-medium)", borderRadius: "8px", padding: "8px", zIndex: 100, minWidth: "200px", boxShadow: "0 4px 12px rgba(0,0,0,0.5)" }}>
+          <div style={{ position: "absolute", top: "100%", right: "0", marginTop: "4px", background: "var(--bg-card)", border: "1px solid var(--color-border-medium)", borderRadius: "8px", padding: "8px", zIndex: 100, minWidth: "200px", boxShadow: "0 4px 12px rgba(0,0,0,0.5)" }}>
             <div style={{ padding: "4px 8px", fontSize: "12px", fontWeight: "600", color: "var(--color-text-muted)", textTransform: "uppercase", marginBottom: "4px" }}>
               Show Columns
             </div>
@@ -88,7 +88,7 @@ export default function TasksToolbar({
             <div style={{ borderTop: "1px solid var(--color-border-medium)", margin: "8px 0" }}></div>
             <button 
               onClick={resetColumns}
-              style={{ width: "100%", background: "transparent", border: "none", color: "#0a84ff", cursor: "pointer", fontSize: "13px", padding: "6px", textAlign: "left" }}
+              style={{ width: "100%", background: "transparent", border: "none", color: "var(--color-text-dark)", textDecoration: "underline", cursor: "pointer", fontSize: "13px", padding: "6px", textAlign: "left" }}
             >
               Reset to default
             </button>

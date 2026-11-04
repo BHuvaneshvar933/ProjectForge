@@ -341,7 +341,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
 
               {localMetrics.aiHealthRecommendedActions && localMetrics.aiHealthRecommendedActions.length > 0 && localMetrics.aiHealthRecommendedActions[0] !== "Keep monitoring project activity." && localMetrics.aiHealthRecommendedActions[0] !== "Unavailable" && (
                 <div style={{ marginBottom: "20px" }}>
-                  <h4 style={{ fontSize: "14px", color: "#0a84ff", margin: "0 0 8px 0" }}>Recommended Actions</h4>
+                  <h4 style={{ fontSize: "14px", color: "var(--color-text-dark)", margin: "0 0 8px 0" }}>Recommended Actions</h4>
                   <ol style={{ margin: 0, paddingLeft: "24px", fontSize: "13px", color: "var(--color-text-dark)" }}>
                     {localMetrics.aiHealthRecommendedActions.map((action, idx) => (
                       <li key={idx} style={{ marginBottom: "6px" }}>{action}</li>
@@ -358,7 +358,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                   {localMetrics.aiHealthWorkDistribution.recommendations && localMetrics.aiHealthWorkDistribution.recommendations.length > 0 && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                       {localMetrics.aiHealthWorkDistribution.recommendations.map((rec, idx) => (
-                        <div key={idx} style={{ padding: "10px", background: "rgba(10, 132, 255, 0.05)", borderRadius: "6px" }}>
+                        <div key={idx} style={{ padding: "10px", background: "var(--color-paper)", border: "1px solid var(--border-color)", borderRadius: "6px" }}>
                           <strong style={{ fontSize: "13px", color: "var(--color-text-dark)", display: "block" }}>{rec.member} &rarr; {rec.task}</strong>
                           <span style={{ fontSize: "13px", color: "var(--color-text-muted)" }}>{rec.reason}</span>
                         </div>
@@ -369,8 +369,8 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               )}
 
               {localMetrics.aiHealthCollaborationOpportunity && (
-                <div style={{ padding: "12px", background: "rgba(191,90,242,0.1)", borderRadius: "6px", border: "1px solid rgba(191,90,242,0.2)", marginBottom: "16px" }}>
-                  <span style={{ fontSize: "13px", color: "#bf5af2", fontWeight: "600", display: "block", marginBottom: "4px" }}>Collaboration Opportunity</span>
+                <div style={{ padding: "12px", background: "var(--color-paper)", borderRadius: "6px", border: "1px solid var(--border-color)", marginBottom: "16px" }}>
+                  <span style={{ fontSize: "13px", color: "var(--color-text-dark)", fontWeight: "600", display: "block", marginBottom: "4px" }}>Collaboration Opportunity</span>
                   <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthCollaborationOpportunity}</span>
                 </div>
               )}
@@ -378,12 +378,12 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
               {/* Legacy fallback for older data */}
               {(!localMetrics.aiHealthPrimaryConcern || !localMetrics.aiHealthPrimaryConcern.title) && localMetrics.aiHealthMainRisk && (
                  <div style={{ marginBottom: "12px", fontSize: "14px" }}>
-                   <strong style={{ color: "#ff9f0a" }}>Main Risk:</strong> <span style={{ color: "var(--color-text-dark)" }}>{localMetrics.aiHealthMainRisk}</span>
+                   <strong style={{ color: "var(--color-text-dark)" }}>Main Risk:</strong> <span style={{ color: "var(--color-text-dark)" }}>{localMetrics.aiHealthMainRisk}</span>
                  </div>
               )}
               {(!localMetrics.aiHealthRecommendedActions || localMetrics.aiHealthRecommendedActions.length === 0) && localMetrics.aiHealthSuggestion && (
-                 <div style={{ padding: "12px", background: "rgba(10,132,255,0.1)", borderRadius: "6px", border: "1px solid rgba(10,132,255,0.2)" }}>
-                   <span style={{ fontSize: "13px", color: "#0a84ff", fontWeight: "600", display: "block", marginBottom: "4px" }}>AI Suggestion</span>
+                 <div style={{ padding: "12px", background: "var(--color-paper)", borderRadius: "6px", border: "1px solid var(--border-color)" }}>
+                   <span style={{ fontSize: "13px", color: "var(--color-text-dark)", fontWeight: "600", display: "block", marginBottom: "4px" }}>AI Suggestion</span>
                    <span style={{ fontSize: "13px", color: "var(--color-text-dark)" }}>{localMetrics.aiHealthSuggestion}</span>
                  </div>
               )}
@@ -422,7 +422,7 @@ export default function WorkspaceOverview({ project, tasks, team, isOwner, onRem
                         {localMetrics.aiWeeklySummary.tasks?.newWork?.length > 0 && (
                           <div>
                             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-                              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#0a84ff" }}></div>
+                              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--color-text-dark)" }}></div>
                               <strong style={{ fontSize: "14px", color: "var(--color-text-dark)" }}>New Work</strong>
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>

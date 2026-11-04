@@ -1,28 +1,33 @@
 .btn {
-  border-radius: 2px;
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  transition: all 0.15s ease;
+  border-radius: 999px;
+  font-weight: 600;
+  font-family: inherit;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: none !important;
 }
 
 .btn--sm {
-  padding: 6px 12px;
+  padding: 6px 14px;
   font-size: 13px;
 }
 
 .btn--md {
-  padding: 8px 18px;
-  font-size: 13px;
+  padding: 9px 20px;
+  font-size: 14px;
 }
 
 .btn--lg {
-  padding: 10px 24px;
-  font-size: 13px;
+  padding: 12px 26px;
+  font-size: 15px;
 }
 
 .btn--full {
@@ -30,71 +35,68 @@
 }
 
 .btn--primary {
-  background: #ffffff;
-  color: #000000;
-  border: 1px solid #ffffff;
-  font-weight: 500;
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.2);
+  background: #121214;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
-.btn--primary:hover {
-  background: #000000;
-  color: #ffffff;
-  border-color: #ffffff;
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.3);
+.btn--primary:hover:not(.btn--disabled) {
+  background: #FFFFFF !important;
+  color: #121214 !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
 }
 
 .btn--secondary {
-  background: transparent;
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: #ffffff !important;
+  color: var(--color-text-dark) !important;
+  border: 1px solid rgba(18, 18, 20, 0.15) !important;
 }
 
-.btn--secondary:hover {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+.btn--secondary:hover:not(.btn--disabled) {
+  background: #EFECE6 !important;
+  color: var(--color-text-dark) !important;
+  border-color: rgba(18, 18, 20, 0.25) !important;
 }
 
 .btn--outline {
   background: transparent;
-  color: #ffffff;
-  border: 1px solid #ffffff;
+  color: var(--color-text-dark);
+  border: 1px solid rgba(18, 18, 20, 0.15) !important;
 }
 
-.btn--outline:hover {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+.btn--outline:hover:not(.btn--disabled) {
+  background: #EFECE6;
+  color: var(--color-text-dark);
+  border-color: rgba(18, 18, 20, 0.25);
 }
 
 .btn--danger {
-  background: rgba(255, 69, 58, 0.15);
-  color: #ff453a;
-  border-color: rgba(255, 69, 58, 0.3);
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border: none !important;
 }
 
-.btn--danger:hover {
-  background: #ff453a;
-  color: #ffffff;
+.btn--danger:hover:not(.btn--disabled) {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border: none !important;
 }
 
 .btn--ghost {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: var(--color-text-dark);
+  border: 1px solid rgba(18, 18, 20, 0.15) !important;
 }
 
-.btn--ghost:hover {
-  background: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
+.btn--ghost:hover:not(.btn--disabled) {
+  background: #EFECE6;
+  color: var(--color-text-dark);
+  border-color: rgba(18, 18, 20, 0.25);
 }
 
 .btn--disabled {
-  opacity: 0.35;
+  opacity: 0.4;
   cursor: not-allowed;
-  box-shadow: none;
 }
 
 .btn__loading {
@@ -121,9 +123,44 @@
   font-size: 13px;
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+/* Dark Mode Button Overrides: White BG, Black Text -> Hover: Black BG, White Text, White Border */
+html[data-theme="dark"] .btn--primary,
+html[data-theme="dark"] .btn--secondary {
+  background: #ffffff !important;
+  color: #08080a !important;
+  border: 1px solid #ffffff !important;
 }
+
+html[data-theme="dark"] .btn--primary:hover:not(.btn--disabled),
+html[data-theme="dark"] .btn--secondary:hover:not(.btn--disabled) {
+  background: #08080a !important;
+  color: #ffffff !important;
+  border: 1px solid #ffffff !important;
+}
+
+html[data-theme="dark"] .btn--outline {
+  background: transparent !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+html[data-theme="dark"] .btn--outline:hover:not(.btn--disabled) {
+  background: #ffffff !important;
+  color: #08080a !important;
+  border: 1px solid #ffffff !important;
+}
+
+html[data-theme="dark"] .btn--ghost {
+  background: transparent !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+html[data-theme="dark"] .btn--ghost:hover:not(.btn--disabled) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+}
+
 
 

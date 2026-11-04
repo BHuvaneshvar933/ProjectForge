@@ -199,9 +199,9 @@ export default function Messages() {
 
   if (!user) {
     return (
-      <div className="dashboard-page">
+      <div className="dashboard-page messages-page">
         <PageHeader title="Messages" />
-        <div className="messages-layout" style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <div className="messages-layout messages-layout--loading">
           <Spinner size="lg" />
         </div>
       </div>
@@ -209,25 +209,24 @@ export default function Messages() {
   }
 
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page messages-page">
       <PageHeader title="Messages" />
       <div className="messages-layout">
         {/* Sidebar */}
         <aside className={`messages-sidebar ${activeConvId ? 'hide-on-mobile' : ''}`}>
         <div className="messages-sidebar-header">
-          
-          <div className="dashboard-sidebar__tabs" style={{ display: 'flex', gap: '8px', marginBottom: '16px', padding: '0 24px' }}>
+          <div className="messages-tabs">
             <button 
-              className={`dashboard-sidebar__tab ${activeTab === 'owned' ? 'is-active' : ''}`}
+              type="button"
+              className={`messages-tab ${activeTab === 'owned' ? 'is-active' : ''}`}
               onClick={() => setActiveTab('owned')}
-              style={{ flex: 1 }}
             >
               Projects You Own
             </button>
             <button 
-              className={`dashboard-sidebar__tab ${activeTab === 'applied' ? 'is-active' : ''}`}
+              type="button"
+              className={`messages-tab ${activeTab === 'applied' ? 'is-active' : ''}`}
               onClick={() => setActiveTab('applied')}
-              style={{ flex: 1 }}
             >
               Projects Applied
             </button>
@@ -246,11 +245,16 @@ export default function Messages() {
 
         <div className="messages-sidebar-list">
           {loadingConvs ? (
-            <div style={{ textAlign: 'center', padding: '40px' }}><Spinner /></div>
+            <div className="messages-list-loading"><Spinner /></div>
           ) : conversations.length === 0 ? (
             <div className="messages-empty-state">
-              <p className="title">No conversations yet</p>
-              <p className="subtitle">
+              <div className="messages-empty-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+              </div>
+              <p className="messages-empty-title">No conversations yet</p>
+              <p className="messages-empty-subtitle">
                 Project owners will appear here when they message you about an application.
               </p>
             </div>
@@ -261,7 +265,7 @@ export default function Messages() {
                   <div className="messages-section">
                     {Object.keys(ownedProjects).map(projectTitle => (
                     <div key={`own-${projectTitle}`} className="messages-group">
-                      <div className="messages-group-title" style={{ padding: "8px 24px 4px", fontSize: "13px", fontWeight: 600, borderBottom: "1px solid rgba(255,255,255,0.05)", marginBottom: "4px" }}>{projectTitle}</div>
+                      <div className="messages-group-title">{projectTitle}</div>
                       {ownedProjects[projectTitle].map(conv => {
                         const otherUser = getOtherUser(conv);
                         const isUnread = conv.lastMessage && conv.lastMessage.senderId !== user._id && !conv.lastMessage.seen;
@@ -292,6 +296,7 @@ export default function Messages() {
                                 {conv.lastMessage?.text || "Started a conversation"}
                               </div>
                             </div>
+                            {isUnread && <span className="messages-unread-dot" />}
                           </div>
                         )
                       })}
@@ -300,8 +305,13 @@ export default function Messages() {
                   </div>
                 ) : (
                   <div className="messages-empty-state">
-                    <p className="title">No conversations yet</p>
-                    <p className="subtitle">You have no messages for projects you own.</p>
+                    <div className="messages-empty-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                    </div>
+                    <p className="messages-empty-title">No conversations yet</p>
+                    <p className="messages-empty-subtitle">You have no messages for projects you own.</p>
                   </div>
                 )
               )}
@@ -335,7 +345,7 @@ export default function Messages() {
                                   {conv.lastMessageAt ? new Date(conv.lastMessageAt).toLocaleDateString([], { month: 'short', day: 'numeric' }) : ""}
                                 </span>
                               </div>
-                              <div className="messages-item-project" style={{ fontSize: "11px", color: "var(--color-primary)", marginBottom: "2px" }}>
+                              <div className="messages-item-project">
                                 {conv.projectId?.title || "Unknown Project"}
                               </div>
                               <div className="messages-item-preview">
@@ -343,6 +353,7 @@ export default function Messages() {
                                 {conv.lastMessage?.text || "Started a conversation"}
                               </div>
                             </div>
+                            {isUnread && <span className="messages-unread-dot" />}
                           </div>
                         )
                       })}
@@ -350,8 +361,13 @@ export default function Messages() {
                   </div>
                 ) : (
                   <div className="messages-empty-state">
-                    <p className="title">No conversations yet</p>
-                    <p className="subtitle">You have no messages for projects you applied to.</p>
+                    <div className="messages-empty-icon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                    </div>
+                    <p className="messages-empty-title">No conversations yet</p>
+                    <p className="messages-empty-subtitle">You have no messages for projects you applied to.</p>
                   </div>
                 )
               )}
@@ -364,9 +380,11 @@ export default function Messages() {
       <main className={`messages-main ${!activeConvId ? 'hide-on-mobile' : ''}`}>
         {!activeConvId || !activeConversation ? (
           <div className="messages-no-selection">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
+            <div className="messages-no-selection__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
             <h2>Your Messages</h2>
             <p>Select a conversation to read or send messages.</p>
           </div>
@@ -414,7 +432,7 @@ export default function Messages() {
 
             <div className="messages-chat-area">
               {loadingMessages ? (
-                <div style={{ textAlign: 'center', padding: '40px' }}><Spinner /></div>
+                <div className="messages-chat-loading"><Spinner /></div>
               ) : (
                 messages.map(msg => {
                   const senderStr = String(msg.senderId?._id || msg.senderId);
@@ -445,6 +463,7 @@ export default function Messages() {
                 placeholder="Type a message..."
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
+                autoComplete="off"
               />
               <button type="submit" disabled={!inputText.trim()} title="Send Message">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>

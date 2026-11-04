@@ -9,7 +9,7 @@ export default function BulkActionBar({ selectedCount, onClear, onDelete, onUpda
       bottom: "32px",
       left: "50%",
       transform: "translateX(-50%)",
-      background: "#2c2c2e",
+      background: "#181818",
       border: "1px solid var(--color-border-medium)",
       borderRadius: "12px",
       padding: "12px 24px",
@@ -20,7 +20,7 @@ export default function BulkActionBar({ selectedCount, onClear, onDelete, onUpda
       zIndex: 1000
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <span style={{ background: "#0a84ff", color: "var(--color-text-dark)", padding: "2px 8px", borderRadius: "12px", fontSize: "14px", fontWeight: "600" }}>
+        <span style={{ background: "var(--color-text-dark)", color: "var(--bg-page)", padding: "2px 8px", borderRadius: "12px", fontSize: "14px", fontWeight: "600" }}>
           {selectedCount}
         </span>
         <span style={{ color: "var(--color-text-dark)", fontWeight: "500", fontSize: "14px" }}>issues selected</span>

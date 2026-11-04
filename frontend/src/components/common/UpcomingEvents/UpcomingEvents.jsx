@@ -69,7 +69,8 @@ const UpcomingEvents = () => {
 
   const renderEvent = (evt) => {
     let icon = '';
-    if (evt.type === 'task') icon = '🔴';
+    const isTask = evt.type === 'task';
+    if (isTask) icon = '•';
     else if (evt.type === 'meeting') icon = '🔵';
     else if (evt.type === 'milestone') icon = '🟢';
     else if (evt.type === 'project_deadline') icon = '🚀';
@@ -86,7 +87,7 @@ const UpcomingEvents = () => {
           }
         }}
       >
-        <span className="upcoming-event-icon">{icon}</span>
+        <span className={`upcoming-event-icon ${isTask ? 'upcoming-event-icon--bullet' : ''}`}>{icon}</span>
         <div className="upcoming-event-details">
           <span className="upcoming-event-title">{evt.title}</span>
           <span className="upcoming-event-meta">{evt.projectName}</span>

@@ -9,6 +9,20 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  if (err && err.name === "CastError") {
+    return res.status(404).json({
+      success: false,
+      message: "Resource not found",
+    });
+  }
+
+  if (err && err.message === "Project not found") {
+    return res.status(404).json({
+      success: false,
+      message: "Project not found",
+    });
+  }
+
   if (err && err.name === "VersionError") {
     return res.status(409).json({
       success: false,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Command } from 'cmdk';
 import { useNavigate } from 'react-router-dom';
-import { Search, Folder, User, Settings } from 'lucide-react';
+import { Search, Folder, User, Settings, HelpCircle } from 'lucide-react';
 import './CommandPalette.css';
 
 export default function CommandPalette() {
@@ -52,6 +52,10 @@ export default function CommandPalette() {
             <Command.Item onSelect={() => runCommand(() => navigate('/account'))} className="command-palette-item">
               <User className="command-palette-item-icon" />
               My Account
+            </Command.Item>
+            <Command.Item onSelect={() => runCommand(() => navigate('/help'))} className="command-palette-item">
+              <HelpCircle className="command-palette-item-icon" />
+              Help & Support (Tutorials)
             </Command.Item>
           </Command.Group>
 

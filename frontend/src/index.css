@@ -1,10 +1,36 @@
 @import "./colors.css";
 @import "tailwindcss";
 
+@theme {
+	--font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+	--font-serif: 'Cormorant Garamond', Georgia, serif;
+}
+
 :root {
 	/* Typography Families */
-	--font-sans: 'Google Sans', 'Inter', system-ui, -apple-system, sans-serif;
-	--font-serif: 'Cormorant Garamond', 'Newsreader', Georgia, serif;
+	--font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+	--font-serif: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* =========================================================================
+ * UNIVERSAL TYPOGRAPHY RESET: NO BOLD FONT ANYWHERE (REGULAR WEIGHT 400)
+ * Per user request: "do not use bold font anywhere in the website".
+ * ========================================================================= */
+*,
+*::before,
+*::after,
+html,
+body,
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, button, input, select, textarea,
+strong, b, th, td, label, li, dt, dd,
+blockquote, form, fieldset, legend,
+header, footer, nav, section, article, aside, main {
+	font-weight: 400 !important;
+}
+
+b, strong {
+	font-weight: 400 !important;
 }
 
 /* Universal Card & Box Title Underline Styles */
@@ -44,8 +70,8 @@ html[data-theme="dark"] .workspace-column,
 html[data-theme="dark"] .workspace-task,
 html[data-theme="dark"] .modal-container,
 html[data-theme="dark"] .task-details-drawer {
-	background-color: #202028 !important;
-	color: #F9F8F5 !important;
+	background-color: #121212 !important;
+	color: #FFFFFF !important;
 	border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
@@ -67,9 +93,11 @@ html[data-theme="dark"] .workspace-page,
 html[data-theme="dark"] .account-page,
 html[data-theme="dark"] .create-project-page,
 html[data-theme="dark"] .applications-page,
-html[data-theme="dark"] .dashboard-page {
-	background-color: #09090B !important;
-	color: #F9F8F5 !important;
+html[data-theme="dark"] .dashboard-page,
+html[data-theme="dark"] .calendar-page,
+html[data-theme="dark"] .help-page {
+	background-color: #000000 !important;
+	color: #FFFFFF !important;
 }
 
 /* Headings & Main Typography Overrides */
@@ -88,7 +116,7 @@ html[data-theme="dark"] .project-card__title,
 html[data-theme="dark"] .overview-card-title,
 html[data-theme="dark"] .summary-section__title,
 html[data-theme="dark"] .modal-title {
-	color: #F9F8F5 !important;
+	color: #FFFFFF !important;
 }
 
 /* Secondary & Muted Text Overrides */
@@ -102,7 +130,7 @@ html[data-theme="dark"] .pub-cta__desc,
 html[data-theme="dark"] .browse-page__subtitle,
 html[data-theme="dark"] .project-card__desc,
 html[data-theme="dark"] .workspace-task__meta {
-	color: #D1D1DB;
+	color: #B5B5B5;
 }
 
 html[data-theme="dark"] strong {
@@ -118,14 +146,14 @@ html[data-theme="dark"] .browse-sidebar__select,
 html[data-theme="dark"] .dashboard-sidebar__select,
 html[data-theme="dark"] .browse-page__select,
 html[data-theme="dark"] .workspace-select {
-	background-color: #1C1C22 !important;
+	background-color: #161616 !important;
 	color: #FFFFFF !important;
-	border-color: rgba(255, 255, 255, 0.25) !important;
+	border-color: rgba(255, 255, 255, 0.18) !important;
 }
 
 html[data-theme="dark"] input::placeholder,
 html[data-theme="dark"] textarea::placeholder {
-	color: #A0A0B0 !important;
+	color: #737373 !important;
 }
 
 select,
@@ -133,19 +161,24 @@ select,
 .dashboard-sidebar__select,
 .browse-page__select,
 .workspace-select {
+	-webkit-appearance: none !important;
+	-moz-appearance: none !important;
+	appearance: none !important;
 	background-color: #ffffff !important;
 	color: #121214 !important;
 	background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23121214' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
 	background-repeat: no-repeat !important;
 	background-position: right 14px center !important;
-	appearance: none !important;
-	-webkit-appearance: none !important;
 }
 
+html[data-theme="dark"] select,
 html[data-theme="dark"] .browse-sidebar__select,
 html[data-theme="dark"] .dashboard-sidebar__select,
 html[data-theme="dark"] .browse-page__select,
 html[data-theme="dark"] .workspace-select {
+	-webkit-appearance: none !important;
+	-moz-appearance: none !important;
+	appearance: none !important;
 	background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23FFFFFF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") !important;
 	background-repeat: no-repeat !important;
 	background-position: right 14px center !important;
@@ -157,9 +190,9 @@ html[data-theme="dark"] .summary-skill-chip,
 html[data-theme="dark"] .summary-achievements li,
 html[data-theme="dark"] .summary-leaderboard__item,
 html[data-theme="dark"] .summary-timeline__content {
-	background-color: #1C1C22 !important;
+	background-color: #181818 !important;
 	color: #FFFFFF !important;
-	border: 1px solid rgba(255, 255, 255, 0.18) !important;
+	border: 1px solid rgba(255, 255, 255, 0.14) !important;
 }
 
 /* Universal Avatar Letter & Badge Styling in Dark Mode */
@@ -192,7 +225,7 @@ html[data-theme="dark"] .btn-outline {
 
 html[data-theme="dark"] .pub-btn--outline:hover,
 html[data-theme="dark"] .btn-outline:hover {
-	background-color: #2A2A34 !important;
+	background-color: #222222 !important;
 	border-color: #FFFFFF !important;
 }
 
@@ -213,7 +246,7 @@ html[data-theme="dark"] .navbar {
 	background: rgba(8, 8, 10, 0.45) !important;
 	backdrop-filter: blur(24px) saturate(190%) !important;
 	-webkit-backdrop-filter: blur(24px) saturate(190%) !important;
-	border-bottom: none !important;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
 	box-shadow: none !important;
 }
 
@@ -257,14 +290,36 @@ html[data-theme="dark"] .navbar__cta-btn:hover {
 
 html[data-theme="dark"] .dashboard-header__btn {
 	background: #FFFFFF !important;
-	color: #000000 !important;
-	border-color: #FFFFFF !important;
+	color: #08080a !important;
+	border: 1px solid #FFFFFF !important;
+}
+
+html[data-theme="dark"] .dashboard-header__btn *,
+html[data-theme="dark"] .dashboard-header__btn span,
+html[data-theme="dark"] .dashboard-header__btn strong {
+	color: #08080a !important;
+}
+
+html[data-theme="dark"] .dashboard-header__btn svg {
+	color: #08080a !important;
+	stroke: currentColor !important;
 }
 
 html[data-theme="dark"] .dashboard-header__btn:hover {
-	background: #E4E4E7 !important;
-	color: #333333 !important;
-	border-color: #E4E4E7 !important;
+	background: #08080a !important;
+	color: #ffffff !important;
+	border: 1px solid #ffffff !important;
+}
+
+html[data-theme="dark"] .dashboard-header__btn:hover *,
+html[data-theme="dark"] .dashboard-header__btn:hover span,
+html[data-theme="dark"] .dashboard-header__btn:hover strong {
+	color: #ffffff !important;
+}
+
+html[data-theme="dark"] .dashboard-header__btn:hover svg {
+	color: #ffffff !important;
+	stroke: currentColor !important;
 }
 
 html[data-theme="dark"] .spinner {
@@ -272,8 +327,19 @@ html[data-theme="dark"] .spinner {
 	border-top-color: #F9F8F5;
 }
 
-* {
+*, *::before, *::after {
 	box-sizing: border-box;
+	font-family: var(--font-sans);
+	font-weight: 400 !important;
+}
+
+html, body, #root, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, a, div, label, li, table, th, td, b, strong {
+	font-family: var(--font-sans) !important;
+	font-weight: 400 !important;
+}
+
+.font-serif, [class*="font-serif"] {
+	font-family: var(--font-serif) !important;
 }
 
 html {
@@ -316,7 +382,7 @@ a:hover {
 
 h1, h2, h3, h4, h5, h6 {
 	font-family: var(--font-sans);
-	font-weight: 700;
+	font-weight: 400 !important;
 	margin: 0 0 12px 0;
 	letter-spacing: -0.02em;
 	color: var(--text-main);
@@ -330,33 +396,33 @@ h1, h2, h3, h4, h5, h6 {
 /* Editorial Display Typography Utility Classes */
 .display-hero {
 	font-family: var(--font-sans);
-	font-size: clamp(2.5rem, 6vw, 5.5rem);
-	font-weight: 800;
+	font-size: clamp(2rem, 4.5vw, 3.8rem);
+	font-weight: 400 !important;
 	line-height: 1.05;
-	letter-spacing: -0.035em;
+	letter-spacing: -0.03em;
 	color: var(--text-main);
 }
 
 .display-chapter {
 	font-family: var(--font-sans);
-	font-size: clamp(2rem, 4.5vw, 4rem);
-	font-weight: 800;
+	font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+	font-weight: 400 !important;
 	line-height: 1.1;
-	letter-spacing: -0.03em;
+	letter-spacing: -0.025em;
 }
 
 .display-stat {
 	font-family: var(--font-sans);
-	font-size: clamp(2.8rem, 6.5vw, 6rem);
-	font-weight: 800;
+	font-size: clamp(1.8rem, 3.8vw, 3.2rem);
+	font-weight: 400 !important;
 	line-height: 1;
-	letter-spacing: -0.04em;
+	letter-spacing: -0.03em;
 }
 
 .eyebrow {
 	font-family: var(--font-sans);
 	font-size: 11px;
-	font-weight: 700;
+	font-weight: 400 !important;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
 	color: var(--text-sub);
@@ -418,12 +484,18 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	outline-offset: 2px;
 }
 
-/* GLOBAL DASHBOARD LAYOUT */
-.dashboard-page {
-	width: 95vw;
-	max-width: 1800px;
-	margin: 0 auto;
-	padding: 40px 0;
+/* GLOBAL DASHBOARD LAYOUT & UNIVERSAL PAGE SPACING */
+.dashboard-page,
+.browse-page,
+.account,
+.workspace,
+.learning-archive,
+.calendar-page {
+	width: 95vw !important;
+	max-width: 1800px !important;
+	margin: 0 auto !important;
+	padding-top: 20px !important;
+	padding-bottom: 75px !important;
 }
 
 .dashboard-header {
@@ -436,10 +508,11 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 }
 
 .dashboard-title {
-	font-size: clamp(2.2rem, 4.5vw, 3.5rem);
-	font-weight: 800;
-	line-height: 1.1;
-	letter-spacing: -0.035em;
+	font-size: clamp(1.4rem, 2.4vw, 1.95rem) !important;
+	font-weight: 400 !important;
+	text-transform: uppercase !important;
+	letter-spacing: 0.05em !important;
+	line-height: 1.2;
 	color: var(--text-main);
 	margin: 0 0 6px;
 	display: inline-block;
@@ -448,7 +521,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 .dashboard-subtitle {
 	color: var(--text-sub);
 	font-size: 16px;
-	font-weight: 500;
+	font-weight: 400 !important;
 }
 
 .dashboard-header__btn {
@@ -460,7 +533,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	background: var(--btn-primary-bg);
 	color: var(--btn-primary-text);
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 400 !important;
 	transition: all 0.2s ease;
 	border: 1px solid var(--btn-primary-bg);
 }
@@ -509,7 +582,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 
 .dashboard-sidebar__heading {
 	font-size: 12px;
-	font-weight: 700;
+	font-weight: 400 !important;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
 	color: var(--text-sub);
@@ -525,24 +598,74 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 .dashboard-sidebar__tab {
 	padding: 12px 16px;
 	border-radius: 8px;
-	background: transparent;
-	color: var(--text-sub);
-	font-weight: 600;
+	background: #FAF8F2;
+	color: var(--color-text-dark);
+	font-weight: 400 !important;
 	font-size: 14px;
 	text-align: left;
 	transition: all 0.15s ease;
-	border: 1px solid transparent;
+	border: 1px solid rgba(18, 18, 20, 0.15) !important;
+	cursor: pointer;
 }
 
-.dashboard-sidebar__tab:hover:not(:disabled) {
-	background: var(--bg-card-hover);
-	color: var(--text-main);
+.dashboard-sidebar__tab:not(.is-active):hover:not(:disabled) {
+	background: #121214 !important;
+	color: #ffffff !important;
+	border-color: #121214 !important;
 }
 
 .dashboard-sidebar__tab.is-active {
-	background: var(--btn-primary-bg);
-	color: var(--btn-primary-text);
-	font-weight: 700;
+	background: #121214 !important;
+	color: #ffffff !important;
+	border-color: #121214 !important;
+	font-weight: 400 !important;
+	cursor: default;
+}
+
+.dashboard-sidebar__tab.is-active:hover {
+	background: #121214 !important;
+	color: #ffffff !important;
+	border-color: #121214 !important;
+}
+
+html[data-theme="dark"] .dashboard-sidebar__tab,
+html[data-theme="dark"] .browse-sidebar__tab {
+	background: #141416 !important;
+	color: #a3a3a3 !important;
+	border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+html[data-theme="dark"] .dashboard-sidebar__tab:not(.is-active):hover:not(:disabled),
+html[data-theme="dark"] .browse-sidebar__tab:not(.is-active):hover:not(:disabled) {
+	background: #242428 !important;
+	color: #ffffff !important;
+	border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+html[data-theme="dark"] .dashboard-sidebar__tab.is-active,
+html[data-theme="dark"] .browse-sidebar__tab.is-active {
+	background: #ffffff !important;
+	color: #08080a !important;
+	border: 1px solid #ffffff !important;
+	font-weight: 400 !important;
+	cursor: default;
+}
+
+html[data-theme="dark"] .dashboard-sidebar__tab.is-active *,
+html[data-theme="dark"] .browse-sidebar__tab.is-active * {
+	color: #08080a !important;
+}
+
+html[data-theme="dark"] .dashboard-sidebar__tab.is-active:hover,
+html[data-theme="dark"] .browse-sidebar__tab.is-active:hover {
+	background: #f0f0f0 !important;
+	color: #08080a !important;
+	border: 1px solid #ffffff !important;
+}
+
+html[data-theme="dark"] .dashboard-sidebar__tab.is-active:hover *,
+html[data-theme="dark"] .browse-sidebar__tab.is-active:hover * {
+	color: #08080a !important;
 }
 
 .dashboard-sidebar__tab:disabled {
@@ -563,7 +686,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	border: 1px solid var(--border-color);
 	color: var(--text-main);
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 400 !important;
 	outline: none;
 	cursor: pointer;
 }
@@ -591,7 +714,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	border: 1px solid var(--border-color);
 	color: var(--text-main);
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 400 !important;
 	transition: all 0.15s ease;
 }
 
@@ -608,7 +731,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 
 .dashboard-pagination__nav-text {
 	font-size: 13px;
-	font-weight: 600;
+	font-weight: 400 !important;
 }
 
 .dashboard-pagination__pages {
@@ -622,7 +745,7 @@ html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
 	height: 40px;
 	border-radius: 50%;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 400 !important;
 	color: var(--text-sub);
 	background: transparent;
 	display: inline-flex;
@@ -680,6 +803,25 @@ html[data-theme="dark"] .task-card,
 html[data-theme="dark"] .my-projects__card {
 	border: none !important;
 	box-shadow: 0 6px 26px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Universal: Remove any X and Y translation on hovering on any button in the website */
+button:hover,
+.btn:hover,
+.button:hover,
+[role="button"]:hover,
+a.btn:hover,
+.pub-btn:hover,
+.navbar__cta-btn:hover,
+.dashboard-header__btn:hover,
+.dashboard-pagination__nav-btn:hover,
+.dashboard-pagination__page-btn:hover,
+.create-project__button:hover,
+.edit-project__button:hover,
+.project-card__action:hover,
+.project-card__action:hover *,
+.workspace-chat__send:hover {
+	transform: none !important;
 }
 
 /* Tactile Active Button Feedback (Instant physical response) */
@@ -777,9 +919,72 @@ html[data-theme="dark"] .project-card__owner-avatar {
 	color: #08080a !important;
 }
 
-/* Strict High-Priority Dark Mode Button Overrides: Start Project, Windows Download, View Cards */
+/* =========================================================================
+ * Strict High-Priority Dark Mode Button Overrides: White BG, Dark Text
+ * Ensures all buttons, links, tabs, and their inner children (span, strong, svg)
+ * have crisp, high-contrast dark text (#08080a) on white backgrounds.
+ * ========================================================================= */
+html[data-theme="dark"] .project-card__action,
+html[data-theme="dark"] .project-card__action *,
+html[data-theme="dark"] .project-card__action span,
+html[data-theme="dark"] .dashboard-sidebar__tab.is-active,
+html[data-theme="dark"] .dashboard-sidebar__tab.is-active *,
+html[data-theme="dark"] .browse-sidebar__tab.is-active,
+html[data-theme="dark"] .browse-sidebar__tab.is-active *,
+html[data-theme="dark"] .btn--primary,
+html[data-theme="dark"] .btn--primary *,
+html[data-theme="dark"] .dashboard-header__btn,
+html[data-theme="dark"] .dashboard-header__btn *,
+html[data-theme="dark"] .pub-btn--primary,
+html[data-theme="dark"] .pub-btn--primary *,
+html[data-theme="dark"] .pub-btn--windows,
+html[data-theme="dark"] .pub-btn--windows *,
+html[data-theme="dark"] .summary-btn,
+html[data-theme="dark"] .summary-btn *,
+html[data-theme="dark"] .my-projects__empty-action,
+html[data-theme="dark"] .my-projects__empty-action *,
+html[data-theme="dark"] .apps-empty__action,
+html[data-theme="dark"] .apps-empty__action *,
+html[data-theme="dark"] .modal__button--primary,
+html[data-theme="dark"] .modal__button--primary *,
+html[data-theme="dark"] .event-modal__btn,
+html[data-theme="dark"] .event-modal__btn *,
+html[data-theme="dark"] .create-project__button--primary,
+html[data-theme="dark"] .create-project__button--primary *,
+html[data-theme="dark"] .create-project__button--success,
+html[data-theme="dark"] .create-project__button--success *,
+html[data-theme="dark"] .edit-project__button--primary,
+html[data-theme="dark"] .edit-project__button--primary *,
+html[data-theme="dark"] .edit-project__button--success,
+html[data-theme="dark"] .edit-project__button--success *,
+html[data-theme="dark"] .workspace__tab.is-active,
+html[data-theme="dark"] .workspace__tab.is-active * {
+	color: #08080a !important;
+}
+
+html[data-theme="dark"] .project-card__action svg,
+html[data-theme="dark"] .pub-btn--windows svg,
+html[data-theme="dark"] .dashboard-header__btn svg,
+html[data-theme="dark"] .btn--primary svg {
+	stroke: #08080a !important;
+	color: #08080a !important;
+}
+
+/* Hover: Inverted Black BG, White Text, White Border */
 html[data-theme="dark"] .navbar__cta-btn:hover,
 html[data-theme="dark"] .pub-btn--windows:hover,
+html[data-theme="dark"] .pub-btn--primary:hover,
+html[data-theme="dark"] .btn--primary:hover,
+html[data-theme="dark"] .dashboard-header__btn:hover,
+html[data-theme="dark"] .summary-btn:hover,
+html[data-theme="dark"] .my-projects__empty-action:hover,
+html[data-theme="dark"] .apps-empty__action:hover,
+html[data-theme="dark"] .modal__button--primary:hover,
+html[data-theme="dark"] .event-modal__btn:hover,
+html[data-theme="dark"] .create-project__button--primary:hover,
+html[data-theme="dark"] .create-project__button--success:hover,
+html[data-theme="dark"] .edit-project__button--primary:hover,
+html[data-theme="dark"] .edit-project__button--success:hover,
 html[data-theme="dark"] .project-card__action:hover,
 html[data-theme="dark"] .project-card__action--ghost:hover,
 html[data-theme="dark"] .project-card__action--primary:hover,
@@ -789,4 +994,60 @@ html[data-theme="dark"] a.project-card__action:hover {
 	color: #ffffff !important;
 	border: 1px solid #ffffff !important;
 	border-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .navbar__cta-btn:hover *,
+html[data-theme="dark"] .pub-btn--windows:hover *,
+html[data-theme="dark"] .pub-btn--primary:hover *,
+html[data-theme="dark"] .btn--primary:hover *,
+html[data-theme="dark"] .dashboard-header__btn:hover *,
+html[data-theme="dark"] .summary-btn:hover *,
+html[data-theme="dark"] .my-projects__empty-action:hover *,
+html[data-theme="dark"] .apps-empty__action:hover *,
+html[data-theme="dark"] .modal__button--primary:hover *,
+html[data-theme="dark"] .event-modal__btn:hover *,
+html[data-theme="dark"] .create-project__button--primary:hover *,
+html[data-theme="dark"] .create-project__button--success:hover *,
+html[data-theme="dark"] .edit-project__button--primary:hover *,
+html[data-theme="dark"] .edit-project__button--success:hover *,
+html[data-theme="dark"] .project-card__action:hover *,
+html[data-theme="dark"] .project-card__action--ghost:hover *,
+html[data-theme="dark"] .project-card__action--primary:hover *,
+html[data-theme="dark"] a.project-card__action:hover * {
+	color: #ffffff !important;
+}
+
+html[data-theme="dark"] .project-card__action:hover svg,
+html[data-theme="dark"] .pub-btn--windows:hover svg,
+html[data-theme="dark"] .dashboard-header__btn:hover svg,
+html[data-theme="dark"] .btn--primary:hover svg {
+	stroke: #ffffff !important;
+	fill: #ffffff !important;
+	color: #ffffff !important;
+}
+
+/* =========================================================================
+ * STRICT UNIVERSAL FINAL OVERRIDE: ZERO BOLD FONT SITE-WIDE
+ * Guarantees that no element, class, tag, pseudo-element, or inline styling
+ * can display bold or semi-bold weights anywhere across the website.
+ * ========================================================================= */
+*,
+*::before,
+*::after,
+html *,
+body *,
+html body h1, html body h2, html body h3, html body h4, html body h5, html body h6,
+html body p, html body span, html body div, html body a, html body button,
+html body input, html body select, html body textarea,
+html body strong, html body b, html body th, html body td, html body label, html body li,
+html body dt, html body dd, html body blockquote,
+html body [class*="btn"], html body [class*="title"], html body [class*="heading"],
+html body [class*="tab"], html body [class*="badge"], html body [class*="card"],
+html body [class*="name"], html body [class*="header"], html body [class*="nav"],
+html body [class*="text"], html body [class*="label"], html body [class*="hero"] {
+	font-weight: 400 !important;
+}
+
+strong, b {
+	font-weight: 400 !important;
 }

@@ -178,7 +178,6 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
           <div className="journey-progress-dashboard">
             <div className="progress-header">
               <h3>MY PROGRESS</h3>
-              <p>Your contribution to this project</p>
             </div>
             <div className="progress-stats">
               <div className="progress-stat-item">
@@ -210,10 +209,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
             {/* CONTRIBUTIONS (Full Width) */}
             <div className="journey-card full-width">
               <div className="journey-card-header">
-                <div>
-                  <h3>Contributions & Achievements</h3>
-                  <p className="journey-card__desc">Your actual work and impact</p>
-                </div>
+                <h3>Contributions & Achievements</h3>
                 <div className="journey-card-actions">
                   <Button variant="outline" size="sm" onClick={handleSuggestContribution} disabled={aiLoading}>
                     {aiLoading ? <Spinner size="sm" /> : "✨ Suggest from my activity"}
@@ -288,10 +284,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
               {/* CHALLENGES (Half Width) */}
               <div className="journey-card half-width">
                 <div className="journey-card-header">
-                  <div>
-                    <h3>Challenges</h3>
-                    <p className="journey-card__desc">What you solved</p>
-                  </div>
+                  <h3>Challenges</h3>
                   {!showAddChallenge && (
                     <Button variant="primary" size="sm" onClick={() => setShowAddChallenge(true)}>
                       + Add
@@ -321,9 +314,9 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                       <div key={i} className="journey-list-item challenge-item">
                         <div className="journey-list-content">
                           <div><strong>Problem:</strong> {c.problem}</div>
-                          <div><strong>Solution:</strong> {c.result}</div>
+                          {c.result && <div><strong>Solution:</strong> {c.result}</div>}
                         </div>
-                        <button onClick={() => handleDeleteChallenge(i)} className="journey-delete-btn">&times;</button>
+                        <button onClick={() => handleDeleteChallenge(i)} className="journey-delete-btn" title="Remove">&times;</button>
                       </div>
                     ))}
                   </div>
@@ -333,10 +326,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
               {/* SKILLS (Half Width) */}
               <div className="journey-card half-width">
                 <div className="journey-card-header">
-                  <div>
-                    <h3>Skills & Technologies</h3>
-                    <p className="journey-card__desc">How you grew</p>
-                  </div>
+                  <h3>Skills & Technologies</h3>
                   {!showAddSkill && (
                     <Button variant="primary" size="sm" onClick={() => setShowAddSkill(true)}>
                       + Add
@@ -382,15 +372,17 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                     {personalJourney.skills?.map((s, i) => {
                       const skillObj = availableSkills.find(sk => sk._id === s.skill) || s.skill;
                       return (
-                        <div key={i} className="journey-list-item">
+                        <div key={i} className="journey-list-item journey-skill-item">
                           <div className="journey-list-content">
-                            <strong>{skillObj.name || "Skill"}</strong>
+                            <span className="journey-skill-name">{skillObj?.name || (typeof skillObj === 'string' ? skillObj : "Skill")}</span>
                             <div className="skill-journey-meta">
-                              <span>Before: {s.before}</span> &rarr; <span>After: {s.after}</span>
+                              <span className="skill-journey-badge">Before: <strong>{s.before}</strong></span>
+                              <span className="skill-journey-arrow">&rarr;</span>
+                              <span className="skill-journey-badge skill-journey-badge--highlight">After: <strong>{s.after}</strong></span>
                             </div>
                             {s.usedFor && <div className="skill-journey-used">Used for: {s.usedFor}</div>}
                           </div>
-                          <button onClick={() => handleDeleteSkill(i)} className="journey-delete-btn">&times;</button>
+                          <button onClick={() => handleDeleteSkill(i)} className="journey-delete-btn" title="Remove">&times;</button>
                         </div>
                       );
                     })}
@@ -402,10 +394,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
             {/* LEARNINGS (Full Width) */}
             <div className="journey-card full-width">
               <div className="journey-card-header">
-                <div>
-                  <h3>What I Learned</h3>
-                  <p className="journey-card__desc">My personal engineering journal</p>
-                </div>
+                <h3>What I Learned</h3>
                 {!showAddLearning && (
                   <Button variant="primary" size="sm" onClick={() => setShowAddLearning(true)}>
                     + Add
@@ -440,7 +429,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                         <span className="learning-badge">{l.category}</span>
                         <p style={{ margin: "4px 0 0 0" }}>{l.text}</p>
                       </div>
-                      <button onClick={() => handleDeleteLearning(i)} className="journey-delete-btn">&times;</button>
+                      <button onClick={() => handleDeleteLearning(i)} className="journey-delete-btn" title="Remove">&times;</button>
                     </div>
                   ))}
                 </div>
@@ -450,10 +439,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
             {/* EVIDENCE (Full Width) */}
             <div className="journey-card full-width">
               <div className="journey-card-header">
-                <div>
-                  <h3>My Evidence</h3>
-                  <p className="journey-card__desc">Link your specific PRs, commits, or demo timestamps</p>
-                </div>
+                <h3>My Evidence</h3>
                 {!showAddEvidence && (
                   <Button variant="primary" size="sm" onClick={() => setShowAddEvidence(true)}>
                     + Add
@@ -485,7 +471,7 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
                         <a href={e.url} target="_blank" rel="noreferrer" className="evidence-link" style={{ display: "block", fontSize: "13px" }}>{e.url}</a>
                         {e.description && <p style={{ fontSize: "13px", color: "var(--color-text-muted)", margin: "4px 0 0 0" }}>{e.description}</p>}
                       </div>
-                      <button onClick={() => handleDeleteEvidence(i)} className="journey-delete-btn">&times;</button>
+                      <button onClick={() => handleDeleteEvidence(i)} className="journey-delete-btn" title="Remove">&times;</button>
                     </div>
                   ))}
                 </div>
@@ -498,8 +484,9 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
       {activeTab === "team" && (
         <div className="journey-tab__grid">
           <div className="journey-card">
-            <h3>Project Timeline</h3>
-            <p className="journey-card__desc">Shared with your team. Automatic feed of project events.</p>
+            <div className="journey-card-header">
+              <h3>Project Timeline</h3>
+            </div>
             <div className="journey-timeline">
               {archiveData.timelineEvents?.length > 0 ? (
                 archiveData.timelineEvents.map((evt, idx) => (
@@ -519,8 +506,9 @@ export default function JourneyTab({ project, teamRecord, tasks = [], isMember, 
           </div>
 
           <div className="journey-card">
-            <h3>Project Deliverables</h3>
-            <p className="journey-card__desc">Shared final outputs for the team.</p>
+            <div className="journey-card-header">
+              <h3>Project Deliverables</h3>
+            </div>
             
             {conflictError && (
               <div style={{ background: "rgba(255, 69, 58, 0.15)", border: "1px solid #ff453a", color: "#ff453a", padding: "16px", borderRadius: "8px", marginBottom: "16px" }}>

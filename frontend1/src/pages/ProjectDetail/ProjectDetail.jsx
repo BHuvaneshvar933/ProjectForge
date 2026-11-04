@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { archiveProject, getJoinedProjects, getProjectById } from '../../api/projectApi';
+import { getJoinedProjects, getProjectById } from '../../api/projectApi';
 import { getCurrentUser } from '../../api/authApi';
 import { applyToProject, getMyApplications } from '../../api/applicationApi';
 import Button from '../../components/common/Button';
@@ -10,8 +10,8 @@ import { toast } from 'react-toastify';
 
 import ProjectHeader from './components/ProjectHeader';
 import ProjectAbout from './components/ProjectAbout';
+import ProjectSkills from './components/ProjectSkills';
 import ProjectTimeline from './components/ProjectTimeline';
-import ProjectTeam from './components/ProjectTeam';
 import EducationalTip from '../../components/common/EducationalTip';
 
 import './ProjectDetail.css';
@@ -31,7 +31,6 @@ export default function ProjectDetail() {
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [applyMessage, setApplyMessage] = useState('');
   const [applyLoading, setApplyLoading] = useState(false);
-  const [showArchiveModal, setShowArchiveModal] = useState(false);
 
   const fetchProject = useCallback(async () => {
     try {
@@ -188,83 +187,83 @@ export default function ProjectDetail() {
     }
   };
 
-  const handleArchive = async () => {
-    if (!isOwner) return;
 
-    try {
-      await archiveProject(id);
-      toast.success('Project archived');
-      setShowArchiveModal(false);
-      navigate('/my-projects');
-    } catch (e) {
-      toast.error(e.response?.data?.message || 'Failed to archive');
-    }
-  };
-
-  const goToApplications = () => {
-    navigate(`/projects/${id}/applications`);
-  };
-
-  const matchPercent = (() => {
-    try {
-      const userSkills = Array.isArray(currentUser?.skills) ? currentUser.skills : [];
-      const reqSkills = Array.isArray(project?.requiredSkills) ? project.requiredSkills : [];
-
-      const userNames = new Set(
-        userSkills
-          .map((s) => (typeof s === "string" ? s : s?.name))
-          .filter(Boolean)
-          .map((x) => String(x).toLowerCase())
-      );
-      const reqNames = new Set(
-        reqSkills
-          .map((s) => (typeof s === "string" ? s : s?.name))
-          .filter(Boolean)
-          .map((x) => String(x).toLowerCase())
-      );
-
-      if (userNames.size === 0 || reqNames.size === 0) return null;
-
-      let intersection = 0;
-      for (const s of userNames) {
-        if (reqNames.has(s)) intersection += 1;
-      }
-      const union = new Set([...userNames, ...reqNames]).size;
-      if (!union) return null;
-
-      return Math.round((intersection / union) * 100);
-    } catch {
-      return null;
-    }
-  })();
+  const hasActions = (tokenPresent && isMember) || isOwner;
 
   return (
     <div className="project-detail">
-      <ProjectHeader
-        project={project}
-        matchPercent={matchPercent}
-        tokenPresent={tokenPresent}
-        isMember={isMember}
-        showPending={showPending}
-        teamFull={teamFull}
-        isRecruiting={isRecruiting}
-        canApply={canApply}
-        applyLoading={applyLoading}
-        setShowApplyModal={setShowApplyModal}
-        isOwner={isOwner}
-        goToApplications={goToApplications}
-        setShowArchiveModal={setShowArchiveModal}
-      />
+      <div className="project-detail__layout">
+        <div className="project-detail__main">
+          <div className="project-detail__card-container">
+            <ProjectHeader
+              project={project}
+              tokenPresent={tokenPresent}
+              isMember={isMember}
+              showPending={showPending}
+              teamFull={teamFull}
+              isRecruiting={isRecruiting}
+              canApply={canApply}
+              applyLoading={applyLoading}
+              setShowApplyModal={setShowApplyModal}
+              isOwner={isOwner}
+              openRoles={openRoles}
+            />
 
-      <ProjectAbout
-        project={project}
-        tokenPresent={tokenPresent}
-        skillMatchScore={skillMatchScore}
-      />
+            <div className="project-detail__details-column">
+              {/* 1: About */}
+              <ProjectAbout project={project} />
 
-      <ProjectTimeline project={project} />
+              {/* 2: Required Skills */}
+              <ProjectSkills project={project} currentUser={currentUser} />
 
-      <ProjectTeam project={project} team={team} openRoles={openRoles} />
+              {/* 3: Timeline */}
+              <ProjectTimeline project={project} />
+
+              {/* 4: Open Roles */}
+              {openRoles && openRoles.length > 0 && (
+                <div className="project-detail__section">
+                  <h2 className="project-detail__section-title">Open Roles</h2>
+                  <div className="project-detail__skills-bar">
+                    {openRoles.map((role, i) => (
+                      <span key={i} className="project-detail__skill-item-wrap">
+                        <span className="project-detail__skill-text">{role}</span>
+                        {i < openRoles.length - 1 && (
+                          <span className="project-detail__skill-slash">/</span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <aside className="project-detail__sidebar">
+          {/* Small guide card on the right, outside of the main project card */}
+          <div className="project-detail__info-sidebar-card">
+            <h3 className="project-detail__sidebar-card-title">How to Apply</h3>
+            <div className="project-detail__guide-box">
+              <div className="project-detail__guide-item">
+                <span className="project-detail__guide-heading">How to apply:</span>
+                <p className="project-detail__guide-desc">Submit your application with a concise note highlighting your technical background and what you can build.</p>
+              </div>
+              <div className="project-detail__guide-item">
+                <span className="project-detail__guide-heading">Where to apply:</span>
+                <p className="project-detail__guide-desc">Use the Apply to Join button in the header of this project card.</p>
+              </div>
+              <div className="project-detail__guide-item">
+                <span className="project-detail__guide-heading">Why to apply:</span>
+                <p className="project-detail__guide-desc">Collaborate with motivated teammates, gain real project delivery experience, and strengthen your portfolio.</p>
+              </div>
+              <div className="project-detail__guide-item">
+                <span className="project-detail__guide-heading">Which to apply:</span>
+                <p className="project-detail__guide-desc">Focus on projects with open roles that align directly with your current stack and learning goals.</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
 
       <Modal
         isOpen={showApplyModal}
@@ -284,18 +283,6 @@ export default function ProjectDetail() {
           onChange={(e) => setApplyMessage(e.target.value)}
           placeholder="Example: I can take the Frontend role, I have experience with React and shipping Vite apps..."
         />
-      </Modal>
-
-      <Modal
-        isOpen={showArchiveModal}
-        onClose={() => setShowArchiveModal(false)}
-        title="Archive Project"
-        onConfirm={handleArchive}
-        confirmText="Archive"
-      >
-        <p className="project-detail__modal-hint">
-          This will archive the project and remove it from public browsing.
-        </p>
       </Modal>
     </div>
   );

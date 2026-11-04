@@ -103,19 +103,19 @@ html[data-theme="dark"] .project-basic__select {
 
 html[data-theme="dark"] .project-basic__textarea:hover,
 html[data-theme="dark"] .project-basic__select:hover {
-  background-color: #24242e;
+  background-color: #1a1a1a;
   border-color: rgba(255, 255, 255, 0.35);
 }
 
 html[data-theme="dark"] .project-basic__textarea:focus,
 html[data-theme="dark"] .project-basic__select:focus {
-  background-color: #24242e;
+  background-color: #1a1a1a;
   border-color: #ffffff;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
 }
 
 html[data-theme="dark"] .project-basic__select option {
-  background: #1c1c22;
+  background: #141414;
   color: #ffffff;
 }
 

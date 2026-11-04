@@ -156,6 +156,13 @@ export default function Navbar() {
             </Link>
           )}
 
+          <Link
+            to="/help"
+            className={`navbar__link ${isActive('/help') ? 'is-active' : ''}`.trim()}
+          >
+            Help
+          </Link>
+
           {isAuthed && (
             <div className="navbar__link navbar__link--icon" style={{ padding: 0 }}>
               <NotificationBell />

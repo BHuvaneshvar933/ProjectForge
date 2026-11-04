@@ -173,7 +173,9 @@ export default function Landing() {
           <div className="pub-hero__grid">
             <div className="pub-hero__left">
               <h1 className="pub-hero__title">
-                The Ecosystem for Independent Builders & Collaborative Ships.
+                <span className="pub-hero__title-line">The Ecosystem for</span>{' '}
+                <span className="pub-hero__title-line">Independent Builders&nbsp;&amp;</span>{' '}
+                <span className="pub-hero__title-line">Collaborative Ships.</span>
               </h1>
 
               <div className="pub-hero__body-row">

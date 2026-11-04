@@ -21,7 +21,9 @@ html[data-theme="dark"] .pub-footer {
 .pub-hero {
   display: flex;
   flex-direction: column;
-  padding-top: 48px;
+  justify-content: flex-end;
+  min-height: calc(100vh - 58px);
+  padding-top: 135px;
   padding-bottom: 0;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--bg-page);
@@ -46,8 +48,9 @@ html[data-theme="dark"] .pub-footer {
 .pub-hero__left {
   flex: 1;
   max-width: 1000px;
-  padding-bottom: 40px;
-  padding-top: 20px;
+  padding-bottom: 80px;
+  padding-top: 16px;
+  transform: translateY(30px);
 }
 
 .pub-hero__right {
@@ -55,14 +58,14 @@ html[data-theme="dark"] .pub-footer {
   justify-content: flex-end;
   align-items: flex-end;
   flex-shrink: 0;
-  margin-right: -80px;
+  margin-right: -50px;
   margin-bottom: -1px;
   position: relative;
 }
 
 .pub-hero__showcase-img {
-  width: 780px;
-  max-width: 55vw;
+  width: 650px;
+  max-width: 47vw;
   height: auto;
   display: block;
   object-fit: contain;
@@ -77,6 +80,9 @@ html[data-theme="dark"] .pub-footer {
     flex-direction: column;
     align-items: flex-start;
   }
+  .pub-hero__left {
+    transform: none;
+  }
   .pub-hero__right {
     width: 100%;
     justify-content: center;
@@ -85,7 +91,7 @@ html[data-theme="dark"] .pub-footer {
   }
   .pub-hero__showcase-img {
     width: 100%;
-    max-width: 100%;
+    max-width: 500px;
     height: auto;
   }
 }
@@ -95,21 +101,34 @@ html[data-theme="dark"] .pub-footer {
     display: none !important;
   }
   .pub-hero {
-    padding-top: 24px;
+    padding-top: 40px;
   }
   .pub-hero__left {
-    padding-bottom: 24px;
+    padding-bottom: 48px;
+    transform: none;
   }
 }
 
 .pub-hero__title {
-  font-size: clamp(2.8rem, 6vw, 5.2rem);
-  font-weight: 800;
-  line-height: 1.08;
+  font-size: clamp(2.4rem, 5.2vw, 4.5rem);
+  font-weight: 400 !important;
+  line-height: 1.12;
   letter-spacing: -0.035em;
   color: var(--color-text-dark);
-  margin-bottom: 28px;
-  max-width: 1300px;
+  margin-bottom: 26px;
+  max-width: 1200px;
+}
+
+.pub-hero__title-line {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .pub-hero__title {
+    font-size: clamp(2rem, 7.5vw, 2.9rem);
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
 }
 
 .pub-hero__body-row {
@@ -323,19 +342,57 @@ html[data-theme="dark"] .pub-chapter-block__slash {
 }
 
 html[data-theme="dark"] .pub-btn--primary,
-html[data-theme="dark"] .pub-btn--secondary,
 html[data-theme="dark"] .pub-btn--windows {
   background: #ffffff !important;
   color: #08080a !important;
   border: 1px solid #ffffff !important;
 }
 
+html[data-theme="dark"] .pub-btn--primary *,
+html[data-theme="dark"] .pub-btn--primary span,
+html[data-theme="dark"] .pub-btn--windows *,
+html[data-theme="dark"] .pub-btn--windows span {
+  color: #08080a !important;
+}
+
+html[data-theme="dark"] .pub-btn--windows svg {
+  fill: #08080a !important;
+  color: #08080a !important;
+}
+
 html[data-theme="dark"] .pub-btn--primary:hover,
-html[data-theme="dark"] .pub-btn--secondary:hover,
 html[data-theme="dark"] .pub-btn--windows:hover {
   background: #08080a !important;
   color: #ffffff !important;
   border: 1px solid #ffffff !important;
+}
+
+html[data-theme="dark"] .pub-btn--primary:hover *,
+html[data-theme="dark"] .pub-btn--primary:hover span,
+html[data-theme="dark"] .pub-btn--windows:hover *,
+html[data-theme="dark"] .pub-btn--windows:hover span {
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .pub-btn--windows:hover svg {
+  fill: #ffffff !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .pub-btn--secondary {
+  background: #141416 !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+html[data-theme="dark"] .pub-btn--secondary * {
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .pub-btn--secondary:hover {
+  background: #242428 !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
 }
 
 html[data-theme="dark"] .pub-btn--outline {
@@ -424,7 +481,7 @@ html[data-theme="dark"] .pub-btn--outline:hover {
 }
 
 html[data-theme="dark"] .pub-story-card {
-  background: #202028;
+  background: #121212;
   border-color: rgba(255, 255, 255, 0.12);
 }
 

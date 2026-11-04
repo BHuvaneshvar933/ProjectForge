@@ -112,7 +112,7 @@ export default function MyProjects() {
   }
 
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page my-projects-page">
       <PageHeader
         title="My Projects"
         actions={

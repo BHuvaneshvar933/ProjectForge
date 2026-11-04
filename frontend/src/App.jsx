@@ -18,6 +18,7 @@ import ProjectApplications from "./pages/Applications/ProjectApplications";
 import Workspace from "./pages/Workspace/Workspace";
 import LearningArchive from "./pages/LearningArchive/LearningArchive";
 import Messages from "./pages/Messages/Messages";
+import HelpSupport from "./pages/HelpSupport/HelpSupport";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ChatWidget from './components/chat/ChatWidget';
@@ -32,6 +33,8 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/projects" element={<BrowseProjects />} />
         <Route path="/learning-archive" element={<LearningArchive />} />
+        <Route path="/help" element={<HelpSupport />} />
+        <Route path="/support" element={<HelpSupport />} />
         <Route path="/projects/:id" element={<ProjectDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -39,6 +42,14 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route
           path="/projects/create"
+          element={
+            <ProtectedRoute>
+              <CreateProject />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/projects/new"
           element={
             <ProtectedRoute>
               <CreateProject />

@@ -12,16 +12,16 @@ export default function ProjectHeader({
   applyLoading,
   setShowApplyModal,
   isOwner,
-  goToApplications,
+  openRoles = [],
 }) {
   const navigate = useNavigate();
   const { _id: id } = project;
 
   return (
     <div className="project-detail__header">
-      {/* 1. Full Bleed Black Title Banner with Apply to Join inside Header at Right-Most */}
+      {/* Title Banner with Apply Button */}
       <div className="project-detail__title-banner">
-        <h1 className="project-detail__title">{project.title}</h1>
+        <h2 className="project-detail__title">TITLE : {project.title}</h2>
 
         <div className="project-detail__header-action">
           {!tokenPresent && (
@@ -60,45 +60,75 @@ export default function ProjectHeader({
         </div>
       </div>
 
-      {/* 2. Action Buttons under Header (Workspace, View Applications, Edit Project) */}
-      {(isMember || isOwner) && (
-        <div className="project-detail__actions" style={{ display: 'flex', gap: '10px', alignItems: 'center', margin: '14px 0 16px' }}>
-          {tokenPresent && isMember && (
-            <Button variant="primary" onClick={() => navigate(`/workspace/${id}`)}>
-              Workspace
-            </Button>
-          )}
-
+      {/* Action Buttons - only available when user joined or is owner */}
+      {((tokenPresent && isMember) || isOwner) && (
+        <div className="project-detail__actions-list">
+          <button
+            type="button"
+            className="project-detail__action-btn"
+            onClick={() => navigate(`/workspace/${id}`)}
+          >
+            Workspace
+          </button>
           {isOwner && (
             <>
-              <Button variant="outline" onClick={goToApplications}>
+              <button
+                type="button"
+                className="project-detail__action-btn"
+                onClick={() => navigate(`/projects/${id}/applications`)}
+              >
                 View Applications
-              </Button>
-              <Link to={`/projects/${id}/edit`}>
-                <Button variant="secondary">Edit Project</Button>
-              </Link>
+              </button>
+              <button
+                type="button"
+                className="project-detail__action-btn"
+                onClick={() => navigate(`/projects/${id}/edit`)}
+              >
+                Edit Project
+              </button>
             </>
           )}
         </div>
       )}
 
-      {/* 3. Vertically Stacked Metadata Badges with status text colors */}
-      <div className="project-detail__badges">
-        <div className="project-detail__badge-item">
-          <span className="project-detail__badge-label">topic :</span>
-          <span className="project-detail__badge-value">{project.projectType || "General"}</span>
+      {/* 2 Rows of Details */}
+      <div className="project-detail__details-container">
+        <div className="project-detail__details-row">
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Topic :</span>
+            <span className="project-detail__detail-value">{project.projectType || "General"}</span>
+          </div>
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Status :</span>
+            <span className="project-detail__detail-value">{project.status}</span>
+          </div>
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Team :</span>
+            <span className="project-detail__detail-value">
+              {project.currentTeamSize} / {project.teamSizeRequired}
+            </span>
+          </div>
         </div>
-        <div className="project-detail__badge-item">
-          <span className="project-detail__badge-label">status :</span>
-          <span className={`project-detail__status-text status-text--${project.status}`}>
-            {project.status}
-          </span>
-        </div>
-        <div className="project-detail__badge-item">
-          <span className="project-detail__badge-label">team :</span>
-          <span className="project-detail__badge-value">
-            {project.currentTeamSize} / {project.teamSizeRequired}
-          </span>
+
+        <div className="project-detail__details-row">
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Owner :</span>
+            <span className="project-detail__detail-value">{project.owner?.name || "Unknown"}</span>
+          </div>
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Open Roles :</span>
+            <span className="project-detail__detail-value">
+              {openRoles.length > 0 ? openRoles.join(", ") : "All filled"}
+            </span>
+          </div>
+          <div className="project-detail__detail-item">
+            <span className="project-detail__detail-label">Timeline :</span>
+            <span className="project-detail__detail-value">
+              {project.timeline?.startDate 
+                ? `${new Date(project.timeline.startDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}`
+                : "Flexible"}
+            </span>
+          </div>
         </div>
       </div>
     </div>

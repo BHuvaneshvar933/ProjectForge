@@ -29,10 +29,10 @@ export default function AccountDetails({ user }) {
             <div>
               <div style={{ fontSize: 13, color: "var(--color-text-muted)", marginBottom: 4 }}>Current Status</div>
               <div style={{ fontSize: 18, fontWeight: 700, color: "var(--color-text-dark)", display: "flex", alignItems: "center", gap: 8 }}>
-                {user?.reliability?.status === "RELIABLE" ? "🟢 Reliable Collaborator" :
-                 user?.reliability?.status === "CAUTION" ? "🟡 Caution" :
-                 user?.reliability?.status === "CONCERN" ? "🔴 Concern" :
-                 "⚪ Developing"}
+                {user?.reliability?.status === "RELIABLE" ? "Reliable Collaborator" :
+                 user?.reliability?.status === "CAUTION" ? "Caution" :
+                 user?.reliability?.status === "CONCERN" ? "Concern" :
+                 "Developing"}
               </div>
             </div>
             <div style={{ textAlign: "right" }}>
