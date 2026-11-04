@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/client';
 import './CalendarView.css';
@@ -21,11 +21,7 @@ const CalendarView = ({ projectId = null }) => {
   
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchEvents();
-  }, [projectId]);
-
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       const endpoint = projectId ? `/calendar/events?projectId=${projectId}` : '/calendar/events';
@@ -38,7 +34,11 @@ const CalendarView = ({ projectId = null }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [projectId]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
 
   const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
