@@ -470,14 +470,26 @@ html[data-theme="dark"] .help-protip-icon {
 }
 
 .help-faq-body {
-  padding: 0 20px 18px 20px;
+  margin: 0 16px 16px 16px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
   font-size: 14px;
-  color: var(--color-text-muted);
+  color: var(--color-text-dark);
   line-height: 1.6;
+}
+
+html[data-theme="dark"] .help-faq-body {
+  background: #ffffff;
+  color: #121214 !important;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .help-faq-body p {
   margin: 0;
+  color: inherit;
 }
 
 /* Contact / Support Section */

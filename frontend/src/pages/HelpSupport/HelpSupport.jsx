@@ -45,17 +45,17 @@ export default function HelpSupport() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = [
-    { id: 'all', label: 'All Topics', icon: BookOpen },
-    { id: 'discover', label: '1. Discover & Search', icon: Compass },
-    { id: 'create', label: '2. Create & Lead', icon: FolderPlus },
-    { id: 'join', label: '3. Join & Apply', icon: UserPlus },
-    { id: 'invite', label: '4. Invites & Recruiting', icon: Users },
-    { id: 'workspace', label: '5. Workspace & Collab', icon: LayoutDashboard },
-    { id: 'messages', label: '6. Chat & Messaging', icon: MessageSquare },
-    { id: 'calendar', label: '7. Calendar & Deadlines', icon: Calendar },
-    { id: 'archive', label: '8. Portfolio & Journey', icon: Award },
-    { id: 'faq', label: 'Frequently Asked Questions', icon: HelpCircle },
-    { id: 'contact', label: 'Contact Support', icon: Mail },
+    { id: 'all', label: 'All Topics' },
+    { id: 'discover', label: 'Discover & Search' },
+    { id: 'create', label: 'Create & Lead' },
+    { id: 'join', label: 'Join & Apply' },
+    { id: 'invite', label: 'Invites & Recruiting' },
+    { id: 'workspace', label: 'Workspace & Collab' },
+    { id: 'messages', label: 'Chat & Messaging' },
+    { id: 'calendar', label: 'Calendar & Deadlines' },
+    { id: 'archive', label: 'Portfolio & Journey' },
+    { id: 'faq', label: 'Frequently Asked Questions' },
+    { id: 'contact', label: 'Contact Support' },
   ];
 
   const tutorials = [
@@ -431,10 +431,6 @@ export default function HelpSupport() {
       {/* Hero Search & Quick Intro */}
       <section className="help-hero">
         <div className="help-hero__content">
-          <span className="help-hero__tag">
-            <Sparkles style={{ width: 14, height: 14 }} />
-            The Complete ProjectForge Handbook
-          </span>
           <h1 className="help-hero__heading">Everything you need to build, collaborate & ship</h1>
           <p className="help-hero__subheading">
             Explore comprehensive step-by-step tutorials covering project discovery, team recruiting, workspace tools, real-time messaging, task management, and portfolio building.
@@ -466,7 +462,6 @@ export default function HelpSupport() {
       <div className="help-categories-bar">
         <div className="help-categories-scroll">
           {categories.map((cat) => {
-            const Icon = cat.icon;
             const isActive = activeCategory === cat.id;
             return (
               <button
@@ -484,7 +479,6 @@ export default function HelpSupport() {
                   }
                 }}
               >
-                <Icon className="help-cat-icon" />
                 <span>{cat.label}</span>
               </button>
             );

@@ -21,7 +21,9 @@ html[data-theme="dark"] .pub-footer {
 .pub-hero {
   display: flex;
   flex-direction: column;
-  padding-top: 76px;
+  justify-content: flex-end;
+  min-height: calc(100vh - 58px);
+  padding-top: 135px;
   padding-bottom: 0;
   border-bottom: 1px solid var(--border-color);
   background-color: var(--bg-page);
