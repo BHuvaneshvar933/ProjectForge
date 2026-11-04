@@ -14,7 +14,7 @@ export default function ProjectSkills({ project, currentUser }) {
               (us) => String(us) === String(skill?._id || skill)
             );
             return (
-              <span key={i} className="project-detail__skill-item-wrap">
+              <span key={i} className={`project-detail__skill-item-wrap ${isMatched ? 'is-matched' : ''}`}>
                 <span className="project-detail__skill-text">
                   {displaySkillLabel(skill)}
                 </span>

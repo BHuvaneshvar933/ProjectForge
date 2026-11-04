@@ -20,7 +20,6 @@ export default function ProjectDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
-  const [team, setTeam] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -38,7 +37,6 @@ export default function ProjectDetail() {
       const { data } = await getProjectById(id);
       const p = data?.data?.project ?? null;
       setProject(p);
-      setTeam(Array.isArray(p?.team) ? p.team : []);
 
       const token =
         (typeof window !== 'undefined' &&
@@ -152,24 +150,6 @@ export default function ProjectDetail() {
 
   const showPending = Boolean(applicationStatus === 'pending');
 
-  const skillMatchScore = (() => {
-    const userSkills = Array.isArray(currentUser?.skills) ? currentUser.skills : [];
-    const projectSkills = Array.isArray(project.requiredSkills) ? project.requiredSkills : [];
-
-    const userIds = new Set(userSkills.map((s) => String(s)));
-    const projIds = new Set(projectSkills.map((s) => String(s?._id ?? s)));
-
-    const denominator = Math.min(userIds.size, projIds.size);
-    if (denominator === 0) return null;
-
-    let intersectionCount = 0;
-    for (const id of userIds) {
-      if (projIds.has(id)) intersectionCount += 1;
-    }
-
-    return Math.round((intersectionCount / denominator) * 100);
-  })();
-
   const handleApply = async () => {
     if (!canApply) return;
 
@@ -186,9 +166,6 @@ export default function ProjectDetail() {
       setApplyLoading(false);
     }
   };
-
-
-  const hasActions = (tokenPresent && isMember) || isOwner;
 
   return (
     <div className="project-detail">

@@ -7,7 +7,6 @@ export default function ProjectCard({ project, type = "owned" }) {
   const {
     _id,
     title,
-    description,
     status,
     currentTeamSize,
     teamSizeRequired,

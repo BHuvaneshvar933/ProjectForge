@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/client';
 import './CalendarView.css';
@@ -21,7 +21,7 @@ const CalendarView = ({ projectId = null }) => {
   
   const navigate = useNavigate();
 
-  const fetchEvents = useCallback(async () => {
+  const fetchEvents = React.useCallback(async () => {
     try {
       setLoading(true);
       const endpoint = projectId ? `/calendar/events?projectId=${projectId}` : '/calendar/events';

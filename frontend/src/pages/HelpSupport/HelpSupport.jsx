@@ -44,21 +44,7 @@ export default function HelpSupport() {
   const [contactMessage, setContactMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const categories = [
-    { id: 'all', label: 'All Topics' },
-    { id: 'discover', label: 'Discover & Search' },
-    { id: 'create', label: 'Create & Lead' },
-    { id: 'join', label: 'Join & Apply' },
-    { id: 'invite', label: 'Invites & Recruiting' },
-    { id: 'workspace', label: 'Workspace & Collab' },
-    { id: 'messages', label: 'Chat & Messaging' },
-    { id: 'calendar', label: 'Calendar & Deadlines' },
-    { id: 'archive', label: 'Portfolio & Journey' },
-    { id: 'faq', label: 'Frequently Asked Questions' },
-    { id: 'contact', label: 'Contact Support' },
-  ];
-
-  const tutorials = [
+  const tutorials = useMemo(() => [
     {
       id: 'discover',
       category: 'discover',
@@ -335,9 +321,9 @@ export default function HelpSupport() {
       ],
       proTip: 'Document challenges as they happen in the Workspace Journey tab. It\'s much easier than trying to remember what you built 6 months later!'
     }
-  ];
+  ], []);
 
-  const faqs = [
+  const faqs = useMemo(() => [
     {
       q: 'How do I know if my project application was accepted?',
       a: 'When a project owner accepts your application, you will receive an in-app notification, and the status in your "Applications" page will change to "Accepted". You will also automatically gain access to the private Workspace for that project!'
@@ -370,6 +356,20 @@ export default function HelpSupport() {
       q: 'Is ProjectForge free for open-source teams?',
       a: 'Yes, ProjectForge is completely free for developers, students, and open-source creators to collaborate, learn, and build impactful projects together.'
     }
+  ], []);
+
+  const categories = [
+    { id: 'all', label: 'All Topics' },
+    { id: 'discover', label: 'Discover & Search' },
+    { id: 'create', label: 'Create & Lead' },
+    { id: 'join', label: 'Join & Apply' },
+    { id: 'invite', label: 'Invites & Recruiting' },
+    { id: 'workspace', label: 'Workspace & Collab' },
+    { id: 'messages', label: 'Chat & Messaging' },
+    { id: 'calendar', label: 'Calendar & Deadlines' },
+    { id: 'archive', label: 'Portfolio & Journey' },
+    { id: 'faq', label: 'Frequently Asked Questions' },
+    { id: 'contact', label: 'Contact Support' },
   ];
 
   // Filtering logic
