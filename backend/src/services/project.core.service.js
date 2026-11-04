@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Project from "../models/project.model.js";
 import Team from "../models/team.model.js";
 import { calculateUserReliability } from "./reliability.service.js";
@@ -111,6 +112,10 @@ export const createProject = async (userId, data) => {
 
 // Fetch a specific project by its ID, complete with its team and skills.
 export const getProjectById = async (projectId) => {
+  if (!projectId || !mongoose.Types.ObjectId.isValid(projectId)) {
+    throw new Error("Project not found");
+  }
+
   const project = await Project.findOne({
     _id: projectId,
     isDeleted: false
