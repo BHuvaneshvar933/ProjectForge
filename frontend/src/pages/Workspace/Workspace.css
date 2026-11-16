@@ -884,3 +884,7 @@ html[data-theme="dark"] .workspace-select {
   }
 }
 
+.workspace__calendar-layout {
+  width: 100%;
+}
+

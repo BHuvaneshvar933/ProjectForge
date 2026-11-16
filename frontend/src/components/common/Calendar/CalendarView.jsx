@@ -108,15 +108,52 @@ const CalendarView = ({ projectId = null }) => {
     );
   };
 
+  const renderDayEvents = (dayEvents) => {
+    return dayEvents.map((evt, idx) => {
+      const isTask = evt.type === 'task';
+      const eventTypeClass = evt.type === 'project_deadline' ? 'deadline' : (evt.type || 'task');
+
+      return (
+        <div 
+          key={(evt.id || evt._id || 'evt') + idx} 
+          className={`calendar-event-item ${isTask ? 'calendar-event-item--task' : ''}`}
+          onClick={() => setSelectedEvent(evt)}
+          title={evt.title}
+        >
+          <span className={`event-icon event-icon--${eventTypeClass}`}>
+            {renderCalendarEventIcon(evt.type)}
+          </span>
+          <span className="event-title">{evt.title}</span>
+        </div>
+      );
+    });
+  };
+
   const renderGrid = () => {
     const days = [];
     
-    // Empty cells before start of month
-    for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
+    // Trailing days from previous month to fill first row
+    const prevMonthDays = new Date(year, month, 0).getDate();
+    for (let i = firstDay - 1; i >= 0; i--) {
+      const prevDate = prevMonthDays - i;
+      const prevCellDate = new Date(year, month - 1, prevDate);
+      const isToday = new Date().toDateString() === prevCellDate.toDateString();
+      const dayEvents = filteredEvents.filter(e => {
+        const eventDate = new Date(e.date || e.startDate);
+        return eventDate.toDateString() === prevCellDate.toDateString();
+      });
+
+      days.push(
+        <div key={`prev-${prevDate}`} className={`calendar-day other-month ${isToday ? 'today' : ''}`}>
+          <div className="day-number">{prevDate}</div>
+          <div className="day-events">
+            {renderDayEvents(dayEvents)}
+          </div>
+        </div>
+      );
     }
 
-    // Days of month
+    // Days of current month
     for (let d = 1; d <= daysInMonth; d++) {
       const currentCellDate = new Date(year, month, d);
       const isToday = new Date().toDateString() === currentCellDate.toDateString();
@@ -130,23 +167,28 @@ const CalendarView = ({ projectId = null }) => {
         <div key={`day-${d}`} className={`calendar-day ${isToday ? 'today' : ''}`}>
           <div className="day-number">{d}</div>
           <div className="day-events">
-            {dayEvents.map((evt, idx) => {
-              const isTask = evt.type === 'task';
-              const eventTypeClass = evt.type === 'project_deadline' ? 'deadline' : (evt.type || 'task');
+            {renderDayEvents(dayEvents)}
+          </div>
+        </div>
+      );
+    }
 
-              return (
-                <div 
-                  key={evt.id + idx} 
-                  className={`calendar-event-item ${isTask ? 'calendar-event-item--task' : ''}`}
-                  onClick={() => setSelectedEvent(evt)}
-                >
-                  <span className={`event-icon event-icon--${eventTypeClass}`}>
-                    {renderCalendarEventIcon(evt.type)}
-                  </span>
-                  <span className="event-title">{evt.title}</span>
-                </div>
-              );
-            })}
+    // Leading days from next month to complete the last row
+    const totalCells = days.length;
+    const remainingInGrid = (7 - (totalCells % 7)) % 7;
+    for (let d = 1; d <= remainingInGrid; d++) {
+      const nextCellDate = new Date(year, month + 1, d);
+      const isToday = new Date().toDateString() === nextCellDate.toDateString();
+      const dayEvents = filteredEvents.filter(e => {
+        const eventDate = new Date(e.date || e.startDate);
+        return eventDate.toDateString() === nextCellDate.toDateString();
+      });
+
+      days.push(
+        <div key={`next-${d}`} className={`calendar-day other-month ${isToday ? 'today' : ''}`}>
+          <div className="day-number">{d}</div>
+          <div className="day-events">
+            {renderDayEvents(dayEvents)}
           </div>
         </div>
       );
@@ -199,16 +241,18 @@ const CalendarView = ({ projectId = null }) => {
         </div>
       </div>
 
-      <div className="calendar-grid">
-        <div className="weekday-header">MON</div>
-        <div className="weekday-header">TUE</div>
-        <div className="weekday-header">WED</div>
-        <div className="weekday-header">THU</div>
-        <div className="weekday-header">FRI</div>
-        <div className="weekday-header">SAT</div>
-        <div className="weekday-header">SUN</div>
-        
-        {loading ? <div className="calendar-loading">Loading events...</div> : renderGrid()}
+      <div className="calendar-grid-wrapper">
+        <div className="calendar-grid">
+          <div className="weekday-header">MON</div>
+          <div className="weekday-header">TUE</div>
+          <div className="weekday-header">WED</div>
+          <div className="weekday-header">THU</div>
+          <div className="weekday-header">FRI</div>
+          <div className="weekday-header">SAT</div>
+          <div className="weekday-header">SUN</div>
+          
+          {loading ? <div className="calendar-loading">Loading events...</div> : renderGrid()}
+        </div>
       </div>
 
       {selectedEvent && (
