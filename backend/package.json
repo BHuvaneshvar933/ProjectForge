@@ -19,6 +19,8 @@
     "start": "node server.js",
     "seed": "node src/scripts/seed.js",
     "seed:reset": "node src/scripts/seed.js --reset",
+    "seed:synthetic": "node src/scripts/seedSyntheticData.js",
+    "seed:synthetic:reset": "node src/scripts/seedSyntheticData.js --reset",
     "build": "echo No build required",
     "coverage": "vitest run --coverage"
   },

@@ -20,17 +20,30 @@ export default function BrowseProjectsTab({
   return (
     <>
       {!hideControls && (
-        <div className="browse-page__filters">
+        <div className="browse-page__filters" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px' }}>
           <select
             value={filters.projectType}
             onChange={(e) => setFilters({ ...filters, projectType: e.target.value, page: 1 })}
             className="browse-page__select"
+            style={{ width: 'auto', minWidth: '160px' }}
           >
             <option value="">All Types</option>
             <option value="web">Web</option>
             <option value="mobile">Mobile</option>
             <option value="ml">ML</option>
             <option value="hackathon">Hackathon</option>
+          </select>
+          <select
+            value={filters.status}
+            onChange={(e) => setFilters({ ...filters, status: e.target.value, page: 1 })}
+            className="browse-page__select"
+            style={{ width: 'auto', minWidth: '160px' }}
+          >
+            <option value="">Recruiting (Default)</option>
+            <option value="all">All Statuses</option>
+            <option value="recruiting">Recruiting</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
           </select>
         </div>
       )}

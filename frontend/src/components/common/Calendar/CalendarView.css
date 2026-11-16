@@ -145,16 +145,27 @@
 }
 
 .event-icon {
-  font-size: 0.8rem;
-  line-height: 1;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
-.event-icon--bullet {
-  font-size: 1.15rem;
-  line-height: 1;
-  color: var(--color-text-dark);
+.event-icon--meeting {
+  color: #2563eb;
+}
+
+.event-icon--milestone {
+  color: #16a34a;
+}
+
+.event-icon--deadline {
+  color: #ea580c;
+}
+
+.event-icon--task {
+  color: var(--color-text-muted);
 }
 
 .event-title {

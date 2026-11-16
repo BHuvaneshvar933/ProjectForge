@@ -174,7 +174,9 @@ export const browseProjects = async (query) => {
   };
 
   if (status) {
-    filter.status = status;
+    if (status !== "all") {
+      filter.status = status;
+    }
   } else {
     filter.status = "recruiting";
   }

@@ -286,6 +286,21 @@ export default function BrowseProjects() {
                   <option value="hackathon">Hackathon</option>
                 </select>
               </div>
+
+              <div className="dashboard-sidebar__section">
+                <h3 className="dashboard-sidebar__heading">Filter By Status</h3>
+                <select
+                  value={filters.status}
+                  onChange={(e) => setFilters({ ...filters, status: e.target.value, page: 1 })}
+                  className="dashboard-sidebar__select"
+                >
+                  <option value="">Recruiting (Default)</option>
+                  <option value="all">All Statuses</option>
+                  <option value="recruiting">Recruiting</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
             </>
           )}
 

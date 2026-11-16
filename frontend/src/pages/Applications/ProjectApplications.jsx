@@ -156,8 +156,9 @@ export default function ProjectApplications() {
                   <div className="apps-card__title" style={{ display: "flex", alignItems: "center" }}>
                     {applicant?.name || "Applicant"}
                     {applicant?.reliability?.status === "RELIABLE" && (
-                      <span style={{ fontSize: 12, padding: '2px 6px', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: 4, fontWeight: 600, backgroundColor: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', marginLeft: 8 }}>
-                        🟢 {applicant.reliability.label}
+                      <span style={{ fontSize: 12, padding: '2px 8px', borderRadius: 12, display: 'inline-flex', alignItems: 'center', gap: 6, fontWeight: 600, backgroundColor: 'rgba(46, 204, 113, 0.15)', color: '#2ecc71', marginLeft: 8 }}>
+                        <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#2ecc71', display: 'inline-block' }} />
+                        {applicant.reliability.label}
                       </span>
                     )}
                     {applicant?.reliability?.status === "DEVELOPING" && (

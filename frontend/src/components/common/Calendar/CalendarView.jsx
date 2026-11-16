@@ -73,6 +73,41 @@ const CalendarView = ({ projectId = null }) => {
     return true;
   });
 
+  const renderCalendarEventIcon = (type) => {
+    if (type === 'meeting') {
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+          <path d="M23 21v-2a4 4 0 00-3-3.87" />
+          <path d="M16 3.13a4 4 0 010 7.75" />
+        </svg>
+      );
+    }
+    if (type === 'milestone') {
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+          <line x1="4" y1="22" x2="4" y2="15" />
+        </svg>
+      );
+    }
+    if (type === 'project_deadline') {
+      return (
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      );
+    }
+    return (
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M9 11l3 3L22 4" />
+        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+      </svg>
+    );
+  };
+
   const renderGrid = () => {
     const days = [];
     
@@ -96,12 +131,8 @@ const CalendarView = ({ projectId = null }) => {
           <div className="day-number">{d}</div>
           <div className="day-events">
             {dayEvents.map((evt, idx) => {
-              let icon = '';
               const isTask = evt.type === 'task';
-              if (isTask) icon = '•';
-              else if (evt.type === 'meeting') icon = '🔵';
-              else if (evt.type === 'milestone') icon = '🟢';
-              else if (evt.type === 'project_deadline') icon = '🚀';
+              const eventTypeClass = evt.type === 'project_deadline' ? 'deadline' : (evt.type || 'task');
 
               return (
                 <div 
@@ -109,7 +140,9 @@ const CalendarView = ({ projectId = null }) => {
                   className={`calendar-event-item ${isTask ? 'calendar-event-item--task' : ''}`}
                   onClick={() => setSelectedEvent(evt)}
                 >
-                  <span className={`event-icon ${isTask ? 'event-icon--bullet' : ''}`}>{icon}</span>
+                  <span className={`event-icon event-icon--${eventTypeClass}`}>
+                    {renderCalendarEventIcon(evt.type)}
+                  </span>
                   <span className="event-title">{evt.title}</span>
                 </div>
               );
@@ -185,10 +218,15 @@ const CalendarView = ({ projectId = null }) => {
             
             <div className="event-modal__header">
               <span className={`event-modal__badge event-modal__badge--${selectedEvent.type}`}>
-                {selectedEvent.type === 'task' && '• Task'}
-                {selectedEvent.type === 'meeting' && '🔵 Meeting'}
-                {selectedEvent.type === 'milestone' && '🟢 Milestone'}
-                {selectedEvent.type === 'project_deadline' && '🚀 Project Deadline'}
+                <span className={`event-icon event-icon--${selectedEvent.type === 'project_deadline' ? 'deadline' : selectedEvent.type}`} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                  {renderCalendarEventIcon(selectedEvent.type)}
+                </span>
+                <span>
+                  {selectedEvent.type === 'task' && 'Task'}
+                  {selectedEvent.type === 'meeting' && 'Meeting'}
+                  {selectedEvent.type === 'milestone' && 'Milestone'}
+                  {selectedEvent.type === 'project_deadline' && 'Project Deadline'}
+                </span>
               </span>
               {selectedEvent.type === 'task' && (
                 <span className="event-modal__tag">Assigned to you</span>
